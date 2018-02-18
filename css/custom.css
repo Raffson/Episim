@@ -77,8 +77,8 @@ footer p {
 }
 
 .custom-container {
-  margin-left: 5rem;
-  margin-right: 5rem;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 
 .custom-title {
@@ -98,9 +98,10 @@ footer p {
   border-style: dashed;
   border-color: red;
   font-size: 0.85rem;
-  margin-left: 3rem;
-  margin-right: 3rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  margin-left: 10%;
+  margin-right: 10%;
+  padding-left: 15px;
+  padding-right: 15px;
   color: black;
+  word-wrap: break-word;
 }
