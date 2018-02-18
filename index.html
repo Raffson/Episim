@@ -131,9 +131,9 @@
                 <div class="custom-frame">
 
 /Users/raphael/Downloads/stride-56d3061.../main/cpp/immunity/Vaccinator.cpp:128:34: error:
-      cannot initialize a variable of type 'vector<stride::Cluster> *' with an rvalue of
-      type 'std::vector<ContactPool> *'
-                vector<Cluster>* immunity_clusters = &m_sim->m_households; ///< Th...
+      cannot initialize a variable of type 'vector&lt;stride::Cluster&gt; *' with an rvalue of
+      type 'std::vector&lt;ContactPool&gt; *'
+                vector&lt;Cluster&gt;* immunity_clusters = &m_sim->m_households; ///&lt; Th...
                                  ^                   ~~~~~~~~~~~~~~~~~~~~
 1 error generated.
 make[2]: *** [main/cpp/CMakeFiles/libstride.dir/immunity/Vaccinator.cpp.o] Error 1
