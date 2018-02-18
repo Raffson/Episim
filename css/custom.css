@@ -93,11 +93,14 @@ footer p {
 }
 
 .custom-frame {
+  font-family: monospace;
+  white-space: pre-wrap;
   border-style: dashed;
   border-color: red;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   margin-left: 3rem;
   margin-right: 3rem;
   padding-left: 2rem;
   padding-right: 2rem;
+  color: black;
 }
