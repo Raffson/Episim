@@ -92,4 +92,12 @@ footer p {
     padding-right:15px;
 }
 
-
+.custom-frame {
+  border-style: dashed;
+  border-color: red;
+  font-size: 0.7rem;
+  margin-left: 3rem;
+  margin-right: 3rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
