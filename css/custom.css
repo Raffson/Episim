@@ -76,6 +76,10 @@ footer p {
   border-radius:25%;
 }
 
+.pic0brad {
+    border-radius: 0;
+}
+
 .custom-container {
   margin-left: 10%;
   margin-right: 10%;
