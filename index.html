@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <!-- saved from url=(0098)file:///C:/Users/Robbe/Eindwerk_site/RobbeHeirman.github.io/Album%20example%20for%20Bootstrap.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="en">
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -12,6 +13,11 @@
     <link href="./css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="./css/custom.css" rel="stylesheet">
+	<!-- For collapsible button -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
   </head>
 
   <body>
@@ -38,20 +44,24 @@
                 <div class= "col-3">
                     <img class = "img-fluid pic25brad" src="images/Robbe.jpg">
                     <p>Robbe Heirman</p>
+		    <p>github name: RobbeHeirman</p>
                 </div>
 
                 <div class= "col-3">
                     <img class = "img-fluid pic25brad" src="images/Beau.jpg">
                     <p>Beau De Clerq</p>
+		    <p>github name: bdclercq</p>
                 </div>
 
                 <div class= "col-3">
                     <img class = "img-fluid pic25brad" src="images/Nishchal.jpg">
                     <p>Nishchal Shrestha</p>
+		    <p>github name: nishrestha</p>
                 </div>
                 <div class= "col-3">
                     <img class = "img-fluid pic25brad" src="images/Raphael.jpg">
                     <p>Raphael Assa </p>
+		    <p>github name: Raffson</p>
                 </div>
             </div>
         </div>
@@ -61,8 +71,13 @@
 
     <div class="section-w">
         <div class="container">
-            <div class="custom-header">Assignment 1</div>
-            <div class="custom-container text-muted">
+
+<div class="container">
+  <div class="custom-header">Assignment 1</div>
+  <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Solution</button>
+	<br/> <br/>
+  <div id="demo" class="collapse">
+    <div class="custom-container text-muted">
                 <div class="custom-title">
                     What was asked for this assignment?
                 </div>
@@ -140,8 +155,8 @@ make[1]: *** [main/cpp/CMakeFiles/libstride.dir/all] Error 2
 make: *** [all] Error 2
                 </div>
             </div>
-        </div>
-    </div>
+  </div>
+</div>
 
   </body>
 </html>

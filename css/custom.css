@@ -105,3 +105,13 @@ footer p {
   color: black;
   word-wrap: break-word;
 }
+
+.btn-info {
+position: absolute;
+    right: 40%;
+font-family: monospace;
+    width: 20%;
+ border-radius:25%;
+padding: 100px;
+padding-bottom: 5%;
+}
