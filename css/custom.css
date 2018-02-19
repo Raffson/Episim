@@ -76,8 +76,16 @@ footer p {
   border-radius:25%;
 }
 
-.pic0brad {
+.picBuildMaster {
     border-radius: 0;
+    width: 15%;
+    max-width:15%;
+}
+
+.picBuild {
+    border-radius: 0;
+    width: 35%;
+    max-width:35%;
 }
 
 .custom-container {
