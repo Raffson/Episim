@@ -74,87 +74,89 @@
 
 <div class="container">
   <div class="custom-header">Assignment 1</div>
-  <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Solution</button>
-	<br/> <br/>
-  <div id="demo" class="collapse">
-    <div class="custom-container text-muted">
-                <div class="custom-title">
-                    What was asked for this assignment?
-                </div>
-                <p class="custom-pgraph">
-                    For our first assignment we were asked to investigate the influance of r<sub>0</sub> on the attack rate.
-                    The first parameter, r<sub>0</sub>, is a basic reproduction number, i.e. a measure for infectiousness
-                    of a disease. In other words, how many people will 1 person infect in a completely susceptible population.
-                    The second parameter, attack rate, represents the fraction of the population that has been infected
-                    at the end of the simulation.
-                </p>
+  <div class="text-center"> 
+	  <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Solution</button>
+		<br/> <br/>
+	  <div id="demo" class="collapse">
+		<div class="custom-container text-muted">
+		            <div class="custom-title">
+		                What was asked for this assignment?
+		            </div>
+		            <p class="custom-pgraph">
+		                For our first assignment we were asked to investigate the influance of r<sub>0</sub> on the attack rate.
+		                The first parameter, r<sub>0</sub>, is a basic reproduction number, i.e. a measure for infectiousness
+		                of a disease. In other words, how many people will 1 person infect in a completely susceptible population.
+		                The second parameter, attack rate, represents the fraction of the population that has been infected
+		                at the end of the simulation.
+		            </p>
 
-                <div class="custom-title">
-                    What was delivered by EpiSim?
-                </div>
-                <p class="custom-pgraph">
-                    Due to the fact that newer versions of the stride simulator were pushed which would change the results
-                    dramatically, we decided to take a closer look at the different versions. Our findings are summarized in
-                    <a href="assignments/1/EpiSim-Report1.pdf">this pdf report</a>,
-                    however it is in dutch. We may be planning on including
-                    an english version later, though this is still uncertain. Aside from that we have also bundeled all our
-                    data, graphs &amp; reports into a <a href="assignments/1/EpiSim-Assignment1.zip">zip file</a>.
-                </p>
+		            <div class="custom-title">
+		                What was delivered by EpiSim?
+		            </div>
+		            <p class="custom-pgraph">
+		                Due to the fact that newer versions of the stride simulator were pushed which would change the results
+		                dramatically, we decided to take a closer look at the different versions. Our findings are summarized in
+		                <a href="assignments/1/EpiSim-Report1.pdf">this pdf report</a>,
+		                however it is in dutch. We may be planning on including
+		                an english version later, though this is still uncertain. Aside from that we have also bundeled all our
+		                data, graphs &amp; reports into a <a href="assignments/1/EpiSim-Assignment1.zip">zip file</a>.
+		            </p>
 
-                <div class="custom-title">
-                    What did we conclude?
-                </div>
-                <p class="custom-pgraph">
-                    After comparing the results &amp; trying to interpret them, one thing can be said for certain.
-                    No matter what results we take, the attack rate increases if we increase r<sub>0</sub>.
-                    In the original results we would see that the number of infected people would be limited
-                    to some extent, i.e. about 20% of the population would be the maximum fraction of infected people
-                    assuming the worst case scenario. For the latest version this becomes practically the entire
-                    population for r<sub>0</sub> values bigger than or equal to 4. At this point we decided to proceed
-                    and inspect the different versions where we noticed a few strange things. Some versions did not compile
-                    at first, but this was due to a recurring problem where 'sstream' was not included in RNManager.h which
-                    can be found in the folder "main/cpp/util". Another problem was a crashing simulator for which fixes where
-                    introduced during the second lecture (Tue. 13 Feb. 2018 @ 14:00) but somehow those fixes managed to slip
-                    back out of the master branch during subsequent merges. Next, we noticed that some builds passed tests
-                    while other builds didn't. We figured out that this was due to different versions of BatchRuns.cpp which
-                    can be found in "test/cpp/gtester", where we assume that originally the absolute error was allowed to be
-                    10% off. This changed to 50% by changing the factor 0.1 to 0.5, while in some other builds this factor
-                    was simply left out. As a results, the ASSERT_NEAR test would pass the tests if the factor was left out.
-                    As to which factor it should actually be, we are still trying to figure out that one ourselves.
-                    At last, we tried running and comparing the results for a number of different builds and tracked down
-                    a major difference in results to elisekaa's commit with hash "11510dc...". We believe that somewhere
-                    during the refractor of the "Vaccinator" class, something went wrong and as a result the immunization
-                    &amp; vaccination profiles are not working properly. This also seems logical when one compares the
-                    results since it seems likely that an enitre population would get infected if the disease were highly
-                    contagious and nobody were immune or vaccinated. Looking at the original results, they also seem likely
-                    considering some people may be immune while most others would have been vaccinated.
-                </p>
+		            <div class="custom-title">
+		                What did we conclude?
+		            </div>
+		            <p class="custom-pgraph">
+		                After comparing the results &amp; trying to interpret them, one thing can be said for certain.
+		                No matter what results we take, the attack rate increases if we increase r<sub>0</sub>.
+		                In the original results we would see that the number of infected people would be limited
+		                to some extent, i.e. about 20% of the population would be the maximum fraction of infected people
+		                assuming the worst case scenario. For the latest version this becomes practically the entire
+		                population for r<sub>0</sub> values bigger than or equal to 4. At this point we decided to proceed
+		                and inspect the different versions where we noticed a few strange things. Some versions did not compile
+		                at first, but this was due to a recurring problem where 'sstream' was not included in RNManager.h which
+		                can be found in the folder "main/cpp/util". Another problem was a crashing simulator for which fixes where
+		                introduced during the second lecture (Tue. 13 Feb. 2018 @ 14:00) but somehow those fixes managed to slip
+		                back out of the master branch during subsequent merges. Next, we noticed that some builds passed tests
+		                while other builds didn't. We figured out that this was due to different versions of BatchRuns.cpp which
+		                can be found in "test/cpp/gtester", where we assume that originally the absolute error was allowed to be
+		                10% off. This changed to 50% by changing the factor 0.1 to 0.5, while in some other builds this factor
+		                was simply left out. As a results, the ASSERT_NEAR test would pass the tests if the factor was left out.
+		                As to which factor it should actually be, we are still trying to figure out that one ourselves.
+		                At last, we tried running and comparing the results for a number of different builds and tracked down
+		                a major difference in results to elisekaa's commit with hash "11510dc...". We believe that somewhere
+		                during the refractor of the "Vaccinator" class, something went wrong and as a result the immunization
+		                &amp; vaccination profiles are not working properly. This also seems logical when one compares the
+		                results since it seems likely that an enitre population would get infected if the disease were highly
+		                contagious and nobody were immune or vaccinated. Looking at the original results, they also seem likely
+		                considering some people may be immune while most others would have been vaccinated.
+		            </p>
 
-                <div class="custom-title">
-                    Updates
-                </div>
-                <p class="custom-pgraph">
-                    Sun. 18 Feb. 2018 @ 2300 UTC:
+		            <div class="custom-title">
+		                Updates
+		            </div>
+		            <p class="custom-pgraph">
+		                Sun. 18 Feb. 2018 @ 2300 UTC:
 
-                    We tried replacing the vaccinator class with its old version but have not yet succeeded.
-                    This proves to be more difficult than expected since the old vaccinator class depends on
-                    other old files which have been deleted, thus requiring a bit more effort to restore the
-                    old version. We will however continue to search untill we find a way to combine the
-                    latest version with the older version of the vaccinator class. Currently we are stuck with
-                    the following compiler error:
-                </p>
-                <div class="custom-frame">
-/Users/raphael/Downloads/stride-56d3061.../main/cpp/immunity/Vaccinator.cpp:128:34: error:
-      cannot initialize a variable of type 'vector&lt;stride::Cluster&gt; *' with an rvalue of
-      type 'std::vector&lt;ContactPool&gt; *'
-                vector&lt;Cluster&gt;* immunity_clusters = &m_sim->m_households; ///&lt; Th...
-                                 ^                   ~~~~~~~~~~~~~~~~~~~~
-1 error generated.
-make[2]: *** [main/cpp/CMakeFiles/libstride.dir/immunity/Vaccinator.cpp.o] Error 1
-make[1]: *** [main/cpp/CMakeFiles/libstride.dir/all] Error 2
-make: *** [all] Error 2
-                </div>
-            </div>
+		                We tried replacing the vaccinator class with its old version but have not yet succeeded.
+		                This proves to be more difficult than expected since the old vaccinator class depends on
+		                other old files which have been deleted, thus requiring a bit more effort to restore the
+		                old version. We will however continue to search untill we find a way to combine the
+		                latest version with the older version of the vaccinator class. Currently we are stuck with
+		                the following compiler error:
+		            </p>
+		            <div class="custom-frame">
+	/Users/raphael/Downloads/stride-56d3061.../main/cpp/immunity/Vaccinator.cpp:128:34: error:
+		  cannot initialize a variable of type 'vector&lt;stride::Cluster&gt; *' with an rvalue of
+		  type 'std::vector&lt;ContactPool&gt; *'
+		            vector&lt;Cluster&gt;* immunity_clusters = &m_sim->m_households; ///&lt; Th...
+		                             ^                   ~~~~~~~~~~~~~~~~~~~~
+	1 error generated.
+	make[2]: *** [main/cpp/CMakeFiles/libstride.dir/immunity/Vaccinator.cpp.o] Error 1
+	make[1]: *** [main/cpp/CMakeFiles/libstride.dir/all] Error 2
+	make: *** [all] Error 2
+		</div>
+	</div>
+  </div>
   </div>
 </div>
 
