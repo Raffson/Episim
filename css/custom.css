@@ -18,7 +18,7 @@ body {
 }
 
 .jumbotron-heading {
-  font-size: 7.5rem;
+  font-size: 15vmin;
   font-weight: 300;
 }
 
@@ -66,7 +66,7 @@ footer p {
 }
 
 .custom-header {
-  font-size: 3rem;
+  font-size: 7.5vmin;
   font-weight: 300;
   text-align: center;
   margin-bottom: 2rem;
@@ -82,11 +82,11 @@ footer p {
 }
 
 .custom-title {
-  font-size: 2rem;
+  font-size: 5vmin;
 }
 
 .custom-pgraph {
-    font-size: 1rem;
+    font-size: 3vmin;
     font-weight: 200;
     padding-left: 15px;
     padding-right:15px;
@@ -97,11 +97,11 @@ footer p {
   white-space: pre-wrap;
   border-style: dashed;
   border-color: red;
-  font-size: 0.85rem;
+  font-size: 1.7vmin;
   margin-left: 10%;
   margin-right: 10%;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding-left: 5%;
+  padding-right: 5%;
   color: black;
   word-wrap: break-word;
 }
