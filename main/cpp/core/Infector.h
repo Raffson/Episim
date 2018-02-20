@@ -22,15 +22,15 @@
 #include "behaviour/information_policies/LocalDiscussion.h"
 #include "behaviour/information_policies/NoLocalInformation.h"
 #include "calendar/Calendar.h"
+#include "core/ContactHandler.h"
 #include "core/DiseaseProfile.h"
 #include "core/LogMode.h"
-#include "core/RngHandler.h"
 
 #include <memory>
 
 namespace stride {
 
-class Cluster;
+class ContactPool;
 
 /// Indicates whether optimized implementation may be used.
 /// \tparam LL          LogLevel
@@ -64,7 +64,7 @@ class Infector
 {
 public:
         ///
-        static void Exec(Cluster& cluster, DiseaseProfile disease_profile, RngHandler& contact_handler,
+        static void Exec(ContactPool& cluster, DiseaseProfile disease_profile, ContactHandler contact_handler,
                          std::shared_ptr<const Calendar> calendar);
 };
 
@@ -76,7 +76,7 @@ class Infector<LL, TIC, NoLocalInformation, true>
 {
 public:
         ///
-        static void Exec(Cluster& cluster, DiseaseProfile disease_profile, RngHandler& contact_handler,
+        static void Exec(ContactPool& cluster, DiseaseProfile disease_profile, ContactHandler contact_handler,
                          std::shared_ptr<const Calendar> calendar);
 };
 
@@ -95,5 +95,10 @@ extern template class Infector<LogMode::Id::Contacts, false, NoLocalInformation>
 extern template class Infector<LogMode::Id::Contacts, false, LocalDiscussion>;
 extern template class Infector<LogMode::Id::Contacts, true, NoLocalInformation>;
 extern template class Infector<LogMode::Id::Contacts, true, LocalDiscussion>;
+
+extern template class Infector<LogMode::Id::SusceptibleContacts, false, NoLocalInformation>;
+extern template class Infector<LogMode::Id::SusceptibleContacts, false, LocalDiscussion>;
+extern template class Infector<LogMode::Id::SusceptibleContacts, true, NoLocalInformation>;
+extern template class Infector<LogMode::Id::SusceptibleContacts, true, LocalDiscussion>;
 
 } // namespace stride

@@ -19,9 +19,9 @@
  * Header for the Vaccinator class.
  */
 
-#include "core/Cluster.h"
+#include "core/ContactPool.h"
 #include "sim/Simulator.h"
-#include "util/Random.h"
+#include "util/RNManager.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <memory>
@@ -36,27 +36,28 @@ namespace stride {
 class Vaccinator
 {
 public:
+        //Initialize vaccinator algorithm.
         Vaccinator(std::shared_ptr<Simulator> sim, const boost::property_tree::ptree& pt_config,
-                   const boost::property_tree::ptree& pt_disease, util::Random& rng);
+                   const boost::property_tree::ptree& pt_disease, util::RNManager& rn_manager);
 
         /// Apply the immunization strategy in the configuration file to the Simulator object.
         void Apply(const std::string& s);
 
 private:
         /// Initiate the given immunity distribution in the population, according the given link probability.
-        void Administer(const std::vector<Cluster>& clusters, std::vector<double>& immunity_distribution,
+        void Administer(const std::vector<ContactPool>& clusters, std::vector<double>& immunity_distribution,
                         double immunity_link_probability);
 
         /// Administer cocoon immunization for the given rate and target ages [min-max] to protect connected
         /// individuals of the given age class [min-max].
-        void AdministerCocoon(const std::vector<Cluster>& clusters, double immunity_rate, double adult_age_min,
+        void AdministerCocoon(const std::vector<ContactPool>& clusters, double immunity_rate, double adult_age_min,
                               double adult_age_max, double child_age_min, double child_age_max);
 
 private:
         const boost::property_tree::ptree& m_config;
         const boost::property_tree::ptree& m_disease;
         std::shared_ptr<Simulator> m_sim;
-        util::Random& m_rng;
+        util::RNManager& m_rn_manager;
 };
 
 } // namespace stride

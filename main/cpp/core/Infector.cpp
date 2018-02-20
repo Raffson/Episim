@@ -20,7 +20,7 @@
 
 #include "Infector.h"
 
-#include "core/Cluster.h"
+#include "core/ContactPool.h"
 
 #include <spdlog/spdlog.h>
 
@@ -52,12 +52,12 @@ class LOG_POLICY
 {
 public:
         static void Contact(const shared_ptr<spdlog::logger>& logger, Person* p1, Person* p2,
-                            ClusterType::Id cluster_type, const shared_ptr<const Calendar>& environ)
+                            ContactPoolType::Id cluster_type, const shared_ptr<const Calendar>& environ)
         {
         }
 
         static void Transmission(const shared_ptr<spdlog::logger>& logger, Person* p1, Person* p2,
-                                 ClusterType::Id cluster_type, const shared_ptr<const Calendar>& calendar)
+                                 ContactPoolType::Id cluster_type, const shared_ptr<const Calendar>& calendar)
         {
         }
 };
@@ -68,14 +68,14 @@ class LOG_POLICY<LogMode::Id::Transmissions>
 {
 public:
         static void Contact(const shared_ptr<spdlog::logger>& logger, Person* p1, Person* p2,
-                            ClusterType::Id cluster_type, const shared_ptr<const Calendar>& environ)
+                            ContactPoolType::Id cluster_type, const shared_ptr<const Calendar>& environ)
         {
         }
 
         static void Transmission(const shared_ptr<spdlog::logger>& logger, Person* p1, Person* p2,
-                                 ClusterType::Id cluster_type, const shared_ptr<const Calendar>& calendar)
+                                 ContactPoolType::Id cluster_type, const shared_ptr<const Calendar>& calendar)
         {
-                logger->info("[TRAN] {} {} {} {}", p1->GetId(), p2->GetId(), ClusterType::ToString(cluster_type),
+                logger->info("[TRAN] {} {} {} {}", p1->GetId(), p2->GetId(), ContactPoolType::ToString(cluster_type),
                              calendar->GetSimulationDay());
         }
 };
@@ -86,13 +86,13 @@ class LOG_POLICY<LogMode::Id::Contacts>
 {
 public:
         static void Contact(const shared_ptr<spdlog::logger>& logger, Person* p1, Person* p2,
-                            ClusterType::Id cluster_type, const shared_ptr<const Calendar>& calendar)
+                            ContactPoolType::Id cluster_type, const shared_ptr<const Calendar>& calendar)
         {
-                const auto home = (cluster_type == ClusterType::Id::Household);
-                const auto work = (cluster_type == ClusterType::Id::Work);
-                const auto school = (cluster_type == ClusterType::Id::School);
-                const auto primary_community = (cluster_type == ClusterType::Id::PrimaryCommunity);
-                const auto secundary_community = (cluster_type == ClusterType::Id::SecondaryCommunity);
+                const auto home = (cluster_type == ContactPoolType::Id::Household);
+                const auto work = (cluster_type == ContactPoolType::Id::Work);
+                const auto school = (cluster_type == ContactPoolType::Id::School);
+                const auto primary_community = (cluster_type == ContactPoolType::Id::PrimaryCommunity);
+                const auto secundary_community = (cluster_type == ContactPoolType::Id::SecondaryCommunity);
 
                 logger->info("[CONT] {} {} {} {} {} {} {} {} {}", p1->GetId(), p1->GetAge(), p2->GetAge(),
                              static_cast<unsigned int>(home), static_cast<unsigned int>(school),
@@ -101,10 +101,29 @@ public:
         }
 
         static void Transmission(const shared_ptr<spdlog::logger>& logger, Person* p1, Person* p2,
-                                 ClusterType::Id cluster_type, const shared_ptr<const Calendar>& calendar)
+                                 ContactPoolType::Id cluster_type, const shared_ptr<const Calendar>& calendar)
         {
-                logger->info("[TRAN] {} {} {} {}", p1->GetId(), p2->GetId(), ClusterType::ToString(cluster_type),
+                logger->info("[TRAN] {} {} {} {}", p1->GetId(), p2->GetId(), ContactPoolType::ToString(cluster_type),
                              calendar->GetSimulationDay());
+        }
+};
+
+/// Specialized LOG_POLICY policy LogMode::SusceptibleContacts.
+template <>
+class LOG_POLICY<LogMode::Id::SusceptibleContacts>
+{
+public:
+        static void Contact(const shared_ptr<spdlog::logger>& logger, Person* p1, Person* p2,
+                            ContactPoolType::Id cluster_type, const shared_ptr<const Calendar>& calendar)
+        {
+                if (p1->GetHealth().IsSusceptible() && p2->GetHealth().IsSusceptible()) {
+                        logger->info("[CONT] {} {}", p1->GetId(), p2->GetId());
+                }
+        }
+
+        static void Transmission(const shared_ptr<spdlog::logger>& logger, Person* p1, Person* p2,
+                                 ContactPoolType::Id cluster_type, const shared_ptr<const Calendar>& calendar)
+        {
         }
 };
 
@@ -114,7 +133,7 @@ public:
 // And every local information policy except NoLocalInformation
 //-------------------------------------------------------------------------------------------------
 template <LogMode::Id LL, bool TIC, typename LIP, bool TO>
-void Infector<LL, TIC, LIP, TO>::Exec(Cluster& cluster, DiseaseProfile disease_profile, RngHandler& contact_handler,
+void Infector<LL, TIC, LIP, TO>::Exec(ContactPool& cluster, DiseaseProfile disease_profile, ContactHandler contact_handler,
                                       shared_ptr<const Calendar> calendar)
 {
         using LP = LOG_POLICY<LL>;
@@ -176,8 +195,8 @@ void Infector<LL, TIC, LIP, TO>::Exec(Cluster& cluster, DiseaseProfile disease_p
 // Time optimized implementation for NoLocalInformationPolicy and None || Transmission logging.
 //-------------------------------------------------------------------------------------------
 template <LogMode::Id LL, bool TIC>
-void Infector<LL, TIC, NoLocalInformation, true>::Exec(Cluster& cluster, DiseaseProfile disease_profile, RngHandler& ch,
-                                                       shared_ptr<const Calendar> calendar)
+void Infector<LL, TIC, NoLocalInformation, true>::Exec(ContactPool& cluster, DiseaseProfile disease_profile,
+                                                       ContactHandler ch, shared_ptr<const Calendar> calendar)
 {
         using LP = LOG_POLICY<LL>;
         using RP = R0_POLICY<TIC>;
@@ -245,5 +264,10 @@ template class Infector<LogMode::Id::Contacts, false, NoLocalInformation>;
 template class Infector<LogMode::Id::Contacts, false, LocalDiscussion>;
 template class Infector<LogMode::Id::Contacts, true, NoLocalInformation>;
 template class Infector<LogMode::Id::Contacts, true, LocalDiscussion>;
+
+template class Infector<LogMode::Id::SusceptibleContacts, false, NoLocalInformation>;
+template class Infector<LogMode::Id::SusceptibleContacts, false, LocalDiscussion>;
+template class Infector<LogMode::Id::SusceptibleContacts, true, NoLocalInformation>;
+template class Infector<LogMode::Id::SusceptibleContacts, true, LocalDiscussion>;
 
 } // namespace stride

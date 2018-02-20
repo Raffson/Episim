@@ -16,10 +16,10 @@
 
 /**
  * @file
- * Header for the core Cluster class.
+ * Header for the core ContactPool class.
  */
 
-#include "core/ClusterType.h"
+#include "core/ContactPoolType.h"
 #include "core/ContactProfile.h"
 #include "core/ContactProfiles.h"
 #include "core/LogMode.h"
@@ -33,29 +33,29 @@ namespace stride {
 /**
  * Represents a location for social contacts, an group of people.
  */
-class Cluster
+class ContactPool
 {
 public:
         /// Constructor
-        Cluster(std::size_t cluster_id, ClusterType::Id cluster_type, const ContactProfiles& profiles);
+        ContactPool(std::size_t cluster_id, ContactPoolType::Id cluster_type, const ContactProfiles& profiles);
 
         /// No copying: too big.
-        Cluster(const Cluster&) = delete;
+        ContactPool(const ContactPool&) = delete;
 
         /// Moving is ok.
-        Cluster(Cluster&&) = default;
+        ContactPool(ContactPool&&) = default;
 
         // No assignment: too big.
-        Cluster& operator=(const Cluster&) = delete;
+        ContactPool& operator=(const ContactPool&) = delete;
 
         // Move assignment is ok.
-        Cluster& operator=(Cluster&&) = default;
+        ContactPool& operator=(ContactPool&&) = default;
 
-        /// Add the given Person to the Cluster.
+        /// Add the given Person to the ContactPool.
         void AddMember(Person* p);
 
         /// Return the type of this cluster.
-        ClusterType::Id GetClusterType() const { return m_cluster_type; }
+        ContactPoolType::Id GetClusterType() const { return m_cluster_type; }
         //
         Person* GetMember(unsigned int index) const { return m_members[index].first; }
 
@@ -79,7 +79,7 @@ private:
 
 private:
         std::size_t m_cluster_id;                        ///< The ID of the Cluster (for logging purposes).
-        ClusterType::Id m_cluster_type;                  ///< The type of the Cluster (for logging purposes).
+        ContactPoolType::Id m_cluster_type;                  ///< The type of the Cluster (for logging purposes).
         std::size_t m_index_immune;                      ///< Index of the first immune member in the Cluster.
         std::vector<std::pair<Person*, bool>> m_members; ///< Container with pointers to Cluster members.
         const ContactProfile& m_profile;                 ///< Contact pattern.
