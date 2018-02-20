@@ -15,7 +15,7 @@
 
 /**
  * @file
- * Implementation of ContactPoolType.
+ * Implementation of ClusterType.
  */
 
 #include "ContactPoolType.h"

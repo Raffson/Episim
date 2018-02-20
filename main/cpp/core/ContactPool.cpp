@@ -15,7 +15,7 @@
 
 /**
  * @file
- * Implementation for the core ContactPool class.
+ * Implementation for the core Cluster class.
  */
 
 #include "ContactPool.h"
@@ -24,9 +24,8 @@ namespace stride {
 
 using namespace std;
 
-ContactPool::ContactPool(std::size_t cluster_id, ContactPoolType::Id cluster_type, const ContactProfiles& profiles)
-    : m_cluster_id(cluster_id), m_cluster_type(cluster_type), m_index_immune(0),
-      m_profile(profiles[static_cast<std::size_t>(cluster_type)])
+ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, const ContactProfiles& profiles)
+    : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_profile(profiles[static_cast<std::size_t>(type)])
 {
 }
 
@@ -53,15 +52,19 @@ double ContactPool::GetContactRate(const Person* p) const
         return individual_contact_rate;
 }
 
-tuple<bool, size_t> ContactPool::SortMembers()
+unsigned int ContactPool::GetSize() const { return m_members.size(); }
+
+Person* ContactPool::GetMember(unsigned int index) const { return m_members[index].first; }
+
+std::tuple<bool, size_t> ContactPool::SortMembers()
 {
-        bool infectious_cases = false;
-        size_t num_cases = 0;
+        bool   infectious_cases = false;
+        size_t num_cases        = 0;
 
         for (size_t i_member = 0; i_member < m_index_immune; i_member++) {
                 // if immune, move to back
                 if (m_members[i_member].first->GetHealth().IsImmune()) {
-                        bool swapped = false;
+                        bool   swapped   = false;
                         size_t new_place = m_index_immune - 1;
                         m_index_immune--;
                         while (!swapped && new_place > i_member) {
@@ -91,7 +94,7 @@ tuple<bool, size_t> ContactPool::SortMembers()
 void ContactPool::UpdateMemberPresence()
 {
         for (auto& member : m_members) {
-                member.second = member.first->IsInCluster(m_cluster_type);
+                member.second = member.first->IsInCluster(m_pool_type);
         }
 }
 

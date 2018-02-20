@@ -31,13 +31,13 @@
 namespace stride {
 
 /**
- * Represents a location for social contacts, an group of people.
+ * Represents a group of Persons for potential contacts.
  */
 class ContactPool
 {
 public:
-        /// Constructor
-        ContactPool(std::size_t cluster_id, ContactPoolType::Id cluster_type, const ContactProfiles& profiles);
+        /// Initializing constructor
+        ContactPool(std::size_t pool_id, ContactPoolType::Id type, const ContactProfiles& profiles);
 
         /// No copying: too big.
         ContactPool(const ContactPool&) = delete;
@@ -48,22 +48,17 @@ public:
         // No assignment: too big.
         ContactPool& operator=(const ContactPool&) = delete;
 
-        // Move assignment is ok.
-        ContactPool& operator=(ContactPool&&) = default;
-
-        /// Add the given Person to the ContactPool.
+        /// Add the given Person.
         void AddMember(Person* p);
 
-        /// Return the type of this cluster.
-        ContactPoolType::Id GetClusterType() const { return m_cluster_type; }
-        //
-        Person* GetMember(unsigned int index) const { return m_members[index].first; }
-
-        /// Return number of persons in this cluster.
-        std::size_t GetSize() const { return m_members.size(); }
-
-        /// Get basic contact rate in this cluster.
+        /// Get basic contact rate.
         double GetContactRate(const Person* p) const;
+
+        /// Get size
+        unsigned int GetSize() const;
+
+        /// Get member at index
+        Person* GetMember(unsigned int index) const;
 
 private:
         /// Sort members w.r.t. health status.
@@ -74,15 +69,15 @@ private:
         template <LogMode::Id LL, bool TIC, typename LIP, bool TO>
         friend class Infector;
 
-        /// Calculate which members are present in the cluster on the current day.
+        /// Calculate which members are present on the current day.
         void UpdateMemberPresence();
 
 private:
-        std::size_t m_cluster_id;                        ///< The ID of the Cluster (for logging purposes).
-        ContactPoolType::Id m_cluster_type;                  ///< The type of the Cluster (for logging purposes).
-        std::size_t m_index_immune;                      ///< Index of the first immune member in the Cluster.
-        std::vector<std::pair<Person*, bool>> m_members; ///< Container with pointers to Cluster members.
-        const ContactProfile& m_profile;                 ///< Contact pattern.
+        std::size_t                           m_pool_id;      ///< The ID of the Cluster (for logging purposes).
+        ContactPoolType::Id                   m_pool_type;    ///< The type of the Cluster (for logging purposes).
+        std::size_t                           m_index_immune; ///< Index of the first immune member in the Cluster.
+        std::vector<std::pair<Person*, bool>> m_members;      ///< Container with pointers to Cluster members.
+        const ContactProfile&                 m_profile;      ///< Contact pattern.
 };
 
 } // namespace stride
