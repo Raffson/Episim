@@ -147,7 +147,7 @@
 		                Updates
 		            </div>
 		            <p class="custom-pgraph">
-		                Sun. 18 Feb. 2018 @ 2300 UTC:
+                        <u><b>Sun. 18 Feb. 2018 @ 2300 UTC:</b></u>
 
 		                We tried replacing the vaccinator class with its old version but have not yet succeeded.
 		                This proves to be more difficult than expected since the old vaccinator class depends on
@@ -167,6 +167,29 @@
 	make[1]: *** [main/cpp/CMakeFiles/libstride.dir/all] Error 2
 	make: *** [all] Error 2
 	                </div>
+                    <p class="custom-pgraph" style="margin-top:1rem;">
+                    <u><b>Tue. 20 Feb. 2018 @ 0300 UTC:</b></u>
+
+		                After trying several things we managed to get a working version by both taking the newest
+                        version and the one with hash "7faa958...". The newest version required a lot of changes
+                        which didn't seem ideal. So we decided to take version "7faa958..." and restore the last
+                        working version of the vaccinator class which we took from "bf89cb0". This proved to be
+                        rather simple since a quick replace of the Vaccinator &amp; SimulatorBuilder classes
+                        already gave us a working version, minding the forgotten include for 'sstream' of course.
+                        We then proceeded to manually merge with "fb4c84b..." which introduced a change in terminology.
+                        At this point we decided to start off by renaming the Cluster class to ContactPool, however
+                        this introduced a serious number of issues since many of the other classes reference this type.
+                        Another issue was the fact that the Cluster class changed in order to be compatible with the
+                        new version of the vaccinator class, so we had to take the old versions and rename everything manually.
+                        From there we simply replaced all files that were changed to fix the referencing issue,
+                        except those that were used to restore the old vaccinator class, i.e. Vaccinator &amp; SimulatorBuilder.
+                        These were manually edited where needed. At last, this introduced problems with the Infector class,
+                        so we restored back to the old version, rename where needed and add some code since a new logging mode
+                        was made. If this code would not be added the linker would fail, meaning code is being referenced somewhere
+                        but the actual code is in fact missing. Thus we still conclude that the (big) difference in results
+                        is the outcome of the vaccinator's refractor. A small text file with some scrap notes can be found
+                        <a href="assignments/1/WayOfWork.txt" target="_blank">here</a>.
+                    </p>
 	            </div>
             </div>
         </div>

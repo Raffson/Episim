@@ -1,0 +1,53 @@
+(Kinda) Stepwise guide of how I worked, by Raphael.
+When I say "kinda" this means it's more like a scrapbook of notes :P
+
+so, latest version
+take old vaccinator & overwrite
+add Cluster.cpp/h from old
+add ClusterType.cpp/h from old
+add Random.h from old
+replace Simulator.h with old
+add SimulatorObserver.h from old
+forgot to add Cluster.cpp & ClusterType.cpp to CMakeLists.txt, so now we did
+replace Subject.h with old
+replace PopulationBuilder.cpp/h with old
+replace Simulator.cpp with old
+replace Person.cpp/h with old
+leave out ContactPool.cpp and ContactPoolType from CMakeLists
+replace SimulatorBuilder.cpp/h with old
+replace ContactProfile.cpp/h with old
+replace StrideRunner.cpp/h with old
+replace PopulationGenerator.cpp.h with old
+add AliasDistribution.cpp/h from old and add to CMakeLists
+changed CMakeLists to exclude swig/contactpooltype.i?
+replace pystride with old? still getting the same compiler error as the line above..
+replace entire python source folder? <- well that worked!
+
+COMPILING ONCE AGAIN!!!
+However I need to do this again since I was messing up at first...
+
+
+
+Tying something different now, taking the versions bf89cb0 and 7faa958
+
+so copy old vaccinator again
+copy old SimulatorBuilder.cpp
+don't forget to include sstream in RNManager.h
+
+COMPILES! results are the same as bf89cb0, assuming those are the last "correct" results... thus we are now at 7faa958, skipping everything after bf89cb0
+
+Now what is the change in terminology about? why does it mess up our shit...
+trying to manually merge...
+So basically, copied all files from fb4c84b which were not restored/edited
+from the old version. Then it turns out some ContactPool was also adjusted,
+so we take the old code, but simply rename everything manually where needed...
+After that, the Infector class starts spitting errors because it's assuming
+the newer version of ContactPool IIRC (yeah i forgot to write down steps during the manual merge, which is bad mkaay). So reverting to the old version of Infector, I then got a linking error because a new version introduced a new logging mode, so I kind of guessed and added some more extern template declarations, as well as the regular template declarations in the cpp file and also the missing template-class definition.
+
+The code COMPILES again! runs fine and results are still "correct".
+More manual merging should be done... but i'm getting tired...
+
+Wondering what will happen with the "Consolidation of popgen stuff" commit when we
+actually try merging this stuff manually...
+
+
