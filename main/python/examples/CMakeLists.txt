@@ -28,6 +28,7 @@ SET(PYTHON_EXAMPLES
 	runSimple.py
 	runStopOnCallback.py
 	seedTester.py
+	seedGenerator.py
 )
 
 #================================================================================================
