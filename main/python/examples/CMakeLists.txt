@@ -27,6 +27,7 @@ SET(PYTHON_EXAMPLES
 	runRepeat.py
 	runSimple.py
 	runStopOnCallback.py
+	seedTester.py
 )
 
 #================================================================================================
