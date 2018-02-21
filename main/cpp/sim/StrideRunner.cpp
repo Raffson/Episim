@@ -49,7 +49,7 @@ StrideRunner::StrideRunner()
 {
 }
 
-void StrideRunner::RegisterObserver(shared_ptr<SimulatorObserver>& observer) { m_sim->Register(observer); }
+void StrideRunner::RegisterObserver(std::shared_ptr<python::SimulatorObserver>& observer) { m_sim->Register(observer); }
 
 void StrideRunner::Setup(bool track_index_case, const string& config_file_name, bool use_install_dirs)
 {
@@ -81,12 +81,10 @@ void StrideRunner::Setup(bool track_index_case, const string& config_file_name, 
         // Configuration.
         // -----------------------------------------------------------------------------------------
         const auto file_path = canonical(system_complete(config_file_name));
-
         if (!is_regular_file(file_path)) {
                 throw runtime_error(string(__func__) + ">Config file " + file_path.string() +
                                     " not present. Aborting.");
         }
-
         read_xml(file_path.string(), m_pt_config);
         cout << "Configuration file:  " << file_path.string() << endl;
 
@@ -136,10 +134,11 @@ void StrideRunner::Setup(bool track_index_case, const string& config_file_name, 
         spdlog::set_async_mode(1048576);
         boost::filesystem::path logfile_path = m_output_prefix;
         if (use_install_dirs) {
-        		logfile_path += "_logfile";
+                logfile_path += "_logfile";
         } else {
-        		logfile_path /= "logfile";
+                logfile_path /= "logfile";
         }
+
         auto file_logger = spdlog::rotating_logger_mt("contact_logger", logfile_path.c_str(),
                                                       numeric_limits<size_t>::max(), numeric_limits<size_t>::max());
         file_logger->set_pattern("%v"); // Remove meta data from log => time-stamp of logging
@@ -167,13 +166,14 @@ void StrideRunner::Setup(bool track_index_case, const string& config_file_name, 
 /// Run the simulator with config information provided.
 void StrideRunner::Run()
 {
+	std::cout << "Starting the run" << std::endl;
         // -----------------------------------------------------------------------------------------
         // Run the simulation (if operational).
         // -----------------------------------------------------------------------------------------
         Stopwatch<> run_clock("run_clock");
         if (m_operational) {
                 m_is_running = true;
-                const auto num_days{m_pt_config.get<unsigned int>("run.num_days")};
+                const auto           num_days{m_pt_config.get<unsigned int>("run.num_days")};
                 vector<unsigned int> cases(num_days);
                 vector<unsigned int> adopted(num_days);
                 for (unsigned int i = 0; i < num_days; i++) {
@@ -189,7 +189,7 @@ void StrideRunner::Run()
 
                         cout << "     Done, infected count: ";
 
-                        cases[i] = m_sim->GetPopulation()->GetInfectedCount();
+                        cases[i]   = m_sim->GetPopulation()->GetInfectedCount();
                         adopted[i] = m_sim->GetPopulation()->GetAdoptedCount();
 
                         cout << setw(7) << cases[i] << "     Adopters count: " << setw(7) << adopted[i];

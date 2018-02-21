@@ -20,7 +20,7 @@
  */
 
 #include "behaviour/belief_policies/Belief.h"
-#include "core/ClusterType.h"
+#include "core/ContactPoolType.h"
 #include "core/Health.h"
 
 #include <boost/property_tree/ptree.hpp>
@@ -62,14 +62,14 @@ public:
         /// Get the age.
         double GetAge() const { return m_age; }
 
-        ///
+        /// Return belief info.
         Belief* GetBelief() { return m_belief; }
 
-        ///
+        /// Return belief info.
         Belief const* GetBelief() const { return m_belief; }
 
         /// Get cluster ID of cluster_type
-        unsigned int GetClusterId(const ClusterType::Id& cluster_type) const;
+        unsigned int GetContactPoolId(const ContactPoolType::Id &cluster_type) const;
 
         /// Return person's gender.
         char GetGender() const { return m_gender; }
@@ -84,7 +84,7 @@ public:
         unsigned int GetId() const { return m_id; }
 
         /// Check if a person is present today in a given cluster
-        bool IsInCluster(const ClusterType::Id& c) const;
+        bool IsInContactPool(const ContactPoolType::Id &c) const;
 
         /// Does this person participates in the social contact study?
         bool IsParticipatingInSurvey() const { return m_is_participant; }
@@ -99,13 +99,13 @@ public:
         void Update(Person* p);
 
 private:
-        unsigned int m_id; ///< The id.
-        double m_age;      ///< The age.
-        char m_gender;     ///< The gender.
+        unsigned int m_id;     ///< The id.
+        double       m_age;    ///< The age.
+        char         m_gender; ///< The gender.
 
         unsigned int m_household_id;           ///< The household id.
-        unsigned int m_school_id;              ///< The school cluster id
-        unsigned int m_work_id;                ///< The work cluster id
+        unsigned int m_school_id;              ///< The school contactpool id
+        unsigned int m_work_id;                ///< The work contactpool id
         unsigned int m_primary_community_id;   ///< The primary community id
         unsigned int m_secondary_community_id; ///< The secondary community id
 
@@ -113,8 +113,7 @@ private:
         bool m_at_school;              ///< Is person present at school today?
         bool m_at_work;                ///< Is person present at work today?
         bool m_at_primary_community;   ///< Is person present at primary_community today?
-        bool m_at_secondary_community; ///< Is person present at secundary_community
-                                       /// today?
+        bool m_at_secondary_community; ///< Is person present at secundary_community today?
 
         Health m_health; ///< Health info for this person.
 

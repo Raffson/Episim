@@ -19,44 +19,41 @@
  * Header for the Vaccinator class.
  */
 
-#include "core/Cluster.h"
+#include "core/ContactPool.h"
 #include "sim/Simulator.h"
-#include "util/Random.h"
+#include "util/RNManager.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <memory>
-#include <string>
-#include <vector>
 
 namespace stride {
 
+enum class ImmunizationProfile
+{
+        None   = 0U,
+        Random = 1U,
+        Cocoon = 2U,
+        Null
+};
+
 /**
- * Apply the immunization strategy in the configuration file to the Simulator object.
+ * Apply the natural immunity and/or vaccination strategy specified in the configuration file.
  */
 class Vaccinator
 {
 public:
-        Vaccinator(std::shared_ptr<Simulator> sim, const boost::property_tree::ptree& pt_config,
-                   const boost::property_tree::ptree& pt_disease, util::Random& rng);
+        Vaccinator(const boost::property_tree::ptree& pt_config, util::RNManager& rn_manager);
 
-        /// Apply the immunization strategy in the configuration file to the Simulator object.
-        void Apply(const std::string& s);
-
-private:
-        /// Initiate the given immunity distribution in the population, according the given link probability.
-        void Administer(const std::vector<Cluster>& clusters, std::vector<double>& immunity_distribution,
-                        double immunity_link_probability);
-
-        /// Administer cocoon immunization for the given rate and target ages [min-max] to protect connected
-        /// individuals of the given age class [min-max].
-        void AdministerCocoon(const std::vector<Cluster>& clusters, double immunity_rate, double adult_age_min,
-                              double adult_age_max, double child_age_min, double child_age_max);
+        /// Apply the strategies specified in the configuration file
+        void Apply(std::shared_ptr<Simulator> sim);
 
 private:
-        const boost::property_tree::ptree& m_config;
-        const boost::property_tree::ptree& m_disease;
-        std::shared_ptr<Simulator> m_sim;
-        util::Random& m_rng;
+        ///
+        void Administer(std::string immunity_type, std::string immunization_profile, std::shared_ptr<Simulator> sim);
+
+private:
+        const boost::property_tree::ptree& m_pt_config;
+        util::RNManager&                   m_rn_manager;
 };
 
 } // namespace stride

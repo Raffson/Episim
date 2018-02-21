@@ -43,9 +43,29 @@ namespace util {
 using namespace std;
 using namespace boost::filesystem;
 
+void InstallDirs::Print(ostream& os)
+{
+        os << "Local      directory:   " << InstallDirs::GetExecPath().string() << endl;
+        os << "Current    directory:   " << InstallDirs::GetCurrentDir().string() << endl;
+        os << "Install    directory:   " << InstallDirs::GetRootDir().string() << endl;
+        os << "Config     directory:   " << InstallDirs::GetConfigDir().string() << endl;
+        os << "Data       directory:   " << InstallDirs::GetDataDir().string() << endl;
+        os << "Checkpoint directory:   " << InstallDirs::GetCheckpointsDir().string() << endl;
+}
+
+void InstallDirs::Check()
+{
+        if (InstallDirs::GetCurrentDir().compare(InstallDirs::GetRootDir()) != 0) {
+                throw runtime_error(string(__func__) + "> Current directory is not install root! Aborting.");
+        }
+        if (InstallDirs::GetDataDir().empty()) {
+                throw runtime_error(string(__func__) + "> Data directory not present! Aborting.");
+        }
+}
+
 InstallDirs::Dirs& InstallDirs::Get()
 {
-        static Dirs dirs{Initialize()};
+        static Dirs dirs = Initialize();
         return dirs;
 }
 
@@ -55,7 +75,7 @@ InstallDirs::Dirs InstallDirs::Initialize()
         //------- Retrieving path of executable
         {
 #if defined(WIN32)
-                char exePath[MAX_PATH];
+                char    exePath[MAX_PATH];
                 HMODULE hModule = GetModuleHandle(NULL);
                 if (GetModuleFileName(NULL, exePath, sizeof(exePath)) != 0)
                         ;
@@ -63,14 +83,14 @@ InstallDirs::Dirs InstallDirs::Initialize()
                         dirs.m_exec_path = canonical(system_complete(exePath));
                 }
 #elif defined(__linux__)
-                char exePath[PATH_MAX];
+                char   exePath[PATH_MAX];
                 size_t size = ::readlink("/proc/self/exe", exePath, sizeof(exePath));
                 if (size > 0 && size < sizeof(exePath)) {
-                        exePath[size] = '\0';
+                        exePath[size]    = '\0';
                         dirs.m_exec_path = canonical(system_complete(exePath));
                 }
 #elif defined(__APPLE__)
-                char exePath[PATH_MAX];
+                char     exePath[PATH_MAX];
                 uint32_t size = sizeof(exePath);
                 if (_NSGetExecutablePath(exePath, &size) == 0) {
                         dirs.m_exec_path = canonical(system_complete(exePath));
@@ -88,7 +108,7 @@ InstallDirs::Dirs InstallDirs::Initialize()
                                 //      -Contents               <-Root Path
                                 //              -MacOS
                                 //                   -executables
-                                dirs.m_bin_dir = exec_dir;
+                                dirs.m_bin_dir  = exec_dir;
                                 dirs.m_root_dir = exec_dir.parent_path();
                         } else
 #endif
@@ -98,13 +118,13 @@ InstallDirs::Dirs InstallDirs::Initialize()
                                 //      -bin
                                 //              -release/debug
                                 //                      -executables
-                                dirs.m_bin_dir = exec_dir.parent_path();
+                                dirs.m_bin_dir  = exec_dir.parent_path();
                                 dirs.m_root_dir = exec_dir.parent_path().parent_path();
                         } else
 #if (WIN32)
                             if (exec_dir.filename().string() != "bin") {
                                 // Executables in root folder
-                                dirs.m_bin_dir = exec_dir;
+                                dirs.m_bin_dir  = exec_dir;
                                 dirs.m_root_dir = exec_dir;
                         } else
 #endif
@@ -112,21 +132,34 @@ InstallDirs::Dirs InstallDirs::Initialize()
                                 // x/exec                <-Root Path
                                 //      -bin
                                 //              -executables
-                                dirs.m_bin_dir = exec_dir;
+                                dirs.m_bin_dir  = exec_dir;
                                 dirs.m_root_dir = exec_dir.parent_path();
                         }
                 }
         }
-
         //------- Data Dir
         {
                 dirs.m_data_dir = dirs.m_root_dir / "data";
                 dirs.m_data_dir = is_directory(dirs.m_data_dir) ? dirs.m_data_dir : path();
         }
-
         //------- Current Dir
         {
                 dirs.m_current_dir = system_complete(current_path());
+        }
+        //------- Checkpoints Dir
+        {
+                dirs.m_checkpoints_dir = dirs.m_root_dir / "checkpoints";
+                dirs.m_checkpoints_dir = is_directory(dirs.m_checkpoints_dir) ? dirs.m_checkpoints_dir : path();
+        }
+        //------- Tests Dir
+        {
+                dirs.m_tests_dir = dirs.m_root_dir / "tests";
+                dirs.m_tests_dir = is_directory(dirs.m_tests_dir) ? dirs.m_tests_dir : path();
+        }
+        //------- Config Dir
+        {
+                dirs.m_config_dir = dirs.m_root_dir / "config";
+                dirs.m_config_dir = is_directory(dirs.m_config_dir) ? dirs.m_config_dir : path();
         }
         return dirs;
 }

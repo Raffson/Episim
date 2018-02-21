@@ -7,31 +7,58 @@ import itertools
 import pystride
 from pystride.Simulation import Simulation
 
-sim = Simulation()
-# Load configuration common to all simulations for this study
-sim.loadRunConfig("config/common.xml")
+def measureSusceptiblesClustering(sim, timestep):
+    """
+    """
+    if timestep == 9:
+        # Count contacts between susceptibles after 10 timesteps
+        pass
 
-# Set parameters that are the same for all baseline simulations
-sim.runConfig.setParameter("output_prefix", "Baseline")
-sim.runConfig.setParameter("seeding_rate", 0.002)
-sim.runConfig.setParameter("local_information_policy", "NoLocalInformation")
-sim.runConfig.setParameter("global_information_policy", "NoGlobalInformation")
-sim.runConfig.setParameter("belief_policy/name", "NoBelief")
-sim.runConfig.setParameter("behaviour_policy", "NoBehaviour")
+def seedInfection(sim, timestep):
+    """
+    """
+    if timestep == 9:
+        pass
 
-# TODO have common natural immunity rate?
-# From what age to what age and what percentage?
+def runBaseline():
+    """
+    """
+    sim = Simulation()
+    # Set parameters
+    sim.runConfig.setParameter("output_prefix", "Baseline")
+    sim.runConfig.setParameter("num_days", 60)
 
-seeds = list(range(10))
-vaccs = [0.6, 0.7, 0.8, 0.9, 1.0]
+    sim.runConfig.setParameter("disease_config_file", "data/disease_measles.xml")
+    sim.runConfig.setParameter("r0", 11)
+    sim.runConfig.setParameter("seeding_rate", 0)
+    sim.runConfig.setParameter("seeding_age_min", 1)
+    sim.runConfig.setParameter("seeding_age_max", 99)
 
-# Create forks with varying seed & vaccination coverage
-for seed, vac_cov in list(itertools.product(seeds, vaccs)):
-    # Create fork
-    fork = sim.fork("vac_cov_" + str(vac_cov) + "_" + str(seed))
-    fork.runConfig.setParameter("rng_seed", seed)
-    fork.runConfig.setParameter("immunity_rate", vac_cov)
-    fork.runConfig.setParameter("vaccine_rate", vac_cov)
+    sim.runConfig.setParameter("population_file", "data/pop_flanders600.csv")
+    sim.runConfig.setParameter("generate_person_file", 0)
+    sim.runConfig.setParameter("num_participants_survey", 10000)
+    sim.runConfig.setParameter("age_contact_matrix_file", "data/contact_matrix_flanders_subpop.xml")
+    sim.runConfig.setParameter("log_level", "SusceptibleContacts")
+    sim.runConfig.setParameter("start_date", "2017-01-01")
+    sim.runConfig.setParameter("holidays_file", "data/holidays_none.json")
+    
+    # immunity_profile
+    # vaccine_profile
+    # vaccine_link_probability
+    # immunity_rate
+    # vaccine_rate
 
-# Run all forks
-sim.runForks()
+    sim.runConfig.setParameter("local_information_policy", "NoLocalInformation")
+    sim.runConfig.setParameter("global_information_policy", "NoGlobalInformation")
+    sim.runConfig.setParameter("belief_policy/name", "NoBelief")
+    sim.runConfig.setParameter("behaviour_policy", "NoBehaviour")
+
+    sim.runConfig.setParameter("rng_seed", 1)
+
+    # Register callbacks
+    sim.RegisterCallback(measureSusceptiblesClustering)
+    sim.RegisterCallback(seedInfection)
+
+    # TODO run forks with varying parameters (itertools.product(...))
+    # Run simulation
+    sim.run()

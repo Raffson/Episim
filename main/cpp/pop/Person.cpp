@@ -25,28 +25,30 @@ namespace stride {
 
 using namespace std;
 
-unsigned int Person::GetClusterId(const ClusterType::Id& cluster_type) const
+unsigned int Person::GetContactPoolId(const ContactPoolType::Id &cluster_type) const
 {
+        unsigned int ret;
         switch (cluster_type) {
-        case ClusterType::Id::Household: return m_household_id;
-        case ClusterType::Id::School: return m_school_id;
-        case ClusterType::Id::Work: return m_work_id;
-        case ClusterType::Id::PrimaryCommunity: return m_primary_community_id;
-        case ClusterType::Id::SecondaryCommunity: return m_secondary_community_id;
-        default: throw runtime_error(string(__func__) + "> Should not reach default.");
+        case ContactPoolType::Id::Household: ret = m_household_id; break;
+        case ContactPoolType::Id::School: ret = m_school_id; break;
+        case ContactPoolType::Id::Work: ret = m_work_id; break;
+        case ContactPoolType::Id::PrimaryCommunity: ret = m_primary_community_id; break;
+        case ContactPoolType::Id::SecondaryCommunity: ret = m_secondary_community_id; break;
         }
+        return ret;
 }
 
-bool Person::IsInCluster(const ClusterType::Id& c) const
+bool Person::IsInContactPool(const ContactPoolType::Id &c) const
 {
+        bool ret;
         switch (c) {
-        case ClusterType::Id::Household: return m_at_household;
-        case ClusterType::Id::School: return m_at_school;
-        case ClusterType::Id::Work: return m_at_work;
-        case ClusterType::Id::PrimaryCommunity: return m_at_primary_community;
-        case ClusterType::Id::SecondaryCommunity: return m_at_secondary_community;
-        default: throw runtime_error(string(__func__) + "> Should not reach default.");
+        case ContactPoolType::Id::Household: ret = m_at_household; break;
+        case ContactPoolType::Id::School: ret = m_at_school; break;
+        case ContactPoolType::Id::Work: ret = m_at_work; break;
+        case ContactPoolType::Id::PrimaryCommunity: ret = m_at_primary_community; break;
+        case ContactPoolType::Id::SecondaryCommunity: ret = m_at_secondary_community; break;
         }
+        return ret;
 }
 
 void Person::Update(bool is_work_off, bool is_school_off)
@@ -55,21 +57,21 @@ void Person::Update(bool is_work_off, bool is_school_off)
 
         // Update presence in clusters.
         if (m_health.IsSymptomatic()) {
-                m_at_school = false;
-                m_at_work = false;
+                m_at_school              = false;
+                m_at_work                = false;
                 m_at_secondary_community = false;
-                m_at_primary_community = false;
+                m_at_primary_community   = false;
                 // TODO set at_home_due_to_illness?
         } else if (is_work_off || (m_age <= MinAdultAge() && is_school_off)) {
-                m_at_school = false;
-                m_at_work = false;
+                m_at_school              = false;
+                m_at_work                = false;
                 m_at_secondary_community = false;
-                m_at_primary_community = true;
+                m_at_primary_community   = true;
         } else {
-                m_at_school = true;
-                m_at_work = true;
+                m_at_school              = true;
+                m_at_work                = true;
                 m_at_secondary_community = true;
-                m_at_primary_community = false;
+                m_at_primary_community   = false;
         }
 }
 

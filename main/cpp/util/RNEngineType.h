@@ -11,45 +11,41 @@
  *  You should have received a copy of the GNU General Public License
  *  along with the software. If not, see <http://www.gnu.org/licenses/>.
  *
- *  Copyright 2017, Kuylen E, Willem L, Broeckhove J
+ *  Copyright 2018, Kuylen E, Willem L, Broeckhove J
  */
 
 /**
  * @file
- * Definition of ClusterType.
+ * Interface of Random Engine Type
  */
 
-#include <cstddef>
 #include <string>
 
 namespace stride {
-namespace ClusterType {
+namespace RNEngineType {
 
-/// Enumerates the cluster types.
+/// Random number engine type ids. We use a subset of engines provided by the trng library.
 enum class Id
 {
-        Household,
-        School,
-        Work,
-        PrimaryCommunity,
-        SecondaryCommunity,
-        Null
+        lcg64,
+        lcg64_shift,
+        mrg2,
+        mrg3,
+        yarn2,
+        yarn3,
 };
 
-/// Number of Cluster types (not including Null type).
-inline constexpr unsigned int NumOfTypes() { return 5U; }
+/// Check whether type with name s exists.
+bool IsType(std::string s);
 
 /// Cast to size_t for indexing.
 inline std::size_t ToSizeT(Id id) { return static_cast<std::size_t>(id); }
 
-/// Converts a ClusterType::Id value to corresponding name.
-std::string ToString(ClusterType::Id w);
+/// Convert a type id to corresponding name.
+std::string ToString(Id b);
 
-/// Check whether string is name of a ClusterType::Id.
-bool IsType(const std::string& s);
-
-/// Converts a string with name to ClusterType::Id.
+/// Converts a string with name to Id.
 Id ToType(const std::string& s);
 
-} // namespace ClusterType
+} // namespace RNEngineType
 } // namespace stride

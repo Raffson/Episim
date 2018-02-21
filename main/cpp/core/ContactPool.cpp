@@ -18,25 +18,24 @@
  * Implementation for the core Cluster class.
  */
 
-#include "Cluster.h"
+#include "ContactPool.h"
 
 namespace stride {
 
 using namespace std;
 
-Cluster::Cluster(std::size_t cluster_id, ClusterType::Id cluster_type, const ContactProfiles& profiles)
-    : m_cluster_id(cluster_id), m_cluster_type(cluster_type), m_index_immune(0),
-      m_profile(profiles[static_cast<std::size_t>(cluster_type)])
+ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, const ContactProfiles& profiles)
+    : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_profile(profiles[static_cast<std::size_t>(type)])
 {
 }
 
-void Cluster::AddMember(Person* p)
+void ContactPool::AddMember(Person* p)
 {
         m_members.emplace_back(std::make_pair(p, true));
         m_index_immune++;
 }
 
-double Cluster::GetContactRate(const Person* p) const
+double ContactPool::GetContactRate(const Person* p) const
 {
         const double reference_num_contacts{m_profile[EffectiveAge(static_cast<unsigned int>(p->GetAge()))]};
         const double potential_num_contacts{static_cast<double>(m_members.size() - 1)};
@@ -53,15 +52,21 @@ double Cluster::GetContactRate(const Person* p) const
         return individual_contact_rate;
 }
 
-tuple<bool, size_t> Cluster::SortMembers()
+size_t ContactPool::GetSize() const { return m_members.size(); }
+
+Person* ContactPool::GetMember(unsigned int index) const { return m_members[index].first; }
+
+const std::vector<std::pair<Person*, bool>>& ContactPool::GetPool() const { return m_members; }
+
+std::tuple<bool, size_t> ContactPool::SortMembers()
 {
-        bool infectious_cases = false;
-        size_t num_cases = 0;
+        bool   infectious_cases = false;
+        size_t num_cases        = 0;
 
         for (size_t i_member = 0; i_member < m_index_immune; i_member++) {
                 // if immune, move to back
                 if (m_members[i_member].first->GetHealth().IsImmune()) {
-                        bool swapped = false;
+                        bool   swapped   = false;
                         size_t new_place = m_index_immune - 1;
                         m_index_immune--;
                         while (!swapped && new_place > i_member) {
@@ -88,10 +93,10 @@ tuple<bool, size_t> Cluster::SortMembers()
         return std::make_tuple(infectious_cases, num_cases);
 }
 
-void Cluster::UpdateMemberPresence()
+void ContactPool::UpdateMemberPresence()
 {
         for (auto& member : m_members) {
-                member.second = member.first->IsInCluster(m_cluster_type);
+                member.second = member.first->IsInContactPool(m_pool_type);
         }
 }
 

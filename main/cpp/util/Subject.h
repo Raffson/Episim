@@ -1,25 +1,25 @@
 #pragma once
 /*
- *  This is free software: you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- *  The software is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *  You should have received a copy of the GNU General Public License
- *  along with the software. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright 2011-2016 Universiteit Antwerpen
  *
- *  Copyright 2017, Kuylen E, Willem L, Broeckhove J
+ * Licensed under the EUPL, Version 1.1 or  as soon they will be approved by
+ * the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl5
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing
+ * permissions and limitations under the Licence.
  */
-
 /**
  * @file
  * Interface/Implementation of Subject.
  */
 
-#include <algorithm>
+#include <functional>
+#include <map>
 #include <memory>
 
 namespace stride {
@@ -27,62 +27,49 @@ namespace util {
 
 /**
  * Template for Subject/Observer (or Publish/Subscribe). Offers flexibility
- * in defining event types.
- * Despite the shared_ptrs in the Register/Unregister, the Subject takes no
- * ownership
+ * in defining event types and having customized callbacks. Despite the
+ * shared_ptrs in the Register/Unregister, the Subject takes no ownership
  * of the observer object and only stores a weak_ptr.
  */
-// TODO reinstate the weak ptrs
-template <typename E, typename U>
+template <typename E>
 class Subject
 {
 public:
-        virtual ~Subject() { UnregisterAll(); }
+        using EventType    = E;
+        using CallbackType = std::function<void(const EventType&)>;
 
-        void Register(const std::shared_ptr<U>&);
+public:
+        virtual ~Subject() { unregisterAll(); }
 
-        void Unregister(const std::shared_ptr<U>&);
+        template <typename U>
+        void registerObserver(const std::shared_ptr<U>& u, CallbackType f)
+        {
+                m_observers.insert(make_pair(std::static_pointer_cast<const void>(u), f));
+        }
 
-        void UnregisterAll();
+        template <typename U>
+        void unregister(const std::shared_ptr<U>& u)
+        {
+                m_observers.erase(std::static_pointer_cast<const void>(u));
+        }
 
-        void Notify(const E&);
+        void unregisterAll() { m_observers.clear(); }
+
+        void notify(const EventType& e)
+        {
+                for (const auto& o : m_observers) {
+                        const auto spt = o.first.lock();
+                        if (spt) {
+                                (o.second)(e);
+                        } else {
+                                m_observers.erase(o.first);
+                        }
+                }
+        }
 
 private:
-        std::vector<std::shared_ptr<U>> m_observers;
+        std::map<std::weak_ptr<const void>, CallbackType, std::owner_less<std::weak_ptr<const void>>> m_observers;
 };
-
-template <typename E, typename U>
-void Subject<E, U>::Register(const std::shared_ptr<U>& u)
-{
-        m_observers.push_back(u);
-}
-
-template <typename E, typename U>
-void Subject<E, U>::Unregister(const std::shared_ptr<U>& u)
-{
-        m_observers.erase(std::remove(m_observers.begin(), m_observers.end(), u), m_observers.end());
-}
-
-template <typename E, typename U>
-void Subject<E, U>::UnregisterAll()
-{
-        m_observers.clear();
-}
-
-template <typename E, typename U>
-void Subject<E, U>::Notify(const E& e)
-{
-        for (const auto& o : m_observers) {
-                // const auto spt = o.lock();
-                // if (spt) {
-                // spt->Update(e);
-                //} else {
-                //	m_observers.erase(std::remove(m_observers.begin(), m_observers.end(),
-                // o), m_observers.end());
-                //}
-                o->Update(e);
-        }
-}
 
 } // namespace util
 } // namespace stride

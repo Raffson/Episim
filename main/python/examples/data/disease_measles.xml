@@ -15,9 +15,15 @@
 	<start_symptomatic>
 		<probability>0</probability>
 		<probability>0</probability>
+        <probability>0</probability>
 		<probability>0</probability>
 		<probability>0</probability>
 		<probability>0</probability>
+        <probability>0</probability>
+        <probability>0</probability>
+        <probability>0</probability>
+        <probability>0</probability>
+        <probability>0</probability>
 		<probability>0.1</probability>
 		<probability>0.2</probability>
 		<probability>0.6</probability>
