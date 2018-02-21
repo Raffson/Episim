@@ -28,6 +28,7 @@ SET(PYTHON_EXAMPLES
 	runSimple.py
 	runStopOnCallback.py
 	seedTester.py
+	seedGenerator.py
 )
 
 #================================================================================================
@@ -38,8 +39,8 @@ SET(PYTHON_EXAMPLES
 file(GLOB DEPLOY_FILES "data/*")
 INSTALL( FILES ${DEPLOY_FILES} DESTINATION ${BIN_INSTALL_LOCATION}/data )
 
-file(GLOB DEPLOY_FILES "config/*")
-INSTALL( FILES ${DEPLOY_FILES} DESTINATION ${BIN_INSTALL_LOCATION}/config )
+#file(GLOB DEPLOY_FILES "config/*")
+INSTALL( DIRECTORY "config/" DESTINATION ${BIN_INSTALL_LOCATION}/config )
 
 INSTALL ( FILES
 		  ${PYTHON_EXAMPLES}
