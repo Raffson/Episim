@@ -48,15 +48,16 @@ def main_runner(f, days):
             output = str(output)
             output = output.split("\\n")
 
-            print(output[len(output) - 8])
-            output = "Seednumber:" + line + "\n" + output[len(output) - 8] + "\n\n"
+            stride_out = output[len(output) - 8]
+            output = line + "\t" + stride_out.split(":")[2].replace(" ", "").split("A")[0] + "\n"
             writer += output
 
     if not os.path.exists("seedTester-Results"):
         os.makedirs("seedTester-Results")
     time = str(datetime.now())
     time = time.split(".")[0].replace("-", "").replace(" ", "_").replace(":", "")
-    with open("seedTester-Results/"+time+".txt",'w') as f:
+    with open("seedTester-Results/"+time+".dat",'w') as f:
+        f.write("# Seed\tInfected count\n")
         f.write(writer)
 
 
@@ -65,9 +66,9 @@ if __name__ == '__main__':
     if len(sys.argv) == 2 and sys.argv[1] == "--help":
         print("Usage of seedTester...\n\n" + \
                 "First method, runs multiple seeds: python3 seedTester.py <path-to-file-with-seeds> <num-of-days>\n" + \
-                "Where <path-to-file-with-seeds> is optional (default=config/default_seeds.txt) " +\
+                "Where <path-to-file-with-seeds> is optional (default=config/seedTester/default_seeds.txt) " +\
                 "and <num-of-days> optional (default=50).\n" +\
-                "This method writes the results to a file called TIME.txt in a folder called seedTester-Results.\n\n" +\
+                "This method writes the results to a file called TIME.dat in a folder called seedTester-Results.\n\n" +\
                 "Second method, runs 1 seed only: python3 seedTester.py --p <seed> <num-of-days>\n" +\
                 "Where <seed> is mandatory and <num-of-days> optional (default=50).\n")
 
@@ -84,5 +85,5 @@ if __name__ == '__main__':
         main_runner(sys.argv[1], "50") #default 50 days...
 
     elif len(sys.argv) == 1:
-        main_runner("config/default_seeds.txt", "50")
+        main_runner("config/seedTester/default_seeds.txt", "50")
 
