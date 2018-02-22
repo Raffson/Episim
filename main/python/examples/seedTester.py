@@ -17,12 +17,12 @@ def run_simulator(seed, num_days):
     """
 
     simulator = Simulation()
-    simulator.loadRunConfig("../config/run_default.xml")
+    simulator.loadRunConfig("../config/run_default_nolog.xml")
     simulator.runConfig.setParameter("num_days", num_days)
 
     simulator.runConfig.setParameter("rng_seed", seed)
 
-    simulator.run()
+    simulator.run(genFiles=False)
 
 
 def main_runner(f, days):
@@ -66,9 +66,9 @@ if __name__ == '__main__':
     if len(sys.argv) == 2 and sys.argv[1] == "--help":
         print("Usage of seedTester...\n\n" + \
                 "First method, runs multiple seeds: python3 seedTester.py <path-to-file-with-seeds> <num-of-days>\n" + \
-                "Where <path-to-file-with-seeds> is optional (default=config/seedTester/default_seeds.txt) " +\
+                "Where <path-to-file-with-seeds> is optional (default=seedTester/config/default_seeds.txt) " +\
                 "and <num-of-days> optional (default=50).\n" +\
-                "This method writes the results to a file called TIME.dat in a folder called seedTester-Results.\n\n" +\
+                "This method writes the results to a file called TIME.dat in a folder called seedTester/results.\n\n" +\
                 "Second method, runs 1 seed only: python3 seedTester.py --p <seed> <num-of-days>\n" +\
                 "Where <seed> is mandatory and <num-of-days> optional (default=50).\n")
 
