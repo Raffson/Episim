@@ -54,7 +54,7 @@ if __name__ == "__main__":
             sys.exit("Usage: python3 seedGenerator.py --seeds=INT --files=INT --name=CHARSEQUENCE --type=TYPE\n" +\
                     "Where --seeds=INT is optional (default=1000), representing the number of seeds per file.\n" +\
                     "Where --files=INT is optional (default=1), representing the number of files to be generated.\n" +\
-                    "Where --name=CHARSEQUENCE is optional, representing the filename used to write in \"config/seedTester\".\n" +\
+                    "Where --name=CHARSEQUENCE is optional, representing the filename used to write in \"seedTester/config\".\n" +\
                     "Where --type=TYPE is optional, representing the type of seed generation.\n" +\
                     "TYPE can be 'linear', 'noise1, 'noise2' or 'random'. Default value for TYPE is 'random'." +\
                     "If TYPE is different from 'random', only one file is generated.\n" +\
@@ -76,11 +76,11 @@ if __name__ == "__main__":
         if( len(sys.argv) >= 2 and present and is_int(value, nrfiles) ):
             nrfiles = abs(int(value))
 
-        if not os.path.exists("config"):  # testing if write dirs exist, else create
-            os.makedirs("config")
+        if not os.path.exists("seedTester"):  # testing if write dirs exist, else create
+            os.makedirs("seedTester")
 
-        if not os.path.exists("config/seedTester"):
-            os.makedirs("config/seedTester")
+        if not os.path.exists("seedTester/config"):
+            os.makedirs("seedTester/config")
 
         prefix = ""
         present, value = argsContains(sys.argv, "--name")
@@ -100,7 +100,7 @@ if __name__ == "__main__":
             elif( gentype == "noise2" ):
                 f = lambda x: (((4294967295/seed_amount)*x)+floor(75000*cos(-x)*sin(-x)))
 
-            filename = "config/seedTester/{0}.txt".format(gentype)
+            filename = "seedTester/config/{0}.txt".format(gentype)
             with open(filename, "w+") as file:
                 file.write("{0} seed generation\n".format(gentype))
                 for i in range(seed_amount):
@@ -115,7 +115,7 @@ if __name__ == "__main__":
                 if( present ):
                     filename = prefix + "-" + str(i) + ".txt"
 
-                filename = "config/seedTester/{0}".format(filename)
+                filename = "seedTester/config/{0}".format(filename)
 
                 seeds = []
                 #make sure seeds are unique within their respective file
