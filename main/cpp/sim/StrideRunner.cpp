@@ -164,7 +164,7 @@ void StrideRunner::Setup(bool track_index_case, const string& config_file_name, 
 }
 
 /// Run the simulator with config information provided.
-void StrideRunner::Run()
+void StrideRunner::Run(const bool genFiles)
 {
         std::cout << "Starting the run" << std::endl;
         // -----------------------------------------------------------------------------------------
@@ -199,7 +199,8 @@ void StrideRunner::Run()
                 // -----------------------------------------------------------------------------------------
                 // Generate output files
                 // -----------------------------------------------------------------------------------------
-                GenerateOutputFiles(m_output_prefix, cases, adopted, m_pt_config,
+		if( genFiles )
+                	GenerateOutputFiles(m_output_prefix, cases, adopted, m_pt_config,
                                     static_cast<unsigned int>(duration_cast<milliseconds>(run_clock.Get()).count()),
                                     static_cast<unsigned int>(duration_cast<milliseconds>(m_clock.Get()).count()));
 

@@ -87,7 +87,7 @@ if __name__ == "__main__":
         if len(sys.argv) >= 2 and present:
             prefix = value
             #filter illegal characters...
-            #thus this allows for custom filenames to be written to "config/seedTester"
+            #thus this allows for custom filenames to be written to "seedTester/config"
             valid_chars = "-_.()%s%s" % (string.ascii_letters, string.digits)
             prefix = ''.join(c for c in prefix if c in valid_chars)
             if( prefix != value ):
