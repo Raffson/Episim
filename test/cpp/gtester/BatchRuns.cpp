@@ -45,7 +45,7 @@ public:
                 static const map<string, unsigned int> results{{"default", 2000U},
                                                                {"seeding_rate", 0U},
                                                                {"immunity_rate", 5U},
-                                                               {"measles", 346100U},
+                                                               {"measles", 599000U},
                                                                {"maximum", 600000}};
                 return results;
         };
@@ -134,8 +134,9 @@ TEST_P(BatchDemos, Run)
         // Initialize the simulation.
         // -----------------------------------------------------------------------------------------
         cout << "Building the simulator. " << endl;
+        cout << " ----> test_tag: " << test_tag << endl << " ----> threadcount:  " << num_threads << endl;
         auto sim = SimulatorBuilder::Build(pt_config, num_threads, track_index_case);
-        cout << "Done building the simulator. " << endl << endl;
+        cout << "Done building the simulator" << endl << endl;
 
         // -----------------------------------------------------------------------------------------
         // Run the simulation.
@@ -167,8 +168,7 @@ unsigned int threads[]{1U};
 #endif
 } // namespace
 
-INSTANTIATE_TEST_CASE_P(Run_default, BatchDemos,
-                        ::testing::Combine(::testing::Values(string("default")), ::testing::ValuesIn(threads)));
+INSTANTIATE_TEST_CASE_P(Run_default, BatchDemos, ::testing::Combine(::testing::Values(string("default")), ::testing::ValuesIn(threads)));
 
 INSTANTIATE_TEST_CASE_P(Run_seeding_rate, BatchDemos,
                         ::testing::Combine(::testing::Values(string("seeding_rate")), ::testing::ValuesIn(threads)));
