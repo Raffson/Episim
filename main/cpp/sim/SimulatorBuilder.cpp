@@ -160,7 +160,8 @@ std::shared_ptr<Simulator> SimulatorBuilder::Build(const ptree& pt_config, const
                     (p.GetAge() <= seeding_age_max)) {
                         p.GetHealth().StartInfection();
                         num_infected--;
-                        logger->info("[PRIM] {} {} {} {}", -1, p.GetId(), -1, 0);
+                        if( sim->m_log_level != LogMode::Id::None )
+                          logger->info("[PRIM] {} {} {} {}", -1, p.GetId(), -1, 0);
                 }
         }
 

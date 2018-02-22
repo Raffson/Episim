@@ -17,7 +17,7 @@ def run_simulator(seed, num_days):
     """
 
     simulator = Simulation()
-    simulator.loadRunConfig("../config/run_default.xml")
+    simulator.loadRunConfig("../config/run_default_nolog.xml")
     simulator.runConfig.setParameter("num_days", num_days)
 
     simulator.runConfig.setParameter("rng_seed", seed)
