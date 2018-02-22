@@ -25,10 +25,10 @@ namespace stride {
 
 using namespace std;
 
-unsigned int Person::GetContactPoolId(const ContactPoolType::Id &cluster_type) const
+unsigned int Person::GetContactPoolId(const ContactPoolType::Id& pool_type) const
 {
         unsigned int ret;
-        switch (cluster_type) {
+        switch (pool_type) {
         case ContactPoolType::Id::Household: ret = m_household_id; break;
         case ContactPoolType::Id::School: ret = m_school_id; break;
         case ContactPoolType::Id::Work: ret = m_work_id; break;
@@ -38,7 +38,7 @@ unsigned int Person::GetContactPoolId(const ContactPoolType::Id &cluster_type) c
         return ret;
 }
 
-bool Person::IsInContactPool(const ContactPoolType::Id &c) const
+bool Person::IsInContactPool(const ContactPoolType::Id& c) const
 {
         bool ret;
         switch (c) {
@@ -55,7 +55,7 @@ void Person::Update(bool is_work_off, bool is_school_off)
 {
         m_health.Update();
 
-        // Update presence in clusters.
+        // Update presence in contactpools.
         if (m_health.IsSymptomatic()) {
                 m_at_school              = false;
                 m_at_work                = false;

@@ -17,7 +17,7 @@ def run_simulator(seed, num_days):
     """
 
     simulator = Simulation()
-    simulator.loadRunConfig("config/run_default.xml")
+    simulator.loadRunConfig("../config/run_default.xml")
     simulator.runConfig.setParameter("num_days", num_days)
 
     simulator.runConfig.setParameter("rng_seed", seed)
@@ -52,11 +52,11 @@ def main_runner(f, days):
             output = line + "\t" + stride_out.split(":")[2].replace(" ", "").split("A")[0] + "\n"
             writer += output
 
-    if not os.path.exists("seedTester-Results"):
-        os.makedirs("seedTester-Results")
+    if not os.path.exists("seedTester/results"):
+        os.makedirs("seedTester/results")
     time = str(datetime.now())
     time = time.split(".")[0].replace("-", "").replace(" ", "_").replace(":", "")
-    with open("seedTester-Results/"+time+".dat",'w') as f:
+    with open("seedTester/results/"+time+".dat",'w') as f:
         f.write("# Seed\tInfected count\n")
         f.write(writer)
 
@@ -85,5 +85,5 @@ if __name__ == '__main__':
         main_runner(sys.argv[1], "50") #default 50 days...
 
     elif len(sys.argv) == 1:
-        main_runner("config/seedTester/default_seeds.txt", "50")
+        main_runner("seedTester/config/default_seeds.txt", "50")
 

@@ -57,7 +57,6 @@ public:
         /// Get member at index
         Person* GetMember(unsigned int index) const;
 
-
         /// Get member at index
         const std::vector<std::pair<Person*, bool>>& GetPool() const;
 
@@ -79,7 +78,7 @@ private:
 private:
         std::size_t                           m_pool_id;      ///< The ID of the ContactPool (for logging purposes).
         ContactPoolType::Id                   m_pool_type;    ///< The type of the ContactPool (for logging purposes).
-        std::size_t                           m_index_immune; ///< Index of the first immune member in the Cluster.
+        std::size_t                           m_index_immune; ///< Index of the first immune member in the ContactPool.
         std::vector<std::pair<Person*, bool>> m_members;      ///< Container with pointers to contactpool members.
         const ContactProfile&                 m_profile;      ///< Contact pattern.
 };
