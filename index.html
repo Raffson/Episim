@@ -223,15 +223,38 @@
 		                What was asked for this assignment?
 		            </div>
 		            <p class="custom-pgraph">
-                        W.I.P.
+                        The goal of this assignment was to establish reasonable bounds for the number of infected people.
+                        Therefore it is needed to run a large number of simulations with different seeds.
+                        Once bounds are established, we are to use the concluded percentage
+                        to adjust the regression tests within the project.
 		            </p>
 
 		            <div class="custom-title">
 		                What was delivered by EpiSim?
 		            </div>
 		            <p class="custom-pgraph">
-                        W.I.P.
-		            </p>
+                        EpiSim ran 5000 simulations with configuration file "run_default.xml" with logging level set to 'None"
+                         (for which we summarized our findings into
+                        <a href="assignments/WIP.txt" target="_blank">this report</a>)
+                        after making some adjustments to the simulator and
+                        writing a number of scripts. Specifically we added the ability
+                        to suppress the .csv files produced by the simulator in order to reduce the amount of data written
+                        during these 5000 simulations. We also introduced a small fix where SimulatorBuilder.cpp would
+                        still write to the log when the logging level is set to 'None'. Aside from that 2 scripts were written
+                        in python. The first script is seedTester.py, which (as the name suggests) will run simulations for
+                        a number of seeds read from a file. The second script is seedGenerator.py, which
+                        generates a number of unique seeds and writes them to a file. To find out how to use these scripts,
+                        refer to the comments within the files or try using the '--help' option.
+                        At last, we tried changing the 'margin' in BatchRuns.cpp to 0.05 (=5%) instead of the original 0.1 (=10%).
+                        However this resulted into a failing test for 'test_tag: influenza_a' where the allowed difference
+                        simply became too small.
+                        This could be explained by the fact that all of our results are based on
+                        "disease_measles.xml" since that's the disease used in the default configuration. This implies we
+                        should also look at the results for other diseases. Since we realized this too late we had no more
+                        time left to investigate this properly.
+                        Again all our data, reports &amp; graphs are bundeled into the following
+                        <a href="assignments/WIP.txt" target="_blank">zip file</a>.
+                    </p>
 
 		            <div class="custom-title">
 		                What did we conclude?
