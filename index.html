@@ -108,8 +108,9 @@
 		                Due to the fact that newer versions of the stride simulator were pushed which would change the results
 		                dramatically, we decided to take a closer look at the different versions. Our findings are summarized in
 		                <a href="assignments/1/EpiSim-Report1.pdf" target="_blank">this pdf report</a>,
-		                however it is in dutch. We may be planning on including
-		                an english version later, though this is still uncertain. Aside from that we have also bundeled all our
+		                however it is in dutch. <strike> We may be planning on including
+                        an english version later</strike>, refer to this summary instead.
+                        Aside from that we have also bundled all our
 		                data, graphs &amp; reports into a
                         <a href="assignments/1/EpiSim-Assignment1.zip" target="_blank">zip file</a>.
 		            </p>
@@ -225,34 +226,38 @@
 		            <p class="custom-pgraph">
                         The goal of this assignment was to establish reasonable bounds for the number of infected people.
                         Therefore it is needed to run a large number of simulations with different seeds.
-                        Once bounds are established, we are to use the concluded percentage
-                        to adjust the regression tests within the project.
+                        Once bounds are established, we are to use the bounds to calculate a percentage relative to the mean
+                        and use this to adjust the regression tests within the project.
 		            </p>
 
 		            <div class="custom-title">
 		                What was delivered by EpiSim?
 		            </div>
 		            <p class="custom-pgraph">
-                        EpiSim ran 5000 simulations with configuration file "run_default.xml" with logging level set to 'None"
+                        EpiSim ran 5000 simulations with configuration file "run_default.xml" with logging level set to 'None'
                          (for which we summarized our findings into
                         <a href="assignments/WIP.txt" target="_blank">this report</a>)
                         after making some adjustments to the simulator and
                         writing a number of scripts. Specifically we added the ability
                         to suppress the .csv files produced by the simulator in order to reduce the amount of data written
                         during these 5000 simulations. We also introduced a small fix where SimulatorBuilder.cpp would
-                        still write to the log when the logging level is set to 'None'. Aside from that 2 scripts were written
+                        still write to the log when the logging level is set to 'None'. Aside from that 3 scripts were written
                         in python. The first script is seedTester.py, which (as the name suggests) will run simulations for
-                        a number of seeds read from a file. The second script is seedGenerator.py, which
-                        generates a number of unique seeds and writes them to a file. To find out how to use these scripts,
+                        a number of seeds that are read from a file. The second script is seedGenerator.py, which
+                        generates a number of unique seeds and writes them to a file. The last script, plotter.py
+                        (only in zip-file), is used to
+                        generate a histogram from the produced data and provide some basic statistical information like mean,
+                        standard deviation &amp; an interval of 10% around the mean.
+                        To find out how to use these scripts,
                         refer to the comments within the files or try using the '--help' option.
                         At last, we tried changing the 'margin' in BatchRuns.cpp to 0.05 (=5%) instead of the original 0.1 (=10%).
                         However this resulted into a failing test for 'test_tag: influenza_a' where the allowed difference
                         simply became too small.
-                        This could be explained by the fact that all of our results are based on
-                        "disease_measles.xml" since that's the disease used in the default configuration. This implies we
+                        This could be explained by the fact that all of our results are based on the default configuration
+                        which uses "disease_measles.xml". This implies we
                         should also look at the results for other diseases. Since we realized this too late we had no more
                         time left to investigate this properly.
-                        Again all our data, reports &amp; graphs are bundeled into the following
+                        Again all our data, reports &amp; graphs are bundled into the following
                         <a href="assignments/WIP.txt" target="_blank">zip file</a>.
                     </p>
 
@@ -260,9 +265,101 @@
 		                What did we conclude?
 		            </div>
 		            <p class="custom-pgraph">
-                        W.I.P.
+                        After trying out more values for 'margin' we conclude that it is possible to take a value as low as 3%
+                        (though 5% would be a more conservative value)
+                        while the tests would still pass, except for 'influenza_a' (as mentioned in the previous section) for
+                        which 8.8% would be the lowest possible 'margin' while still passing the tests.
+                        This could be the result of a bad seed in the sense that it coincidentally produces a result that's an
+                        outlier. In this case the 'target' value does not accurately represent the mean and should therefore
+                        be adjusted. Another possibility would be that the influenza disease simply produces different results,
+                        for example a bigger standard deviation would explain why a bigger 'margin' may be needed. Since our
+                        results for the default configuration (except for turning the logging level to 'None')
+                        are normally distributed, it is likely to be the same case with influenza. Pushing the first 100 seeds
+                        of 'random2.dat' for the influenza disease through the simulator with the same configuration used
+                        in the 'influenza_a' test case, we quickly confirm this suspicion regarding normal distribution of results.
+                        It also turns out that the mean is slightly different from the 'target' specified in BatchRuns.cpp
+                        for 'influenza_a'. However we must keep in mind
+                        that only 100 samples were used compared to the 5000 samples we originally used for establishing
+                        bounds on the default configuration, and thus this mean may still be a bad estimate.
+                        Even these 5000 results are still a fraction compared to the total
+                        of 4,294,967,295 (unsigned long) possible seeds. When comparing the standard deviation proportionally,
+                        i.e. devide std. deviation by mean (call this result 'X' for later reference),
+                        we see that for 'influenza_a' the fraction is larger compared to
+                        our original results. To determine whether this is caused by the influenza disease itself
+                        or by one of the other parameters in the configuration used by the test case, we would need to eliminate
+                        possible parameters that could cause the issue by running more simulations with different configurations.
+                        One possible explanation that comes to mind would be that r<sub>0</sub> somehow affects the standard
+                        deviation, supposing that 'X' would decrease along with an increasing r<sub>0</sub> value since
+                        our original configuration had a r<sub>0</sub> value of 11 compared to 3 for the influenza configuration
+                        of the test case. But on the other hand the number of days to simulate is also different so it may
+                        just as well be this difference that causes the phenomenon.
+                        Thus we conclude that 5% would be a good value for 'margin', though before actually changing the 'margin'
+                        of our regression tests we would first need to properly confirm that the mean for 'influenza_a'
+                        is indeed off from the current 'target'.
+                        Furthermore we would need to investigate the influance of r<sub>0</sub>
+                        on this ratio 'X', as well as looking at the influance of the number of simulation days. If these
+                        parameters turn out to be irrelevant, then we must dig further and see what the effects are of the
+                        seeding rate, immunity rate/profile &amp; vaccination rate/profile. At last, a small statistical
+                        summary is given for the average results of the default configuration.
+                        For the results of the seperate .dat files refer to the report or 'stat-summary.txt' within the zip file.
 		            </p>
-
+                    <table class="custom-table">
+                        <tr>
+                            <th>Statistics</th>
+                            <th>plotter.py</th>
+                            <th>R</th>
+                        </tr>
+                        <tr>
+                            <td>Mean</td>
+                            <td>106700.2</td>
+                            <td>106700.3</td>
+                        </tr>
+                        <tr>
+                            <td>Std. Deviation</td>
+                            <td>244.6</td>
+                            <td>244.76214</td>
+                        </tr>
+                        <tr>
+                            <td>10% Bound</td>
+                            <td>[96030.2, 117370.4]</td>
+                            <td>[96030.27, 117370.3]</td>
+                        </tr>
+                        <tr>
+                            <td>[Min, Max]</td>
+                            <td>N/A</td>
+                            <td>[105902.4, 107488.8]</td>
+                        </tr>
+                        <tr>
+                            <td>P(Min &lt; X &lt; Max)</td>
+                            <td>N/A</td>
+                            <td>99.88051%</td>
+                        </tr>
+                        <tr>
+                            <td>P(104000 &lt; X &lt; 109000)</td>
+                            <td>N/A</td>
+                            <td>&asymp;100%</td>
+                        </tr>
+                        <tr>
+                            <td>1 - (104000/Mean)</td>
+                            <td>N/A</td>
+                            <td>2.530733%</td>
+                        </tr>
+                        <tr>
+                            <td>(109000/Mean) - 1</td>
+                            <td>N/A</td>
+                            <td>2.155289%</td>
+                        </tr>
+                        <tr>
+                            <td>3% Bound</td>
+                            <td>N/A</td>
+                            <td>[103499.3,109901.3]</td>
+                        </tr>
+                        <tr>
+                            <td>5% Bound</td>
+                            <td>N/A</td>
+                            <td>[101365.3,112035.3]</td>
+                        </tr>
+                    </table>
 	            </div>
             </div>
         </div>
