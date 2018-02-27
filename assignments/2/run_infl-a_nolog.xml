@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <run>
     <rng_seed>2015</rng_seed>
-    <r0>5</r0>
+    <r0>3</r0>
     <seeding_rate>0.0009</seeding_rate>
     <seeding_age_min>1</seeding_age_min>
     <seeding_age_max>99</seeding_age_max>
