@@ -9,39 +9,34 @@
 #  GNU General Public License for more details.
 #  You should have received a copy of the GNU General Public License,
 #  along with the software. If not, see <http://www.gnu.org/licenses/>.
-#  see http://www.gnu.org/licenses/.
+#  see http://www.gnu.org/licenses/
 #
 #  Copyright 2017, Willem L, Kuylen E, Stijven S & Broeckhove J
 #############################################################################
 
-
 #============================================================================
-# Build & install the (OpenMP enabled if OpenMP available) executable.
+# Install the python test scripts.
 #============================================================================
-set( EXEC       gtester     )
-set( SRC
-		main.cpp
-		BatchRuns.cpp
-		InfluenceR0Runs.cpp
+set ( SCRIPTS
+	testSimple.py
 )
 
-add_executable(${EXEC}   ${SRC} )
-target_link_libraries( ${EXEC}    ${LIBS} gtest pthread libstride) 
-install(TARGETS ${EXEC}  DESTINATION   ${BIN_INSTALL_LOCATION})
+INSTALL ( FILES
+	${SCRIPTS}
+	DESTINATION ${BIN_INSTALL_LOCATION}
+)
 
 #============================================================================
 # Define tests.
 #============================================================================
-add_test( NAME  ${EXEC}_all 		
-        WORKING_DIRECTORY  ${TESTS_DIR}
-		COMMAND   ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_LOCATION}/${EXEC} 
-		         --gtest_output=xml:gtester_all.xml
+add_test( NAME python_environment
+	WORKING_DIRECTORY ${TESTS_DIR}
+	COMMAND python3 ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_LOCATION}/testSimple.py
 )
 
 #============================================================================
 # Clean up.
 #============================================================================
-unset( EXEC      )
-unset( SRC       )
+unset( SCRIPTS   )
 
 #############################################################################

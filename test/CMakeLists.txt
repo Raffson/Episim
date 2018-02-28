@@ -46,6 +46,7 @@ add_definitions( -DGTEST_LANG_CXX11 )
 # Add subdirectories:
 #============================================================================
 add_subdirectory( cpp       )
+add_subdirectory( python    )
 add_subdirectory( resources )
 
 #############################################################################
