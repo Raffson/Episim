@@ -7,8 +7,6 @@ Script has optional arguments (order of occurrence does not matter):
     - optional integer (e.g. --seed=5000): amount of seeds to generate per file, default = 1000.
     - optional integer (e.g. --files=2): amount of files to generate, default = 1.
     - optional filename (e.g. --name=example): file to write seeds to, default = "seed-TIME.txt".
-
-    TODO:
     - optional seed generation profile (e.g. --type=linear): choice between 'linear', 'noise1', 'noise2' & 'random'
         default = 'random', any other input will result back into 'random'
         generates only 1 file with specific name, overriding the other options...
