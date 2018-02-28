@@ -31,7 +31,6 @@ set(STRIDE_INCLUDE_DOC      FALSE)
 #set(STRIDE_COMPILER_ID      GNU)
 set(STRIDE_COMPILER_ID      Clang)
 set(STRIDE_COMPILER_ID      Apple)
-
 #============================================================================
 # To help find modules.
 #============================================================================
