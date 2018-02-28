@@ -7,22 +7,26 @@ from .Config import Config
 from .SimulationObserver import SimulationObserver
 
 class Simulation:
-    def __init__(self):
+    def __init__(self, dataDir=None):
         self.forks = list()
         self.runner = StrideRunner()
         self.observer = SimulationObserver(self.runner)
         self.runConfig = Config(root="run")
         self.diseaseConfig = Config(root="disease")
         self.timestamp =  strftime("%Y%m%d_%H%M%S", localtime())
+        if dataDir == None:
+            self.dataDir = os.path.join("..", "data")
+        else:
+            self.dataDir = dataDir
 
     def loadRunConfig(self, filename: str):
         self.runConfig = Config(filename)
-        self.diseaseConfig = Config(self.runConfig.getParameter("disease_config_file"))
+        self.diseaseConfig = Config(os.path.join(self.dataDir, self.runConfig.getParameter("disease_config_file")))
         self.runConfig.setParameter('output_prefix', self.getLabel())
 
     def loadDiseaseConfig(self, filename: str):
         self.diseaseConfig = Config(filename)
-        self.runConfig.setParameter("disease_config_file", filename)
+        self.runConfig.setParameter("disease_config_file", os.path.basename(filename))
 
     def getLabel(self):
         label = self.runConfig.getParameter('output_prefix')
@@ -37,15 +41,18 @@ class Simulation:
         return os.path.join(self.getWorkingDirectory(), self.getLabel())
 
     def _linkData(self):
-        dataDir = os.path.join(self.getOutputDirectory(), "data")
-        os.makedirs(dataDir, exist_ok=True)
-        files = [
-            self.runConfig.getParameter("population_file"),
-            self.runConfig.getParameter("holidays_file"),
-            self.runConfig.getParameter("age_contact_matrix_file"),
+        dataDestDir = os.path.join(self.getOutputDirectory(), "data")
+        os.makedirs(dataDestDir, exist_ok=True)
+        file_params = [
+            "population_file",
+            "holidays_file",
+            "age_contact_matrix_file",
+            # TODO disease_config_file?
         ]
-        for src in files:
-            dst = os.path.join(dataDir, os.path.basename(src))
+        for param in file_params:
+            src = os.path.join(self.dataDir, self.runConfig.getParameter(param))
+            self.runConfig.setParameter(param, src)
+            dst = os.path.join(dataDestDir, os.path.basename(src))
             if (os.path.isfile(src)) and (not (os.path.isfile(dst))):
                 os.symlink(src, dst)
 
@@ -83,7 +90,7 @@ class Simulation:
         f = Fork(name, self)
         return f
 
-    def run(self, trackIndexCase=False):
+    def run(self, trackIndexCase=False, genFiles=True):
         """ Run the current simulation. """
         self._setup()
 
@@ -91,7 +98,7 @@ class Simulation:
         try:
             self.runner.Setup(trackIndexCase, configPath)
             self.runner.RegisterObserver(self.observer)
-            self.runner.Run()
+            self.runner.Run(genFiles)
         except:
             print("Exception while running the simulator. Closing down.")
             exit(1)

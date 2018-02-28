@@ -47,16 +47,15 @@ void Simulator::TimeStep()
 {
         std::shared_ptr<DaysOffInterface> days_off{nullptr};
 
-        // Logic where you compute (on the basis of input/config for initial day
-        // or on the basis of number of sick persons, duration of epidemic etc)
-        // what kind of DaysOff scheme you apply. If we want to make this cluster
-        // dependent then the days_off object has to be passed into the Update
-        // function.
+        // Logic where you compute (on the basis of input/config for initial day or on the basis of
+        // number of sick persons, duration of epidemic etc) what kind of DaysOff scheme you apply.
+        // If we want to make this independent of contacpools, then the days_off object has to be
+        // passed into the Update function.
         days_off                 = std::make_shared<DaysOffStandard>(m_calendar);
         const bool is_work_off   = days_off->IsWorkOff();
         const bool is_school_off = days_off->IsSchoolOff();
 
-        // Update individual's health status & presence in clusters.
+        // Update individual's health status & presence in contactpools.
         for (auto& p : *m_population) {
                 p.Update(is_work_off, is_school_off);
         }
@@ -68,12 +67,11 @@ void Simulator::TimeStep()
                         case Id::SusceptibleContacts:
                                 UpdateContactPools<Id::SusceptibleContacts, NoLocalInformation, true>();
                                 break;
-                        case Id::Contacts:
-                                UpdateContactPools<Id::Contacts, NoLocalInformation, true>(); break;
+                        case Id::Contacts: UpdateContactPools<Id::Contacts, NoLocalInformation, true>(); break;
                         case Id::Transmissions:
-                                UpdateContactPools<Id::Transmissions, NoLocalInformation, true>(); break;
-                        case Id::None:
-                                UpdateContactPools<Id::None, NoLocalInformation, true>(); break;
+                                UpdateContactPools<Id::Transmissions, NoLocalInformation, true>();
+                                break;
+                        case Id::None: UpdateContactPools<Id::None, NoLocalInformation, true>(); break;
                         default: throw std::runtime_error(std::string(__func__) + "Log mode screwed up!");
                         }
                 } else {
@@ -81,12 +79,11 @@ void Simulator::TimeStep()
                         case Id::SusceptibleContacts:
                                 UpdateContactPools<Id::SusceptibleContacts, NoLocalInformation, false>();
                                 break;
-                        case Id::Contacts:
-                                UpdateContactPools<Id::Contacts, NoLocalInformation, false>(); break;
+                        case Id::Contacts: UpdateContactPools<Id::Contacts, NoLocalInformation, false>(); break;
                         case Id::Transmissions:
-                                UpdateContactPools<Id::Transmissions, NoLocalInformation, false>(); break;
-                        case Id::None:
-                                UpdateContactPools<Id::None, NoLocalInformation, false>(); break;
+                                UpdateContactPools<Id::Transmissions, NoLocalInformation, false>();
+                                break;
+                        case Id::None: UpdateContactPools<Id::None, NoLocalInformation, false>(); break;
                         default: throw std::runtime_error(std::string(__func__) + "Log mode screwed up!");
                         }
                 }
@@ -96,12 +93,9 @@ void Simulator::TimeStep()
                         case Id::SusceptibleContacts:
                                 UpdateContactPools<Id::SusceptibleContacts, LocalDiscussion, true>();
                                 break;
-                        case Id::Contacts:
-                                UpdateContactPools<Id::Contacts, LocalDiscussion, true>(); break;
-                        case Id::Transmissions:
-                                UpdateContactPools<Id::Transmissions, LocalDiscussion, true>(); break;
-                        case Id::None:
-                                UpdateContactPools<Id::None, LocalDiscussion, true>(); break;
+                        case Id::Contacts: UpdateContactPools<Id::Contacts, LocalDiscussion, true>(); break;
+                        case Id::Transmissions: UpdateContactPools<Id::Transmissions, LocalDiscussion, true>(); break;
+                        case Id::None: UpdateContactPools<Id::None, LocalDiscussion, true>(); break;
                         default: throw std::runtime_error(std::string(__func__) + "Log mode screwed up!");
                         }
                 } else {
@@ -109,12 +103,9 @@ void Simulator::TimeStep()
                         case Id::SusceptibleContacts:
                                 UpdateContactPools<Id::SusceptibleContacts, LocalDiscussion, false>();
                                 break;
-                        case Id::Contacts:
-                                UpdateContactPools<Id::Contacts, LocalDiscussion, false>(); break;
-                        case Id::Transmissions:
-                                UpdateContactPools<Id::Transmissions, LocalDiscussion, false>(); break;
-                        case Id::None:
-                                UpdateContactPools<Id::None, LocalDiscussion, false>(); break;
+                        case Id::Contacts: UpdateContactPools<Id::Contacts, LocalDiscussion, false>(); break;
+                        case Id::Transmissions: UpdateContactPools<Id::Transmissions, LocalDiscussion, false>(); break;
+                        case Id::None: UpdateContactPools<Id::None, LocalDiscussion, false>(); break;
                         default: throw std::runtime_error(std::string(__func__) + "Log mode screwed up!");
                         }
                 }
