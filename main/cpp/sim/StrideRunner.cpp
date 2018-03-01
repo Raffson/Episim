@@ -96,6 +96,7 @@ void StrideRunner::Setup(bool track_index_case, const string& config_file_name, 
 #pragma omp parallel
         {
                 num_threads = static_cast<unsigned int>(omp_get_num_threads());
+                num_threads = this->m_pt_config.get("run.threads", num_threads);
         }
         if (ConfigInfo::HaveOpenMP()) {
                 cout << "Using OpenMP threads:  " << num_threads << endl;
