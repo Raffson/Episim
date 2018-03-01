@@ -41,7 +41,7 @@ set(CMAKE_PROGRAM_PATH  "/opt/local/bin;/usr/texbin;/usr/local/bin;/usr/bin"
 #============================================================================
 # Stride specific variables:
 #============================================================================
-set(STRIDE_INCLUDE_DOC	FALSE 
+set(STRIDE_INCLUDE_DOC	FALSE
 	CACHE BOOL "Exclude doc directory from build and install.")
 set(STRIDE_FORCE_NO_OPENMP	FALSE 
 	CACHE BOOL "Do NOT use OpenMP even if available.")

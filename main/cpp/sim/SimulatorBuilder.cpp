@@ -95,9 +95,10 @@ std::shared_ptr<Simulator> SimulatorBuilder::Build(const ptree& pt_config, const
         // --------------------------------------------------------------
         // Initialize RNManager for random number engine management.
         // --------------------------------------------------------------
-        const auto            rng_tag  = pt_config.get<string>("rng_type","mrg2");
+
+
         const auto            rng_seed = pt_config.get<unsigned long>("run.rng_seed", 1UL);
-        const auto            rng_type = pt_config.get<string>("run.rng_type", rng_tag);
+        const auto            rng_type = pt_config.get<string>("run.rng_type", "mrg2");
         const RNManager::Info info{rng_type, rng_seed, "", sim->m_num_threads};
         sim->m_rn_manager.Initialize(info);
 
