@@ -71,7 +71,7 @@ set(LIB_SRC
 	util/InstallDirs.cpp
     util/RNEngineType.cpp
     util/RNManager.cpp
-        popgen-Episim/main.cpp)
+        popgen-Episim/main.cpp popgen-Episim/GeoGen/Coordinate.cpp popgen-Episim/GeoGen/Coordinate.h)
 
 #============================================================================
 # Build the Stride library.
