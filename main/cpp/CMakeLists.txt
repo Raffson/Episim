@@ -71,7 +71,7 @@ set(LIB_SRC
 	util/InstallDirs.cpp
     util/RNEngineType.cpp
     util/RNManager.cpp
-)
+        popgen-Episim/main.cpp)
 
 #============================================================================
 # Build the Stride library.
@@ -88,6 +88,12 @@ add_executable(stride sim/main.cpp)
 target_link_libraries(stride ${LIBS} libstride)
 install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
 
+#============================================================================
+# Build and install the Episim executable.
+#============================================================================1
+add_executable(popgen-Episim popgen-Episim/main.cpp)
+target_link_libraries(popgen-Episim ${LIBS} libstride)
+install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
 #============================================================================
 # Build and install the stride executable.
 #============================================================================
