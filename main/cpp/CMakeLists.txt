@@ -71,7 +71,7 @@ set(LIB_SRC
 	util/InstallDirs.cpp
     util/RNEngineType.cpp
     util/RNManager.cpp
-)
+        geo-gen/GeoGrid.cpp geo-gen/GeoGrid.h geo-gen/Community.cpp geo-gen/Community.h geo-gen/Household.cpp geo-gen/Household.h geo-gen/City.cpp geo-gen/City.h)
 
 #============================================================================
 # Build the Stride library.
