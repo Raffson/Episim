@@ -8,6 +8,6 @@
 
 namespace geogen{
 
-std::Map<int, std::shared_ptr<City>> parse_cities(std::string);
+std::Map<int, std::shared_ptr<City>> parse_cities(const boost::filesystem::path&);
 
 }

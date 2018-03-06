@@ -6,8 +6,10 @@
 #define STRIDE_GEOGRID_H
 
 #include <vector>
+#include <map>
+#include <memory>
 
-#include "Community.h"
+#include "popgen-Episim/GeoGen/community_type/Community.h"
 #include "Household.h"
 #include "City.h"
 
@@ -16,6 +18,11 @@ using namespace std;
 class GeoGrid {
 public:
     GeoGrid() = default;
+    void generate_schools();
+    void generate_colleges();
+    void generate_workplaces();
+    void generate_communities();
+
 
 private:
     /// Contains schools, higher educations, workplaces, primary communities and secondary communities
@@ -25,7 +32,7 @@ private:
     vector<Household> households;
 
     /// Contains all cities for the GeoGrid
-    vector<City> cities;
+    map<int, shared_ptr<City>> cities;
 };
 
 

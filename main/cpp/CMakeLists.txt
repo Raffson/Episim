@@ -78,7 +78,7 @@ set(LIB_SRC
 	popgen-Episim/main.cpp
 	popgen-Episim/GeoGen/Coordinate.cpp
 	popgen-Episim/GeoGen/GeoGrid.cpp
-	popgen-Episim/GeoGen/Community.cpp
+        popgen-Episim/GeoGen/community_type/Community.cpp
 	popgen-Episim/GeoGen/Household.cpp
 	popgen-Episim/GeoGen/City.cpp
 #---

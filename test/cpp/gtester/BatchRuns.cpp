@@ -81,7 +81,7 @@ public:
 
                 if (tag == "influenza_a") {
                         target = 2100U;
-			margin = 0.10;
+			    margin = 0.010;
                 }
                 if (tag == "influenza_b") {
                         pt.put("run.seeding_rate", 0.0);
