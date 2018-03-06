@@ -77,10 +77,10 @@ set(LIB_SRC
 	util/RNManager.cpp
 	popgen-Episim/main.cpp
 	popgen-Episim/GeoGen/Coordinate.cpp
-	geo-gen/GeoGrid.cpp
-	geo-gen/Community.cpp
-	geo-gen/Household.cpp
-	geo-gen/City.cpp
+	popgen-Episim/GeoGen/GeoGrid.cpp
+	popgen-Episim/GeoGen/Community.cpp
+	popgen-Episim/GeoGen/Household.cpp
+	popgen-Episim/GeoGen/City.cpp
 #---
 	viewers/CliViewer.cpp
 )
