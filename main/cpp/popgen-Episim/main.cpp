@@ -6,6 +6,6 @@
 #include "popgen-Episim/GeoGen/Parser.h"
 int main(int argc, char** argv)
 {
-    parse_cities("data/flanders_cities.csv");
+    geogen::parse_cities("data/flanders_cities.csv");
     std::cout << "Hello World!" << std::endl;
 }
