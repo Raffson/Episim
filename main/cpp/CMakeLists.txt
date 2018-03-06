@@ -43,17 +43,17 @@ set(LIB_SRC
 #---
 	#popgen/AliasSampler.cpp
 	#popgen/FamilyParser.cpp
-    #popgen/utils.cpp
+    	#popgen/utils.cpp
 	#popgen/geo/GeoCoordinate.cpp
 	#popgen/geo/GeoCoordCalculator.cpp
 #---
 	#popgen2/AliasMethod.cpp
-    #popgen2/Community.cpp
-    #popgen2/GeneratorPerson.cpp
+    	#popgen2/Community.cpp
+    	#popgen2/GeneratorPerson.cpp
 	#popgen2/GrahamScan.cpp
-    #popgen2/Household.cpp
+    	#popgen2/Household.cpp
 	#popgen2/main.cpp
-    #popgen2/RNG.cpp
+    	#popgen2/RNG.cpp
 	#popgen2/Society.cpp
 	#popgen2/SocietyCSVWriter.cpp
 	#popgen2/SocietyGenerator.cpp
@@ -61,16 +61,22 @@ set(LIB_SRC
 	#popgen2/geo/GeoGrid.cpp
 	#popgen2/geo/Geometry.cpp
 #---
+	sim/CliController.cpp
+	sim/SimRunner.cpp
 	sim/Simulator.cpp
 	sim/SimulatorBuilder.cpp
 	sim/StrideRunner.cpp
+	sim/event/Id.cpp
+	sim/event/Subject.cpp
 #---
-    util/CSV.cpp
+    	util/CSV.cpp
 	util/CSVRow.cpp
-    util/FileUtils.cpp
+	util/FileUtils.cpp
 	util/InstallDirs.cpp
-    util/RNEngineType.cpp
-    util/RNManager.cpp
+	util/RNEngineType.cpp
+	util/RNManager.cpp
+#---
+	viewers/CliViewer.cpp
 )
 
 #============================================================================
@@ -85,6 +91,8 @@ set_target_properties(libstride PROPERTIES PREFIX "")
 # Build and install the stride executable.
 #============================================================================
 add_executable(stride sim/main.cpp)
+target_include_directories(stride PUBLIC
+	${CMAKE_HOME_DIRECTORY}/main/resources/lib/tclap/include)
 target_link_libraries(stride ${LIBS} libstride)
 install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
 
