@@ -13,7 +13,7 @@
  *
  *
  */
-namespace GeoGrid{
+namespace geogrid{
 
 /*
  * Basic Coördinate class. container for x & y value's to represent a
@@ -25,12 +25,15 @@ public:
 
      // Basic constructor
     Coordinate();
-    Coordinate(int x, int y);
+    Coordinate(double x, double y);
 
 
-    int x;
-    int y;
+    double x;
+    double y;
+
+    double longitude;
+    double latitude;
 };
 
-} // namespace: GeoGrid
+} // namespace: geogrid
 
