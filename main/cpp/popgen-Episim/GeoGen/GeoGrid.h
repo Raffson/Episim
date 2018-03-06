@@ -9,7 +9,7 @@
 #include <map>
 #include <memory>
 
-#include "popgen-Episim/GeoGen/community_type/Community.h"
+#include "popgen-Episim/GeoGen/CommunityTypes/Community.h"
 #include "Household.h"
 #include "City.h"
 
