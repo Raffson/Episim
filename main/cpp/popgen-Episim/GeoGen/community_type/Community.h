@@ -6,7 +6,8 @@
 #define STRIDE_COMMUNITY_H
 
 #include <cstddef>
-#include <python3.5m/asdl.h>
+#include <string>
+
 
 
 class Community
@@ -24,7 +25,7 @@ public:
     std::size_t GetCityID() { return m_city_id; }
 
     ///
-    string GetCommunityType() { return string(""); }
+    std::string GetCommunityType() { return std::string(""); }
 
     ///
     std::size_t GetID() { return m_community_id; }

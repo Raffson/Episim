@@ -5,9 +5,7 @@
 
 #include <memory>
 #include <map>
+#include "popgen-Episim/GeoGen/City.h"
+#include "boost/filesystem.hpp"
 
-namespace geogen{
-
-std::Map<int, std::shared_ptr<City>> parse_cities(const boost::filesystem::path&);
-
-}
+std::map<int, std::shared_ptr<City>> parse_cities(const boost::filesystem::path&);
