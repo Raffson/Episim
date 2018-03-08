@@ -16,6 +16,7 @@
 #include "Coordinate.h"
 
 
-geogrid::Coordinate::Coordinate(): x(0), y(0) {}
+geogrid::Coordinate::Coordinate(): x(0), y(0), longitude(0), latitude(0) {}
 
-geogrid::Coordinate::Coordinate(double x, double y): x(x), y(y) {}
+geogrid::Coordinate::Coordinate(double x, double y, double longitude, double latitude) :
+        x(x), y(y), longitude(longitude), latitude(latitude) {}

@@ -1,41 +1,50 @@
-//
-// Created by beau on 3/5/18.
-//
+#pragma once
+/*
+ *  This is free software: you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *  The software is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *  You should have received a copy of the GNU General Public License
+ *  along with the software. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#ifndef STRIDE_CITY_H
-#define STRIDE_CITY_H
 
 #include <string>
 #include <utility>
 #include <cstddef>
 
+#include "popgen-Episim/GeoGen/Coordinate.h"
+
 using namespace std;
+namespace geogrid {
+    class City {
+    public:
 
-class City {
-public:
-    City();
+        City(unsigned int city_id, unsigned int province, unsigned int population,
+             Coordinate coordinates, string name);
 
-private:
-    /// Id generator.
-    static std::size_t g_id_generator;
+    private:
 
-    /// A unique ID of the city.
-    std::size_t city_id;
+        /// A unique ID of the city.
+        const unsigned int city_id;
 
-    // province ?
+        // province
+        const unsigned int province;
 
-    /// Population of the city.
-    std::size_t population;
+        /// Population of the city.
+        unsigned int population;
 
-    /// (x, y) position of the city on a map.
-    pair<double, double> coords;
+        // Coordinate, smart coordinate container
+        Coordinate coordinates;
 
-    /// (longitude, latitude) position of the city on a map.
-    pair<double, double> long_lat;
-
-    /// Name of the city.
-    string name;
-};
+        /// Name of the city.
+        const string name;
+    };
+}//namespace geogen
 
 
-#endif //STRIDE_CITY_H

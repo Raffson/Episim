@@ -10,7 +10,7 @@
 #include "popgen-Episim/GeoGen/City.h"
 #include "boost/filesystem.hpp"
 
-namespace geogen {
+namespace geogrid {
 namespace parser {
 
 

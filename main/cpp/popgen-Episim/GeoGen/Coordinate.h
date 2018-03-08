@@ -25,7 +25,7 @@ public:
 
      // Basic constructor
     Coordinate();
-    Coordinate(double x, double y);
+    Coordinate(double x, double y, double longitude, double latitude);
 
 
     double x;

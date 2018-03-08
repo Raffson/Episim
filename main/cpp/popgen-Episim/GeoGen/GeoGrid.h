@@ -15,25 +15,30 @@
 
 using namespace std;
 
-class GeoGrid {
-public:
-    GeoGrid() = default;
-    void generate_schools();
-    void generate_colleges();
-    void generate_workplaces();
-    void generate_communities();
+namespace geogrid {
+    class GeoGrid {
+    public:
+        GeoGrid() = default;
+
+        void generate_schools();
+
+        void generate_colleges();
+
+        void generate_workplaces();
+
+        void generate_communities();
 
 
-private:
-    /// Contains schools, higher educations, workplaces, primary communities and secondary communities
-    vector<Community> communities;
+    private:
+        /// Contains schools, higher educations, workplaces, primary communities and secondary communities
+        vector<Community> communities;
 
-    /// Contains all households for the GeoGrid
-    vector<Household> households;
+        /// Contains all households for the GeoGrid
+        vector<Household> households;
 
-    /// Contains all cities for the GeoGrid
-    map<int, shared_ptr<City>> cities;
-};
-
+        /// Contains all cities for the GeoGrid
+        map<int, shared_ptr<City>> cities;
+    };
+}//geogrid
 
 #endif //STRIDE_GEOGRID_H
