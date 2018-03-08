@@ -18,7 +18,9 @@ using namespace std;
 namespace geogrid {
     class GeoGrid {
     public:
-        GeoGrid() = default;
+        GeoGrid();
+
+        GeoGrid( map<int, shared_ptr<City>> cities);
 
         void generate_schools();
 
