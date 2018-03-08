@@ -21,9 +21,10 @@
 #include "CSV.h"
 
 #include "util/FileUtils.h"
-#include "util/Misc.h"
+#include "util/Safeline.h"
 
 #include <boost/filesystem/fstream.hpp>
+#include <iostream>
 
 namespace stride {
 namespace util {
@@ -40,9 +41,10 @@ CSV::CSV(const boost::filesystem::path& path, std::initializer_list<std::string>
 
                 std::string line;
 
-                // header
-                getline(file, line);
+                // header changed to safeGetline -> issue with newline \r instead of \n in csv
+                safeGetline(file, line);
                 line = Trim(line);
+
                 std::vector<std::string> headerLabels =
                     Split(line, ","); // Split is bad! There is no option to escape ",".
                 for (const std::string& label : headerLabels) {
@@ -50,8 +52,8 @@ CSV::CSV(const boost::filesystem::path& path, std::initializer_list<std::string>
                 }
                 columnCount = labels.size();
 
-                // body
-                while (getline(file, line)) {
+                // body changed to safeGetline -> issue with newline \r instead of \n in csv
+                while (safeGetline(file, line)) {
                         line = Trim(line);
                         if (!line.empty()) {
                                 std::vector<std::string> values =

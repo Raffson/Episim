@@ -75,6 +75,7 @@ set(LIB_SRC
 	util/InstallDirs.cpp
 	util/RNEngineType.cpp
 	util/RNManager.cpp
+	util/Safeline.cpp
 
 	popgen-Episim/main.cpp
 	popgen-Episim/GeoGen/Coordinate.cpp
