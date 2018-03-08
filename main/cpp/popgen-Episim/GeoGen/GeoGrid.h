@@ -1,9 +1,8 @@
+#pragma once
 //
 // Created by beau on 3/5/18.
 //
 
-#ifndef STRIDE_GEOGRID_H
-#define STRIDE_GEOGRID_H
 
 #include <vector>
 #include <map>
@@ -17,19 +16,33 @@
 using namespace std;
 
 namespace geogrid {
+
+    /*
+     * Class representing our GeoGrid;
+     * Geogrid contains information about the cities. placing of contactpools
+     * (shools, workplaces...) within those cities. Will be used by popgen and
+     * the gui.
+     */
     class GeoGrid {
+
     public:
 
         GeoGrid() = default;
-        //constructor with a map of cities
+
+        /*
+         * Constructor GeoGRid.
+         * @param map of id city* pairs representing the cities in our geogrid
+         */
         explicit GeoGrid( map<int, shared_ptr<City>> cities);
 
         /*
-         * Takes a filepath to
+         * Takes a filepath to city_config file.
+         * @param map: a path to a city file
          */
         explicit GeoGrid(const boost::filesystem::path& map);
 
-        void generate_schools();
+        // Generates the schools.
+        void generate_schools(unsigned int pop_total);
 
         void generate_colleges();
 
@@ -41,6 +54,11 @@ namespace geogrid {
 
 
     private:
+
+        // Counts the total population in th GeoGrid based on the cities
+        // in map cities.
+        unsigned int count_total_pop() const;
+
         /// Contains schools, higher educations, workplaces, primary communities and secondary communities
         vector<Community> communities;
 
@@ -52,4 +70,3 @@ namespace geogrid {
     };
 }//geogrid
 
-#endif //STRIDE_GEOGRID_H

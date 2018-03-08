@@ -21,3 +21,7 @@ geogrid::City::City(const unsigned int city_id, const unsigned int province, uns
                                                                                population(population),
                                                                                coordinates(coordinates),
                                                                                name(name) {}
+
+unsigned int geogrid::City::getPopulation() const {
+    return population;
+}

@@ -32,7 +32,10 @@ namespace geogrid {
 
         /// A unique ID of the city.
         const unsigned int city_id;
+    public:
+        unsigned int getPopulation() const;
 
+    private:
         // province
         const unsigned int province;
 
