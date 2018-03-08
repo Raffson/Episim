@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <iostream>
 
 #include "popgen-Episim/GeoGen/CommunityTypes/Community.h"
 #include "boost/filesystem.hpp"
@@ -58,6 +59,9 @@ namespace geogrid {
         // Counts the total population in th GeoGrid based on the cities
         // in map cities.
         unsigned int count_total_pop() const;
+
+
+    private:
 
         /// Contains schools, higher educations, workplaces, primary communities and secondary communities
         vector<Community> communities;

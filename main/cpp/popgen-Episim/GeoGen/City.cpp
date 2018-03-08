@@ -25,3 +25,11 @@ geogrid::City::City(const unsigned int city_id, const unsigned int province, uns
 unsigned int geogrid::City::getPopulation() const {
     return population;
 }
+
+const std::string geogrid::City::getName() const {
+    return name;
+}
+
+const unsigned int geogrid::City::getId() const {
+    return city_id;
+}

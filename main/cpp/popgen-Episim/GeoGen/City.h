@@ -28,14 +28,17 @@ namespace geogrid {
         City(unsigned int city_id, unsigned int province, unsigned int population,
              Coordinate coordinates, string name);
 
+        unsigned int getPopulation() const;
+
+        const string getName() const;
+
+        const unsigned int getId() const;
+
     private:
 
         /// A unique ID of the city.
         const unsigned int city_id;
-    public:
-        unsigned int getPopulation() const;
 
-    private:
         // province
         const unsigned int province;
 
