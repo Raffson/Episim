@@ -85,7 +85,7 @@ set(LIB_SRC
 	popgen-Episim/GeoGen/Parser.cpp
 #---
 	viewers/CliViewer.cpp
-)
+        util/Safeline.cpp util/Safeline.h)
 
 #============================================================================
 # Build the Stride library.
