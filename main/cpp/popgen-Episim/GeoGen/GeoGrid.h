@@ -9,6 +9,7 @@
 #include <map>
 #include <memory>
 
+#include "boost/filesystem.hpp"
 #include "popgen-Episim/GeoGen/community_type/Community.h"
 #include "Household.h"
 #include "City.h"
@@ -18,9 +19,15 @@ using namespace std;
 namespace geogrid {
     class GeoGrid {
     public:
-        GeoGrid();
 
-        GeoGrid( map<int, shared_ptr<City>> cities);
+        GeoGrid() = default;
+        //constructor with a map of cities
+        explicit GeoGrid( map<int, shared_ptr<City>> cities);
+
+        /*
+         * Takes a filepath to
+         */
+        explicit GeoGrid(const boost::filesystem::path& map);
 
         void generate_schools();
 
@@ -29,6 +36,8 @@ namespace geogrid {
         void generate_workplaces();
 
         void generate_communities();
+
+        void generate_all();
 
 
     private:
