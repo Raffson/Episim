@@ -35,10 +35,11 @@ set(LIB_SRC
 #---
 	output/AdoptedFile.cpp
 	output/CasesFile.cpp
-	output/PersonFile.cpp
+	output/PersonsFile.cpp
 	output/SummaryFile.cpp
 #---	
     pop/Person.cpp
+    pop/Population.cpp
     pop/PopulationBuilder.cpp
 #---
 	#popgen/AliasSampler.cpp
@@ -65,14 +66,16 @@ set(LIB_SRC
 	sim/SimRunner.cpp
 	sim/Simulator.cpp
 	sim/SimulatorBuilder.cpp
-	sim/StrideRunner.cpp
+	sim/python/StrideRunner.cpp
 	sim/event/Id.cpp
 	sim/event/Subject.cpp
 #---
-    	util/CSV.cpp
+	util/CSV.cpp
 	util/CSVRow.cpp
 	util/FileUtils.cpp
-	util/InstallDirs.cpp
+	util/FileSys.cpp
+	util/LogUtils.cpp
+	util/PtreeUtils.cpp
 	util/RNEngineType.cpp
 	util/RNManager.cpp
 	util/Safeline.cpp
@@ -85,7 +88,11 @@ set(LIB_SRC
 	popgen-Episim/GeoGen/City.cpp
 	popgen-Episim/GeoGen/Parser.cpp
 #---
+	viewers/AdoptedViewer.cpp
+	viewers/CasesViewer.cpp
 	viewers/CliViewer.cpp
+	viewers/PersonsViewer.cpp
+	viewers/SummaryViewer.cpp
 )
 
 #============================================================================
