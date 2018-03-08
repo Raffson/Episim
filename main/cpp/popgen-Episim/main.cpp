@@ -7,6 +7,6 @@
 #include "popgen-Episim/GeoGen/Parser.h"
 int main(int argc, char** argv)
 {
-    geogrid::GeoGrid grid(geogrid::parser::parse_cities("../../flanders_cities.csv"));
+    geogrid::GeoGrid grid(geogrid::parser::parse_cities("data/flanders_cities.csv"));
 
 }
