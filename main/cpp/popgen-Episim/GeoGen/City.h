@@ -29,28 +29,33 @@ namespace geogen {
         City(unsigned int city_id, unsigned int province, unsigned int population,
              Coordinate coordinates, string name);
 
+        const unsigned int getId() const;
+
+        const unsigned int getProvince() const;
+
         unsigned int getPopulation() const;
+
+        const Coordinate getCoordinates() const;
 
         const string getName() const;
 
-        const unsigned int getId() const;
 
     private:
 
         /// A unique ID of the city.
-        const unsigned int city_id;
+        const unsigned int m_city_id;
 
         // province
-        const unsigned int province;
+        const unsigned int m_province;
 
         /// Population of the city.
-        unsigned int population;
+        unsigned int m_population;
 
         // Coordinate, smart coordinate container
-        Coordinate coordinates;
+        Coordinate m_coordinates;
 
         /// Name of the city.
-        const string name;
+        const string m_name;
     };
 
 }//namespace geogen

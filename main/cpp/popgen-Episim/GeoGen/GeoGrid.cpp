@@ -9,7 +9,7 @@ using namespace std;
 
 namespace geogen {
 
-    GeoGrid::GeoGrid(map<int, shared_ptr<City>> cities) : cities(move(cities)) {
+    GeoGrid::GeoGrid(map<int, shared_ptr<City>> cities) : m_cities(move(cities)) {
 
 
         generate_all();
@@ -44,7 +44,7 @@ namespace geogen {
     void GeoGrid::generate_colleges() {
         //need 10 largest cities, largest determined by number of people in the city...
         vector <shared_ptr<City>> lc;
-        for (auto &it : cities) {
+        for (auto &it : m_cities) {
             adjustLargestCities(lc, it.second);
         }
 
@@ -81,7 +81,7 @@ namespace geogen {
     unsigned int GeoGrid::count_total_pop() const {
 
         unsigned int counter = 0;
-        for (auto &it : cities) {
+        for (auto &it : m_cities) {
             counter += it.second->getPopulation();
         }
         return counter;

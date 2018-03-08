@@ -3,3 +3,7 @@
 //
 
 #include "Community.h"
+
+namespace geogen{
+
+}//namespace geogen

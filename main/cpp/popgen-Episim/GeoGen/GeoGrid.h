@@ -64,13 +64,13 @@ namespace geogen {
     private:
 
         /// Contains schools, higher educations, workplaces, primary communities and secondary communities
-        vector<Community> communities;
+        vector<Community> m_communities;
 
         /// Contains all households for the GeoGrid
-        vector<Household> households;
+        vector<Household> m_households;
 
         /// Contains all cities for the GeoGrid
-        map<int, shared_ptr<City>> cities;
+        map<int, shared_ptr<City>> m_cities;
     };
 
 }//namespace geogen
