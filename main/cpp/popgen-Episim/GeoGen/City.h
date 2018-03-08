@@ -21,7 +21,8 @@
 #include "popgen-Episim/GeoGen/Coordinate.h"
 
 using namespace std;
-namespace geogrid {
+
+namespace geogen {
     class City {
     public:
 
@@ -51,6 +52,7 @@ namespace geogrid {
         /// Name of the city.
         const string name;
     };
+
 }//namespace geogen
 
 

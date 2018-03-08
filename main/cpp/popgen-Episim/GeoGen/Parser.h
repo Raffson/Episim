@@ -10,11 +10,13 @@
 #include "popgen-Episim/GeoGen/City.h"
 #include "boost/filesystem.hpp"
 
-namespace geogrid {
+using namespace std;
+
+namespace geogen {
 namespace parser {
 
 
-    std::map<int, std::shared_ptr<City>> parse_cities(const boost::filesystem::path &);
+    map<int, shared_ptr<City>> parse_cities(const boost::filesystem::path &);
 
 
 } // namespace parser

@@ -16,7 +16,7 @@
 
 using namespace std;
 
-namespace geogrid {
+namespace geogen {
 
     /*
      * Class representing our GeoGrid;
@@ -72,5 +72,6 @@ namespace geogrid {
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> cities;
     };
-}//geogrid
+
+}//namespace geogen
 
