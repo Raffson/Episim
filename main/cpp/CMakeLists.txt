@@ -35,10 +35,11 @@ set(LIB_SRC
 #---
 	output/AdoptedFile.cpp
 	output/CasesFile.cpp
-	output/PersonFile.cpp
+	output/PersonsFile.cpp
 	output/SummaryFile.cpp
 #---	
     pop/Person.cpp
+    pop/Population.cpp
     pop/PopulationBuilder.cpp
 #---
 	#popgen/AliasSampler.cpp
@@ -65,27 +66,34 @@ set(LIB_SRC
 	sim/SimRunner.cpp
 	sim/Simulator.cpp
 	sim/SimulatorBuilder.cpp
-	sim/StrideRunner.cpp
+	sim/python/StrideRunner.cpp
 	sim/event/Id.cpp
 	sim/event/Subject.cpp
 #---
-    	util/CSV.cpp
+	util/CSV.cpp
 	util/CSVRow.cpp
 	util/FileUtils.cpp
-	util/InstallDirs.cpp
+	util/FileSys.cpp
+	util/LogUtils.cpp
+	util/PtreeUtils.cpp
 	util/RNEngineType.cpp
 	util/RNManager.cpp
+	util/Safeline.cpp
 
 	popgen-Episim/main.cpp
 	popgen-Episim/GeoGen/Coordinate.cpp
 	popgen-Episim/GeoGen/GeoGrid.cpp
-	popgen-Episim/GeoGen/community_type/Community.cpp
+        popgen-Episim/GeoGen/CommunityTypes/Community.cpp
 	popgen-Episim/GeoGen/Household.cpp
 	popgen-Episim/GeoGen/City.cpp
 	popgen-Episim/GeoGen/Parser.cpp
 #---
+	viewers/AdoptedViewer.cpp
+	viewers/CasesViewer.cpp
 	viewers/CliViewer.cpp
-        util/Safeline.cpp util/Safeline.h)
+	viewers/PersonsViewer.cpp
+	viewers/SummaryViewer.cpp
+)
 
 #============================================================================
 # Build the Stride library.

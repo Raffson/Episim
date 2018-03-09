@@ -15,13 +15,35 @@
 
 #include "City.h"
 
-geogrid::City::City(const unsigned int city_id, const unsigned int province, unsigned int population,
-                    const geogrid::Coordinate coordinates, const string name): city_id(city_id),
-                                                                               province(province),
-                                                                               population(population),
-                                                                               coordinates(coordinates),
-                                                                               name(name) {}
+using namespace std;
 
-unsigned int geogrid::City::getPopulation() const {
-    return population;
-}
+namespace geogen {
+
+    City::City(const unsigned int city_id, const unsigned int province, unsigned int population,
+                        const Coordinate coordinates, const string name) : m_city_id(city_id),
+                                                                           m_province(province),
+                                                                           m_population(population),
+                                                                           m_coordinates(coordinates),
+                                                                           m_name(name) {}
+
+    const unsigned int City::getId() const {
+        return m_city_id;
+    }
+
+    const unsigned int City::getProvince() const {
+        return m_province;
+    }
+
+    unsigned int City::getPopulation() const {
+        return m_population;
+    }
+
+    const Coordinate City::getCoordinates() const {
+        return m_coordinates;
+    }
+
+    const string City::getName() const {
+        return m_name;
+    }
+
+}//namespace geogen

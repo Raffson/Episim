@@ -7,15 +7,16 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <iostream>
 
+#include "popgen-Episim/GeoGen/CommunityTypes/Community.h"
 #include "boost/filesystem.hpp"
-#include "popgen-Episim/GeoGen/community_type/Community.h"
 #include "Household.h"
 #include "City.h"
 
 using namespace std;
 
-namespace geogrid {
+namespace geogen {
 
     /*
      * Class representing our GeoGrid;
@@ -59,14 +60,18 @@ namespace geogrid {
         // in map cities.
         unsigned int count_total_pop() const;
 
+
+    private:
+
         /// Contains schools, higher educations, workplaces, primary communities and secondary communities
-        vector<Community> communities;
+        vector<Community> m_communities;
 
         /// Contains all households for the GeoGrid
-        vector<Household> households;
+        vector<Household> m_households;
 
         /// Contains all cities for the GeoGrid
-        map<int, shared_ptr<City>> cities;
+        map<int, shared_ptr<City>> m_cities;
     };
-}//geogrid
+
+}//namespace geogen
 

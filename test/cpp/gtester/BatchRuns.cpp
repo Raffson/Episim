@@ -68,6 +68,8 @@ public:
                         pt_config.put("run.global_information_policy", "NoGlobalInformation");
                         pt_config.put("run.belief_policy.name", "NoBelief");
                         pt_config.put("run.behaviour_policy", "NoBehaviour");
+                        pt_config.put("run.use_install_dirs", true);
+                        pt_config.put("run.track_index_case", false);
                 }
                 return pt_config;
         }
@@ -81,7 +83,7 @@ public:
 
                 if (tag == "influenza_a") {
                         target = 2100U;
-			    margin = 0.10;
+			margin = 0.1;
                 }
                 if (tag == "influenza_b") {
                         pt.put("run.seeding_rate", 0.0);
@@ -132,7 +134,7 @@ TEST_P(BatchRuns, Run)
         // Scenario configuration and target number.
         // -----------------------------------------------------------------------------------------
         const auto d         = ScenarioData(test_tag);
-        const auto pt_config = get<0>(d);
+        auto       pt_config = get<0>(d);
         const auto target    = get<1>(d);
         const auto margin    = get<2>(d);
 
@@ -149,7 +151,9 @@ TEST_P(BatchRuns, Run)
         // -----------------------------------------------------------------------------------------
         cout << "Building the simulator. " << endl;
         cout << " ----> test_tag: " << test_tag << endl << " ----> threadcount:  " << num_threads << endl;
-        auto sim = SimulatorBuilder::Build(pt_config, num_threads);
+        pt_config.put("run.num_threads", num_threads);
+        SimulatorBuilder builder(pt_config);
+        const auto       sim = builder.Build();
         cout << "Done building the simulator" << endl;
 
         // -----------------------------------------------------------------------------------------
