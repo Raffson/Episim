@@ -13,7 +13,7 @@ namespace parser{
     std::map<int, std::shared_ptr<City>> parse_cities(const boost::filesystem::path& filename){
 
         std::map<int, std::shared_ptr<City>> result;
-        stride::util::CSV read_in(filename);
+        stride::util::CSV read_in(filename); //helper for reading CSV files
         for (auto &it : read_in) {
 
             unsigned int id = std::stoi(it.getValue(0));
