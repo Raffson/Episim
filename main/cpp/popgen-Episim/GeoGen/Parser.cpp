@@ -16,7 +16,7 @@ namespace parser{
 
         map<int, shared_ptr<City>> result;
         stride::util::CSV read_in(filename);
-        
+
         for (auto &it : read_in) {
 
             unsigned int id = (unsigned int)(stoi(it.getValue(0)));
