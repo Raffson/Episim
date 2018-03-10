@@ -93,7 +93,7 @@ set(LIB_SRC
 	viewers/CliViewer.cpp
 	viewers/PersonsViewer.cpp
 	viewers/SummaryViewer.cpp
-)
+        popgen-Episim/GeoGen/CommunityTypes/School.cpp popgen-Episim/GeoGen/CommunityTypes/School.h popgen-Episim/GeoGen/CommunityTypes/ContactPool.cpp popgen-Episim/GeoGen/CommunityTypes/ContactPool.h)
 
 #============================================================================
 # Build the Stride library.

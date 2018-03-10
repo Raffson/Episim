@@ -39,7 +39,12 @@ namespace geogen {
     void GeoGrid::generate_schools(const unsigned int pop_total, const float fract
             ,const unsigned int school_size) {
 
+        // Calculating extra data
+        // rounded because we don't have a fraction of a person
         auto amount_schooled = (const unsigned int) std::round(pop_total * fract);
+        // round because we do not build half a school
+        auto amount_of_schools = (const unsigned int) std::round(amount_schooled / school_size);
+        std::cout << amount_of_schools << std::endl;
 
     }
 
