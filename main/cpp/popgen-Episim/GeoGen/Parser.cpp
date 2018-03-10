@@ -16,11 +16,12 @@ namespace parser{
 
         map<int, shared_ptr<City>> result;
         stride::util::CSV read_in(filename);
+        
         for (auto &it : read_in) {
 
-            unsigned int id = stoi(it.getValue(0));
-            unsigned int province = stoi(it.getValue(1));
-            unsigned int population = stoi(it.getValue(2));
+            unsigned int id = (unsigned int)(stoi(it.getValue(0)));
+            unsigned int province = (unsigned int)(stoi(it.getValue(1)));
+            unsigned int population = (unsigned int)(stoi(it.getValue(2)));
             double x_coord = stof(it.getValue(3));
             double y_coord = stof(it.getValue(4));
             double longitude = stof(it.getValue(5));

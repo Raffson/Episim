@@ -25,6 +25,8 @@ namespace geogen {
         string read_file = p_tree.get("popgen.data_files.cities","geogen_default.xml");
         m_cities = parser::parse_cities(base_path.append(read_file));
 
+        std::cout << this->count_total_pop() << std::endl;
+
     }
 
     void GeoGrid::generate_schools(const unsigned int pop_total) {

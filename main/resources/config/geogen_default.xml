@@ -2,7 +2,7 @@
 <popgen>
 
     <data_files>
-        <cities>flanders_cities.csv"</cities>
+        <cities>flanders_cities.csv</cities>
     </data_files>
 
 </popgen>
