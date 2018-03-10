@@ -22,14 +22,24 @@ namespace geogen {
 
         //reading the cities data file
         boost::filesystem::path base_path = "data/";
-        string read_file = p_tree.get("popgen.data_files.cities","geogen_default.xml");
-        m_cities = parser::parse_cities(base_path.append(read_file));
+        string city_file = p_tree.get("popgen.data_files.cities","flanders_cities.csv");
+        m_cities = parser::parse_cities(base_path.append(city_file));
 
-        std::cout << this->count_total_pop() << std::endl;
+        //Generating schools
+        auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
+        //specs ask this to be read out of config, but could be calculated directly
+        //out of the city file?
+        auto schooled_fract = p_tree.get<float>("popgen.pop_info.fraction_schooled");
+        auto school_size = p_tree.get<unsigned int>("popgen.contactpool_info.school.size");
+        generate_schools(total_pop, schooled_fract, school_size);
+
 
     }
 
-    void GeoGrid::generate_schools(const unsigned int pop_total) {
+    void GeoGrid::generate_schools(const unsigned int pop_total, const float fract
+            ,const unsigned int school_size) {
+
+        auto amount_schooled = (const unsigned int) std::round(pop_total * fract);
 
     }
 
@@ -76,16 +86,6 @@ namespace geogen {
 
     }
 
-    void GeoGrid::generate_all() {
-
-        const unsigned int pop_total = count_total_pop();
-
-        generate_schools(pop_total);
-        generate_colleges();
-        generate_workplaces();
-        generate_communities();
-
-    }
 
     unsigned int GeoGrid::count_total_pop() const {
 

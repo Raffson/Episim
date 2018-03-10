@@ -18,7 +18,7 @@ using namespace std;
 
 namespace geogen {
 
-    /*
+    /**
      * Class representing our GeoGrid;
      * Geogrid contains information about the cities. placing of contactpools
      * (shools, workplaces...) within those cities. Will be used by popgen and
@@ -31,12 +31,15 @@ namespace geogen {
         GeoGrid() = default;
 
 
-        //Takes a filepath to city_config file.
-        //@param map: a path to a city file
-        explicit GeoGrid(const boost::filesystem::path& map);
+        /// Takes a filepath to city_config file.
+        /// @param map: a path to a gegogen config file. This file contains
+        ///             things like name of the city data file, information about
+        ///             the population...
+        explicit GeoGrid(const boost::filesystem::path& config);
 
-        // Generates the schools.
-        void generate_schools(unsigned int pop_total);
+        /// Generates the schools.
+        void generate_schools(unsigned int pop_total,
+                              float fract, unsigned int school_size);
 
         void generate_colleges();
 
@@ -49,8 +52,8 @@ namespace geogen {
 
     private:
 
-        // Counts the total population in th GeoGrid based on the cities
-        // in map cities.
+        /// Counts the total population in th GeoGrid based on the cities
+        /// in map cities.
         unsigned int count_total_pop() const;
 
 

@@ -13,4 +13,10 @@
         <fraction_active_workers>0.8</fraction_active_workers>
     </pop_info>
 
+    <contactpool_info>
+        <school>
+            <size>500</size>
+        </school>
+    </contactpool_info>
+
 </popgen>
