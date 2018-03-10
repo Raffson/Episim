@@ -7,5 +7,5 @@
 
 int main(int argc, char** argv)
 {
-    geogen::GeoGrid grid("data/flanders_cities.csv");
+    geogen::GeoGrid grid("config/geogen_default.xml");
 }

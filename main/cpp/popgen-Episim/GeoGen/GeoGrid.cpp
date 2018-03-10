@@ -2,21 +2,28 @@
 // Created by beau on 3/5/18.
 //
 
+#include "boost/property_tree/ptree.hpp"
+#include <boost/property_tree/xml_parser.hpp>
+
 #include "GeoGrid.h"
 #include "popgen-Episim/GeoGen/Parser.h"
+
+
 
 using namespace std;
 
 namespace geogen {
 
-    GeoGrid::GeoGrid(map<int, shared_ptr<City>> cities) : m_cities(move(cities)) {
+    GeoGrid::GeoGrid(const boost::filesystem::path & config_file) {
 
+        //Setting up property tree to parse xml config file
+        boost::property_tree::ptree p_tree;
+        boost::property_tree::read_xml(config_file.string(), p_tree);
 
-        generate_all();
-    }
-
-    GeoGrid::GeoGrid(const boost::filesystem::path &map) :
-            GeoGrid(parser::parse_cities(map)) {
+        //reading the cities data file
+        boost::filesystem::path base_path = "data/";
+        string read_file = p_tree.get("popgen.data_files.cities","geogen_default.xml");
+        m_cities = parser::parse_cities(base_path.append(read_file));
 
     }
 

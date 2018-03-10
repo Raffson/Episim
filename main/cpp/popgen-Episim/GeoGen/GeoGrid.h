@@ -30,16 +30,9 @@ namespace geogen {
 
         GeoGrid() = default;
 
-        /*
-         * Constructor GeoGRid.
-         * @param map of id city* pairs representing the cities in our geogrid
-         */
-        explicit GeoGrid( map<int, shared_ptr<City>> cities);
 
-        /*
-         * Takes a filepath to city_config file.
-         * @param map: a path to a city file
-         */
+        //Takes a filepath to city_config file.
+        //@param map: a path to a city file
         explicit GeoGrid(const boost::filesystem::path& map);
 
         // Generates the schools.
@@ -71,6 +64,7 @@ namespace geogen {
 
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities;
+
     };
 
 }//namespace geogen

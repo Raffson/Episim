@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<popgen>
+
+    <data_files>
+        <cities>flanders_cities.csv"</cities>
+    </data_files>
+
+</popgen>
