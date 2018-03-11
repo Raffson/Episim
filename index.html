@@ -212,7 +212,7 @@
     </div>
 
 
-        <div class="section-lg text-muted">
+    <div class="section-lg text-muted">
         <div class="container">
             <div class="custom-header">Assignment 2</div>
             <div class="text-center">
@@ -400,6 +400,43 @@
                         configuration) regardless of the random engine. The same can be said about the number of threads used,
                         i.e. no matter how many threads we use, the results stay roughly the same. For more details, refer to
                         the report and/or the zip file.
+                    </p>
+	            </div>
+            </div>
+        </div>
+    </div>
+    <div class="section-w">
+        <div class="container">
+            <div class="custom-header">Test plan GeoGen</div>
+            <div class="text-center">
+	            <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#testplan1">Solution</button>
+            </div>
+		    <br/> <br/>
+	        <div id="testplan1" class="collapse">
+		        <div class="custom-container text-muted">
+		            <div class="custom-title">
+		                What was delivered by EpiSim?
+		            </div>
+		            <p class="custom-pgraph">
+                        Since most of the classes present in 'main/cpp/popgen-Episim/GeoGen' are trivial, we decided to
+                        only test the 'GeoGrid' class. We divided the work as follows:
+                    </p>
+                    <ul class="custom-pgraph" style="margin-left: 5rem">
+                        <li>GeoGrid::generate_schools : Robbe Heirman</li>
+                        <li>GeoGrid::generate_colleges : Raphael Assa</li>
+                        <li>GeoGrid::generate_communities : Beau De Clerq</li>
+                        <li>GeoGrid::generate_workplaces : Nishchal Shrestha</li>
+                    </ul>
+                    <p class="custom-pgraph">
+                        The test plan for these functions can be found in
+                        <a href="assignments/GeoGen/Testplan.pdf" target="_blank">this pdf file</a>.
+                        Each test plan was written by the person assigned to the respective function. The actual tests are
+                        yet to written, however at this point the code for GeoGen is partially done. In the upcoming week
+                        (11/03 - 18/03) we will continue working on the code for GeoGen as well as writing the tests, thus
+                        we expect the alpha version of GeoGen to be on schedule. <br> <br>
+                        NOTE: Due to unforseen circumstances Robbe's test plan is not present yet, however this will be
+                        included as soon as possible. Expect the test plan to be online within 24 hours,
+                        i.e. before March 12 @ 2300 UTC.
                     </p>
 	            </div>
             </div>
