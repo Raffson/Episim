@@ -1,12 +1,17 @@
 //
 // Created by beau on 3/5/18.
 //
+#include "math.h"
+
+#include <random>
 
 #include "boost/property_tree/ptree.hpp"
 #include <boost/property_tree/xml_parser.hpp>
 
+
 #include "GeoGrid.h"
 #include "popgen-Episim/GeoGen/Parser.h"
+#include "popgen-Episim/GeoGen/CommunityTypes/School.h"
 
 
 
@@ -44,7 +49,30 @@ namespace geogen {
         auto amount_schooled = (const unsigned int) std::round(pop_total * fract);
         // round because we do not build half a school
         auto amount_of_schools = (const unsigned int) std::round(amount_schooled / school_size);
-        std::cout << amount_of_schools << std::endl;
+
+
+        // Setting up to divide the schools to cities
+        std::vector<unsigned int> pop_id; //We will push the id's of the cities for each pop member.
+        for(auto &it: m_cities){
+            auto c_schooled_pop = (unsigned int) std::round(it.second->getPopulation() * fract);
+            pop_id.insert(pop_id.end(), c_schooled_pop, (const unsigned int &) it.first);
+        }
+        //Note that this way cuz of rounding we lose a couple of schooled ppl.
+        //But this shouldn't affect our city divison.
+
+
+        random_device rand_dev;
+        mt19937 gen (rand_dev()); //TODO need to remember state of this prob should be selectable.
+        uniform_int_distribution<int>  distr(0, pop_id.size() - 1);
+
+        for(unsigned int i = 0; i < amount_of_schools; i++){
+
+            shared_ptr<School> nw_school(new School(school_size));
+            int index = pop_id[distr(gen)];
+            shared_ptr<City> chosen_city = m_cities[index];
+            chosen_city->addSchool(nw_school);
+        }
+
 
     }
 

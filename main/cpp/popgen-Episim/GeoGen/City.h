@@ -17,8 +17,11 @@
 #include <string>
 #include <utility>
 #include <cstddef>
+#include <vector>
+#include <memory>
 
 #include "popgen-Episim/GeoGen/Coordinate.h"
+#include "popgen-Episim/GeoGen/CommunityTypes/School.h"
 
 using namespace std;
 
@@ -39,6 +42,10 @@ namespace geogen {
 
         const string getName() const;
 
+        /// Adds a school to the city.
+        /// @param school A school smart_ptr to the school to be added.
+        void addSchool(shared_ptr<School> school );
+
 
     private:
 
@@ -56,6 +63,9 @@ namespace geogen {
 
         /// Name of the city.
         const string m_name;
+
+        /// vec of schools
+        vector<shared_ptr<School>> m_schools;
     };
 
 }//namespace geogen

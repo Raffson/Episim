@@ -46,4 +46,9 @@ namespace geogen {
         return m_name;
     }
 
+    void City::addSchool(shared_ptr<School> school) {
+
+        m_schools.push_back(school);
+    }
+
 }//namespace geogen
