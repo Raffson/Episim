@@ -1,17 +1,16 @@
 //
 // Created by beau on 3/5/18.
 //
-#include "math.h"
-
+#include <cmath>
 #include <random>
 
 #include "boost/property_tree/ptree.hpp"
-#include <boost/property_tree/xml_parser.hpp>
+#include "boost/property_tree/xml_parser.hpp"
 
 
 #include "GeoGrid.h"
 #include "popgen-Episim/GeoGen/Parser.h"
-#include "popgen-Episim/GeoGen/CommunityTypes/School.h"
+
 
 
 
@@ -61,10 +60,12 @@ namespace geogen {
         //But this shouldn't affect our city divison.
 
 
+        //Setting up random engine, TODO refactor to somewhere global
         random_device rand_dev;
         mt19937 gen (rand_dev()); //TODO need to remember state of this prob should be selectable.
-        uniform_int_distribution<int>  distr(0, pop_id.size() - 1);
+        uniform_int_distribution<int>  distr(0, (unsigned int) pop_id.size() - 1);
 
+        // assign schools to cities according to our normal distribution
         for(unsigned int i = 0; i < amount_of_schools; i++){
 
             shared_ptr<School> nw_school(new School(school_size));
