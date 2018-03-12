@@ -48,15 +48,15 @@ namespace geogen {
 
         // Calculating extra data
         // rounded because we don't have a fraction of a person
-        auto amount_schooled = (const unsigned int) std::round(m_total_pop * m_schooled_frac);
+        auto amount_schooled = (const unsigned int) round(m_total_pop * m_schooled_frac);
         // round because we do not build half a school
-        auto amount_of_schools = (const unsigned int) std::round(amount_schooled / m_school_size);
+        auto amount_of_schools = (const unsigned int) round(amount_schooled / m_school_size);
 
 
         // Setting up to divide the schools to cities
-        std::vector<unsigned int> pop_id; //We will push the id's of the cities for each pop member.
+        vector<unsigned int> pop_id; //We will push the id's of the cities for each pop member.
         for(auto &it: m_cities){
-            auto c_schooled_pop = (unsigned int) std::round(it.second->getPopulation() * m_schooled_frac);
+            auto c_schooled_pop = (unsigned int) round(it.second->getPopulation() * m_schooled_frac);
             pop_id.insert(pop_id.end(), c_schooled_pop, (const unsigned int &) it.first);
         }
         //Note that this way cuz of rounding we lose a couple of schooled ppl.
@@ -104,12 +104,22 @@ namespace geogen {
             adjustLargestCities(lc, it.second, maxlc);
         }
 
-        //just checking which cities we found...
-        for (auto &it : lc) {
-            cout << it->getId() << "   " << it->getPopulation() << "   " << it->getName() << endl;
-        }
-
         //generate colleges to the respective cities...
+        for (auto &it : lc) {
+            //just checking which cities we found...
+            //cout << it->getId() << "   " << it->getPopulation() << "   " << it->getName() << endl;
+
+            //so let's go...
+            double students = it->getPopulation()*m_student_frac;
+            //doesn't matter if students it's a double at this time
+            // since this is only an estimate for the number of colleges
+            unsigned int nrcolleges =  round(students / m_college_size);
+            cout << students << " students,   " << nrcolleges << " colleges for " << it->getName() << endl;
+            //now do we create a college and add it to the city's vector of colleges?
+            //or do we create a college that references the city's  id?
+            //need to discuss this with group to maintain a consistent way of working
+            //at this point Robbe decided to the the first while Beau opted for the latter...
+        }
     }
 
     void GeoGrid::generate_workplaces() {
@@ -120,11 +130,10 @@ namespace geogen {
         vector<shared_ptr<PrimSec>> primsec_communities;
         /// Communities need to be distributed according to the relative population size.
         /// First we need to determine the total number of communities to be used.
-        auto total_pop = count_total_pop();
-        auto total_communities = ceil(total_pop/2000);
+        auto total_communities = ceil(m_total_pop/2000);
         for (auto it : m_cities){
             shared_ptr<City> city = it.second;
-            auto ratio = city->getPopulation()/total_pop;
+            auto ratio = city->getPopulation()/m_total_pop;
             /// Now we have the ratio, we know that the city has ratio % of all communities.
             auto city_communities = (total_communities*ratio)/100;
             for (int i = 0; i < city_communities; i++){
