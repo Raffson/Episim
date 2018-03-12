@@ -85,6 +85,7 @@ To use the cmake command line:
         generates Makefiles, defining the install directory macro
     "make all; make install; make test"
         builds, installs and tests everything
+
 If you want a different build type e.g. Debug, then in the third step you have
 to define the CMAKE_BUILD_TYPE. To include documentation in the build or install,
 you need to set the macro -DSTRIDE_INCLUDE_DOC=TRUE in the third step or in
