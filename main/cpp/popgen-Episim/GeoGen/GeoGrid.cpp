@@ -120,8 +120,8 @@ namespace geogen {
         vector<shared_ptr<PrimSec>> primsec_communities;
         /// Communities need to be distributed according to the relative population size.
         /// First we need to determine the total number of communities to be used.
-        auto total_pop = count_total_pop();
-        auto total_communities = ceil(total_pop/2000);
+        auto total_pop = m_total_pop;
+        auto total_communities = ceil(total_pop/2000.0);
         for (auto it : m_cities){
             shared_ptr<City> city = it.second;
             auto ratio = city->getPopulation()/total_pop;
