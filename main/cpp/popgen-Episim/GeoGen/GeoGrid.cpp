@@ -10,8 +10,7 @@
 
 #include "GeoGrid.h"
 #include "popgen-Episim/GeoGen/Parser.h"
-
-
+#include <popgen-Episim/GeoGen/CommunityTypes/PrimSec.h>
 
 
 using namespace std;
@@ -85,8 +84,8 @@ namespace geogen {
         return smallest;
     }
 
-    void adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city) {
-        if (lc.size() < 10) lc.push_back(city);
+    void adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city, unsigned int maxlc) {
+        if (lc.size() < maxlc) lc.push_back(city);
         else {
             unsigned int citpop = city->getPopulation();
             unsigned int smallest = findSmallest(lc);
@@ -94,11 +93,11 @@ namespace geogen {
         }
     }
 
-    void GeoGrid::generate_colleges() {
+    void GeoGrid::generate_colleges(unsigned int maxlc) {
         //need 10 largest cities, largest determined by number of people in the city...
         vector <shared_ptr<City>> lc;
         for (auto &it : m_cities) {
-            adjustLargestCities(lc, it.second);
+            adjustLargestCities(lc, it.second, maxlc);
         }
 
         //just checking which cities we found...
@@ -117,7 +116,23 @@ namespace geogen {
     }
 
     void GeoGrid::generate_communities() {
-
+        vector<shared_ptr<PrimSec>> primsec_communities;
+        /// Communities need to be distributed according to the relative population size.
+        /// First we need to determine the total number of communities to be used.
+        auto total_pop = count_total_pop();
+        auto total_communities = ceil(total_pop/2000);
+        for (auto it : m_cities){
+            shared_ptr<City> city = it.second;
+            auto ratio = city->getPopulation()/total_pop;
+            /// Now we have the ratio, we know that the city has ratio % of all communities.
+            auto city_communities = (total_communities*ratio)/100;
+            for (int i = 0; i < city_communities; i++){
+                shared_ptr<PrimSec> primsec = make_shared<PrimSec>();
+                primsec->setCity(city);
+                primsec_communities.push_back(primsec);
+            }
+        }
+        /// TODO: determine if community is primary or secundary.
     }
 
 

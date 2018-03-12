@@ -41,7 +41,7 @@ namespace geogen {
         void generate_schools(unsigned int pop_total,
                               float fract, unsigned int school_size);
 
-        void generate_colleges();
+        void generate_colleges(unsigned int maxlc = 10);
 
         void generate_workplaces();
 
