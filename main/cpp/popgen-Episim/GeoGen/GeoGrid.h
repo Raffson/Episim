@@ -9,7 +9,6 @@
 #include <memory>
 #include <iostream>
 
-#include "popgen-Episim/GeoGen/CommunityTypes/Community.h"
 #include "boost/filesystem.hpp"
 #include "Household.h"
 #include "City.h"
@@ -38,8 +37,7 @@ namespace geogen {
         explicit GeoGrid(const boost::filesystem::path& config);
 
         /// Generates the schools.
-        void generate_schools(unsigned int pop_total,
-                              float fract, unsigned int school_size);
+        void generate_schools();
 
         void generate_colleges(unsigned int maxlc = 10);
 
@@ -59,14 +57,26 @@ namespace geogen {
 
     private:
 
-        /// Contains schools, higher educations, workplaces, primary communities and secondary communities
-        vector<Community> m_communities;
-
-        /// Contains all households for the GeoGrid
+        /// Contains all households for the GeoGrid -> perhaps move this into City?
         vector<Household> m_households;
 
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities;
+
+        /// Total population of simulation area
+        unsigned int m_total_pop;
+
+        /// Fraction of population that goes to school
+        float m_schooled_frac;
+
+        /// Average size of each school
+        unsigned int m_school_size;
+
+        /// Fraction of population that are students
+        float m_student_frac;
+
+        /// Average size of each college
+        unsigned int m_college_size;
 
     };
 

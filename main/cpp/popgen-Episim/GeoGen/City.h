@@ -22,6 +22,7 @@
 
 #include "popgen-Episim/GeoGen/Coordinate.h"
 #include "popgen-Episim/GeoGen/CommunityTypes/School.h"
+#include "popgen-Episim/GeoGen/CommunityTypes/College.h"
 
 using namespace std;
 
@@ -64,8 +65,11 @@ namespace geogen {
         /// Name of the city.
         const string m_name;
 
-        /// vec of schools
+        /// Vector of schools
         vector<shared_ptr<School>> m_schools;
+
+        /// Vector of colleges
+        vector<shared_ptr<College>> m_colleges;
     };
 
 }//namespace geogen

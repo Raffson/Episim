@@ -29,30 +29,34 @@ namespace geogen {
         m_cities = parser::parse_cities(base_path.append(city_file));
 
         //Generating schools
-        auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
+        //auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
         //specs ask this to be read out of config, but could be calculated directly
         //out of the city file?
-        auto schooled_fract = p_tree.get<float>("popgen.pop_info.fraction_schooled");
-        auto school_size = p_tree.get<unsigned int>("popgen.contactpool_info.school.size");
-        generate_schools(total_pop, schooled_fract, school_size);
+        // -> you're right... so let's do it like this:
+        m_total_pop = count_total_pop();
 
+        m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
+        m_school_size = p_tree.get<unsigned int>("popgen.contactpool_info.school.size");
+        generate_schools();
 
+        m_student_frac = p_tree.get<float>("popgen.pop_info.fraction_student");
+        m_college_size =  p_tree.get<unsigned int>("popgen.contactpool_info.college.size");
+        generate_colleges();
     }
 
-    void GeoGrid::generate_schools(const unsigned int pop_total, const float fract
-            ,const unsigned int school_size) {
+    void GeoGrid::generate_schools() {
 
         // Calculating extra data
         // rounded because we don't have a fraction of a person
-        auto amount_schooled = (const unsigned int) std::round(pop_total * fract);
+        auto amount_schooled = (const unsigned int) std::round(m_total_pop * m_schooled_frac);
         // round because we do not build half a school
-        auto amount_of_schools = (const unsigned int) std::round(amount_schooled / school_size);
+        auto amount_of_schools = (const unsigned int) std::round(amount_schooled / m_school_size);
 
 
         // Setting up to divide the schools to cities
         std::vector<unsigned int> pop_id; //We will push the id's of the cities for each pop member.
         for(auto &it: m_cities){
-            auto c_schooled_pop = (unsigned int) std::round(it.second->getPopulation() * fract);
+            auto c_schooled_pop = (unsigned int) std::round(it.second->getPopulation() * m_schooled_frac);
             pop_id.insert(pop_id.end(), c_schooled_pop, (const unsigned int &) it.first);
         }
         //Note that this way cuz of rounding we lose a couple of schooled ppl.
@@ -67,7 +71,7 @@ namespace geogen {
         // assign schools to cities according to our normal distribution
         for(unsigned int i = 0; i < amount_of_schools; i++){
 
-            shared_ptr<School> nw_school(new School(school_size));
+            shared_ptr<School> nw_school(new School(m_school_size));
             int index = pop_id[distr(gen)];
             shared_ptr<City> chosen_city = m_cities[index];
             chosen_city->addSchool(nw_school);
@@ -105,10 +109,7 @@ namespace geogen {
             cout << it->getId() << "   " << it->getPopulation() << "   " << it->getName() << endl;
         }
 
-        //now we need to generate colleges for each of these cities,
-        // each college should have room for about 3000 (=average) students...
-        // assigning students to colleges is not for now (yet),
-        // so what do we need to do here, generate communities & add them to m_communities?
+        //generate colleges to the respective cities...
     }
 
     void GeoGrid::generate_workplaces() {
