@@ -11,6 +11,8 @@
 
 namespace geogen {
 
+    using Persons = std::vector<std::shared_ptr<Person>>;
+
     enum Type{
         primary,
         secundary
@@ -21,7 +23,11 @@ namespace geogen {
         PrimSec(){};
         void setType(Type t);
         void setCity(std::shared_ptr<City> c);
-        bool addMember(std::shared_ptr<Person> p);
+        void addMember(std::shared_ptr<Person> p);
+        std::size_t getNumberMembers(){ return members.size(); }
+        std::shared_ptr<City> getCity(){ return city; }
+        Type getType(){ return type; }
+        Persons getMembers(){ return members; }
 
     private:
         /// Primary or secundary community.
@@ -31,7 +37,7 @@ namespace geogen {
         std::shared_ptr<City> city;
 
         /// Members of the community.
-        std::vector<std::shared_ptr<Person>> members;
+        Persons members;
     };
 }
 

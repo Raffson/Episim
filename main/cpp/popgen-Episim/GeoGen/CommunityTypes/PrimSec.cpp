@@ -14,10 +14,6 @@ void PrimSec::setCity(shared_ptr<City> c) {
     city = c;
 }
 
-bool PrimSec::addMember(shared_ptr<Person> p) {
-    if (members.size() < 2000){
-        members.push_back(p);
-        return true;
-    }
-    return false;
+void PrimSec::addMember(shared_ptr<Person> p) {
+    members.push_back(p);
 }
