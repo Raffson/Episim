@@ -78,6 +78,9 @@ namespace geogen {
         /// Average size of each college
         unsigned int m_college_size;
 
+        /// Primary/Secundary community limit
+        unsigned int m_community_size_limit;
+
     };
 
 }//namespace geogen

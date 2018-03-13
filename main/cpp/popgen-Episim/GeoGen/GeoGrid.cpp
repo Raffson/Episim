@@ -42,6 +42,9 @@ namespace geogen {
         m_student_frac = p_tree.get<float>("popgen.pop_info.fraction_student");
         m_college_size =  p_tree.get<unsigned int>("popgen.contactpool_info.college.size");
         generate_colleges();
+
+        m_community_size_limit = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
+        generate_communities();
     }
 
     void GeoGrid::generate_schools() {
@@ -130,7 +133,7 @@ namespace geogen {
         vector<shared_ptr<PrimSec>> primsec_communities;
         /// Communities need to be distributed according to the relative population size.
         /// First we need to determine the total number of communities to be used.
-        auto total_communities = ceil(m_total_pop/2000.0);
+        auto total_communities = ceil(m_total_pop/m_community_size_limit);
         for (auto it : m_cities){
             shared_ptr<City> city = it.second;
             auto ratio = city->getPopulation()/m_total_pop;
