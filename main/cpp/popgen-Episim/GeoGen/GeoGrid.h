@@ -8,10 +8,18 @@
 #include <map>
 #include <memory>
 #include <iostream>
+#include <cmath>
+#include <random>
 
 #include "boost/filesystem.hpp"
-#include "Household.h"
-#include "City.h"
+#include "boost/property_tree/ptree.hpp"
+#include "boost/property_tree/xml_parser.hpp"
+
+#include "popgen-Episim/GeoGen/Household.h"
+#include "popgen-Episim/GeoGen/City.h"
+#include "popgen-Episim/GeoGen/Parser.h"
+#include "popgen-Episim/GeoGen/Community.h"
+
 
 using namespace std;
 
@@ -62,6 +70,11 @@ namespace geogen {
 
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities;
+
+        /// Keep a map of all communities?
+        /// -> will put everything in place in comments,
+        ///     if we need it, just uncomment it...
+        ///map<unsigned int, shared_ptr<Community>> m_communities;
 
         /// Total population of simulation area
         unsigned int m_total_pop;

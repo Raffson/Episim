@@ -21,12 +21,15 @@
 #include <memory>
 
 #include "popgen-Episim/GeoGen/Coordinate.h"
-#include "popgen-Episim/GeoGen/CommunityTypes/School.h"
-#include "popgen-Episim/GeoGen/CommunityTypes/College.h"
 
 using namespace std;
 
 namespace geogen {
+
+    /// Forward declaration to avoid problems with includes...
+    class Community;
+    enum class CommunityType;
+
     class City {
     public:
 
@@ -43,9 +46,8 @@ namespace geogen {
 
         const string getName() const;
 
-        /// Adds a school to the city.
-        /// @param school A school smart_ptr to the school to be added.
-        void addSchool(shared_ptr<School> school );
+        /// Adds community to the city.
+        void addCommunity(shared_ptr<Community> community);
 
 
     private:
@@ -66,10 +68,7 @@ namespace geogen {
         const string m_name;
 
         /// Vector of schools
-        vector<shared_ptr<School>> m_schools;
-
-        /// Vector of colleges
-        vector<shared_ptr<College>> m_colleges;
+        vector<shared_ptr<Community>> m_communities;
     };
 
 }//namespace geogen

@@ -83,13 +83,13 @@ set(LIB_SRC
 	popgen-Episim/main.cpp
 	popgen-Episim/GeoGen/Coordinate.cpp
 	popgen-Episim/GeoGen/GeoGrid.cpp
-    #popgen-Episim/GeoGen/CommunityTypes/Community.cpp
+    popgen-Episim/GeoGen/Community.cpp
 	popgen-Episim/GeoGen/Household.cpp
 	popgen-Episim/GeoGen/City.cpp
 	popgen-Episim/GeoGen/Parser.cpp
-	popgen-Episim/GeoGen/CommunityTypes/School.cpp
-	popgen-Episim/GeoGen/CommunityTypes/ContactPool.cpp
-	popgen-Episim/GeoGen/CommunityTypes/PrimSec.cpp
+	#popgen-Episim/GeoGen/CommunityTypes/School.cpp
+	#popgen-Episim/GeoGen/CommunityTypes/ContactPool.cpp
+	#popgen-Episim/GeoGen/CommunityTypes/PrimSec.cpp
 #---
 	viewers/AdoptedViewer.cpp
 	viewers/CasesViewer.cpp
