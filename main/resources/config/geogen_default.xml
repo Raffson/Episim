@@ -20,6 +20,9 @@
 	<college>
 		<size>3000</size>
 	</college>
+	<community>
+		<size>2000</size>
+	</community>
     </contactpool_info>
 
 </popgen>
