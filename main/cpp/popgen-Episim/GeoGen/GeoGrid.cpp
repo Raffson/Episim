@@ -114,6 +114,7 @@ namespace geogen {
             //or do we create a college that references the city's  id?
             //need to discuss this with group to maintain a consistent way of working
             //at this point Robbe decided to the the first while Beau opted for the latter...
+            //-> we need both!
         }
     }
 
