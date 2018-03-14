@@ -3,26 +3,38 @@
 
     <data_files>
         <cities>flanders_cities.csv</cities>
+        <!-- <commuting>flanders_commuting.csv</commuting> -->
+        <commuting>test_commuting.csv</commuting>
+
     </data_files>
 
     <pop_info>
         <pop_total>4341923</pop_total>
         <fraction_schooled>0.2</fraction_schooled>
         <fraction_student>0.3</fraction_student>
+        <fraction_worker>0.35</fraction_worker>
+
+        <!-- fraction of people over 64 years-->
+        <fraction_old>0.1</fraction_old>
         <!-- fraction that is student of pop age range 18-26 -->
         <fraction_active_workers>0.5</fraction_active_workers>
+        <!-- from the active population those who commute-->
+        <fraction_commuting_workers>0.5</fraction_commuting_workers>
     </pop_info>
 
     <contactpool_info>
         <school>
             <size>500</size>
         </school>
-	<college>
-		<size>3000</size>
-	</college>
-	<community>
-		<size>2000</size>
-	</community>
+        <college>
+            <size>3000</size>
+        </college>
+        <community>
+            <size>2000</size>
+        </community>
+        <workplace>
+            <size>20</size>
+        </workplace>
     </contactpool_info>
 
 </popgen>

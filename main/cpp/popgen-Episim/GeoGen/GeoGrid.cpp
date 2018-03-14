@@ -20,6 +20,9 @@ namespace geogen {
         string city_file = p_tree.get("popgen.data_files.cities","flanders_cities.csv");
         m_cities = parser::parse_cities(base_path.append(city_file));
 
+
+        m_commuting = parser::parse_commuting("data/flanders_commuting.csv");
+
         //Generating schools
         //auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
         //specs ask this to be read out of config, but could be calculated directly
@@ -37,6 +40,11 @@ namespace geogen {
 
         m_community_size_limit = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
         generate_communities();
+
+        m_active_frac = p_tree.get<float>("popgen.pop_info.fraction_worker");
+        m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
+
+        generate_workplaces();
     }
 
     void GeoGrid::generate_schools() {
@@ -119,6 +127,13 @@ namespace geogen {
     }
 
     void GeoGrid::generate_workplaces() {
+        //calculating the required informations
+        double working_population = m_active_frac * m_total_pop;
+        double number_of_workplaces = working_population/m_worksplace_size;
+
+        //dividing workplaces to cities
+        for (auto it:m_cities){
+        }
 
     }
 

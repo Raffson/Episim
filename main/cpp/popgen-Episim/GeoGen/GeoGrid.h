@@ -71,6 +71,9 @@ namespace geogen {
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities;
 
+        /// Contains information about number of commuters from a city to a city
+        map<pair<unsigned int, unsigned int>, unsigned int> m_commuting;
+
         /// Keep a map of all communities?
         /// -> will put everything in place in comments,
         ///     if we need it, just uncomment it...
@@ -93,6 +96,12 @@ namespace geogen {
 
         /// Primary/Secundary community limit
         unsigned int m_community_size_limit;
+
+        /// Average size of each workplaces
+        unsigned int m_worksplace_size;
+
+        ///Total population that is active(works)
+        unsigned int m_active_frac;
 
     };
 
