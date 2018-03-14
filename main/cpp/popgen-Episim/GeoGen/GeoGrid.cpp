@@ -29,13 +29,18 @@ namespace geogen {
 
         m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
         m_school_size = p_tree.get<unsigned int>("popgen.contactpool_info.school.size");
-        generate_schools();
 
         m_student_frac = p_tree.get<float>("popgen.pop_info.fraction_student");
         m_college_size =  p_tree.get<unsigned int>("popgen.contactpool_info.college.size");
-        generate_colleges();
+        m_maxlc = p_tree.get<unsigned int>("popgen.contactpool_info.college.cities");
 
         m_community_size_limit = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
+    }
+
+    void GeoGrid::generate_all() {
+        generate_schools();
+        generate_colleges();
+        generate_workplaces();
         generate_communities();
     }
 
@@ -70,12 +75,13 @@ namespace geogen {
             shared_ptr<City> chosen_city = m_cities[index];
             shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
             chosen_city->addCommunity(nw_school);
+            //m_communities[nw_school->getID()] = nw_school
         }
 
 
     }
 
-    unsigned int findSmallest(const vector <shared_ptr<City>> &lc) {
+    unsigned int GeoGrid::findSmallest(const vector <shared_ptr<City>> &lc) {
         unsigned int smallest = 0;
         for (unsigned int i = 1; i < lc.size(); i++) {
             if (lc[smallest]->getPopulation() > lc[i]->getPopulation()) smallest = i;
@@ -83,8 +89,8 @@ namespace geogen {
         return smallest;
     }
 
-    void adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city, unsigned int maxlc) {
-        if (lc.size() < maxlc) lc.push_back(city);
+    void GeoGrid::adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city) {
+        if (lc.size() < m_maxlc) lc.push_back(city);
         else {
             unsigned int citpop = city->getPopulation();
             unsigned int smallest = findSmallest(lc);
@@ -92,11 +98,11 @@ namespace geogen {
         }
     }
 
-    void GeoGrid::generate_colleges(unsigned int maxlc) {
+    void GeoGrid::generate_colleges() {
         //need 10 largest cities, largest determined by number of people in the city...
         vector <shared_ptr<City>> lc;
         for (auto &it : m_cities) {
-            adjustLargestCities(lc, it.second, maxlc);
+            adjustLargestCities(lc, it.second);
         }
 
         //generate colleges to the respective cities...
@@ -106,15 +112,18 @@ namespace geogen {
 
             //so let's go...
             double students = it->getPopulation()*m_student_frac;
-            //doesn't matter if students it's a double at this time
+            //doesn't matter if students is a double at this time
             // since this is only an estimate for the number of colleges
             unsigned int nrcolleges =  round(students / m_college_size);
-            cout << students << " students,   " << nrcolleges << " colleges for " << it->getName() << endl;
-            //now do we create a college and add it to the city's vector of colleges?
-            //or do we create a college that references the city's  id?
-            //need to discuss this with group to maintain a consistent way of working
-            //at this point Robbe decided to the the first while Beau opted for the latter...
-            //-> we need both!
+            //is this how we need to calculate the nr of colleges?
+            // or did i not understand it properly?
+            //cout << students << " students,   " << nrcolleges << " colleges for " << it->getName() << endl;
+
+            for(unsigned int i = 0; i < nrcolleges; i++) {
+                shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
+                it->addCommunity( college );
+                //m_communities[college->getID()] = college
+            }
         }
     }
 
@@ -136,6 +145,7 @@ namespace geogen {
                 /// used primary communities atm since i have no clue what this has to be...
                 shared_ptr<Community> community = make_shared<Community>(CommunityType::Primary, city);
                 city->addCommunity(community);
+                //m_communities[community->getID()] = community
             }
         }
         /// TODO: determine if community is primary or secundary.

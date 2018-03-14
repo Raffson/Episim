@@ -19,6 +19,7 @@
         </school>
 	<college>
 		<size>3000</size>
+		<cities>10</cities>
 	</college>
 	<community>
 		<size>2000</size>

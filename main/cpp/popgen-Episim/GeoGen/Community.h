@@ -28,7 +28,7 @@ namespace geogen {
     enum class CommunityType
     {
         School,
-        University,
+        College,
         Work,
         Primary,
         Secondary,

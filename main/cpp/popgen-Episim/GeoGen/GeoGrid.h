@@ -47,7 +47,7 @@ namespace geogen {
         /// Generates the schools.
         void generate_schools();
 
-        void generate_colleges(unsigned int maxlc = 10);
+        void generate_colleges();
 
         void generate_workplaces();
 
@@ -57,6 +57,14 @@ namespace geogen {
 
 
     private:
+
+        ///Returns index of city with smallest population from 'lc'
+        /// used by adjustLargestCities(lc, city)
+        unsigned int findSmallest(const vector <shared_ptr<City>> &lc);
+
+        ///Adjusts 'lc' iff 'city' has more people than the city with the smallest population in 'lc'
+        /// used by generate_colleges()
+        void adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city);
 
         /// Counts the total population in th GeoGrid based on the cities
         /// in map cities.
@@ -76,24 +84,29 @@ namespace geogen {
         ///     if we need it, just uncomment it...
         ///map<unsigned int, shared_ptr<Community>> m_communities;
 
-        /// Total population of simulation area
+        /// Total population of simulation area -> make this const?
         unsigned int m_total_pop;
 
-        /// Fraction of population that goes to school
+        /// Fraction of population that goes to school -> make this const?
         float m_schooled_frac;
 
-        /// Average size of each school
+        /// Average size of each school -> make this const?
         unsigned int m_school_size;
 
-        /// Fraction of population that are students
+        /// Fraction of population that are students -> make this const?
         float m_student_frac;
 
-        /// Average size of each college
+        /// Average size of each college -> make this const?
         unsigned int m_college_size;
 
-        /// Primary/Secundary community limit
+        /// Maximum nr of "largest cities" -> make this const?
+        unsigned int m_maxlc;
+
+        /// Primary/Secundary community limit -> make this const?
         unsigned int m_community_size_limit;
 
+        ///making these members const requires reworking the constructor,
+        /// or hack our way around the initialisation...
     };
 
 }//namespace geogen
