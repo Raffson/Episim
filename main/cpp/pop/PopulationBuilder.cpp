@@ -19,13 +19,14 @@
  */
 
 #include "PopulationBuilder.h"
-#include "util/InstallDirs.h"
+#include "util/FileSys.h"
 #include "util/PtreeUtils.h"
 #include "util/StringUtils.h"
 
 #include <trng/uniform01_dist.hpp>
 #include <trng/uniform_int_dist.hpp>
 #include <spdlog/spdlog.h>
+#include <cassert>
 
 namespace stride {
 
@@ -70,9 +71,9 @@ std::shared_ptr<Population> PopulationBuilder::Build(const ptree& pt_config, con
         //------------------------------------------------
         // Add persons to population.
         //------------------------------------------------
-        const auto file_name = pt_config.get<string>("run.population_file");
-
-        const auto file_path = InstallDirs().GetDataDir() /= file_name;
+        const auto file_name        = pt_config.get<string>("run.population_file");
+        const auto use_install_dirs = pt_config.get<bool>("run.use_install_dirs");
+        const auto file_path        = (use_install_dirs) ? FileSys().GetDataDir() /= file_name : file_name;
         if (!is_regular_file(file_path)) {
                 throw runtime_error(string(__func__) + "> Population file " + file_path.string() + " not present.");
         }
@@ -121,7 +122,7 @@ std::shared_ptr<Population> PopulationBuilder::Build(const ptree& pt_config, con
 
                 population.CreatePerson(person_id, age, household_id, school_id, work_id, primary_community_id,
                                         secondary_community_id, start_infectiousness, start_symptomatic,
-                                        time_infectious, time_symptomatic, risk_averseness, pt_belief);
+                                        time_infectious, time_symptomatic, pt_belief, risk_averseness);
 
                 ++person_id;
         }
@@ -167,14 +168,14 @@ std::shared_ptr<Population> PopulationBuilder::Build(const ptree& pt_config, con
 /// Sample from the distribution
 unsigned int PopulationBuilder::Sample(std::function<double()>& rn_generator, const std::vector<double>& distribution)
 {
+        assert((abs(distribution.back() -1.0) < 1.e-10) && "PopulationBUilder::Sample> Error in distribution!");
         const auto random01 = rn_generator();
-        auto       j        = static_cast<unsigned int>(distribution.size());
         for (unsigned int i = 0; i < distribution.size(); i++) {
                 if (random01 <= distribution[i]) {
-                        j = i;
+                        return i;
                 }
         }
-        return j;
+        return static_cast<unsigned int>(distribution.size());
 }
 
 } // namespace stride

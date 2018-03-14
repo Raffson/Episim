@@ -23,54 +23,59 @@ set(LIB_SRC
     calendar/Calendar.cpp
 #---
 	core/ContactPool.cpp
-    core/ContactPoolType.cpp
-    core/ContactProfile.cpp
-    core/DiseaseProfile.cpp
-    core/Health.cpp
-    core/Infector.cpp
-    core/LogMode.cpp
+	core/ContactPoolType.cpp
+	core/ContactProfile.cpp
+	core/DiseaseProfile.cpp
+	core/Health.cpp
+	core/Infector.cpp
+	core/LogMode.cpp
 #---
 	immunity/Immunizer.cpp
 	immunity/Vaccinator.cpp
 #---
 	output/AdoptedFile.cpp
 	output/CasesFile.cpp
-	output/PersonFile.cpp
+	output/PersonsFile.cpp
 	output/SummaryFile.cpp
 #---	
-    pop/Person.cpp
-    pop/PopulationBuilder.cpp
+	pop/Person.cpp
+	pop/Population.cpp
+	pop/PopulationBuilder.cpp
 #---
-	#popgen/AliasSampler.cpp
-	#popgen/FamilyParser.cpp
-    #popgen/utils.cpp
-	#popgen/geo/GeoCoordinate.cpp
-	#popgen/geo/GeoCoordCalculator.cpp
-#---
-	#popgen2/AliasMethod.cpp
-    #popgen2/Community.cpp
-    #popgen2/GeneratorPerson.cpp
-	#popgen2/GrahamScan.cpp
-    #popgen2/Household.cpp
-	#popgen2/main.cpp
-    #popgen2/RNG.cpp
-	#popgen2/Society.cpp
-	#popgen2/SocietyCSVWriter.cpp
-	#popgen2/SocietyGenerator.cpp
-	#popgen2/geo/City.cpp
-	#popgen2/geo/GeoGrid.cpp
-	#popgen2/geo/Geometry.cpp
-#---
+	sim/CliController.cpp
+	sim/SimRunner.cpp
 	sim/Simulator.cpp
 	sim/SimulatorBuilder.cpp
-	sim/StrideRunner.cpp
+	sim/python/StrideRunner.cpp
+	sim/event/Id.cpp
+	sim/event/Subject.cpp
 #---
-    util/CSV.cpp
+	util/CSV.cpp
 	util/CSVRow.cpp
-    util/FileUtils.cpp
-	util/InstallDirs.cpp
-    util/RNEngineType.cpp
-    util/RNManager.cpp
+	util/FileUtils.cpp
+	util/FileSys.cpp
+	util/LogUtils.cpp
+	util/PtreeUtils.cpp
+	util/RNEngineType.cpp
+	util/RNManager.cpp
+	util/Safeline.cpp
+
+	popgen-Episim/main.cpp
+	popgen-Episim/GeoGen/Coordinate.cpp
+	popgen-Episim/GeoGen/GeoGrid.cpp
+	popgen-Episim/GeoGen/Community.cpp
+	popgen-Episim/GeoGen/Household.cpp
+	popgen-Episim/GeoGen/City.cpp
+	popgen-Episim/GeoGen/Parser.cpp
+	#popgen-Episim/GeoGen/CommunityTypes/School.cpp
+	#popgen-Episim/GeoGen/CommunityTypes/ContactPool.cpp
+	#popgen-Episim/GeoGen/CommunityTypes/PrimSec.cpp
+#---
+	viewers/AdoptedViewer.cpp
+	viewers/CasesViewer.cpp
+	viewers/CliViewer.cpp
+	viewers/PersonsViewer.cpp
+	viewers/SummaryViewer.cpp
 )
 
 #============================================================================
@@ -85,9 +90,17 @@ set_target_properties(libstride PROPERTIES PREFIX "")
 # Build and install the stride executable.
 #============================================================================
 add_executable(stride sim/main.cpp)
+target_include_directories(stride PUBLIC
+	${CMAKE_HOME_DIRECTORY}/main/resources/lib/tclap/include)
 target_link_libraries(stride ${LIBS} libstride)
 install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
 
+#============================================================================
+# Build and install the Episim executable.
+#============================================================================1
+add_executable(popgen-Episim popgen-Episim/main.cpp)
+target_link_libraries(popgen-Episim ${LIBS} libstride)
+install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
 #============================================================================
 # Build and install the stride executable.
 #============================================================================

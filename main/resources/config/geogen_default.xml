@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<popgen>
+
+    <data_files>
+        <cities>flanders_cities.csv</cities>
+    </data_files>
+
+    <pop_info>
+        <pop_total>4341923</pop_total>
+        <fraction_schooled>0.2</fraction_schooled>
+        <fraction_student>0.3</fraction_student>
+        <!-- fraction that is student of pop age range 18-26 -->
+        <fraction_active_workers>0.5</fraction_active_workers>
+    </pop_info>
+
+    <contactpool_info>
+        <school>
+            <size>500</size>
+        </school>
+	<college>
+		<size>3000</size>
+	</college>
+	<community>
+		<size>2000</size>
+	</community>
+    </contactpool_info>
+
+</popgen>
