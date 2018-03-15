@@ -3,9 +3,7 @@
 
     <data_files>
         <cities>flanders_cities.csv</cities>
-        <!-- <commuting>flanders_commuting.csv</commuting> -->
-        <commuting>test_commuting.csv</commuting>
-
+        <commuting>flanders_commuting.csv</commuting>
     </data_files>
 
     <pop_info>

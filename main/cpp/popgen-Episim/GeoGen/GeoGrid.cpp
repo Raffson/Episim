@@ -20,8 +20,8 @@ namespace geogen {
         string city_file = p_tree.get("popgen.data_files.cities","flanders_cities.csv");
         m_cities = parser::parse_cities(base_path.append(city_file));
 
-
-        m_commuting = parser::parse_commuting("data/flanders_commuting.csv");
+        string commuting_file =  p_tree.get("popgen.data_files.commuting","flanders_commuting.csv");
+        m_commuting = parser::parse_commuting("data/" + commuting_file);
 
         //Generating schools
         //auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
