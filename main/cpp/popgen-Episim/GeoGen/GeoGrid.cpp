@@ -20,21 +20,34 @@ namespace geogen {
         string city_file = p_tree.get("popgen.data_files.cities","flanders_cities.csv");
         m_cities = parser::parse_cities(base_path.append(city_file));
 
+        string commuting_file =  p_tree.get("popgen.data_files.commuting","flanders_commuting.csv");
+        m_commuting = parser::parse_commuting("data/" + commuting_file);
+
         //Generating schools
         //auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
         //specs ask this to be read out of config, but could be calculated directly
         //out of the city file?
         // -> you're right... so let's do it like this:
-        m_total_pop = count_total_pop();
+        //m_total_pop = count_total_pop();
+        //After specifically asking about this, turns out we still need to read it from file...
+        //perhaps find a way to verify this number somehow, if the possibility exists of course...
+        m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
 
         m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
-        m_school_size = p_tree.get<unsigned int>("popgen.contactpool_info.school.size");
+        m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers1");
+        m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers2");
+        m_rest_frac = p_tree.get<float>("popgen.pop_info.fraction_rest");
 
-        m_student_frac = p_tree.get<float>("popgen.pop_info.fraction_student");
+        m_student_frac = p_tree.get<float>("popgen.pop_info.fraction_students");
+        m_commuting_students = p_tree.get<float>("popgen.pop_info.fraction_commuting_students");
+        m_active_frac = p_tree.get<float>("popgen.pop_info.fraction_active_workers");
+        m_commuting_workers = p_tree.get<float>("popgen.pop_info.fraction_commuting_workers");
+
+        m_school_size = p_tree.get<unsigned int>("popgen.contactpool_info.school.size");
         m_college_size =  p_tree.get<unsigned int>("popgen.contactpool_info.college.size");
         m_maxlc = p_tree.get<unsigned int>("popgen.contactpool_info.college.cities");
-
-        m_community_size_limit = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
+        m_community_size = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
+        m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
     }
 
     void GeoGrid::generate_all() {
@@ -111,7 +124,7 @@ namespace geogen {
             //cout << it->getId() << "   " << it->getPopulation() << "   " << it->getName() << endl;
 
             //so let's go...
-            double students = it->getPopulation()*m_student_frac;
+            double students = it->getPopulation()*m_workers1_frac*m_student_frac;
             //doesn't matter if students is a double at this time
             // since this is only an estimate for the number of colleges
             unsigned int nrcolleges =  round(students / m_college_size);
@@ -127,7 +140,54 @@ namespace geogen {
         }
     }
 
+    unsigned int GeoGrid::count_number_of_in_commuters(unsigned int destination_id) {
+        unsigned int result = 0;
+        for(auto it:m_commuting){
+            if(it.first.second == destination_id){
+                result += it.second;
+            }
+        }
+        return result;
+    }
+
+    unsigned int GeoGrid::count_number_of_out_commuters(unsigned int origin_id){
+        unsigned int result = 0;
+        for(auto it:m_commuting){
+            if(it.first.first == origin_id){
+                //commuting in own region shouldn't be counted
+                if(it.first.first != it.first.second){
+                    result += it.second;
+
+                }
+            }
+        }
+        return result;
+    }
+
     void GeoGrid::generate_workplaces() {
+        //calculating the required informations
+
+        //double working_population = m_active_frac * m_total_pop;
+        //double number_of_workplaces = working_population/m_worksplace_size;
+
+        //dividing workplaces to cities
+        for (auto it:m_cities){
+            shared_ptr<City> city = it.second;
+            unsigned int in_commuters = this->count_number_of_in_commuters(it.first);
+            //unsigned int out_commuters = this->count_number_of_out_commuters(it.first);
+
+            //To be confirmed: everybody commutes, the in-commuters have all the people working in that region,
+            //including locals who work in their own region
+            //some percentages of the commuters are students
+            double working_commuters = m_commuting_workers * in_commuters;
+            unsigned int number_of_workplaces = round(working_commuters / m_worksplace_size);
+
+            for(unsigned int i=0; i<number_of_workplaces; i++){
+                shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
+                city->addCommunity(community);
+            }
+
+        }
 
     }
 
@@ -135,7 +195,7 @@ namespace geogen {
         vector<shared_ptr<Community>> primsec_communities;
         /// Communities need to be distributed according to the relative population size.
         /// First we need to determine the total number of communities to be used.
-        auto total_communities = ceil(m_total_pop/m_community_size_limit);
+        auto total_communities = ceil(m_total_pop/m_community_size);
         for (auto it : m_cities){
             shared_ptr<City> city = it.second;
             auto ratio = city->getPopulation()/m_total_pop;

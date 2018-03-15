@@ -66,10 +66,15 @@ namespace geogen {
         /// used by generate_colleges()
         void adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city);
 
+        /// Counts total in-commuters for a given destination
+        unsigned int count_number_of_in_commuters(unsigned int destination_id);
+
+        /// Counts total out-commuters for a given destination
+        unsigned int count_number_of_out_commuters(unsigned int origin_id);
+
         /// Counts the total population in th GeoGrid based on the cities
         /// in map cities.
         unsigned int count_total_pop() const;
-
 
     private:
 
@@ -79,10 +84,17 @@ namespace geogen {
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities;
 
+        /// Contains information about number of commuters from a city to a city
+        /// -> change this to map<unsigned int, map<unsigned int, unsigned int>>
+        /// that'll make the usage afterwards way easier,
+        /// e.g. m_communiting[city1.id][city2.id] gives the commuting info..
+        map<pair<unsigned int, unsigned int>, unsigned int> m_commuting;
+
         /// Keep a map of all communities?
         /// -> will put everything in place in comments,
         ///     if we need it, just uncomment it...
         ///map<unsigned int, shared_ptr<Community>> m_communities;
+
 
         /// Total population of simulation area -> make this const?
         unsigned int m_total_pop;
@@ -90,11 +102,31 @@ namespace geogen {
         /// Fraction of population that goes to school -> make this const?
         float m_schooled_frac;
 
+        /// Fraction of population that are able to work between 18y and 26y -> make this const?
+        float m_workers1_frac;
+
+        /// Fraction of population that are able to work between 27y and 65y -> make this const?
+        float m_workers2_frac;
+
+        /// Fraction of population younger than 3y and older than 65y -> make this const?
+        float m_rest_frac;
+
+        /// Fraction of workers1 that is student -> make this const?
+        float m_student_frac;
+
+        ///the ratio of commuters that are workers -> make this const?
+        float m_commuting_students;
+
+        ///Total population that is actually working -> make this const?
+        /// for workers1 (18y-26y) mind that we first need to exclude the students...
+        float m_active_frac;
+
+        ///the ratio of commuters that are workers -> make this const?
+        float m_commuting_workers;
+
+
         /// Average size of each school -> make this const?
         unsigned int m_school_size;
-
-        /// Fraction of population that are students -> make this const?
-        float m_student_frac;
 
         /// Average size of each college -> make this const?
         unsigned int m_college_size;
@@ -103,11 +135,15 @@ namespace geogen {
         unsigned int m_maxlc;
 
         /// Primary/Secundary community limit -> make this const?
-        unsigned int m_community_size_limit;
+        unsigned int m_community_size;
+
+        /// Average size of each workplaces -> make this const?
+        unsigned int m_worksplace_size;
+
 
         ///making these members const requires reworking the constructor,
         /// or hack our way around the initialisation...
-    };
+        };
 
 }//namespace geogen
 

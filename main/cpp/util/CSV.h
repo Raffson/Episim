@@ -77,6 +77,9 @@ public:
 
         /// Compare operator.
         bool operator==(const CSV& other) const;
+
+        /// Labels
+        std::vector<std::string> getLabels();
 };
 
 template <typename... T>
