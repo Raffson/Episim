@@ -10,6 +10,7 @@
 #include "popgen-Episim/GeoGen/GeoGrid.h"
 
 #include <gtest/gtest.h>
+#include <omp.h>
 #include <spdlog/spdlog.h>
 #include <boost/property_tree/ptree.hpp>
 
@@ -24,6 +25,11 @@ namespace Tests {
     class CommunityTest : public ::testing::TestWithParam<tuple<const char*, unsigned int>>
     {
     public:
+        /// TestCase set up.
+        static void SetUpTestCase() {}
+
+        /// Tearing down TestCase
+        static void TearDownTestCase() {}
 
 
     protected:
