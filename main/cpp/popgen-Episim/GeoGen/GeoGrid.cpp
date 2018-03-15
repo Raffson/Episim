@@ -44,6 +44,7 @@ namespace geogen {
         m_active_frac = p_tree.get<float>("popgen.pop_info.fraction_worker");
         m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
 
+        m_commuting_workers = p_tree.get<float>("popgen.pop_info.fraction_commuting_workers");
         generate_workplaces();
     }
 
@@ -126,13 +127,53 @@ namespace geogen {
         }
     }
 
+    unsigned int GeoGrid::count_number_of_in_commuters(unsigned int destination_id) {
+        unsigned int result = 0;
+        for(auto it:m_commuting){
+            if(it.first.second == destination_id){
+                result += it.second;
+            }
+        }
+        return result;
+    }
+
+    unsigned int GeoGrid::count_number_of_out_commuters(unsigned int origin_id){
+        unsigned int result = 0;
+        for(auto it:m_commuting){
+            if(it.first.first == origin_id){
+                //commuting in own region shouldn't be counted
+                if(it.first.first != it.first.second){
+                    result += it.second;
+
+                }
+            }
+        }
+        return result;
+    }
+
     void GeoGrid::generate_workplaces() {
         //calculating the required informations
-        double working_population = m_active_frac * m_total_pop;
-        double number_of_workplaces = working_population/m_worksplace_size;
+
+        //double working_population = m_active_frac * m_total_pop;
+        //double number_of_workplaces = working_population/m_worksplace_size;
 
         //dividing workplaces to cities
         for (auto it:m_cities){
+            shared_ptr<City> city = it.second;
+            unsigned int in_commuters = this->count_number_of_in_commuters(it.first);
+            //unsigned int out_commuters = this->count_number_of_out_commuters(it.first);
+
+            //To be confirmed: everybody commutes, the in-commuters have all the people working in that region,
+            //including locals who work in their own region
+            //some percentages of the commuters are students
+            double working_commuters = m_commuting_workers * in_commuters;
+            unsigned int number_of_workplaces = round(working_commuters / m_worksplace_size);
+
+            for(unsigned int i=0; i<number_of_workplaces; i++){
+                shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
+                city->addCommunity(community);
+            }
+
         }
 
     }

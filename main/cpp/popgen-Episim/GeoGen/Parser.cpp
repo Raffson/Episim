@@ -51,10 +51,9 @@ namespace parser{
                 string destination = cityIds.at(index);
                 unsigned int origin_id = (unsigned int) (stoi(origin.erase(0, 3)));
                 unsigned int destination_id = (unsigned int) (stoi(destination.erase(0, 3)));
-                cout << origin_id << " " << destination_id << " " << commuters << endl;
 
                 pair<unsigned int, unsigned int> key = make_pair(origin_id, destination_id);
-                result.at(key) = commuters;
+                result[key] = commuters;
 
             }
             index++;

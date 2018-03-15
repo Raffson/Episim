@@ -61,7 +61,12 @@ namespace geogen {
         /// Counts the total population in th GeoGrid based on the cities
         /// in map cities.
         unsigned int count_total_pop() const;
+        
+        /// Counts total in-commuters for a given destination
+        unsigned int count_number_of_in_commuters(unsigned int destination_id);
 
+        /// Counts total out-commuters for a given destination
+        unsigned int count_number_of_out_commuters(unsigned int origin_id);
 
     private:
 
@@ -101,9 +106,15 @@ namespace geogen {
         unsigned int m_worksplace_size;
 
         ///Total population that is active(works)
-        unsigned int m_active_frac;
+        float m_active_frac;
 
-    };
+        ///the ratio of commuters that are workers (not students)
+        float m_commuting_workers;
+
+
+
+
+        };
 
 }//namespace geogen
 

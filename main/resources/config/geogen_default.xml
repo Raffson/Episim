@@ -12,14 +12,15 @@
         <pop_total>4341923</pop_total>
         <fraction_schooled>0.2</fraction_schooled>
         <fraction_student>0.3</fraction_student>
-        <fraction_worker>0.35</fraction_worker>
+        <fraction_worker>0.4</fraction_worker>
 
         <!-- fraction of people over 64 years-->
         <fraction_old>0.1</fraction_old>
         <!-- fraction that is student of pop age range 18-26 -->
         <fraction_active_workers>0.5</fraction_active_workers>
-        <!-- from the active population those who commute-->
-        <fraction_commuting_workers>0.5</fraction_commuting_workers>
+        <!-- the ratio of commuters that are workers (not students)-->
+        <fraction_commuting_workers>0.6</fraction_commuting_workers>
+
     </pop_info>
 
     <contactpool_info>
