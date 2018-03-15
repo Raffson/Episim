@@ -1,16 +1,8 @@
 //
 // Created by beau on 3/5/18.
 //
-#include <cmath>
-#include <random>
-
-#include "boost/property_tree/ptree.hpp"
-#include "boost/property_tree/xml_parser.hpp"
-
 
 #include "GeoGrid.h"
-#include "popgen-Episim/GeoGen/Parser.h"
-#include <popgen-Episim/GeoGen/CommunityTypes/PrimSec.h>
 
 
 using namespace std;
@@ -74,10 +66,10 @@ namespace geogen {
         // assign schools to cities according to our normal distribution
         for(unsigned int i = 0; i < amount_of_schools; i++){
 
-            shared_ptr<School> nw_school(new School(m_school_size));
             int index = pop_id[distr(gen)];
             shared_ptr<City> chosen_city = m_cities[index];
-            chosen_city->addSchool(nw_school);
+            shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
+            chosen_city->addCommunity(nw_school);
         }
 
 
@@ -122,6 +114,7 @@ namespace geogen {
             //or do we create a college that references the city's  id?
             //need to discuss this with group to maintain a consistent way of working
             //at this point Robbe decided to the the first while Beau opted for the latter...
+            //-> we need both!
         }
     }
 
@@ -130,7 +123,7 @@ namespace geogen {
     }
 
     void GeoGrid::generate_communities() {
-        vector<shared_ptr<PrimSec>> primsec_communities;
+        vector<shared_ptr<Community>> primsec_communities;
         /// Communities need to be distributed according to the relative population size.
         /// First we need to determine the total number of communities to be used.
         auto total_communities = ceil(m_total_pop/m_community_size_limit);
@@ -140,9 +133,9 @@ namespace geogen {
             /// Now we have the ratio, we know that the city has ratio % of all communities.
             auto city_communities = (total_communities*ratio)/100;
             for (int i = 0; i < city_communities; i++){
-                shared_ptr<PrimSec> primsec = make_shared<PrimSec>();
-                primsec->setCity(city);
-                primsec_communities.push_back(primsec);
+                /// used primary communities atm since i have no clue what this has to be...
+                shared_ptr<Community> community = make_shared<Community>(CommunityType::Primary, city);
+                city->addCommunity(community);
             }
         }
         /// TODO: determine if community is primary or secundary.

@@ -1,4 +1,3 @@
-#pragma once
 /*
  *  This is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -11,36 +10,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with the software. If not, see <http://www.gnu.org/licenses/>.
  *
- *  Copyright 2017, Kuylen E, Willem L, Broeckhove J
+ *  Copyright 2017, Draulans S, Van Leeuwen L
+ *  Copyright 2018, Kuylen E, Willem L, Broeckhove J
+ *
+ *  Modified by EpiSim
  */
 
-/**
- * @file
- * Parser for family data file.
- */
+#include "Community.h"
 
-#include <fstream>
-#include <string>
-#include <vector>
+namespace geogen {
 
-namespace stride {
-namespace popgen {
+    using namespace std;
 
-using uint         = unsigned int;
-using FamilyConfig = std::vector<uint>;
+    Community::Community(CommunityType community_type, shared_ptr<City> city)
+            : m_community_id(UIDgenerator()), m_community_type(community_type), m_city(city)
+    {
+        UIDgenerator()++;
+    }
 
-class FamilyParser
-{
-public:
-        FamilyParser() = default;
+    unsigned int& Community::UIDgenerator()
+    {
+        static unsigned int id = 1; // First id is 1! Needs to be as 0 implies "absent from community".
+        return id;
+    }
 
-        ~FamilyParser() = default;
-
-        std::vector<FamilyConfig> parseFamilies(std::string filename) const;
-
-private:
-        FamilyConfig parseFamily(std::string config) const;
-};
-
-} // namespace popgen
-} // namespace stride
+} // namespace geogen
