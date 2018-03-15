@@ -35,6 +35,12 @@ add_custom_target( run_ctest
 	COMMAND ctest ${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/ctests.txt
 )
 
+#is this needed?
+add_custom_target( episim-test
+	COMMAND gtester-episim 
+	${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/EpiSim/etests.txt
+)
+
 #============================================================================
 # Config related to using Google test (src in resources/lib/gtest) for cpp
 #============================================================================

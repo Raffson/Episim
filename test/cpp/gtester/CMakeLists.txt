@@ -23,12 +23,22 @@ set( SRC
 		main.cpp
 		BatchRuns.cpp
 		InfluenceR0Runs.cpp
-        GenerateCommunityTest.cpp)
+)
 
 add_executable(${EXEC}   ${SRC} )
 target_link_libraries( ${EXEC}    ${LIBS} gtest pthread libstride) 
 install(TARGETS ${EXEC}  DESTINATION   ${BIN_INSTALL_LOCATION})
 
+set( EXEC2       gtester-episim     )
+set( SRC2
+		EpiSim-tests/main.cpp
+		EpiSim-tests/GenerateCommunityTest.cpp
+		EpiSim-tests/GenerateCollegesTest.cpp
+)
+
+add_executable(${EXEC2}   ${SRC2} )
+target_link_libraries( ${EXEC2}    ${LIBS} gtest pthread libstride) 
+install(TARGETS ${EXEC2}  DESTINATION   ${BIN_INSTALL_LOCATION})
 #============================================================================
 # Define tests.
 #============================================================================
@@ -38,10 +48,17 @@ add_test( NAME  ${EXEC}_all
 		         --gtest_output=xml:gtester_all.xml
 )
 
+add_test( NAME  ${EXEC2}_all 		
+        WORKING_DIRECTORY  ${TESTS_DIR}/EpiSim
+		COMMAND   ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_LOCATION}/${EXEC2} 
+		         --gtest_output=xml:gtester_episim.xml
+)
+
 #============================================================================
 # Clean up.
 #============================================================================
 unset( EXEC      )
 unset( SRC       )
-
+unset( EXEC2      )
+unset( SRC2       )
 #############################################################################
