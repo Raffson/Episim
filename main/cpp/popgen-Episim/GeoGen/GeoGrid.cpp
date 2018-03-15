@@ -142,25 +142,22 @@ namespace geogen {
 
     unsigned int GeoGrid::count_number_of_in_commuters(unsigned int destination_id) {
         unsigned int result = 0;
+
         for(auto it:m_commuting){
-            if(it.first.second == destination_id){
-                result += it.second;
-            }
+            result += it.second[destination_id];
         }
         return result;
     }
 
     unsigned int GeoGrid::count_number_of_out_commuters(unsigned int origin_id){
         unsigned int result = 0;
-        for(auto it:m_commuting){
-            if(it.first.first == origin_id){
-                //commuting in own region shouldn't be counted
-                if(it.first.first != it.first.second){
-                    result += it.second;
+        map<unsigned int, unsigned int> destinations = m_commuting[origin_id];
 
-                }
-            }
+        for(auto destination: destinations){
+            if(destination.first != origin_id )
+            result += destination.second;
         }
+
         return result;
     }
 

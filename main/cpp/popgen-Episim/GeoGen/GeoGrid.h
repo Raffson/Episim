@@ -85,10 +85,8 @@ namespace geogen {
         map<int, shared_ptr<City>> m_cities;
 
         /// Contains information about number of commuters from a city to a city
-        /// -> change this to map<unsigned int, map<unsigned int, unsigned int>>
-        /// that'll make the usage afterwards way easier,
-        /// e.g. m_communiting[city1.id][city2.id] gives the commuting info..
-        map<pair<unsigned int, unsigned int>, unsigned int> m_commuting;
+        map<unsigned int, map<unsigned int, unsigned int> > m_commuting;
+
 
         /// Keep a map of all communities?
         /// -> will put everything in place in comments,
