@@ -49,10 +49,10 @@ namespace Tests {
         // -------------------------------------------------------------------------------------
         // Initialize the logger.
         // -------------------------------------------------------------------------------------
-        spdlog::set_async_mode(1048576);
-        auto file_logger = spdlog::rotating_logger_mt("contact_logger", "test_logfile", numeric_limits<size_t>::max(),
-                                                      numeric_limits<size_t>::max());
-        file_logger->set_pattern("%v"); // Remove meta data from log => time-stamp of logging
+//        spdlog::set_async_mode(numeric_limits<unsigned int>::max());
+//        auto file_logger = spdlog::rotating_logger_mt("contact_logger", "test_logfile", numeric_limits<size_t>::max(),
+//                                                      numeric_limits<size_t>::max());
+//        file_logger->set_pattern("%v"); // Remove meta data from log => time-stamp of logging
 
         // -----------------------------------------------------------------------------------------
         // Initialize the simulator.
@@ -65,11 +65,30 @@ namespace Tests {
         // Run the simulation and release logger.
         // -----------------------------------------------------------------------------------------
 
-        spdlog::drop_all();
+//        spdlog::drop_all();
 
         // -----------------------------------------------------------------------------------------
         // Check resuts against target number.
         // -----------------------------------------------------------------------------------------
+
+        map<int, shared_ptr<City>> cities = grid.get_cities();
+        /// Check if the communities are ditributed correctly.
+        for (map<int, shared_ptr<City>>::iterator c_it = cities.begin(); c_it != cities.end(); ++c_it){
+            map<int, shared_ptr<City>>::iterator c_it2 = cities.begin();
+            if (c_it != cities.end()){
+                c_it2 = c_it++;
+            }
+            /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
+            if ((*c_it).first != (*c_it2).first) {
+                if ((*c_it).second->getPopulation() >= (*c_it2).second->getPopulation()) {
+                    EXPECT_GE((*c_it).second->getCommunitySize(), (*c_it2).second->getCommunitySize());
+                }
+                if ((*c_it).second->getPopulation() <= (*c_it2).second->getPopulation()) {
+                    EXPECT_LE((*c_it).second->getCommunitySize(), (*c_it2).second->getCommunitySize());
+                }
+            }
+        }
+
     }
 
     namespace {

@@ -49,6 +49,8 @@ namespace geogen {
         /// Adds community to the city.
         void addCommunity(shared_ptr<Community> community);
 
+        unsigned int getCommunitySize() { return m_communities.size(); }
+
 
     private:
 

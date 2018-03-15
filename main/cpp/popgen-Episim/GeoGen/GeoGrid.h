@@ -20,6 +20,8 @@
 #include "popgen-Episim/GeoGen/Parser.h"
 #include "popgen-Episim/GeoGen/Community.h"
 
+#include "DesignByContract.h"
+
 
 using namespace std;
 
@@ -54,6 +56,8 @@ namespace geogen {
         void generate_communities();
 
         void generate_all();
+
+        map<int, shared_ptr<City>> get_cities();
 
 
     private:
@@ -91,8 +95,8 @@ namespace geogen {
         /// Average size of each college
         unsigned int m_college_size;
 
-        /// Primary/Secundary community limit
-        unsigned int m_community_size_limit;
+        /// Average Primary/Secundary community size
+        unsigned int m_community_size;
 
     };
 
