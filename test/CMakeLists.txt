@@ -35,6 +35,26 @@ add_custom_target( run_ctest
 	COMMAND ctest ${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/ctests.txt
 )
 
+#output isn't written, gotta figure this out...
+add_custom_target( episim-test
+	COMMAND gtester-episim 
+	${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/EpiSim/etests.txt
+	COMMENT "Running EpiSim's tests..."
+)
+
+#============================================================================
+# We need a better way to handle the following file dependencies...
+#============================================================================
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/config/geogen_default.xml
+	${CMAKE_BINARY_DIR}/test/config/geogen_default.xml COPYONLY)
+
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities.csv
+	${CMAKE_BINARY_DIR}/test/data/flanders_cities.csv COPYONLY)
+
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_commuting.csv
+	${CMAKE_BINARY_DIR}/test/data/flanders_commuting.csv COPYONLY)
+
+
 #============================================================================
 # Config related to using Google test (src in resources/lib/gtest) for cpp
 #============================================================================
