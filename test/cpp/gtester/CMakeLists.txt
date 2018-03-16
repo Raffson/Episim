@@ -23,7 +23,7 @@ set( SRC
 		main.cpp
 		BatchRuns.cpp
 		InfluenceR0Runs.cpp
-        GeoGenTests.cpp)
+)
 
 add_executable(${EXEC}   ${SRC} )
 target_link_libraries( ${EXEC}    ${LIBS} gtest pthread libstride) 
@@ -32,8 +32,10 @@ install(TARGETS ${EXEC}  DESTINATION   ${BIN_INSTALL_LOCATION})
 set( EXEC2       gtester-episim     )
 set( SRC2
 		EpiSim-tests/main.cpp
-		EpiSim-tests/GenerateCommunityTest.cpp
-		EpiSim-tests/GenerateCollegesTest.cpp
+		EpiSim-tests/Generate-Community-Test.cpp
+		EpiSim-tests/Generate-Colleges-Test.cpp
+		EpiSim-tests/Generate-Schools-Test.cpp
+		EpiSim-tests/Generate-Workplaces-Test.cpp
 )
 
 add_executable(${EXEC2}   ${SRC2} )
