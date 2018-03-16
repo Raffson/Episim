@@ -4,7 +4,6 @@
 
 #include "GeoGrid.h"
 
-
 using namespace std;
 
 namespace geogen {
@@ -16,12 +15,12 @@ namespace geogen {
         boost::property_tree::read_xml(config_file.string(), p_tree);
 
         //reading the cities data file
-        boost::filesystem::path base_path = "data/";
+        string base_path = "data/";
         string city_file = p_tree.get("popgen.data_files.cities","flanders_cities.csv");
-        m_cities = parser::parse_cities(base_path.append(city_file));
+        m_cities = parser::parse_cities(base_path + city_file);
 
         string commuting_file =  p_tree.get("popgen.data_files.commuting","flanders_commuting.csv");
-        m_commuting = parser::parse_commuting("data/" + commuting_file);
+        m_commuting = parser::parse_commuting(base_path + commuting_file);
 
         //Generating schools
         //auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
@@ -55,6 +54,7 @@ namespace geogen {
         generate_colleges();
         generate_workplaces();
         generate_communities();
+
     }
 
     void GeoGrid::generate_schools() {
@@ -195,20 +195,33 @@ namespace geogen {
         vector<shared_ptr<Community>> primsec_communities;
         /// Communities need to be distributed according to the relative population size.
         /// First we need to determine the total number of communities to be used.
+        /// On average a community has 2000 members.
+        double check = 0;
         auto total_communities = ceil(m_total_pop/m_community_size);
+        unsigned int ti = 0;
         for (auto it : m_cities){
+            ti++;
             shared_ptr<City> city = it.second;
-            auto ratio = city->getPopulation()/m_total_pop;
+            double ratio = (city->getPopulation()/(double)m_total_pop);
+            assert(0<ratio<1);
+            check += ratio;
             /// Now we have the ratio, we know that the city has ratio % of all communities.
-            auto city_communities = (total_communities*ratio)/100;
+            auto city_communities = (total_communities*ratio);
+            assert(city_communities<total_communities);
             for (int i = 0; i < city_communities; i++){
-                /// used primary communities atm since i have no clue what this has to be...
+//                cout << ratio << ", "<< total_communities << ", "<< city_communities<<endl;
+//                cout << ">>> 4 (in loop kwadraat) in iteration: " << ti << " - " << i <<"\n";
+                /// Since there currently is no real difference between primary and secundary communities we make them all primary.
                 shared_ptr<Community> community = make_shared<Community>(CommunityType::Primary, city);
                 city->addCommunity(community);
                 //m_communities[community->getID()] = community
             }
         }
-        /// TODO: determine if community is primary or secundary.
+        //Note from Raphael: This fails on my end due to rounding errors, thus we need a better check...
+        if (check != 1.0){
+            cout<<"ERROR in generate_communities: the total sum of all ratios equals "<< check <<"!"<<endl;
+            return;
+        }
     }
 
 
@@ -220,5 +233,9 @@ namespace geogen {
         }
         return counter;
     }
+
+    map<int, shared_ptr<City>> GeoGrid::get_cities(){
+        return m_cities;
+    };
 
 }//namespace geogen

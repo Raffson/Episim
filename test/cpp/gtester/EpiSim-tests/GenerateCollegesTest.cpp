@@ -22,7 +22,7 @@ namespace Tests {
 
     using boost::property_tree::ptree;
 
-    class CollegeTest : public ::testing::TestWithParam<tuple<const char*, unsigned int>>
+    class CollegeTest : public ::testing::TestWithParam<unsigned int>
     {
     public:
         /// TestCase set up.
@@ -46,35 +46,23 @@ namespace Tests {
     TEST_P(CollegeTest, Run)
     {
 
-        // -------------------------------------------------------------------------------------
-        // Initialize the logger.
-        // -------------------------------------------------------------------------------------
-        spdlog::set_async_mode(1048576);
-        auto file_logger = spdlog::rotating_logger_mt("contact_logger", "test_logfile", numeric_limits<size_t>::max(),
-                                                      numeric_limits<size_t>::max());
-        file_logger->set_pattern("%v"); // Remove meta data from log => time-stamp of logging
-
         // -----------------------------------------------------------------------------------------
         // Initialize the simulator.
         // -----------------------------------------------------------------------------------------
-        cout << "Building the simulator. " << endl;
+        cout << "Building the GeoGrid. " << endl;
         auto grid = GeoGrid("config/geogen_default.xml");
-        cout << "Done building the simulator" << endl;
-
-        // -----------------------------------------------------------------------------------------
-        // Run the simulation and release logger.
-        // -----------------------------------------------------------------------------------------
-
-        spdlog::drop_all();
+        cout << "Done building the GeoGrid" << endl;
 
         // -----------------------------------------------------------------------------------------
         // Check resuts against target number.
         // -----------------------------------------------------------------------------------------
+
+	//Do the test...
+	ASSERT_TRUE(true);
     }
 
     namespace {
-        const char* tags[] = {"r0_0", "r0_4", "r0_8", "r0_12", "r0_16"};
-
+//OpenMP should have no effect atm...
 #ifdef _OPENMP
         unsigned int threads[]{1U, 4U};
 #else
@@ -83,7 +71,7 @@ namespace Tests {
 
     } // namespace
 
-    INSTANTIATE_TEST_CASE_P(Run, CollegeTest, Combine(ValuesIn(tags), ValuesIn(threads)));
+    INSTANTIATE_TEST_CASE_P(Run, CollegeTest, ValuesIn(threads));
 
 } // namespace Tests
 
