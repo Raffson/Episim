@@ -45,13 +45,13 @@ add_custom_target( episim-test
 #============================================================================
 # We need a better way to handle the following file dependencies...
 #============================================================================
-configure_file(${CMAKE_SOURCE_DIR}/main/resources/config/geogen_default.xml
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/config/geogen_test.xml
 	${CMAKE_BINARY_DIR}/test/config/geogen_default.xml COPYONLY)
 
-configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities.csv
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities_test.csv
 	${CMAKE_BINARY_DIR}/test/data/flanders_cities.csv COPYONLY)
 
-configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_commuting.csv
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_commuting_test.csv
 	${CMAKE_BINARY_DIR}/test/data/flanders_commuting.csv COPYONLY)
 
 

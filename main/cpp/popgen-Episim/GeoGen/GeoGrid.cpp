@@ -231,7 +231,7 @@ namespace geogen {
         return counter;
     }
 
-    map<int, shared_ptr<City>> GeoGrid::get_cities(){
+    const map<int, shared_ptr<City>>& GeoGrid::get_cities(){
         return m_cities;
     };
 

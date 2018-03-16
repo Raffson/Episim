@@ -57,8 +57,24 @@ namespace geogen {
 
         void generate_all();
 
-        map<int, shared_ptr<City>> get_cities();
+        const map<int, shared_ptr<City>>& get_cities();
 
+        /// Bunch of getters, mainly for tests atm...
+        /// Could leave all this out but then we need to work with friend classes...
+        unsigned int getTotalPop() const { return m_total_pop; }
+        float getSchooledFrac() const { return m_schooled_frac; }
+        float getWorkers1Frac() const { return m_workers1_frac; }
+        float getWorkers2Frac() const { return m_workers2_frac; }
+        float getRestFrac() const {return m_rest_frac; }
+        float getStudentFrac() const { return m_student_frac; }
+        float getCommutingStudents() const { return m_commuting_students; }
+        float getActiveFrac() const { return m_active_frac; }
+        float getCommutingWorkers() const { return m_commuting_workers; }
+        unsigned int getSchoolSize() const { return m_school_size; }
+        unsigned int getCollegeSize() const { return m_college_size; }
+        unsigned int getMaxLC() const { return m_maxlc; }
+        unsigned int getCommunitySize() const { return m_community_size; }
+        unsigned int getWorkplaceSize() const { return m_worksplace_size; }
 
     private:
 
