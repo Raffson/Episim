@@ -48,12 +48,12 @@ namespace geogen {
         const unsigned int GetID() const { return m_community_id; }
 
         /// Return the community's type
-        CommunityType GetCommunityType() const { return m_community_type; }
+        const CommunityType& GetCommunityType() const { return m_community_type; }
 
         /// Return shared pointer of the city,
         ///  though shouldn't we make it a "const City"?
         ///  at this point the city can be adjusted... do we want that?
-        std::shared_ptr<City> GetCity() { return m_city; }
+        const std::shared_ptr<City>& GetCity() { return m_city; }
 
     private:
         static unsigned int& UIDgenerator();
