@@ -97,40 +97,105 @@ namespace Tests {
         ASSERT_EQ( cities[44021]->getColleges().size(), expGent       );
         ASSERT_EQ( cities[11002]->getColleges().size(), expAntwerpen  );
 
+        //Now remove these 10 cities and check that all other cities have 0 colleges...
+        cities.erase(12025);
+        cities.erase(41002);
+        cities.erase(21009);
+        cities.erase(21001);
+        cities.erase(24062);
+        cities.erase(21015);
+        cities.erase(31005);
+        cities.erase(21004);
+        cities.erase(44021);
+        cities.erase(11002);
+
+        for( auto &it : cities ) {
+            ASSERT_EQ( it.second->getColleges().size(), 0 );
+        }
     }
 
     TEST_P(CollegeTest, AlternateScenario)
     {
+        //No input / wrong file...
+        EXPECT_THROW( auto grid = GeoGrid("bad input..."), runtime_error);
+        auto grid = GeoGrid();
+        EXPECT_EQ(grid.get_cities().size(), 0);
+        EXPECT_EQ(grid.getTotalPop(), 0);
+        EXPECT_FLOAT_EQ(grid.getSchooledFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.getWorkers1Frac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.getWorkers2Frac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.getRestFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.getStudentFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.getCommutingStudents(), 0.0);
+        EXPECT_FLOAT_EQ(grid.getActiveFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.getCommutingWorkers(), 0.0);
+        EXPECT_EQ(grid.getSchoolSize(), 0);
+        EXPECT_EQ(grid.getCollegeSize(), 0);
+        EXPECT_EQ(grid.getMaxLC(), 0);
+        EXPECT_EQ(grid.getCommunitySize(), 0);
+        EXPECT_EQ(grid.getWorkplaceSize(), 0);
 
-        // -----------------------------------------------------------------------------------------
-        // Initialise the simulator.
-        // -----------------------------------------------------------------------------------------
-        cout << "Building the GeoGrid. " << endl;
-        auto grid = GeoGrid("config/geogen_default.xml");
-        cout << "Done building the GeoGrid" << endl;
+        //Should we really test partial input? That's more like a job for the parser isn't it?
+        //In fact, this test all together should be part of the constructor's tester imo...
+    }
 
-        // -----------------------------------------------------------------------------------------
-        // Check results against target number.
-        // -----------------------------------------------------------------------------------------
 
-        //Do the test...
+    //Copy of the code since it is a private function and it is used by adjustLargestCities
+    unsigned int findSmallest(const vector <shared_ptr<City>> &lc) {
+        unsigned int smallest = 0;
+        for (unsigned int i = 1; i < lc.size(); i++) {
+            if (lc[smallest]->getPopulation() > lc[i]->getPopulation()) smallest = i;
+        }
+        return smallest;
+    }
+    //Copy of the code since it is a private function...
+    // small adjustment is needed, m_maxlc must be passed on
+    // because this function is no longer part of the GeoGrid class,
+    // therefore no direct access to m_maxlc...
+    void adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city, unsigned int m_maxlc) {
+        if (lc.size() < m_maxlc) lc.push_back(city);
+        else {
+            unsigned int citpop = city->getPopulation();
+            unsigned int smallest = findSmallest(lc);
+            if (citpop > lc[smallest]->getPopulation()) lc[smallest] = city;
+        }
     }
 
     TEST_P(CollegeTest, adjustLargestCitiesUnit)
     {
+        //We'll push 3 cities with m_maxlc=3
+        // thus the 4th city will replace iff it has a larger population than one of the 3 cities in lc
+        vector <shared_ptr<City>> lc;
 
-        // -----------------------------------------------------------------------------------------
-        // Initialise the simulator.
-        // -----------------------------------------------------------------------------------------
-        cout << "Building the GeoGrid. " << endl;
-        auto grid = GeoGrid("config/geogen_default.xml");
-        cout << "Done building the GeoGrid" << endl;
+        shared_ptr<City> c1 = make_shared<City>(1, 1, 10, Coordinate(), "TestCity1");
+        adjustLargestCities(lc, c1, 3);
+        ASSERT_EQ(lc.size(), 1);
 
-        // -----------------------------------------------------------------------------------------
-        // Check results against target number.
-        // -----------------------------------------------------------------------------------------
+        shared_ptr<City> c2 = make_shared<City>(2, 1, 20, Coordinate(), "TestCity2");
+        adjustLargestCities(lc, c2, 3);
+        ASSERT_EQ(lc.size(), 2);
 
-        //Do the test...
+        shared_ptr<City> c3 = make_shared<City>(3, 1, 30, Coordinate(), "TestCity3");
+        adjustLargestCities(lc, c3, 3);
+        ASSERT_EQ(lc.size(), 3);
+
+        //Try adding a city with smaller population than other cities...
+        // Size should remain 3 and c1, c2, c3 in lc...
+        shared_ptr<City> c4 = make_shared<City>(4, 1, 5, Coordinate(), "TestCity4");
+        adjustLargestCities(lc, c4, 3);
+        ASSERT_EQ(lc.size(), 3);
+        ASSERT_EQ(lc[0], c1);
+        ASSERT_EQ(lc[1], c2);
+        ASSERT_EQ(lc[2], c3);
+
+        //Try adding a city with larger population than other cities...
+        // Size should remain 3 and c5, c2, c3 in lc...
+        shared_ptr<City> c5 = make_shared<City>(5, 1, 15, Coordinate(), "TestCity4");
+        adjustLargestCities(lc, c5, 3);
+        ASSERT_EQ(lc.size(), 3);
+        ASSERT_EQ(lc[0], c5);
+        ASSERT_EQ(lc[1], c2);
+        ASSERT_EQ(lc[2], c3);
     }
 
     //In the testplan I mentioned "assignCollege"
@@ -139,6 +204,7 @@ namespace Tests {
 
     namespace {
 //OpenMP should have no effect atm...
+//Should we simply leave this out?
 #ifdef _OPENMP
         unsigned int threads[]{1U, 4U};
 #else
