@@ -35,6 +35,7 @@ add_custom_target( run_ctest
 	COMMAND ctest ${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/ctests.txt
 )
 
+#output isn't written, gotta figure this out...
 add_custom_target( episim-test
 	COMMAND gtester-episim 
 	${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/EpiSim/etests.txt

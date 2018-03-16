@@ -41,6 +41,7 @@ set( SRC2
 add_executable(${EXEC2}   ${SRC2} )
 target_link_libraries( ${EXEC2}    ${LIBS} gtest pthread libstride) 
 install(TARGETS ${EXEC2}  DESTINATION   ${BIN_INSTALL_LOCATION})
+
 #============================================================================
 # Define tests.
 #============================================================================
@@ -50,10 +51,10 @@ add_test( NAME  ${EXEC}_all
 		         --gtest_output=xml:gtester_all.xml
 )
 
-add_test( NAME  ${EXEC2}_all 		
-        WORKING_DIRECTORY  ${TESTS_DIR}/EpiSim
-		COMMAND   ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_LOCATION}/${EXEC2} 
-		         --gtest_output=xml:gtester_episim.xml
+#output is still not written to install-dir/tests
+add_test( NAME  ${EXEC2} 		
+        WORKING_DIRECTORY  ${CMAKE_INSTALL_PREFIX}
+		COMMAND   ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_LOCATION}/${EXEC2}
 )
 
 #============================================================================
