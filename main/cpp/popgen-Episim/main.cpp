@@ -4,16 +4,19 @@
 
 #include <iostream>
 
-#include <QtCore/QTextStream>
-#include <QtGui/QGuiApplication>
-#include <QtQml/QQmlApplicationEngine>
-#include <QtQuick/QQuickItem>
+#ifdef Qt5_FOUND
+    #include <QtCore/QTextStream>
+    #include <QtGui/QGuiApplication>
+    #include <QtQml/QQmlApplicationEngine>
+    #include <QtQuick/QQuickItem>
+#endif
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
 
 //currently i just added stuff from mapviewer's main.cpp
 //we need to figure out what exactly is required an what not..
 
+#ifdef Qt5_FOUND
 static bool parseArgs(QStringList& args, QVariantMap& parameters)
 {
 
@@ -105,9 +108,13 @@ int startMap(int argc, char *argv[])
     return application.exec();
 }
 
+#endif
+
 int main(int argc, char** argv)
 {
     geogen::GeoGrid grid("config/geogen_default.xml");
     grid.generate_all();
+#ifdef Qt5_FOUND
     startMap(argc, argv);
+#endif
 }
