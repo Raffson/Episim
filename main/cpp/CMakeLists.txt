@@ -97,10 +97,20 @@ install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
 
 #============================================================================
 # Build and install the Episim executable.
-#============================================================================1
-add_executable(popgen-Episim popgen-Episim/main.cpp)
-target_link_libraries(popgen-Episim ${LIBS} libstride)
-install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
+#============================================================================
+if(Qt5_FOUND)
+	set(CMAKE_INCLUDE_CURRENT_DIR ON)
+	qt5_add_resources(RESOURCES popgen-Episim/mapviewer/mapviewer.qrc)
+	set(CMAKE_AUTOUIC ON)
+	set(CMAKE_AUTOMOC ON)
+	add_executable(popgen-Episim popgen-Episim/main.cpp ${RESOURCES})
+	target_link_libraries(popgen-Episim ${LIBS} libstride Qt5::Core Qt5::Qml Qt5::Network Qt5::Quick Qt5::Positioning Qt5::Location)
+	install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
+else ()
+	add_executable(popgen-Episim popgen-Episim/main.cpp)
+	target_link_libraries(popgen-Episim ${LIBS} libstride)
+	install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
+endif()
 #============================================================================
 # Build and install the stride executable.
 #============================================================================
