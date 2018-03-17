@@ -13,6 +13,7 @@
 #include <omp.h>
 #include <spdlog/spdlog.h>
 #include <boost/property_tree/ptree.hpp>
+#include <exception>
 
 namespace Tests {
 
@@ -56,24 +57,31 @@ namespace Tests {
         // Check resuts against target number.
         // -----------------------------------------------------------------------------------------
 
-	/* Note from Raphael: This test contains a segmentation fault, please fix...
-        map<int, shared_ptr<City>> cities = grid.get_cities();
+        auto cities = grid.get_cities();
+        map<int, shared_ptr<City>>::iterator c_it2 = cities.begin();
         /// Check if the communities are ditributed correctly.
-        for (map<int, shared_ptr<City>>::iterator c_it = cities.begin(); c_it != cities.end(); ++c_it){
-            map<int, shared_ptr<City>>::iterator c_it2 = cities.begin();
-            if (c_it != cities.end()){
-                c_it2 = c_it++;
-            }
-            /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
-            if ((*c_it).first != (*c_it2).first) {
-                if ((*c_it).second->getPopulation() >= (*c_it2).second->getPopulation()) {
-                    EXPECT_GE((*c_it).second->getCommunitySize(), (*c_it2).second->getCommunitySize());
+        for (map<int, shared_ptr<City>>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++){
+            try {
+                if (c_it != cities.end()) {
+                    c_it2 = c_it++;
+                    c_it--;
+                } else {
+                    c_it2 = cities.begin();
                 }
-                if ((*c_it).second->getPopulation() <= (*c_it2).second->getPopulation()) {
-                    EXPECT_LE((*c_it).second->getCommunitySize(), (*c_it2).second->getCommunitySize());
+                /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
+                if ((*c_it).first != (*c_it2).first) {
+                    if ((*c_it).second->getPopulation() >= (*c_it2).second->getPopulation()) {
+                        EXPECT_GE((*c_it).second->getCommunitySize(), (*c_it2).second->getCommunitySize());
+                    }
+                    if ((*c_it).second->getPopulation() <= (*c_it2).second->getPopulation()) {
+                        EXPECT_LE((*c_it).second->getCommunitySize(), (*c_it2).second->getCommunitySize());
+                    }
                 }
             }
-        }*/
+            catch(std::exception& e){
+                cout<<"error caught: "<<e.what()<<endl;
+            }
+        }
 
     }
 
