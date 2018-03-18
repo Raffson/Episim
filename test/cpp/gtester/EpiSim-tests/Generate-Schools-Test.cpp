@@ -43,22 +43,23 @@ namespace Tests {
         void TearDown() override {}
     };
 
-    TEST_P(SchoolTest, Run)
+    TEST_P(SchoolTest, HappyDayScenario)
     {
 
         // -----------------------------------------------------------------------------------------
-        // Initialize the simulator.
+        // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
-        cout << "Building the GeoGrid. " << endl;
+        cout << "Building the GeoGrid." << endl;
         auto grid = GeoGrid("config/geogen_default.xml");
-        cout << "Done building the GeoGrid" << endl;
+        cout << "Done building the GeoGrid." << endl;
+
 
         // -----------------------------------------------------------------------------------------
-        // Check resuts against target number.
+        // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-	//Do the test...
-	ASSERT_TRUE(true);
+	    //Do the test...
+	    ASSERT_TRUE(true);
     }
 
     namespace {

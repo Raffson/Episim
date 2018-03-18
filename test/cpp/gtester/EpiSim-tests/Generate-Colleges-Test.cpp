@@ -47,14 +47,15 @@ namespace Tests {
     {
 
         // -----------------------------------------------------------------------------------------
-        // Initialise the simulator.
+        // Initialise the GeoGrid.
         // -----------------------------------------------------------------------------------------
-        cout << "Building the GeoGrid. " << endl;
+        cout << "Building the GeoGrid." << endl;
         auto grid = GeoGrid("config/geogen_default.xml");
-        cout << "Done building the GeoGrid" << endl;
+        cout << "Done building the GeoGrid." << endl;
+
 
         // -----------------------------------------------------------------------------------------
-        // Check results against target number.
+        // Check results against expected results.
         // -----------------------------------------------------------------------------------------
         /* 10 largest cities of flanders_cities_test.csv
          * id,province,population,x_coord,y_coord,latitude,longitude,name
@@ -126,9 +127,9 @@ namespace Tests {
         EXPECT_FLOAT_EQ(grid.getWorkers2Frac(), 0.0);
         EXPECT_FLOAT_EQ(grid.getRestFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.getStudentFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.getCommutingStudents(), 0.0);
+        EXPECT_FLOAT_EQ(grid.getCommutingStudentsFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.getActiveFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.getCommutingWorkers(), 0.0);
+        EXPECT_FLOAT_EQ(grid.getCommutingWorkersFrac(), 0.0);
         EXPECT_EQ(grid.getSchoolSize(), 0);
         EXPECT_EQ(grid.getCollegeSize(), 0);
         EXPECT_EQ(grid.getMaxLC(), 0);

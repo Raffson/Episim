@@ -47,14 +47,15 @@ namespace Tests {
     TEST_P(CommunityTest, Run)
     {
         // -----------------------------------------------------------------------------------------
-        // Initialize the simulator.
+        // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
-        cout << "Building the GeoGrid. " << endl;
+        cout << "Building the GeoGrid." << endl;
         auto grid = GeoGrid("config/geogen_default.xml");
-        cout << "Done building the GeoGrid" << endl;
+        cout << "Done building the GeoGrid." << endl;
+
 
         // -----------------------------------------------------------------------------------------
-        // Check resuts against target number.
+        // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
         auto cities = grid.get_cities();

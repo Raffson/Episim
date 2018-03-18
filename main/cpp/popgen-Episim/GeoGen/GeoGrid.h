@@ -67,9 +67,9 @@ namespace geogen {
         float getWorkers2Frac() const { return m_workers2_frac; }
         float getRestFrac() const {return m_rest_frac; }
         float getStudentFrac() const { return m_student_frac; }
-        float getCommutingStudents() const { return m_commuting_students; }
+        float getCommutingStudentsFrac() const { return m_commuting_students_frac; }
         float getActiveFrac() const { return m_active_frac; }
-        float getCommutingWorkers() const { return m_commuting_workers_frac; }
+        float getCommutingWorkersFrac() const { return m_commuting_workers_frac; }
         unsigned int getSchoolSize() const { return m_school_size; }
         unsigned int getCollegeSize() const { return m_college_size; }
         unsigned int getMaxLC() const { return m_maxlc; }
@@ -133,7 +133,7 @@ namespace geogen {
         float m_student_frac;
 
         ///the ratio of commuters that are workers -> make this const?
-        float m_commuting_students;
+        float m_commuting_students_frac;
 
         ///Total population that is actually working -> make this const?
         /// for workers1 (18y-26y) mind that we first need to exclude the students...

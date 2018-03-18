@@ -48,16 +48,16 @@ namespace Tests {
     TEST_P(WorkplaceTest, HappyDayScenario)
     {
         // -----------------------------------------------------------------------------------------
-        // Initialize the simulator.
+        // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
-        cout << "Building the GeoGrid. " << endl;
+        cout << "Building the GeoGrid." << endl;
         auto grid = GeoGrid("config/geogen_default.xml");
-        cout << "Done building the GeoGrid" << endl;
+        cout << "Done building the GeoGrid." << endl;
+
 
         // -----------------------------------------------------------------------------------------
-        // Check resuts against target number.
+        // Check results against expected results.
         // -----------------------------------------------------------------------------------------
-
 
         //Testing 10 randomly chosen cities atm instead of testing all the 327 cities
         unsigned int antwerpen = 3089;
@@ -91,15 +91,17 @@ namespace Tests {
     TEST_P(WorkplaceTest, CommuterVsLocal)
     {
         // -----------------------------------------------------------------------------------------
-        // Initialize the simulator.
+        // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
-        cout << "Building the GeoGrid. " << endl;
+        cout << "Building the GeoGrid." << endl;
         auto grid = GeoGrid("config/geogen_default.xml");
-        cout << "Done building the GeoGrid" << endl;
+        cout << "Done building the GeoGrid." << endl;
+
 
         // -----------------------------------------------------------------------------------------
-        // Check resuts against target number.
+        // Check results against expected results.
         // -----------------------------------------------------------------------------------------
+
         auto cities = grid.get_cities();
         unsigned int random_city1 = 23096;
         unsigned int random_city2 = 36008;
@@ -126,15 +128,17 @@ namespace Tests {
     TEST_P(WorkplaceTest, Extremeregion)
     {
         // -----------------------------------------------------------------------------------------
-        // Initialize the simulator.
+        // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
-        cout << "Building the GeoGrid. " << endl;
+        cout << "Building the GeoGrid." << endl;
         auto grid = GeoGrid("config/geogen_default.xml");
-        cout << "Done building the GeoGrid" << endl;
+        cout << "Done building the GeoGrid." << endl;
+
 
         // -----------------------------------------------------------------------------------------
-        // Check resuts against target number.
+        // Check results against expected results.
         // -----------------------------------------------------------------------------------------
+
         auto cities = grid.get_cities();
         unsigned a_random_city = 11004;
 

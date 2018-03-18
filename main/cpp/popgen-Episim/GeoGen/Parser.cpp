@@ -13,28 +13,38 @@ namespace parser{
 
 
     map<int, shared_ptr<City>> ParseCities(const boost::filesystem::path &city_file,
-                                           const boost::filesystem::path &commuting_file){
+                                           const boost::filesystem::path &commuting_file, bool parse_commuting){
 
         map<int, shared_ptr<City>> result;
         stride::util::CSV read_in(city_file);
 
+        unsigned  int counter = 0;
         for (auto &it : read_in) {
+            counter++;
+            try {
+                unsigned int id = (unsigned int) (stoi(it.getValue("id")));
+                unsigned int province = (unsigned int) (stoi(it.getValue("province")));
+                unsigned int population = (unsigned int) (stoi(it.getValue("population")));
+                string reader = it.getValue("x_coord");
+                auto x_coord = stof(reader);
+                float y_coord = stof(it.getValue("y_coord"));
+                float longitude = stof(it.getValue("longitude"));
+                float latitude = stof(it.getValue("latitude"));
+                string name = it.getValue("name");
 
-            unsigned int id = (unsigned int)(stoi(it.getValue(0)));
-            unsigned int province = (unsigned int)(stoi(it.getValue(1)));
-            unsigned int population = (unsigned int)(stoi(it.getValue(2)));
-            double x_coord = stof(it.getValue(3));
-            double y_coord = stof(it.getValue(4));
-            double longitude = stof(it.getValue(5));
-            double latitude = stof(it.getValue(6));
-            string name = it.getValue(7);
 
-            Coordinate coord(x_coord, y_coord, longitude, latitude);
-            shared_ptr<City> cty(new City(id, province, population, coord, name));
+                Coordinate coord(x_coord, y_coord, longitude, latitude);
+                shared_ptr<City> cty(new City(id, province, population, coord, name));
 
-            result[id] = cty;
+                result[id] = cty;
+            }
+            catch(exception& e){
+                cout << e.what() << endl << "at row: " << counter << endl;
+            }
         }
-        ParseCommuting(commuting_file, result);
+
+        if(parse_commuting)
+            ParseCommuting(commuting_file, result);
 
         return result;
     }

@@ -20,7 +20,7 @@ namespace geogen {
 
         string commuting_file =  p_tree.get("popgen.data_files.commuting","flanders_commuting.csv");
 
-        m_cities = parser::ParseCities(base_path + city_file, base_path + commuting_file);
+        m_cities = parser::ParseCities(base_path + city_file, base_path + commuting_file, true);
 
         //m_commuting = parser::ParseCommuting(base_path + commuting_file);
 
@@ -40,7 +40,7 @@ namespace geogen {
         m_rest_frac = p_tree.get<float>("popgen.pop_info.fraction_rest");
 
         m_student_frac = p_tree.get<float>("popgen.pop_info.fraction_students");
-        m_commuting_students = p_tree.get<float>("popgen.pop_info.fraction_commuting_students");
+        m_commuting_students_frac = p_tree.get<float>("popgen.pop_info.fraction_commuting_students");
         m_active_frac = p_tree.get<float>("popgen.pop_info.fraction_active_workers");
         m_commuting_workers_frac = p_tree.get<float>("popgen.pop_info.fraction_commuting_workers");
 

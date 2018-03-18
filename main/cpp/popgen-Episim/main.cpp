@@ -13,50 +13,14 @@
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
 
+using namespace std;
+
 //currently i just added stuff from mapviewer's main.cpp
 //we need to figure out what exactly is required an what not..
 
 #ifdef USING_QT
-static bool parseArgs(QStringList& args, QVariantMap& parameters)
-{
 
-    while (!args.isEmpty()) {
-
-        QString param = args.takeFirst();
-
-        if (param.startsWith("--help")) {
-            QTextStream out(stdout);
-            out << "Usage: " << endl;
-            out << "--plugin.<parameter_name> <parameter_value>    -  Sets parameter = value for plugin" << endl;
-            out.flush();
-            return true;
-        }
-
-        if (param.startsWith("--plugin.")) {
-
-            param.remove(0, 9);
-
-            if (args.isEmpty() || args.first().startsWith("--")) {
-                parameters[param] = true;
-            } else {
-
-                QString value = args.takeFirst();
-
-                if (value == "true" || value == "on" || value == "enabled") {
-                    parameters[param] = true;
-                } else if (value == "false" || value == "off"
-                           || value == "disable") {
-                    parameters[param] = false;
-                } else {
-                    parameters[param] = value;
-                }
-            }
-        }
-    }
-    return false;
-}
-
-int startMap(int argc, char *argv[])
+int startMap()
 {
 #if QT_CONFIG(library)
     const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
@@ -64,10 +28,10 @@ int startMap(int argc, char *argv[])
         QCoreApplication::addLibraryPath(QString(p));
 #endif
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QGuiApplication application(argc, argv);
+    int dummyargc = 0;
+    QGuiApplication application(dummyargc, 0);
 
     QVariantMap parameters;
-    QStringList args(QCoreApplication::arguments());
 
     // Fetch tokens from the environment, if present
     const QByteArray mapboxMapID = qgetenv("MAPBOX_MAP_ID");
@@ -89,14 +53,9 @@ int startMap(int argc, char *argv[])
     if (!esriToken.isEmpty())
         parameters["esri.token"] = QString::fromLocal8Bit(esriToken);
 
-    if (parseArgs(args, parameters))
-        return 0;
-    if (!args.contains(QStringLiteral("osm.useragent")))
-        parameters[QStringLiteral("osm.useragent")] = QStringLiteral("QtLocation Mapviewer example");
 
     QQmlApplicationEngine engine;
-    engine.addImportPath(QStringLiteral(":/imports"));
-    engine.load(QUrl(QStringLiteral("qrc:///mapviewer/mapviewer.qml")));
+    engine.load(QUrl::fromLocalFile("mapviewer/mapviewer.qml"));
     QObject::connect(&engine, SIGNAL(quit()), qApp, SLOT(quit()));
 
     QObject *item = engine.rootObjects().first();
@@ -115,6 +74,7 @@ int main(int argc, char** argv)
     geogen::GeoGrid grid("config/geogen_default.xml");
     grid.generate_all();
 #ifdef USING_QT
-    startMap(argc, argv);
+    //startMap(argc, argv);
+    startMap();
 #endif
 }

@@ -32,4 +32,9 @@ INSTALL( FILES ${DEPLOY_FILES} DESTINATION ${CONFIG_INSTALL_LOCATION} )
 #============================================================================
 add_subdirectory( lib )
 
+#============================================================================
+# Copy directory mapviewer to ${CMAKE_INSTALL_PREFIX}
+#============================================================================
+file(COPY mapviewer DESTINATION ${CMAKE_INSTALL_PREFIX})
+
 #############################################################################
