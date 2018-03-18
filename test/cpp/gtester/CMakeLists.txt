@@ -23,7 +23,8 @@ set( SRC
 		main.cpp
 		BatchRuns.cpp
 		InfluenceR0Runs.cpp
-        EpiSim-tests/GeoGenConConstructorTests.cpp)
+  )
+
 
 add_executable(${EXEC}   ${SRC} )
 target_link_libraries( ${EXEC}    ${LIBS} gtest pthread libstride) 
@@ -36,6 +37,7 @@ set( SRC2
 		EpiSim-tests/Generate-Colleges-Test.cpp
 		EpiSim-tests/Generate-Schools-Test.cpp
 		EpiSim-tests/Generate-Workplaces-Test.cpp
+		EpiSim-tests/GeoGenConConstructorTests.cpp
 )
 
 add_executable(${EXEC2}   ${SRC2} )
