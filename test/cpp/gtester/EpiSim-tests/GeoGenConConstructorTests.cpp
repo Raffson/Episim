@@ -5,7 +5,6 @@
 #include <gtest/gtest.h>
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
-#include "popgen-Episim/GeoGen/City.h"
 
 using namespace std;
 
@@ -18,14 +17,12 @@ TEST(GeoGenTest, happy_day_constructor){
 
 TEST(GeoGenTest, faulty_city_row){
 
-    ASSERT_NO_THROW(geogen::parser::parse_cities("data/flanders_cities.csv"));
-    map<int, shared_ptr<geogen::City>> cty_map = geogen::parser::parse_cities("data/flanders_cities_fualty_row.csv");
+    map<int, shared_ptr<geogen::City>> cty_map = geogen::parser::parse_cities("data/flanders_cities_faulty_row.csv");
     EXPECT_EQ(326, cty_map.size());
 }
 
 TEST(GeoGenTest, faulty_city_col){
 
-    ASSERT_NO_THROW(geogen::parser::parse_cities("data/flanders_cities.csv"));
     map<int, shared_ptr<geogen::City>> cty_map = geogen::parser::parse_cities("data/flanders_cities_faulty_col.csv");
     EXPECT_EQ(327, cty_map.size());
 
@@ -33,12 +30,14 @@ TEST(GeoGenTest, faulty_city_col){
     geogen::Coordinate coord = antwerp->getCoordinates();
 
     EXPECT_EQ(1, antwerp->getProvince());
-    EXPECT_EQ(150964, antwerp->getPopulation());
-    EXPECT_EQ(153104.586, coord.x);
-    EXPECT_EQ(212271.7101, coord.y);
-    EXPECT_EQ(51.2165845, coord.latitude);
-    EXPECT_EQ(4.413545489, coord.longitude);
+    EXPECT_EQ(269954, antwerp->getPopulation());
+
+    EXPECT_NEAR(153104.586, coord.x, 1);
+    EXPECT_NEAR(212271.7101, coord.y, 1);
+    EXPECT_NEAR(51.2165845, coord.latitude, 1);
+    EXPECT_NEAR(4.413545489, coord.longitude, 1);
     EXPECT_EQ("ANTWERPEN", antwerp->getName());
+
 
 }
 
@@ -58,12 +57,12 @@ TEST(GeoGenTest,city_correct_data_test){
     geogen::Coordinate coord = antwerp->getCoordinates();
 
     EXPECT_EQ(1, antwerp->getProvince());
-    EXPECT_EQ(150964, antwerp->getPopulation());
-    EXPECT_EQ(153104.586, coord.x);
-    EXPECT_EQ(212271.7101, coord.y);
-    EXPECT_EQ(51.2165845, coord.latitude);
-    EXPECT_EQ(4.413545489, coord.longitude);
-    EXPECT_EQ("Antwerpen", antwerp->getName());
+    EXPECT_EQ(269954, antwerp->getPopulation());
+    EXPECT_NEAR(153104.586, coord.x, 1);
+    EXPECT_NEAR(212271.7101, coord.y, 1);
+    EXPECT_NEAR(51.2165845, coord.latitude, 1);
+    EXPECT_NEAR(4.413545489, coord.longitude, 1);
+    EXPECT_EQ("ANTWERPEN", antwerp->getName());
 
 
 
