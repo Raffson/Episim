@@ -30,7 +30,7 @@ namespace geogen {
         //specs ask this to be read out of config, but could be calculated directly
         //out of the city file?
         // -> you're right... so let's do it like this:
-        //m_total_pop = count_total_pop();
+        //m_total_pop = CountTotalPop();
         //After specifically asking about this, turns out we still need to read it from file...
         //perhaps find a way to verify this number somehow, if the possibility exists of course...
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
@@ -99,7 +99,7 @@ namespace geogen {
 
     }
 
-    unsigned int GeoGrid::findSmallest(const vector <shared_ptr<City>> &lc) {
+    unsigned int GeoGrid::FindSmallest(const vector<shared_ptr<City>> &lc) {
         unsigned int smallest = 0;
         for (unsigned int i = 1; i < lc.size(); i++) {
             if (lc[smallest]->GetPopulation() > lc[i]->GetPopulation()) smallest = i;
@@ -107,11 +107,11 @@ namespace geogen {
         return smallest;
     }
 
-    void GeoGrid::adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city) {
+    void GeoGrid::AdjustLargestCities(vector<shared_ptr<City>> &lc, const shared_ptr<City> &city) {
         if (lc.size() < m_maxlc) lc.push_back(city);
         else {
             unsigned int citpop = city->GetPopulation();
-            unsigned int smallest = findSmallest(lc);
+            unsigned int smallest = FindSmallest(lc);
             if (citpop > lc[smallest]->GetPopulation()) lc[smallest] = city;
         }
     }
@@ -120,7 +120,7 @@ namespace geogen {
         //need 10 largest cities, largest determined by number of people in the city...
         vector <shared_ptr<City>> lc;
         for (auto &it : m_cities) {
-            adjustLargestCities(lc, it.second);
+            AdjustLargestCities(lc, it.second);
         }
 
         //generate colleges to the respective cities...
@@ -201,7 +201,7 @@ namespace geogen {
     }
 
 
-    unsigned int GeoGrid::count_total_pop() const {
+    unsigned int GeoGrid::CountTotalPop() const {
 
         unsigned int counter = 0;
         for (auto &it : m_cities) {

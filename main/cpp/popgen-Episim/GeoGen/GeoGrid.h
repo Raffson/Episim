@@ -84,15 +84,15 @@ namespace geogen {
 
         ///Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
-        unsigned int findSmallest(const vector <shared_ptr<City>> &lc);
+        unsigned int FindSmallest(const vector<shared_ptr<City>> &lc);
 
         ///Adjusts 'lc' iff 'city' has more people than the city with the smallest population in 'lc'
         /// used by generate_colleges()
-        void adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city);
+        void AdjustLargestCities(vector<shared_ptr<City>> &lc, const shared_ptr<City> &city);
 
         /// Counts the total population in th GeoGrid based on the cities
         /// in map cities.
-        unsigned int count_total_pop() const;
+        unsigned int CountTotalPop() const;
 
 
 

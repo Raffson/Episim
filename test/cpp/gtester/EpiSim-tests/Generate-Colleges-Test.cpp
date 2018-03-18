@@ -151,7 +151,7 @@ namespace Tests {
     }
 
 
-    //Copy of the code since it is a private function and it is used by adjustLargestCities
+    //Copy of the code since it is a private function and it is used by AdjustLargestCities
     unsigned int findSmallest(const vector <shared_ptr<City>> &lc) {
         unsigned int smallest = 0;
         for (unsigned int i = 1; i < lc.size(); i++) {
