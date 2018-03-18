@@ -142,25 +142,22 @@ namespace geogen {
 
     unsigned int GeoGrid::count_number_of_in_commuters(unsigned int destination_id) {
         unsigned int result = 0;
+
         for(auto it:m_commuting){
-            if(it.first.second == destination_id){
-                result += it.second;
-            }
+            result += it.second[destination_id];
         }
         return result;
     }
 
     unsigned int GeoGrid::count_number_of_out_commuters(unsigned int origin_id){
         unsigned int result = 0;
-        for(auto it:m_commuting){
-            if(it.first.first == origin_id){
-                //commuting in own region shouldn't be counted
-                if(it.first.first != it.first.second){
-                    result += it.second;
+        map<unsigned int, unsigned int> destinations = m_commuting[origin_id];
 
-                }
-            }
+        for(auto destination: destinations){
+            if(destination.first != origin_id )
+            result += destination.second;
         }
+
         return result;
     }
 
@@ -191,36 +188,32 @@ namespace geogen {
 
     }
 
+    /// Communities need to be distributed according to the relative population size.
+    /// On average a community has 2000 members.
     void GeoGrid::generate_communities() {
+        cout<<"start generating communities"<<endl;
         vector<shared_ptr<Community>> primsec_communities;
-        /// Communities need to be distributed according to the relative population size.
         /// First we need to determine the total number of communities to be used.
-        /// On average a community has 2000 members.
-        double check = 0;
         auto total_communities = ceil(m_total_pop/m_community_size);
-        unsigned int ti = 0;
+        /// Determine how many communities a city should get.
         for (auto it : m_cities){
-            ti++;
+            /// it: pair<int, City>
             shared_ptr<City> city = it.second;
+            cout<<"city found"<<endl;
+            /// ratio: the city contains ratio % of the total population.
             double ratio = (city->getPopulation()/(double)m_total_pop);
+            cout<<city->getPopulation()<<" / "<<(double)m_total_pop<<endl;
             assert(0<ratio<1);
-            check += ratio;
             /// Now we have the ratio, we know that the city has ratio % of all communities.
             auto city_communities = (total_communities*ratio);
             assert(city_communities<total_communities);
+
             for (int i = 0; i < city_communities; i++){
-//                cout << ratio << ", "<< total_communities << ", "<< city_communities<<endl;
-//                cout << ">>> 4 (in loop kwadraat) in iteration: " << ti << " - " << i <<"\n";
                 /// Since there currently is no real difference between primary and secundary communities we make them all primary.
                 shared_ptr<Community> community = make_shared<Community>(CommunityType::Primary, city);
                 city->addCommunity(community);
                 //m_communities[community->getID()] = community
             }
-        }
-        //Note from Raphael: This fails on my end due to rounding errors, thus we need a better check...
-        if (check != 1.0){
-            cout<<"ERROR in generate_communities: the total sum of all ratios equals "<< check <<"!"<<endl;
-            return;
         }
     }
 
