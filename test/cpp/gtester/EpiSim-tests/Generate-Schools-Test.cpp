@@ -77,7 +77,37 @@ namespace Tests {
     }
 
     TEST_P(SchoolTest, high_more_low_less){
+        // -----------------------------------------------------------------------------------------
+        // Initialize the GeoGrid.
+        // -----------------------------------------------------------------------------------------
+        cout << "Building the GeoGrid." << endl;
+        auto grid = GeoGrid("config/geogen_default.xml");
+        cout << "Done building the GeoGrid." << endl;
 
+        auto mp = grid.get_cities();
+
+        shared_ptr<City> highest_pop_c = mp.begin()->second;
+        int highest_pop = highest_pop_c->getAllCommunities().size();
+
+        shared_ptr<City> lowest_pop_c = mp.begin()->second;
+        int lowest_pop = lowest_pop_c->getAllCommunities().size();
+
+        for(auto& it : mp){
+            shared_ptr<City> t_city = it.second;
+            int pop = t_city->getPopulation();
+
+            if(highest_pop < pop){
+                highest_pop = pop;
+                highest_pop_c = t_city;
+            }
+
+            if (lowest_pop > pop){
+                lowest_pop = pop;
+                lowest_pop_c = t_city;
+            }
+        }
+
+        EXPECT_LE(lowest_pop_c->getAllCommunities(), highest_pop_c->getAllCommunities());
     }
 
     namespace {
