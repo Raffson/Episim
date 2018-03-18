@@ -37,7 +37,7 @@ set( SRC2
 		EpiSim-tests/Generate-Colleges-Test.cpp
 		EpiSim-tests/Generate-Schools-Test.cpp
 		EpiSim-tests/Generate-Workplaces-Test.cpp
-		EpiSim-tests/GeoGenConConstructorTests.cpp
+		EpiSim-tests/GeoGen-Constructor-Test.cpp
 )
 
 add_executable(${EXEC2}   ${SRC2} )

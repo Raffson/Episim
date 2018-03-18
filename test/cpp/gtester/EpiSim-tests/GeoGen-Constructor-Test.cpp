@@ -62,10 +62,10 @@ namespace Tests {
 
         EXPECT_EQ(1, antwerp->getProvince());
         EXPECT_EQ(269954, antwerp->getPopulation());
-        EXPECT_NEAR(153104.586, coord.x, 1);
-        EXPECT_NEAR(212271.7101, coord.y, 1);
-        EXPECT_NEAR(51.2165845, coord.latitude, 1);
-        EXPECT_NEAR(4.413545489, coord.longitude, 1);
+        EXPECT_FLOAT_EQ(153104.586, coord.x);
+        EXPECT_FLOAT_EQ(212271.7101, coord.y);
+        EXPECT_FLOAT_EQ(51.2165845, coord.latitude);
+        EXPECT_FLOAT_EQ(4.413545489, coord.longitude);
         EXPECT_EQ("ANTWERPEN", antwerp->getName());
 
     }
@@ -109,10 +109,10 @@ namespace Tests {
         EXPECT_EQ(1, antwerp->getProvince());
         EXPECT_EQ(269954, antwerp->getPopulation());
 
-        EXPECT_NEAR(153104.586, coord.x, 1);
-        EXPECT_NEAR(212271.7101, coord.y, 1);
-        EXPECT_NEAR(51.2165845, coord.latitude, 1);
-        EXPECT_NEAR(4.413545489, coord.longitude, 1);
+        EXPECT_FLOAT_EQ(153104.586, coord.x);
+        EXPECT_FLOAT_EQ(212271.7101, coord.y);
+        EXPECT_FLOAT_EQ(51.2165845, coord.latitude);
+        EXPECT_FLOAT_EQ(4.413545489, coord.longitude);
         EXPECT_EQ("ANTWERPEN", antwerp->getName());
 
     }
