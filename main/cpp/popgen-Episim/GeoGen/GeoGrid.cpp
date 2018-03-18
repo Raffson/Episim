@@ -10,6 +10,7 @@ namespace geogen {
 
     GeoGrid::GeoGrid(const boost::filesystem::path & config_file) {
 
+        this->school_count = 0;
         //Setting up property tree to parse xml config file
         boost::property_tree::ptree p_tree;
         boost::property_tree::read_xml(config_file.string(), p_tree);
@@ -58,7 +59,9 @@ namespace geogen {
     }
 
     void GeoGrid::generate_schools() {
-
+        cout << m_schooled_frac << endl;
+        assert(this->m_schooled_frac<=1);
+        assert(this->m_school_size > 0);
         // Calculating extra data
         // rounded because we don't have a fraction of a person
         auto amount_schooled = (const unsigned int) round(m_total_pop * m_schooled_frac);
@@ -83,7 +86,7 @@ namespace geogen {
 
         // assign schools to cities according to our normal distribution
         for(unsigned int i = 0; i < amount_of_schools; i++){
-
+            school_count++;
             int index = pop_id[distr(gen)];
             shared_ptr<City> chosen_city = m_cities[index];
             shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
@@ -232,6 +235,10 @@ namespace geogen {
 
     const map<int, shared_ptr<City>>& GeoGrid::get_cities(){
         return m_cities;
+    }
+
+    unsigned int GeoGrid::getSchool_count() const {
+        return school_count;
     };
 
 }//namespace geogen

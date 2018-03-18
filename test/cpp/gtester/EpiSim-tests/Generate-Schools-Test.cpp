@@ -59,7 +59,11 @@ namespace Tests {
         // -----------------------------------------------------------------------------------------
 
 	    //Do the test...
-	    ASSERT_TRUE(true);
+	    ASSERT_NO_THROW(grid.generate_schools()); // happy day
+        EXPECT_NEAR(grid.getSchool_count(),1736, 0.1);
+        geogen::GeoGrid fracted("config/geogen_test_school.xml");
+        // EXPECT_DEATH_IF_SUPPORTED(fracted.generate_schools(),".");
+
     }
 
     namespace {
