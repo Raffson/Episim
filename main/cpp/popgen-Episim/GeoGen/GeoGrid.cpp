@@ -40,7 +40,7 @@ namespace geogen {
         m_student_frac = p_tree.get<float>("popgen.pop_info.fraction_students");
         m_commuting_students = p_tree.get<float>("popgen.pop_info.fraction_commuting_students");
         m_active_frac = p_tree.get<float>("popgen.pop_info.fraction_active_workers");
-        m_commuting_workers = p_tree.get<float>("popgen.pop_info.fraction_commuting_workers");
+        m_commuting_workers_frac = p_tree.get<float>("popgen.pop_info.fraction_commuting_workers");
 
         m_school_size = p_tree.get<unsigned int>("popgen.contactpool_info.school.size");
         m_college_size =  p_tree.get<unsigned int>("popgen.contactpool_info.college.size");
@@ -161,6 +161,9 @@ namespace geogen {
         return result;
     }
 
+    void GeoGrid::setNumberOfCommuters(unsigned int origin_id, unsigned int destination_id, unsigned numberOfCommuters){
+        m_commuting[origin_id][destination_id] = numberOfCommuters;
+    }
     void GeoGrid::generate_workplaces() {
         //calculating the required informations
 
@@ -176,7 +179,7 @@ namespace geogen {
             //To be confirmed: everybody commutes, the in-commuters have all the people working in that region,
             //including locals who work in their own region
             //some percentages of the commuters are students
-            double working_commuters = m_commuting_workers * in_commuters;
+            double working_commuters = m_commuting_workers_frac * in_commuters;
             unsigned int number_of_workplaces = round(working_commuters / m_worksplace_size);
 
             for(unsigned int i=0; i<number_of_workplaces; i++){

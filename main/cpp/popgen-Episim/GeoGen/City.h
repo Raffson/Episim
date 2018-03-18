@@ -49,6 +49,7 @@ namespace geogen {
 
         const vector<shared_ptr<const Community>> getColleges() const;
 
+        unsigned int getNumberOfWorkplaces() const;
 
         /// Adds community to the city.
         void addCommunity(shared_ptr<Community> community);

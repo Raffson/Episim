@@ -54,7 +54,11 @@ configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities_test.csv
 configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_commuting_test.csv
 	${CMAKE_BINARY_DIR}/test/data/flanders_commuting.csv COPYONLY)
 
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities_faulty_col.csv
+		${CMAKE_BINARY_DIR}/test/data/flanders_cities_faulty_col.csv COPYONLY)
 
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities_faulty_row.csv
+		${CMAKE_BINARY_DIR}/test/data/flanders_cities_faulty_row.csv COPYONLY)
 #============================================================================
 # Config related to using Google test (src in resources/lib/gtest) for cpp
 #============================================================================

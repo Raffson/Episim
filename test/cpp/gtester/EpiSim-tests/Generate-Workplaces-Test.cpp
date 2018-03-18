@@ -43,23 +43,115 @@ namespace Tests {
         void TearDown() override {}
     };
 
-    TEST_P(WorkplaceTest, Run)
+    TEST_P(WorkplaceTest, HappyDayScenario)
     {
 
         // -----------------------------------------------------------------------------------------
-        // Initialize the simulator.
+        // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
-        cout << "Building the GeoGrid. " << endl;
+        cout << "Building the GeoGrid." << endl;
         auto grid = GeoGrid("config/geogen_default.xml");
-        cout << "Done building the GeoGrid" << endl;
+        cout << "Done building the GeoGrid." << endl;
+
 
         // -----------------------------------------------------------------------------------------
-        // Check resuts against target number.
+        // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-	//Do the test...
+        //Testing 10 randomly chosen cities atm instead of testing all the 327 cities
+        unsigned int antwerpen = 3089;
+        unsigned int leuven = 877;
+        unsigned int brugge = 961;
+        unsigned int roeselare = 471;
+        unsigned int aalst = 663;
+        unsigned int dendermonde = 371;
+        unsigned int temse = 213;
+        unsigned int sinttruiden = 294;
+        unsigned int tongeren = 210;
+        unsigned int maasmechelen = 216;
+
+
+        grid.generate_workplaces();
+
+        auto cities = grid.get_cities();
+        EXPECT_EQ(cities[11002]->getNumberOfWorkplaces(), antwerpen);
+        EXPECT_EQ(cities[24062]->getNumberOfWorkplaces(), leuven);
+        EXPECT_EQ(cities[31005]->getNumberOfWorkplaces(), brugge);
+        EXPECT_EQ(cities[36015]->getNumberOfWorkplaces(), roeselare);
+        EXPECT_EQ(cities[41002]->getNumberOfWorkplaces(), aalst);
+        EXPECT_EQ(cities[42006]->getNumberOfWorkplaces(), dendermonde);
+        EXPECT_EQ(cities[46025]->getNumberOfWorkplaces(), temse);
+        EXPECT_EQ(cities[71053]->getNumberOfWorkplaces(), sinttruiden);
+        EXPECT_EQ(cities[73083]->getNumberOfWorkplaces(), tongeren);
+        EXPECT_EQ(cities[73107]->getNumberOfWorkplaces(), maasmechelen);
+
     }
 
+    TEST_P(WorkplaceTest, CommuterVsLocal)
+    {
+        // -----------------------------------------------------------------------------------------
+        // Initialize the GeoGrid.
+        // -----------------------------------------------------------------------------------------
+        cout << "Building the GeoGrid." << endl;
+        auto grid = GeoGrid("config/geogen_default.xml");
+        cout << "Done building the GeoGrid." << endl;
+
+
+        // -----------------------------------------------------------------------------------------
+        // Check results against expected results.
+        // -----------------------------------------------------------------------------------------
+
+        auto cities = grid.get_cities();
+        unsigned int random_city1 = 23096;
+        unsigned int random_city2 = 36008;
+
+
+        for(auto city: cities){
+            grid.setNumberOfCommuters(city.first, random_city1, 0);
+            grid.setNumberOfCommuters(city.first, random_city2, 0);
+        }
+
+        //setting local_commuters and no commuters from other cities
+        grid.setNumberOfCommuters(random_city1, random_city1, 200);
+
+        //the other city will have commuters from other cities but no locals
+        grid.setNumberOfCommuters(35014, random_city2, 100);
+        grid.setNumberOfCommuters(35029, random_city2, 50);
+        grid.setNumberOfCommuters(37002, random_city2, 50);
+
+        grid.generate_workplaces();
+
+        EXPECT_EQ(cities[random_city1]->getNumberOfWorkplaces(), cities[random_city2]->getNumberOfWorkplaces());
+
+    }
+
+    TEST_P(WorkplaceTest, Extremeregion)
+    {
+        // -----------------------------------------------------------------------------------------
+        // Initialize the GeoGrid.
+        // -----------------------------------------------------------------------------------------
+        cout << "Building the GeoGrid." << endl;
+        auto grid = GeoGrid("config/geogen_default.xml");
+        cout << "Done building the GeoGrid." << endl;
+
+
+        // -----------------------------------------------------------------------------------------
+        // Check results against expected results.
+        // -----------------------------------------------------------------------------------------
+
+        auto cities = grid.get_cities();
+        unsigned a_random_city = 11004;
+
+        for(auto city: cities){
+            grid.setNumberOfCommuters(city.first, a_random_city, 0);
+        }
+
+        grid.generate_workplaces();
+
+        //This is an extrem city where everybody commutes to other cities to work
+        EXPECT_EQ(0, cities[a_random_city]->getNumberOfWorkplaces());
+
+    }
     namespace {
 //OpenMP should have no effect atm...
 #ifdef _OPENMP
