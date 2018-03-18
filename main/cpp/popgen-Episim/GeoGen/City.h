@@ -59,6 +59,7 @@ namespace geogen {
 
         void SetInCommuters(unsigned int id, unsigned int number_of_commuters);
 
+        /// @return number of commuters entering the city
         unsigned int GetNumberOfInCommuters();
 
     private:
