@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<popgen>
+
+    <data_files>
+        <cities>geogen_test_cities.csv</cities>
+        <commuting>test_commuting.csv</commuting>
+    </data_files>
+
+    <pop_info>
+        <pop_total>4341923</pop_total>
+
+        <!-- fraction that goes to school (3y-18y) -->
+        <fraction_schooled>0.2</fraction_schooled>
+
+        <!-- fraction that is able to work (18y-26y) -->
+        <fraction_workers1>0.2</fraction_workers1>
+
+        <!-- fraction that is able to work (27y-65y) -->
+        <fraction_workers2>0.5</fraction_workers2>
+
+        <!-- fraction of people younger than 3y and older than 65y -->
+        <fraction_rest>0.1</fraction_rest>
+
+
+        <!-- fraction of people able to work that is student (18y-26y) -->
+        <fraction_students>0.5</fraction_students>
+        <!-- commuting fraction of students -->
+        <fraction_commuting_students>0.5</fraction_commuting_students>
+
+        <!-- fraction of people that is able to work and actually working -->
+        <fraction_active_workers>0.5</fraction_active_workers>
+        <!-- commuting fraction of active workers -->
+        <fraction_commuting_workers>0.5</fraction_commuting_workers>
+    </pop_info>
+
+    <contactpool_info>
+        <school>
+            <size>500</size>
+        </school>
+        <college>
+            <size>3000</size>
+            <cities>10</cities>
+        </college>
+        <community>
+            <size>2000</size>
+        </community>
+        <workplace>
+            <size>20</size>
+        </workplace>
+    </contactpool_info>
+
+</popgen>

@@ -54,7 +54,14 @@ configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities_test.csv
 configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_commuting_test.csv
 	${CMAKE_BINARY_DIR}/test/data/flanders_commuting.csv COPYONLY)
 
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/config/geogen_workplace_test.xml
+		${CMAKE_BINARY_DIR}/test/config/geogen_workplace_test.xml COPYONLY)
 
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/geogen_test_cities.csv
+		${CMAKE_BINARY_DIR}/test/data/geogen_test_cities.csv COPYONLY)
+
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/test_commuting.csv
+		${CMAKE_BINARY_DIR}/test/data/test_commuting.csv COPYONLY)
 #============================================================================
 # Config related to using Google test (src in resources/lib/gtest) for cpp
 #============================================================================
