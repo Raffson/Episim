@@ -59,6 +59,9 @@ configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities_faulty_co
 
 configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities_faulty_row.csv
 		${CMAKE_BINARY_DIR}/test/data/flanders_cities_faulty_row.csv COPYONLY)
+
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/config/geogen_test_school.xml
+		${CMAKE_BINARY_DIR}/test/config/geogen_test_school.xml COPYONLY)
 #============================================================================
 # Config related to using Google test (src in resources/lib/gtest) for cpp
 #============================================================================
