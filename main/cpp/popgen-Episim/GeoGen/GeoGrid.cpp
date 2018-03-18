@@ -59,7 +59,7 @@ namespace geogen {
     }
 
     void GeoGrid::generate_schools() {
-        cout << m_schooled_frac << endl;
+
         assert(this->m_schooled_frac<=1);
         assert(this->m_school_size > 0);
         // Calculating extra data
@@ -237,8 +237,8 @@ namespace geogen {
         return m_cities;
     }
 
-    unsigned int GeoGrid::getSchool_count() const {
-        return school_count;
+    unsigned int GeoGrid::getSchoolCount() const {
+        return m_school_count;
     };
 
 }//namespace geogen
