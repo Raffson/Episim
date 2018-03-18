@@ -239,6 +239,10 @@ namespace geogen {
 
     unsigned int GeoGrid::getSchoolCount() const {
         return m_school_count;
+    }
+
+    shared_ptr<City> &GeoGrid::operator[](int i) {
+        return m_cities[i];
     };
 
 }//namespace geogen

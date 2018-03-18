@@ -79,6 +79,8 @@ namespace geogen {
         void setNumberOfCommuters(unsigned int origin_id, unsigned int destination_id, unsigned int numberOfCommuters);
         unsigned int getSchoolCount() const;
 
+        shared_ptr<City>& operator[](int i);
+
     private:
 
         ///Returns index of city with smallest population from 'lc'

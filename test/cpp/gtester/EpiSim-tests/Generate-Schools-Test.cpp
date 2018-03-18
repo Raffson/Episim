@@ -61,7 +61,7 @@ namespace Tests {
 
 	    //Do the test...
 	    ASSERT_NO_THROW(grid.generate_schools()); // happy day
-        EXPECT_EQ(grid.getSchool_count(),1736);
+        EXPECT_EQ(grid.getSchoolCount(),1736);
 
     }
 
@@ -74,6 +74,10 @@ namespace Tests {
         cout << "Done building the GeoGrid." << endl;
 
         //ASSERT_DEATH_IF_SUPPORTED(grid.generate_schools(), ".");
+    }
+
+    TEST_P(SchoolTest, high_more_low_less){
+
     }
 
     namespace {
