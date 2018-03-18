@@ -47,37 +47,36 @@ namespace geogen {
         explicit GeoGrid(const boost::filesystem::path& config);
 
         /// Generates the schools.
-        void generate_schools();
+        void GenerateSchools();
 
-        void generate_colleges();
+        void GenerateColleges();
 
-        void generate_workplaces();
+        void GenerateWorkplaces();
 
-        void generate_communities();
+        void GenerateCommunities();
 
-        void generate_all();
+        void GenerateAll();
 
         const map<int, shared_ptr<City>>& get_cities();
 
         /// Bunch of getters, mainly for tests atm...
         /// Could leave all this out but then we need to work with friend classes...
-        unsigned int getTotalPop() const { return m_total_pop; }
-        float getSchooledFrac() const { return m_schooled_frac; }
-        float getWorkers1Frac() const { return m_workers1_frac; }
-        float getWorkers2Frac() const { return m_workers2_frac; }
-        float getRestFrac() const {return m_rest_frac; }
-        float getStudentFrac() const { return m_student_frac; }
-        float getCommutingStudentsFrac() const { return m_commuting_students_frac; }
-        float getActiveFrac() const { return m_active_frac; }
-        float getCommutingWorkersFrac() const { return m_commuting_workers_frac; }
-        unsigned int getSchoolSize() const { return m_school_size; }
-        unsigned int getCollegeSize() const { return m_college_size; }
-        unsigned int getMaxLC() const { return m_maxlc; }
-        unsigned int getCommunitySize() const { return m_community_size; }
-        unsigned int getWorkplaceSize() const { return m_worksplace_size; }
+        unsigned int GetTotalPop() const { return m_total_pop; }
+        float GetSchooledFrac() const { return m_schooled_frac; }
+        float GetWorkers1Frac() const { return m_workers1_frac; }
+        float GetWorkers2Frac() const { return m_workers2_frac; }
+        float GetRestFrac() const {return m_rest_frac; }
+        float GetStudentFrac() const { return m_student_frac; }
+        float GetCommutingStudentsFrac() const { return m_commuting_students_frac; }
+        float GetActiveFrac() const { return m_active_frac; }
+        float GetCommutingWorkersFrac() const { return m_commuting_workers_frac; }
+        unsigned int GetSchoolSize() const { return m_school_size; }
+        unsigned int GetCollegeSize() const { return m_college_size; }
+        unsigned int GetMaxLC() const { return m_maxlc; }
+        unsigned int GetCommunitySize() const { return m_community_size; }
+        unsigned int GetWorkplaceSize() const { return m_worksplace_size; }
 
-        void setNumberOfCommuters(unsigned int origin_id, unsigned int destination_id, unsigned int numberOfCommuters);
-        unsigned int getSchoolCount() const;
+        unsigned int GetSchoolCount() const;
 
         shared_ptr<City>& operator[](int i);
 

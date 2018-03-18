@@ -72,7 +72,7 @@ int startMap()
 int main(int argc, char** argv)
 {
     geogen::GeoGrid grid("config/geogen_default.xml");
-    grid.generate_all();
+    grid.GenerateAll();
 #ifdef USING_QT
     //startMap(argc, argv);
     startMap();
