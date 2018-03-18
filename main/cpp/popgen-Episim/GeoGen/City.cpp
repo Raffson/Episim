@@ -62,6 +62,16 @@ namespace geogen {
         return colleges;
     }
 
+    unsigned int City::getNumberOfWorkplaces() const{
+        unsigned int result = 0;
+        for(auto a_community:m_communities){
+            if(a_community->GetCommunityType() == CommunityType::Work){
+                result++;
+            }
+        }
+        return result;
+    }
+
     void City::addCommunity(shared_ptr<Community> community) {
         m_communities.push_back(community);
     }

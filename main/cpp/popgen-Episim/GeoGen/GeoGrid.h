@@ -69,12 +69,14 @@ namespace geogen {
         float getStudentFrac() const { return m_student_frac; }
         float getCommutingStudents() const { return m_commuting_students; }
         float getActiveFrac() const { return m_active_frac; }
-        float getCommutingWorkers() const { return m_commuting_workers; }
+        float getCommutingWorkers() const { return m_commuting_workers_frac; }
         unsigned int getSchoolSize() const { return m_school_size; }
         unsigned int getCollegeSize() const { return m_college_size; }
         unsigned int getMaxLC() const { return m_maxlc; }
         unsigned int getCommunitySize() const { return m_community_size; }
         unsigned int getWorkplaceSize() const { return m_worksplace_size; }
+
+        void setNumberOfCommuters(unsigned int origin_id, unsigned int destination_id, unsigned int numberOfCommuters);
 
     private:
 
@@ -140,7 +142,7 @@ namespace geogen {
         float m_active_frac;
 
         ///the ratio of commuters that are workers -> make this const?
-        float m_commuting_workers;
+        float m_commuting_workers_frac;
 
 
         /// Average size of each school -> make this const?
