@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#ifdef Qt5_FOUND
+#ifdef USING_QT
     #include <QtCore/QTextStream>
     #include <QtGui/QGuiApplication>
     #include <QtQml/QQmlApplicationEngine>
@@ -16,7 +16,7 @@
 //currently i just added stuff from mapviewer's main.cpp
 //we need to figure out what exactly is required an what not..
 
-#ifdef Qt5_FOUND
+#ifdef USING_QT
 static bool parseArgs(QStringList& args, QVariantMap& parameters)
 {
 
@@ -114,7 +114,7 @@ int main(int argc, char** argv)
 {
     geogen::GeoGrid grid("config/geogen_default.xml");
     grid.generate_all();
-#ifdef Qt5_FOUND
+#ifdef USING_QT
     startMap(argc, argv);
 #endif
 }
