@@ -113,20 +113,6 @@ target_link_libraries(popgen-Episim ${LIBS} libstride)
 install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
 
 #============================================================================
-# Build and install the stride executable.
-#============================================================================
-#add_executable(popgen popgen/main.cpp)
-#target_link_libraries(popgen ${LIBS} libstride)
-#install(TARGETS popgen  DESTINATION   ${BIN_INSTALL_LOCATION})
-
-#============================================================================
-# Build and install the stride executable.
-#============================================================================
-#add_executable(popgen2 popgen2/main.cpp)
-#target_link_libraries(popgen2 ${LIBS} libstride)
-#install(TARGETS popgen2  DESTINATION   ${BIN_INSTALL_LOCATION})
-
-#============================================================================
 # Clean up.
 #============================================================================
 unset(MAIN_SRC)

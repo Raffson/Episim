@@ -76,7 +76,7 @@ namespace Tests {
         //ASSERT_DEATH_IF_SUPPORTED(grid.generate_schools(), ".");
     }
 
-    TEST_P(SchoolTest, high_more_low_less){
+    TEST_P(SchoolTest, HighMoreLowLess){
         // -----------------------------------------------------------------------------------------
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
