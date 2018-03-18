@@ -56,7 +56,7 @@ static bool parseArgs(QStringList& args, QVariantMap& parameters)
     return false;
 }
 
-int main(int argc, char *argv[])
+int startMap(int argc, char *argv[])
 {
 #if QT_CONFIG(library)
     const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
