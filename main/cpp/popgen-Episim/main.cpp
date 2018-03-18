@@ -56,7 +56,7 @@ static bool parseArgs(QStringList& args, QVariantMap& parameters)
     return false;
 }
 
-int startMap(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 #if QT_CONFIG(library)
     const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
@@ -96,7 +96,7 @@ int startMap(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.addImportPath(QStringLiteral(":/imports"));
-    engine.load(QUrl(QStringLiteral("qrc:///mapviewer/mapviewer.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:///mapviewer.qml")));
     QObject::connect(&engine, SIGNAL(quit()), qApp, SLOT(quit()));
 
     QObject *item = engine.rootObjects().first();
