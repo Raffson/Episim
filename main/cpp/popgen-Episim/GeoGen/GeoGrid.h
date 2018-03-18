@@ -88,12 +88,6 @@ namespace geogen {
         /// used by generate_colleges()
         void adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city);
 
-        /// Counts total in-commuters for a given destination
-        unsigned int count_number_of_in_commuters(unsigned int destination_id);
-
-        /// Counts total out-commuters for a given destination
-        unsigned int count_number_of_out_commuters(unsigned int origin_id);
-
         /// Counts the total population in th GeoGrid based on the cities
         /// in map cities.
         unsigned int count_total_pop() const;
@@ -106,14 +100,18 @@ namespace geogen {
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities;
 
-        /// Contains information about number of commuters from a city to a city
-        map<unsigned int, map<unsigned int, unsigned int> > m_commuting;
+
 
 
         /// Keep a map of all communities?
         /// -> will put everything in place in comments,
         ///     if we need it, just uncomment it...
         ///map<unsigned int, shared_ptr<Community>> m_communities;
+
+
+        ///doing the same for commuters
+        /// Contains information about number of commuters from a city to a city
+        ///map<unsigned int, <map<unsigned int, unsigned int> > > m_commuting;
 
 
         /// Total population of simulation area -> make this const?

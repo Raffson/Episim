@@ -76,4 +76,19 @@ namespace geogen {
         m_communities.push_back(community);
     }
 
+
+    void City::SetInCommuters(unsigned int id, unsigned int number_of_commuters){
+        m_commuting[id] = number_of_commuters;
+    }
+
+    unsigned int City::GetNumberOfInCommuters(){
+        unsigned int result = 0;
+        for(auto it:m_commuting){
+            result += it.second;
+        }
+        return result;
+
+    }
+
+
 }//namespace geogen

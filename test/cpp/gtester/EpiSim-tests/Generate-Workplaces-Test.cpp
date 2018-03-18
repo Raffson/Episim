@@ -31,7 +31,6 @@ namespace Tests {
         /// Tearing down TestCase
         static void TearDownTestCase() {}
 
-
     protected:
         /// Destructor has to be virtual.
         ~WorkplaceTest() override {}
@@ -41,11 +40,13 @@ namespace Tests {
 
         /// Tearing down the test fixture
         void TearDown() override {}
+    private:
+
+
     };
 
     TEST_P(WorkplaceTest, HappyDayScenario)
     {
-
         // -----------------------------------------------------------------------------------------
         // Initialize the simulator.
         // -----------------------------------------------------------------------------------------
@@ -103,19 +104,18 @@ namespace Tests {
         unsigned int random_city1 = 23096;
         unsigned int random_city2 = 36008;
 
-
+        //setting local_commuters and no commuters from other cities
         for(auto city: cities){
-            grid.setNumberOfCommuters(city.first, random_city1, 0);
-            grid.setNumberOfCommuters(city.first, random_city2, 0);
+            cities[random_city1]->SetInCommuters(city.first, 0);
+            cities[random_city2]->SetInCommuters(city.first, 0);
         }
 
-        //setting local_commuters and no commuters from other cities
-        grid.setNumberOfCommuters(random_city1, random_city1, 200);
+        cities[random_city1]->SetInCommuters(random_city1, 200);
 
         //the other city will have commuters from other cities but no locals
-        grid.setNumberOfCommuters(35014, random_city2, 100);
-        grid.setNumberOfCommuters(35029, random_city2, 50);
-        grid.setNumberOfCommuters(37002, random_city2, 50);
+        cities[random_city2]->SetInCommuters(35014, 100);
+        cities[random_city2]->SetInCommuters(35029, 50);
+        cities[random_city2]->SetInCommuters(37002, 50);
 
         grid.generate_workplaces();
 
@@ -139,7 +139,7 @@ namespace Tests {
         unsigned a_random_city = 11004;
 
         for(auto city: cities){
-            grid.setNumberOfCommuters(city.first, a_random_city, 0);
+            cities[a_random_city]->SetInCommuters(city.first, 0);
         }
 
         grid.generate_workplaces();
