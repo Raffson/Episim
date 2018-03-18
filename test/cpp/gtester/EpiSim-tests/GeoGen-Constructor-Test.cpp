@@ -76,7 +76,7 @@ namespace Tests {
         // Parse cities.
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
-        map<int, shared_ptr<City>> cty_map = parser::parse_cities("data/flanders_cities_faulty_row.csv");
+        map<int, shared_ptr<City>> cty_map = parser::ParseCities("data/flanders_cities_faulty_row.csv", "data/flanders_commuting.csv", false);
         cout << "Done parsing cities." << endl;
 
 
@@ -93,7 +93,7 @@ namespace Tests {
         // Parse cities.
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
-        map<int, shared_ptr<City>> cty_map = parser::parse_cities("data/flanders_cities_faulty_col.csv");
+        map<int, shared_ptr<City>> cty_map = parser::ParseCities("data/flanders_cities_faulty_row.csv", "data/flanders_commuting.csv", false);
         cout << "Done parsing cities." << endl;
 
 

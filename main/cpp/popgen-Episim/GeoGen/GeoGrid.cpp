@@ -18,10 +18,12 @@ namespace geogen {
         //reading the cities data file
         string base_path = "data/";
         string city_file = p_tree.get("popgen.data_files.cities","flanders_cities.csv");
-        m_cities = parser::parse_cities(base_path + city_file);
 
         string commuting_file =  p_tree.get("popgen.data_files.commuting","flanders_commuting.csv");
-        m_commuting = parser::parse_commuting(base_path + commuting_file);
+
+        m_cities = parser::ParseCities(base_path + city_file, base_path + commuting_file, true);
+
+        //m_commuting = parser::ParseCommuting(base_path + commuting_file);
 
         //Generating schools
         //auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
@@ -143,30 +145,6 @@ namespace geogen {
         }
     }
 
-    unsigned int GeoGrid::count_number_of_in_commuters(unsigned int destination_id) {
-        unsigned int result = 0;
-
-        for(auto it:m_commuting){
-            result += it.second[destination_id];
-        }
-        return result;
-    }
-
-    unsigned int GeoGrid::count_number_of_out_commuters(unsigned int origin_id){
-        unsigned int result = 0;
-        map<unsigned int, unsigned int> destinations = m_commuting[origin_id];
-
-        for(auto destination: destinations){
-            if(destination.first != origin_id )
-            result += destination.second;
-        }
-
-        return result;
-    }
-
-    void GeoGrid::setNumberOfCommuters(unsigned int origin_id, unsigned int destination_id, unsigned numberOfCommuters){
-        m_commuting[origin_id][destination_id] = numberOfCommuters;
-    }
     void GeoGrid::generate_workplaces() {
         //calculating the required informations
 
@@ -176,8 +154,7 @@ namespace geogen {
         //dividing workplaces to cities
         for (auto it:m_cities){
             shared_ptr<City> city = it.second;
-            unsigned int in_commuters = this->count_number_of_in_commuters(it.first);
-            //unsigned int out_commuters = this->count_number_of_out_commuters(it.first);
+            unsigned int in_commuters = city->GetNumberOfInCommuters();
 
             //To be confirmed: everybody commutes, the in-commuters have all the people working in that region,
             //including locals who work in their own region

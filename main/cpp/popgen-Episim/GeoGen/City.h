@@ -19,6 +19,7 @@
 #include <cstddef>
 #include <vector>
 #include <memory>
+#include <map>
 
 #include "popgen-Episim/GeoGen/Coordinate.h"
 #include "popgen-Episim/GeoGen/Community.h"
@@ -54,6 +55,11 @@ namespace geogen {
         /// Adds community to the city.
         void addCommunity(shared_ptr<Community> community);
 
+        map<unsigned int, unsigned int> GetCommuting() const{return m_commuting;};
+
+        void SetInCommuters(unsigned int id, unsigned int number_of_commuters);
+
+        unsigned int GetNumberOfInCommuters();
 
     private:
 
@@ -74,6 +80,9 @@ namespace geogen {
 
         /// Vector of schools
         vector<shared_ptr<Community>> m_communities;
+
+        /// Contains number of commuters from this city to other cities
+        map<unsigned int, unsigned int>   m_commuting;
     };
 
 }//namespace geogen

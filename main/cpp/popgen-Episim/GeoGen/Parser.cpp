@@ -12,10 +12,12 @@ namespace geogen {
 namespace parser{
 
 
-    map<int, shared_ptr<City>> parse_cities(const boost::filesystem::path& filename){
+    map<int, shared_ptr<City>> ParseCities(const boost::filesystem::path &city_file,
+                                           const boost::filesystem::path &commuting_file, bool parse_commuting){
 
         map<int, shared_ptr<City>> result;
-        stride::util::CSV read_in(filename);
+        stride::util::CSV read_in(city_file);
+
         unsigned  int counter = 0;
         for (auto &it : read_in) {
             counter++;
@@ -41,12 +43,14 @@ namespace parser{
             }
         }
 
+        if(parse_commuting)
+            ParseCommuting(commuting_file, result);
+
         return result;
     }
 
-    map<unsigned int, map<unsigned int, unsigned int> > parse_commuting(const boost::filesystem::path & filename){
+    void ParseCommuting(const boost::filesystem::path &filename, map<int, shared_ptr<City>> &cities){
 
-        map<unsigned int, map<unsigned int, unsigned int> > result;
         stride::util::CSV read_in(filename);
 
         std::vector<std::string> cityIds = read_in.getLabels();
@@ -63,11 +67,10 @@ namespace parser{
                 origin_id = (unsigned int) (stoi(origin.erase(0, 3))); //removing id_ from the label
                 unsigned int destination_id = (unsigned int) (stoi(destination.erase(0, 3)));
 
-                result[origin_id][destination_id] = commuters;
+                cities[destination_id]->SetInCommuters(origin_id, commuters);
             }
             index++;
         }
-        return result;
     }
 
 

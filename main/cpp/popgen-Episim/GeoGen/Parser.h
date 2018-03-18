@@ -16,9 +16,10 @@ namespace geogen {
 namespace parser {
 
 
-    map<int, shared_ptr<City>> parse_cities(const boost::filesystem::path &);
+    map<int, shared_ptr<City>> ParseCities(const boost::filesystem::path &,
+        const boost::filesystem::path &, bool parse_commuting);
     /// @return map of pair of (origin_id, destination_id) as key and number of commuters as value
-    map<unsigned int, map<unsigned int, unsigned int> > parse_commuting(const boost::filesystem::path &);
+    void ParseCommuting(const boost::filesystem::path &, map<int, shared_ptr<City>> &);
 
 
 } // namespace parser
