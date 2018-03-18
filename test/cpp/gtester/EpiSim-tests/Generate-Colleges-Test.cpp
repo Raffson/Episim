@@ -127,9 +127,9 @@ namespace Tests {
         EXPECT_FLOAT_EQ(grid.getWorkers2Frac(), 0.0);
         EXPECT_FLOAT_EQ(grid.getRestFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.getStudentFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.getCommutingStudents(), 0.0);
+        EXPECT_FLOAT_EQ(grid.getCommutingStudentsFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.getActiveFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.getCommutingWorkers(), 0.0);
+        EXPECT_FLOAT_EQ(grid.getCommutingWorkersFrac(), 0.0);
         EXPECT_EQ(grid.getSchoolSize(), 0);
         EXPECT_EQ(grid.getCollegeSize(), 0);
         EXPECT_EQ(grid.getMaxLC(), 0);
