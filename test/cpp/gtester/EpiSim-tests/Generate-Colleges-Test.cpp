@@ -73,30 +73,40 @@ namespace Tests {
         */
 
         //Expected nr of colleges
-        unsigned int expMechelen   = round(45736  * grid.getWorkers1Frac() * grid.getStudentFrac() / grid.getCollegeSize());
-        unsigned int expAalst      = round(48564  * grid.getWorkers1Frac() * grid.getStudentFrac() / grid.getCollegeSize());
-        unsigned int expElsene     = round(52404  * grid.getWorkers1Frac() * grid.getStudentFrac() / grid.getCollegeSize());
-        unsigned int expAnderlecht = round(53489  * grid.getWorkers1Frac() * grid.getStudentFrac() / grid.getCollegeSize());
-        unsigned int expLeuven     = round(57258  * grid.getWorkers1Frac() * grid.getStudentFrac() / grid.getCollegeSize());
-        unsigned int expSchaarbeek = round(67992  * grid.getWorkers1Frac() * grid.getStudentFrac() / grid.getCollegeSize());
-        unsigned int expBrugge     = round(72487  * grid.getWorkers1Frac() * grid.getStudentFrac() / grid.getCollegeSize());
-        unsigned int expBrussel    = round(86458  * grid.getWorkers1Frac() * grid.getStudentFrac() / grid.getCollegeSize());
-        unsigned int expGent       = round(141210 * grid.getWorkers1Frac() * grid.getStudentFrac() / grid.getCollegeSize());
-        unsigned int expAntwerpen  = round(269954 * grid.getWorkers1Frac() * grid.getStudentFrac() / grid.getCollegeSize());
+        unsigned int expMechelen   = round(45736  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
+                                                   grid.GetCollegeSize());
+        unsigned int expAalst      = round(48564  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
+                                                   grid.GetCollegeSize());
+        unsigned int expElsene     = round(52404  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
+                                                   grid.GetCollegeSize());
+        unsigned int expAnderlecht = round(53489  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
+                                                   grid.GetCollegeSize());
+        unsigned int expLeuven     = round(57258  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
+                                                   grid.GetCollegeSize());
+        unsigned int expSchaarbeek = round(67992  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
+                                                   grid.GetCollegeSize());
+        unsigned int expBrugge     = round(72487  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
+                                                   grid.GetCollegeSize());
+        unsigned int expBrussel    = round(86458  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
+                                                   grid.GetCollegeSize());
+        unsigned int expGent       = round(141210 * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
+                                                   grid.GetCollegeSize());
+        unsigned int expAntwerpen  = round(269954 * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
+                                                   grid.GetCollegeSize());
 
-        grid.generate_colleges();
+        grid.GenerateColleges();
 
         auto cities = grid.get_cities();
-        ASSERT_EQ( cities[12025]->getColleges().size(), expMechelen   );
-        ASSERT_EQ( cities[41002]->getColleges().size(), expAalst      );
-        ASSERT_EQ( cities[21009]->getColleges().size(), expElsene     );
-        ASSERT_EQ( cities[21001]->getColleges().size(), expAnderlecht );
-        ASSERT_EQ( cities[24062]->getColleges().size(), expLeuven     );
-        ASSERT_EQ( cities[21015]->getColleges().size(), expSchaarbeek );
-        ASSERT_EQ( cities[31005]->getColleges().size(), expBrugge     );
-        ASSERT_EQ( cities[21004]->getColleges().size(), expBrussel    );
-        ASSERT_EQ( cities[44021]->getColleges().size(), expGent       );
-        ASSERT_EQ( cities[11002]->getColleges().size(), expAntwerpen  );
+        ASSERT_EQ(cities[12025]->GetColleges().size(), expMechelen   );
+        ASSERT_EQ(cities[41002]->GetColleges().size(), expAalst      );
+        ASSERT_EQ(cities[21009]->GetColleges().size(), expElsene     );
+        ASSERT_EQ(cities[21001]->GetColleges().size(), expAnderlecht );
+        ASSERT_EQ(cities[24062]->GetColleges().size(), expLeuven     );
+        ASSERT_EQ(cities[21015]->GetColleges().size(), expSchaarbeek );
+        ASSERT_EQ(cities[31005]->GetColleges().size(), expBrugge     );
+        ASSERT_EQ(cities[21004]->GetColleges().size(), expBrussel    );
+        ASSERT_EQ(cities[44021]->GetColleges().size(), expGent       );
+        ASSERT_EQ(cities[11002]->GetColleges().size(), expAntwerpen  );
 
         //Now remove these 10 cities and check that all other cities have 0 colleges...
         cities.erase(12025);
@@ -111,7 +121,7 @@ namespace Tests {
         cities.erase(11002);
 
         for( auto &it : cities ) {
-            ASSERT_EQ( it.second->getColleges().size(), 0 );
+            ASSERT_EQ(it.second->GetColleges().size(), 0 );
         }
     }
 
@@ -121,31 +131,31 @@ namespace Tests {
         EXPECT_THROW( auto grid = GeoGrid("bad input..."), runtime_error);
         auto grid = GeoGrid();
         EXPECT_EQ(grid.get_cities().size(), 0);
-        EXPECT_EQ(grid.getTotalPop(), 0);
-        EXPECT_FLOAT_EQ(grid.getSchooledFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.getWorkers1Frac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.getWorkers2Frac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.getRestFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.getStudentFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.getCommutingStudentsFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.getActiveFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.getCommutingWorkersFrac(), 0.0);
-        EXPECT_EQ(grid.getSchoolSize(), 0);
-        EXPECT_EQ(grid.getCollegeSize(), 0);
-        EXPECT_EQ(grid.getMaxLC(), 0);
-        EXPECT_EQ(grid.getCommunitySize(), 0);
-        EXPECT_EQ(grid.getWorkplaceSize(), 0);
+        EXPECT_EQ(grid.GetTotalPop(), 0);
+        EXPECT_FLOAT_EQ(grid.GetSchooledFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetWorkers1Frac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetWorkers2Frac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetRestFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetStudentFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetCommutingStudentsFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetActiveFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetCommutingWorkersFrac(), 0.0);
+        EXPECT_EQ(grid.GetSchoolSize(), 0);
+        EXPECT_EQ(grid.GetCollegeSize(), 0);
+        EXPECT_EQ(grid.GetMaxLC(), 0);
+        EXPECT_EQ(grid.GetCommunitySize(), 0);
+        EXPECT_EQ(grid.GetWorkplaceSize(), 0);
 
         //Should we really test partial input? That's more like a job for the parser isn't it?
         //In fact, this test all together should be part of the constructor's tester imo...
     }
 
 
-    //Copy of the code since it is a private function and it is used by adjustLargestCities
+    //Copy of the code since it is a private function and it is used by AdjustLargestCities
     unsigned int findSmallest(const vector <shared_ptr<City>> &lc) {
         unsigned int smallest = 0;
         for (unsigned int i = 1; i < lc.size(); i++) {
-            if (lc[smallest]->getPopulation() > lc[i]->getPopulation()) smallest = i;
+            if (lc[smallest]->GetPopulation() > lc[i]->GetPopulation()) smallest = i;
         }
         return smallest;
     }
@@ -156,9 +166,9 @@ namespace Tests {
     void adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city, unsigned int m_maxlc) {
         if (lc.size() < m_maxlc) lc.push_back(city);
         else {
-            unsigned int citpop = city->getPopulation();
+            unsigned int citpop = city->GetPopulation();
             unsigned int smallest = findSmallest(lc);
-            if (citpop > lc[smallest]->getPopulation()) lc[smallest] = city;
+            if (citpop > lc[smallest]->GetPopulation()) lc[smallest] = city;
         }
     }
 
@@ -201,7 +211,7 @@ namespace Tests {
 
     //In the testplan I mentioned "assignCollege"
     // however at this point I figured out that this should be done for City
-    // specifically testing "addCommunity", and perhaps the rest of the class...
+    // specifically testing "AddCommunity", and perhaps the rest of the class...
 
     namespace {
 //OpenMP should have no effect atm...

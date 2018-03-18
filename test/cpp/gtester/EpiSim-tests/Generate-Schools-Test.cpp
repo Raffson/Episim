@@ -60,8 +60,8 @@ namespace Tests {
         // -----------------------------------------------------------------------------------------
 
 	    //Do the test...
-	    ASSERT_NO_THROW(grid.generate_schools()); // happy day
-        EXPECT_EQ(grid.getSchoolCount(),1736);
+	    ASSERT_NO_THROW(grid.GenerateSchools()); // happy day
+        EXPECT_EQ(grid.GetSchoolCount(),1736);
 
     }
 
@@ -73,7 +73,7 @@ namespace Tests {
         auto grid = GeoGrid("config/geogen_test_school.xml");
         cout << "Done building the GeoGrid." << endl;
 
-        //ASSERT_DEATH_IF_SUPPORTED(grid.generate_schools(), ".");
+        //ASSERT_DEATH_IF_SUPPORTED(grid.GenerateSchools(), ".");
     }
 
     TEST_P(SchoolTest, HighMoreLowLess){
@@ -87,14 +87,14 @@ namespace Tests {
         auto mp = grid.get_cities();
 
         shared_ptr<City> highest_pop_c = mp.begin()->second;
-        int highest_pop = highest_pop_c->getAllCommunities().size();
+        int highest_pop = highest_pop_c->GetAllCommunities().size();
 
         shared_ptr<City> lowest_pop_c = mp.begin()->second;
-        int lowest_pop = lowest_pop_c->getAllCommunities().size();
+        int lowest_pop = lowest_pop_c->GetAllCommunities().size();
 
         for(auto& it : mp){
             shared_ptr<City> t_city = it.second;
-            int pop = t_city->getPopulation();
+            int pop = t_city->GetPopulation();
 
             if(highest_pop < pop){
                 highest_pop = pop;
@@ -107,7 +107,7 @@ namespace Tests {
             }
         }
 
-        EXPECT_LE(lowest_pop_c->getAllCommunities(), highest_pop_c->getAllCommunities());
+        EXPECT_LE(lowest_pop_c->GetAllCommunities(), highest_pop_c->GetAllCommunities());
     }
 
     namespace {

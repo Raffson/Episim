@@ -34,31 +34,32 @@ namespace geogen {
         City(unsigned int city_id, unsigned int province, unsigned int population,
              Coordinate coordinates, string name);
 
-        const unsigned int getId() const;
+        const unsigned int GetId() const;
 
-        const unsigned int getProvince() const;
+        const unsigned int GetProvince() const;
 
-        unsigned int getPopulation() const;
+        unsigned int GetPopulation() const;
 
-        const Coordinate getCoordinates() const;
+        const Coordinate GetCoordinates() const;
 
-        const string getName() const;
+        const string GetName() const;
 
-        unsigned int getCommunitySize() const;
+        unsigned int GetCommunitySize() const;
 
-        const vector<shared_ptr<Community>>& getAllCommunities();
+        const vector<shared_ptr<Community>>& GetAllCommunities();
 
-        const vector<shared_ptr<const Community>> getColleges() const;
+        const vector<shared_ptr<const Community>> GetColleges() const;
 
-        unsigned int getNumberOfWorkplaces() const;
+        unsigned int GetNumberOfWorkplaces() const;
 
         /// Adds community to the city.
-        void addCommunity(shared_ptr<Community> community);
+        void AddCommunity(shared_ptr<Community> community);
 
         map<unsigned int, unsigned int> GetCommuting() const{return m_commuting;};
 
         void SetInCommuters(unsigned int id, unsigned int number_of_commuters);
 
+        /// @return number of commuters entering the city
         unsigned int GetNumberOfInCommuters();
 
     private:

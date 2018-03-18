@@ -26,35 +26,35 @@ namespace geogen {
                                                                            m_coordinates(coordinates),
                                                                            m_name(name) {}
 
-    const unsigned int City::getId() const {
+    const unsigned int City::GetId() const {
         return m_city_id;
     }
 
-    const unsigned int City::getProvince() const {
+    const unsigned int City::GetProvince() const {
         return m_province;
     }
 
-    unsigned int City::getPopulation() const {
+    unsigned int City::GetPopulation() const {
         return m_population;
     }
 
-    const Coordinate City::getCoordinates() const {
+    const Coordinate City::GetCoordinates() const {
         return m_coordinates;
     }
 
-    const string City::getName() const {
+    const string City::GetName() const {
         return m_name;
     }
 
-    unsigned int City::getCommunitySize() const {
+    unsigned int City::GetCommunitySize() const {
         return m_communities.size();
     }
 
-    const vector<shared_ptr<Community>>& City::getAllCommunities() {
+    const vector<shared_ptr<Community>>& City::GetAllCommunities() {
         return m_communities;
     }
 
-    const vector<shared_ptr<const Community>> City::getColleges() const {
+    const vector<shared_ptr<const Community>> City::GetColleges() const {
         vector<shared_ptr<const Community>> colleges;
         for( auto &it : m_communities ) {
             if( it->GetCommunityType() == CommunityType::College ) colleges.push_back(it);
@@ -62,7 +62,7 @@ namespace geogen {
         return colleges;
     }
 
-    unsigned int City::getNumberOfWorkplaces() const{
+    unsigned int City::GetNumberOfWorkplaces() const{
         unsigned int result = 0;
         for(auto a_community:m_communities){
             if(a_community->GetCommunityType() == CommunityType::Work){
@@ -72,7 +72,7 @@ namespace geogen {
         return result;
     }
 
-    void City::addCommunity(shared_ptr<Community> community) {
+    void City::AddCommunity(shared_ptr<Community> community) {
         m_communities.push_back(community);
     }
 

@@ -58,15 +58,15 @@ namespace Tests {
         map<int, shared_ptr<City>> mp = grid.get_cities();
 
         shared_ptr<City> antwerp = mp[11002];
-        Coordinate coord = antwerp->getCoordinates();
+        Coordinate coord = antwerp->GetCoordinates();
 
-        EXPECT_EQ(1, antwerp->getProvince());
-        EXPECT_EQ(269954, antwerp->getPopulation());
+        EXPECT_EQ(1, antwerp->GetProvince());
+        EXPECT_EQ(269954, antwerp->GetPopulation());
         EXPECT_FLOAT_EQ(153104.586, coord.x);
         EXPECT_FLOAT_EQ(212271.7101, coord.y);
         EXPECT_FLOAT_EQ(51.2165845, coord.latitude);
         EXPECT_FLOAT_EQ(4.413545489, coord.longitude);
-        EXPECT_EQ("ANTWERPEN", antwerp->getName());
+        EXPECT_EQ("ANTWERPEN", antwerp->GetName());
 
     }
 
@@ -93,7 +93,7 @@ namespace Tests {
         // Parse cities.
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
-        map<int, shared_ptr<City>> cty_map = parser::ParseCities("data/flanders_cities_faulty_row.csv", "data/flanders_commuting.csv", false);
+        map<int, shared_ptr<City>> cty_map = parser::ParseCities("data/flanders_cities_faulty_col.csv", "data/flanders_commuting.csv", false);
         cout << "Done parsing cities." << endl;
 
 
@@ -104,16 +104,16 @@ namespace Tests {
         EXPECT_EQ(327, cty_map.size());
 
         shared_ptr<City> antwerp = cty_map[11002];
-        Coordinate coord = antwerp->getCoordinates();
+        Coordinate coord = antwerp->GetCoordinates();
 
-        EXPECT_EQ(1, antwerp->getProvince());
-        EXPECT_EQ(269954, antwerp->getPopulation());
+        EXPECT_EQ(1, antwerp->GetProvince());
+        EXPECT_EQ(269954, antwerp->GetPopulation());
 
         EXPECT_FLOAT_EQ(153104.586, coord.x);
         EXPECT_FLOAT_EQ(212271.7101, coord.y);
         EXPECT_FLOAT_EQ(51.2165845, coord.latitude);
         EXPECT_FLOAT_EQ(4.413545489, coord.longitude);
-        EXPECT_EQ("ANTWERPEN", antwerp->getName());
+        EXPECT_EQ("ANTWERPEN", antwerp->GetName());
 
     }
 

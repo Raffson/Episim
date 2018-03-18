@@ -30,7 +30,7 @@ namespace geogen {
         //specs ask this to be read out of config, but could be calculated directly
         //out of the city file?
         // -> you're right... so let's do it like this:
-        //m_total_pop = count_total_pop();
+        //m_total_pop = CountTotalPop();
         //After specifically asking about this, turns out we still need to read it from file...
         //perhaps find a way to verify this number somehow, if the possibility exists of course...
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
@@ -52,15 +52,15 @@ namespace geogen {
         m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
     }
 
-    void GeoGrid::generate_all() {
-        generate_schools();
-        generate_colleges();
-        generate_workplaces();
-        generate_communities();
+    void GeoGrid::GenerateAll() {
+        GenerateSchools();
+        GenerateColleges();
+        GenerateWorkplaces();
+        GenerateCommunities();
 
     }
 
-    void GeoGrid::generate_schools() {
+    void GeoGrid::GenerateSchools() {
 
         assert(this->m_schooled_frac<=1);
         assert(this->m_school_size > 0);
@@ -74,7 +74,7 @@ namespace geogen {
         // Setting up to divide the schools to cities
         vector<unsigned int> pop_id; //We will push the id's of the cities for each pop member.
         for(auto &it: m_cities){
-            auto c_schooled_pop = (unsigned int) round(it.second->getPopulation() * m_schooled_frac);
+            auto c_schooled_pop = (unsigned int) round(it.second->GetPopulation() * m_schooled_frac);
             pop_id.insert(pop_id.end(), c_schooled_pop, (const unsigned int &) it.first);
         }
         //Note that this way cuz of rounding we lose a couple of schooled ppl.
@@ -92,60 +92,60 @@ namespace geogen {
             int index = pop_id[distr(gen)];
             shared_ptr<City> chosen_city = m_cities[index];
             shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
-            chosen_city->addCommunity(nw_school);
+            chosen_city->AddCommunity(nw_school);
             //m_communities[nw_school->getID()] = nw_school
         }
 
 
     }
 
-    unsigned int GeoGrid::findSmallest(const vector <shared_ptr<City>> &lc) {
+    unsigned int GeoGrid::FindSmallest(const vector<shared_ptr<City>> &lc) {
         unsigned int smallest = 0;
         for (unsigned int i = 1; i < lc.size(); i++) {
-            if (lc[smallest]->getPopulation() > lc[i]->getPopulation()) smallest = i;
+            if (lc[smallest]->GetPopulation() > lc[i]->GetPopulation()) smallest = i;
         }
         return smallest;
     }
 
-    void GeoGrid::adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city) {
+    void GeoGrid::AdjustLargestCities(vector<shared_ptr<City>> &lc, const shared_ptr<City> &city) {
         if (lc.size() < m_maxlc) lc.push_back(city);
         else {
-            unsigned int citpop = city->getPopulation();
-            unsigned int smallest = findSmallest(lc);
-            if (citpop > lc[smallest]->getPopulation()) lc[smallest] = city;
+            unsigned int citpop = city->GetPopulation();
+            unsigned int smallest = FindSmallest(lc);
+            if (citpop > lc[smallest]->GetPopulation()) lc[smallest] = city;
         }
     }
 
-    void GeoGrid::generate_colleges() {
+    void GeoGrid::GenerateColleges() {
         //need 10 largest cities, largest determined by number of people in the city...
         vector <shared_ptr<City>> lc;
         for (auto &it : m_cities) {
-            adjustLargestCities(lc, it.second);
+            AdjustLargestCities(lc, it.second);
         }
 
         //generate colleges to the respective cities...
         for (auto &it : lc) {
             //just checking which cities we found...
-            //cout << it->getId() << "   " << it->getPopulation() << "   " << it->getName() << endl;
+            //cout << it->GetId() << "   " << it->GetPopulation() << "   " << it->GetName() << endl;
 
             //so let's go...
-            double students = it->getPopulation()*m_workers1_frac*m_student_frac;
+            double students = it->GetPopulation()*m_workers1_frac*m_student_frac;
             //doesn't matter if students is a double at this time
             // since this is only an estimate for the number of colleges
             unsigned int nrcolleges =  round(students / m_college_size);
             //is this how we need to calculate the nr of colleges?
             // or did i not understand it properly?
-            //cout << students << " students,   " << nrcolleges << " colleges for " << it->getName() << endl;
+            //cout << students << " students,   " << nrcolleges << " colleges for " << it->GetName() << endl;
 
             for(unsigned int i = 0; i < nrcolleges; i++) {
                 shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
-                it->addCommunity( college );
+                it->AddCommunity(college);
                 //m_communities[college->getID()] = college
             }
         }
     }
 
-    void GeoGrid::generate_workplaces() {
+    void GeoGrid::GenerateWorkplaces() {
         //calculating the required informations
 
         //double working_population = m_active_frac * m_total_pop;
@@ -164,7 +164,7 @@ namespace geogen {
 
             for(unsigned int i=0; i<number_of_workplaces; i++){
                 shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
-                city->addCommunity(community);
+                city->AddCommunity(community);
             }
 
         }
@@ -173,7 +173,7 @@ namespace geogen {
 
     /// Communities need to be distributed according to the relative population size.
     /// On average a community has 2000 members.
-    void GeoGrid::generate_communities() {
+    void GeoGrid::GenerateCommunities() {
         cout<<"start generating communities"<<endl;
         vector<shared_ptr<Community>> primsec_communities;
         /// First we need to determine the total number of communities to be used.
@@ -184,8 +184,8 @@ namespace geogen {
             shared_ptr<City> city = it.second;
             cout<<"city found"<<endl;
             /// ratio: the city contains ratio % of the total population.
-            double ratio = (city->getPopulation()/(double)m_total_pop);
-            cout<<city->getPopulation()<<" / "<<(double)m_total_pop<<endl;
+            double ratio = (city->GetPopulation()/(double)m_total_pop);
+            cout<< city->GetPopulation()<<" / "<<(double)m_total_pop<<endl;
             assert(0<ratio<1);
             /// Now we have the ratio, we know that the city has ratio % of all communities.
             auto city_communities = (total_communities*ratio);
@@ -194,18 +194,18 @@ namespace geogen {
             for (int i = 0; i < city_communities; i++){
                 /// Since there currently is no real difference between primary and secundary communities we make them all primary.
                 shared_ptr<Community> community = make_shared<Community>(CommunityType::Primary, city);
-                city->addCommunity(community);
+                city->AddCommunity(community);
                 //m_communities[community->getID()] = community
             }
         }
     }
 
 
-    unsigned int GeoGrid::count_total_pop() const {
+    unsigned int GeoGrid::CountTotalPop() const {
 
         unsigned int counter = 0;
         for (auto &it : m_cities) {
-            counter += it.second->getPopulation();
+            counter += it.second->GetPopulation();
         }
         return counter;
     }
@@ -214,7 +214,7 @@ namespace geogen {
         return m_cities;
     }
 
-    unsigned int GeoGrid::getSchoolCount() const {
+    unsigned int GeoGrid::GetSchoolCount() const {
         return m_school_count;
     }
 
