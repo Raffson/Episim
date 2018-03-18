@@ -24,6 +24,7 @@ OTHER_FILES +=mapviewer.qml \
     map/ImageItem.qml \
     map/MiniMap.qml \
     menus/ItemPopupMenu.qml \
+    menus/MainMenu.qml \
     menus/MapPopupMenu.qml \
     menus/MarkerPopupMenu \
     forms/Geocode.qml \

@@ -71,6 +71,16 @@ MenuBar {
         function createMenu(plugins)
         {
             clear()
+            for (var i = 0; i < plugins.length; i++) {
+                createProviderMenuItem(plugins[i]);
+            }
+        }
+
+        function createProviderMenuItem(provider)
+        {
+            var item = addItem(provider);
+            item.checkable = true;
+            item.triggered.connect(function(){selectProvider(provider)})
         }
     }
 
@@ -81,6 +91,18 @@ MenuBar {
         function createMenu(map)
         {
             clear()
+            for (var i = 0; i<map.supportedMapTypes.length; i++) {
+                createMapTypeMenuItem(map.supportedMapTypes[i]).checked =
+                        (map.activeMapType === map.supportedMapTypes[i]);
+            }
+        }
+
+        function createMapTypeMenuItem(mapType)
+        {
+            var item = addItem(mapType.name);
+            item.checkable = true;
+            item.triggered.connect(function(){selectMapType(mapType)})
+            return item;
         }
     }
 
@@ -88,11 +110,33 @@ MenuBar {
         id: toolsMenu
         property bool isFollowMe: false;
         property bool isMiniMap: false;
-        title: qsTr("Empty")
+        title: qsTr("Tools")
 
         function createMenu(map)
         {
             clear()
+            if (map.plugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)) {
+                addItem(qsTr("Reverse geocode")).triggered.connect(function(){selectTool("RevGeocode")})
+            }
+            if (map.plugin.supportsGeocoding()) {
+                addItem(qsTr("Geocode")).triggered.connect(function(){selectTool("Geocode")})
+            }
+            if (map.plugin.supportsRouting()) {
+                addItem(qsTr("Route with coordinates")).triggered.connect(function(){selectTool("CoordinateRoute")})
+                addItem(qsTr("Route with address")).triggered.connect(function(){selectTool("AddressRoute")})
+            }
+
+            var item = addItem("")
+            item.text = Qt.binding(function() { return isMiniMap ? qsTr("Hide minimap") : qsTr("Minimap") })
+            item.triggered.connect(function() {toggleMapState("MiniMap")})
+
+            item = addItem("")
+            item.text = Qt.binding(function() { return isFollowMe ? qsTr("Stop following") : qsTr("Follow me")})
+            item.triggered.connect(function() {toggleMapState("FollowMe")})
+
+            addItem(qsTr("Language")).triggered.connect(function(){selectTool("Language")})
+            addItem(qsTr("Prefetch Map Data")).triggered.connect(function(){selectTool("Prefetch")})
+            addItem(qsTr("Clear Map Data")).triggered.connect(function(){selectTool("Clear")})
         }
     }
 }
