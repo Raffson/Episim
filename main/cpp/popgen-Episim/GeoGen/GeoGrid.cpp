@@ -10,7 +10,7 @@ namespace geogen {
 
     GeoGrid::GeoGrid(const boost::filesystem::path & config_file) {
 
-        this->school_count = 0;
+        this->m_school_count = 0;
         //Setting up property tree to parse xml config file
         boost::property_tree::ptree p_tree;
         boost::property_tree::read_xml(config_file.string(), p_tree);
@@ -88,7 +88,7 @@ namespace geogen {
 
         // assign schools to cities according to our normal distribution
         for(unsigned int i = 0; i < amount_of_schools; i++){
-            school_count++;
+            m_school_count++;
             int index = pop_id[distr(gen)];
             shared_ptr<City> chosen_city = m_cities[index];
             shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
