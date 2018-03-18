@@ -47,14 +47,15 @@ namespace Tests {
     {
 
         // -----------------------------------------------------------------------------------------
-        // Initialise the simulator.
+        // Initialise the GeoGrid.
         // -----------------------------------------------------------------------------------------
-        cout << "Building the GeoGrid. " << endl;
+        cout << "Building the GeoGrid." << endl;
         auto grid = GeoGrid("config/geogen_default.xml");
-        cout << "Done building the GeoGrid" << endl;
+        cout << "Done building the GeoGrid." << endl;
+
 
         // -----------------------------------------------------------------------------------------
-        // Check results against target number.
+        // Check results against expected results.
         // -----------------------------------------------------------------------------------------
         /* 10 largest cities of flanders_cities_test.csv
          * id,province,population,x_coord,y_coord,latitude,longitude,name
