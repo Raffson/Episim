@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <map>
+#include <utility>
 
 #include "util/CSVRow.h"
 #include "popgen-Episim/GeoGen/City.h"
@@ -17,6 +18,8 @@ namespace parser {
 
 
     map<int, shared_ptr<City>> parse_cities(const boost::filesystem::path &);
+    /// @return map of pair of (origin_id, destination_id) as key and number of commuters as value
+    map<pair<unsigned int, unsigned int>, unsigned int> parse_commuting(const boost::filesystem::path &);
 
 
 } // namespace parser

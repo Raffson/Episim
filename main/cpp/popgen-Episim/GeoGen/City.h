@@ -21,14 +21,11 @@
 #include <memory>
 
 #include "popgen-Episim/GeoGen/Coordinate.h"
+#include "popgen-Episim/GeoGen/Community.h"
 
 using namespace std;
 
 namespace geogen {
-
-    /// Forward declaration to avoid problems with includes...
-    class Community;
-    enum class CommunityType;
 
     class City {
     public:
@@ -45,6 +42,13 @@ namespace geogen {
         const Coordinate getCoordinates() const;
 
         const string getName() const;
+
+        unsigned int getCommunitySize() const;
+
+        const vector<shared_ptr<Community>>& getAllCommunities();
+
+        const vector<shared_ptr<const Community>> getColleges() const;
+
 
         /// Adds community to the city.
         void addCommunity(shared_ptr<Community> community);

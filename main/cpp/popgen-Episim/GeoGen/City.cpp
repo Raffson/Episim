@@ -46,8 +46,23 @@ namespace geogen {
         return m_name;
     }
 
-    void City::addCommunity(shared_ptr<Community> community) {
+    unsigned int City::getCommunitySize() const {
+        return m_communities.size();
+    }
 
+    const vector<shared_ptr<Community>>& City::getAllCommunities() {
+        return m_communities;
+    }
+
+    const vector<shared_ptr<const Community>> City::getColleges() const {
+        vector<shared_ptr<const Community>> colleges;
+        for( auto &it : m_communities ) {
+            if( it->GetCommunityType() == CommunityType::College ) colleges.push_back(it);
+        }
+        return colleges;
+    }
+
+    void City::addCommunity(shared_ptr<Community> community) {
         m_communities.push_back(community);
     }
 

@@ -1,4 +1,3 @@
-#pragma once
 /*
  *  This is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
@@ -11,40 +10,32 @@
  *  You should have received a copy of the GNU General Public License
  *  along with the software. If not, see <http://www.gnu.org/licenses/>.
  *
- *  Copyright 2017, Kuylen E, Willem L, Broeckhove J
+ *  Copyright 2017, Willem L, Kuylen E, Stijven S & Broeckhove J
  */
 
 /**
  * @file
- * Header file for Belief.
+ * Main program for test runs.
  */
 
-#include <boost/property_tree/ptree.hpp>
+#include <cerrno>
+#include <exception>
+#include <gtest/gtest.h>
+#include <iostream>
 
-namespace stride {
+using namespace std;
 
-/**
- * Base class for all belief policies.
- */
-class Belief
+int main(int argc, char** argv)
 {
-public:
-        ///
-        Belief(const boost::property_tree::ptree& pt) {}
+        std::cout << "START TEST ENVIRONMENT" << std::endl;
 
-        ///
-        virtual ~Belief() {}
-
-        ///
-        // boost::property_tree::ptree Get() { return m_pt; }
-
-        ///
-        // void Set(const boost::property_tree::ptree& pt) { m_pt = pt; }
-
-        virtual bool HasAdopted() const { return false; }
-
-private:
-        // boost::property_tree::ptree m_pt; ///<
-};
-
-} // namespace stride
+        int exit_status = EXIT_SUCCESS;
+        try {
+                ::testing::InitGoogleTest(&argc, argv);
+                return RUN_ALL_TESTS();
+        } catch (std::exception& e) {
+                cerr << "Exception caught: " << e.what() << endl << endl;
+                exit_status = EXIT_FAILURE;
+        }
+        return exit_status;
+}

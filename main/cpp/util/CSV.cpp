@@ -120,6 +120,11 @@ void stride::util::CSV::write(const boost::filesystem::path& path) const
         file.close();
 }
 
+std::vector<std::string> stride::util::CSV::getLabels(){
+    return labels;
+}
+
+
 bool CSV::operator==(const CSV& other) const
 {
         return labels == other.labels && (const std::vector<CSVRow>&)*this == (const std::vector<CSVRow>&)other;

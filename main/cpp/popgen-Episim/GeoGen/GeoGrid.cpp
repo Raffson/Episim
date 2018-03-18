@@ -4,7 +4,6 @@
 
 #include "GeoGrid.h"
 
-
 using namespace std;
 
 namespace geogen {
@@ -16,27 +15,46 @@ namespace geogen {
         boost::property_tree::read_xml(config_file.string(), p_tree);
 
         //reading the cities data file
-        boost::filesystem::path base_path = "data/";
+        string base_path = "data/";
         string city_file = p_tree.get("popgen.data_files.cities","flanders_cities.csv");
-        m_cities = parser::parse_cities(base_path.append(city_file));
+        m_cities = parser::parse_cities(base_path + city_file);
+
+        string commuting_file =  p_tree.get("popgen.data_files.commuting","flanders_commuting.csv");
+        m_commuting = parser::parse_commuting(base_path + commuting_file);
 
         //Generating schools
         //auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
         //specs ask this to be read out of config, but could be calculated directly
         //out of the city file?
         // -> you're right... so let's do it like this:
-        m_total_pop = count_total_pop();
+        //m_total_pop = count_total_pop();
+        //After specifically asking about this, turns out we still need to read it from file...
+        //perhaps find a way to verify this number somehow, if the possibility exists of course...
+        m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
 
         m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
+        m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers1");
+        m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers2");
+        m_rest_frac = p_tree.get<float>("popgen.pop_info.fraction_rest");
+
+        m_student_frac = p_tree.get<float>("popgen.pop_info.fraction_students");
+        m_commuting_students = p_tree.get<float>("popgen.pop_info.fraction_commuting_students");
+        m_active_frac = p_tree.get<float>("popgen.pop_info.fraction_active_workers");
+        m_commuting_workers = p_tree.get<float>("popgen.pop_info.fraction_commuting_workers");
+
         m_school_size = p_tree.get<unsigned int>("popgen.contactpool_info.school.size");
-        generate_schools();
-
-        m_student_frac = p_tree.get<float>("popgen.pop_info.fraction_student");
         m_college_size =  p_tree.get<unsigned int>("popgen.contactpool_info.college.size");
-        generate_colleges();
+        m_maxlc = p_tree.get<unsigned int>("popgen.contactpool_info.college.cities");
+        m_community_size = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
+        m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
+    }
 
-        m_community_size_limit = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
+    void GeoGrid::generate_all() {
+        generate_schools();
+        generate_colleges();
+        generate_workplaces();
         generate_communities();
+
     }
 
     void GeoGrid::generate_schools() {
@@ -70,12 +88,13 @@ namespace geogen {
             shared_ptr<City> chosen_city = m_cities[index];
             shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
             chosen_city->addCommunity(nw_school);
+            //m_communities[nw_school->getID()] = nw_school
         }
 
 
     }
 
-    unsigned int findSmallest(const vector <shared_ptr<City>> &lc) {
+    unsigned int GeoGrid::findSmallest(const vector <shared_ptr<City>> &lc) {
         unsigned int smallest = 0;
         for (unsigned int i = 1; i < lc.size(); i++) {
             if (lc[smallest]->getPopulation() > lc[i]->getPopulation()) smallest = i;
@@ -83,8 +102,8 @@ namespace geogen {
         return smallest;
     }
 
-    void adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city, unsigned int maxlc) {
-        if (lc.size() < maxlc) lc.push_back(city);
+    void GeoGrid::adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city) {
+        if (lc.size() < m_maxlc) lc.push_back(city);
         else {
             unsigned int citpop = city->getPopulation();
             unsigned int smallest = findSmallest(lc);
@@ -92,11 +111,11 @@ namespace geogen {
         }
     }
 
-    void GeoGrid::generate_colleges(unsigned int maxlc) {
+    void GeoGrid::generate_colleges() {
         //need 10 largest cities, largest determined by number of people in the city...
         vector <shared_ptr<City>> lc;
         for (auto &it : m_cities) {
-            adjustLargestCities(lc, it.second, maxlc);
+            adjustLargestCities(lc, it.second);
         }
 
         //generate colleges to the respective cities...
@@ -105,20 +124,70 @@ namespace geogen {
             //cout << it->getId() << "   " << it->getPopulation() << "   " << it->getName() << endl;
 
             //so let's go...
-            double students = it->getPopulation()*m_student_frac;
-            //doesn't matter if students it's a double at this time
+            double students = it->getPopulation()*m_workers1_frac*m_student_frac;
+            //doesn't matter if students is a double at this time
             // since this is only an estimate for the number of colleges
             unsigned int nrcolleges =  round(students / m_college_size);
-            cout << students << " students,   " << nrcolleges << " colleges for " << it->getName() << endl;
-            //now do we create a college and add it to the city's vector of colleges?
-            //or do we create a college that references the city's  id?
-            //need to discuss this with group to maintain a consistent way of working
-            //at this point Robbe decided to the the first while Beau opted for the latter...
-            //-> we need both!
+            //is this how we need to calculate the nr of colleges?
+            // or did i not understand it properly?
+            //cout << students << " students,   " << nrcolleges << " colleges for " << it->getName() << endl;
+
+            for(unsigned int i = 0; i < nrcolleges; i++) {
+                shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
+                it->addCommunity( college );
+                //m_communities[college->getID()] = college
+            }
         }
     }
 
+    unsigned int GeoGrid::count_number_of_in_commuters(unsigned int destination_id) {
+        unsigned int result = 0;
+        for(auto it:m_commuting){
+            if(it.first.second == destination_id){
+                result += it.second;
+            }
+        }
+        return result;
+    }
+
+    unsigned int GeoGrid::count_number_of_out_commuters(unsigned int origin_id){
+        unsigned int result = 0;
+        for(auto it:m_commuting){
+            if(it.first.first == origin_id){
+                //commuting in own region shouldn't be counted
+                if(it.first.first != it.first.second){
+                    result += it.second;
+
+                }
+            }
+        }
+        return result;
+    }
+
     void GeoGrid::generate_workplaces() {
+        //calculating the required informations
+
+        //double working_population = m_active_frac * m_total_pop;
+        //double number_of_workplaces = working_population/m_worksplace_size;
+
+        //dividing workplaces to cities
+        for (auto it:m_cities){
+            shared_ptr<City> city = it.second;
+            unsigned int in_commuters = this->count_number_of_in_commuters(it.first);
+            //unsigned int out_commuters = this->count_number_of_out_commuters(it.first);
+
+            //To be confirmed: everybody commutes, the in-commuters have all the people working in that region,
+            //including locals who work in their own region
+            //some percentages of the commuters are students
+            double working_commuters = m_commuting_workers * in_commuters;
+            unsigned int number_of_workplaces = round(working_commuters / m_worksplace_size);
+
+            for(unsigned int i=0; i<number_of_workplaces; i++){
+                shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
+                city->addCommunity(community);
+            }
+
+        }
 
     }
 
@@ -126,19 +195,33 @@ namespace geogen {
         vector<shared_ptr<Community>> primsec_communities;
         /// Communities need to be distributed according to the relative population size.
         /// First we need to determine the total number of communities to be used.
-        auto total_communities = ceil(m_total_pop/m_community_size_limit);
+        /// On average a community has 2000 members.
+        double check = 0;
+        auto total_communities = ceil(m_total_pop/m_community_size);
+        unsigned int ti = 0;
         for (auto it : m_cities){
+            ti++;
             shared_ptr<City> city = it.second;
-            auto ratio = city->getPopulation()/m_total_pop;
+            double ratio = (city->getPopulation()/(double)m_total_pop);
+            assert(0<ratio<1);
+            check += ratio;
             /// Now we have the ratio, we know that the city has ratio % of all communities.
-            auto city_communities = (total_communities*ratio)/100;
+            auto city_communities = (total_communities*ratio);
+            assert(city_communities<total_communities);
             for (int i = 0; i < city_communities; i++){
-                /// used primary communities atm since i have no clue what this has to be...
+//                cout << ratio << ", "<< total_communities << ", "<< city_communities<<endl;
+//                cout << ">>> 4 (in loop kwadraat) in iteration: " << ti << " - " << i <<"\n";
+                /// Since there currently is no real difference between primary and secundary communities we make them all primary.
                 shared_ptr<Community> community = make_shared<Community>(CommunityType::Primary, city);
                 city->addCommunity(community);
+                //m_communities[community->getID()] = community
             }
         }
-        /// TODO: determine if community is primary or secundary.
+        //Note from Raphael: This fails on my end due to rounding errors, thus we need a better check...
+        if (check != 1.0){
+            cout<<"ERROR in generate_communities: the total sum of all ratios equals "<< check <<"!"<<endl;
+            return;
+        }
     }
 
 
@@ -150,5 +233,9 @@ namespace geogen {
         }
         return counter;
     }
+
+    const map<int, shared_ptr<City>>& GeoGrid::get_cities(){
+        return m_cities;
+    };
 
 }//namespace geogen

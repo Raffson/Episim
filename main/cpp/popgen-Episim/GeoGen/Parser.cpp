@@ -35,7 +35,33 @@ namespace parser{
         }
 
         return result;
-    };
+    }
+
+    map<pair<unsigned int, unsigned int>, unsigned int> parse_commuting(const boost::filesystem::path& filename){
+        map<pair<unsigned int, unsigned int>, unsigned int> result;
+        stride::util::CSV read_in(filename);
+
+        std::vector<std::string> cityIds = read_in.getLabels();
+
+        unsigned int index = 0;
+        for(auto it: read_in){
+            for(unsigned int i=0; i<cityIds.size(); i++){
+                unsigned int commuters = (unsigned int)(stoi(it.getValue(cityIds.at(i))));
+                string origin = cityIds.at(i);
+                string destination = cityIds.at(index);
+                unsigned int origin_id = (unsigned int) (stoi(origin.erase(0, 3)));
+                unsigned int destination_id = (unsigned int) (stoi(destination.erase(0, 3)));
+
+                pair<unsigned int, unsigned int> key = make_pair(origin_id, destination_id);
+                result[key] = commuters;
+
+            }
+            index++;
+        }
+
+        return result;
+    }
+
 
 } // namespace parser
 } // namespace geogen

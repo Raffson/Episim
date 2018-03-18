@@ -17,7 +17,7 @@
 #============================================================================
 # Test verbosity:
 #============================================================================
-unset( CTEST_VERBOSE_OPTION )
+unset(CTEST_VERBOSE_OPTION)
 if( STRIDE_VERBOSE_TESTING )
 	set( CTEST_VERBOSE_OPTION "-V" )
 endif()
@@ -25,22 +25,42 @@ endif()
 #============================================================================
 # Make test directory in install tree:
 #============================================================================
-set( TESTS_DIR ${CMAKE_INSTALL_PREFIX}/${TESTS_INSTALL_LOCATION} )
-install(DIRECTORY DESTINATION  ${TESTS_DIR} )
+set( TESTS_DIR ${CMAKE_INSTALL_PREFIX}/${TESTS_INSTALL_LOCATION})
+install(DIRECTORY DESTINATION  ${TESTS_DIR})
 
 #============================================================================
 # Top level custom target for instactive use through make:
 #============================================================================
-add_custom_target( run_ctest
+add_custom_target(run_ctest
 	COMMAND ctest ${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/ctests.txt
 )
+
+#output isn't written, gotta figure this out...
+add_custom_target( episim-test
+	COMMAND gtester-episim 
+	${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/EpiSim/etests.txt
+	COMMENT "Running EpiSim's tests..."
+)
+
+#============================================================================
+# We need a better way to handle the following file dependencies...
+#============================================================================
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/config/geogen_test.xml
+	${CMAKE_BINARY_DIR}/test/config/geogen_default.xml COPYONLY)
+
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities_test.csv
+	${CMAKE_BINARY_DIR}/test/data/flanders_cities.csv COPYONLY)
+
+configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_commuting_test.csv
+	${CMAKE_BINARY_DIR}/test/data/flanders_commuting.csv COPYONLY)
+
 
 #============================================================================
 # Config related to using Google test (src in resources/lib/gtest) for cpp
 #============================================================================
-set( GTEST_RESOURCE_DIR	   ${CMAKE_SOURCE_DIR}/test/resources/lib/gtest/ )
-include_directories( ${GTEST_RESOURCE_DIR} )
-add_definitions( -DGTEST_LANG_CXX11 )
+set(GTEST_RESOURCE_DIR	   ${CMAKE_SOURCE_DIR}/test/resources/lib/gtest/)
+include_directories(SYSTEM ${GTEST_RESOURCE_DIR})
+add_definitions(-DGTEST_LANG_CXX11)
 
 #============================================================================
 # Add subdirectories:
