@@ -77,7 +77,9 @@ namespace geogen {
         unsigned int getWorkplaceSize() const { return m_worksplace_size; }
 
         void setNumberOfCommuters(unsigned int origin_id, unsigned int destination_id, unsigned int numberOfCommuters);
-        unsigned int getSchool_count() const;
+        unsigned int getSchoolCount() const;
+
+        shared_ptr<City>& operator[](int i);
 
     private:
 
@@ -166,7 +168,7 @@ namespace geogen {
         ///making these members const requires reworking the constructor,
         /// or hack our way around the initialisation...
 
-        unsigned int school_count;
+        unsigned int m_school_count;
 
 
     };

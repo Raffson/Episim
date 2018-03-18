@@ -13,6 +13,7 @@
 #include <omp.h>
 #include <spdlog/spdlog.h>
 #include <boost/property_tree/ptree.hpp>
+#include <stdlib.h>
 
 namespace Tests {
 
@@ -60,9 +61,22 @@ namespace Tests {
 
 	    //Do the test...
 	    ASSERT_NO_THROW(grid.generate_schools()); // happy day
-        EXPECT_NEAR(grid.getSchool_count(),1736, 0.1);
-        geogen::GeoGrid fracted("config/geogen_test_school.xml");
-        // EXPECT_DEATH_IF_SUPPORTED(fracted.generate_schools(),".");
+        EXPECT_EQ(grid.getSchoolCount(),1736);
+
+    }
+
+    TEST_P(SchoolTest, WrongInput){
+        // -----------------------------------------------------------------------------------------
+        // Initialize the GeoGrid.
+        // -----------------------------------------------------------------------------------------
+        cout << "Building the GeoGrid." << endl;
+        auto grid = GeoGrid("config/geogen_test_school.xml");
+        cout << "Done building the GeoGrid." << endl;
+
+        //ASSERT_DEATH_IF_SUPPORTED(grid.generate_schools(), ".");
+    }
+
+    TEST_P(SchoolTest, high_more_low_less){
 
     }
 
