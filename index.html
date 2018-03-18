@@ -441,5 +441,36 @@
         </div>
     </div>
 
+    <div class="section-lg">
+        <div class="container">
+            <div class="custom-header">Alpha version GeoGen</div>
+            <div class="text-center">
+	            <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#alphageogen">Solution</button>
+            </div>
+		    <br/> <br/>
+	        <div id="alphageogen" class="collapse">
+		        <div class="custom-container text-muted">
+		            <div class="custom-title">
+		                What was delivered by EpiSim?
+		            </div>
+		            <p class="custom-pgraph">
+                        At this point most of our code representing the GeoGen model is done, as well as most of the tests
+                        that were mentioned in our test plan. Obviously this is an ongoing process and thus we may still be
+                        introducing improvements over the next weeks. Furthermore we've integrated a graphical
+                        representation for the GeoGrid using Qt, however the actual representation is yet to be made.
+                        Currently the default example of the mapviewer
+                        (can be found in Qt-installation-folder/Examples/Qt-version/location)
+                        is being used and thus we still have work to do
+                        in order to center the map onto the correct location, place the actual cities and so on. However
+                        we've managed to integrate Qt as an optional part, i.e. if no Qt libraries are found the project
+                        will still compile without any problems. Needless to say, if Qt wasn't found on the system, no
+                        graphical representation will be available. For more details, please refer to the
+                        <a href="https://github.com/Raffson/Episim.git" target="_blank">github repository</a>.
+                    </p>
+	            </div>
+            </div>
+        </div>
+    </div>
+
   </body>
 </html>
