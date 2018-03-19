@@ -61,8 +61,23 @@ int startMap()
     QObject *item = engine.rootObjects().first();
     Q_ASSERT(item);
 
+    /// Call a function from a qml file.
     QMetaObject::invokeMethod(item, "initializeProviders",
                               Q_ARG(QVariant, QVariant::fromValue(parameters)));
+
+    /// To center the map on a specific location: use following code.
+    QVariantList coords;
+    coords.push_back(50);
+    coords.push_back(4);
+    QMetaObject::invokeMethod(item, "setCentre",
+                              Q_ARG(QVariant, QVariant::fromValue(coords)));
+
+    /// To add cities on the map: use following.
+    QVariantList vals;
+    vals.push_back(50);
+    vals.push_back(4);
+    QMetaObject::invokeMethod(item, "placeCity",
+                              Q_ARG(QVariant, QVariant::fromValue(vals)));
 
     return application.exec();
 }

@@ -56,16 +56,18 @@ import "map"
 import "menus"
 import "helper.js" as Helper
 
+
 ApplicationWindow {
     id: appWindow
     property variant map
     property variant minimap
     property variant parameters
+    property MapCircle circle
 
     //defaults
     //! [routecoordinate]
-    property variant fromCoordinate: QtPositioning.coordinate(59.9483, 10.7695)
-    property variant toCoordinate: QtPositioning.coordinate(59.9645, 10.671)
+    property variant fromCoordinate: QtPositioning.coordinate(51.2165845, 4.413545489)
+    property variant toCoordinate: QtPositioning.coordinate(51.2165845, 4.413545489)
     //! [routecoordinate]
 
     function createMap(provider)
@@ -116,6 +118,23 @@ ApplicationWindow {
         }
 
         map.forceActiveFocus()
+    }
+
+    function setCentre(coords){
+        map.center.latitude = coords[0]
+        map.center.longitude = coords[1]
+    }
+
+
+    function placeCity(values){
+        circle = Qt.createQmlObject('import QtLocation 5.3; MapCircle {}', page)
+        circle.center.latitude = values[0]
+        circle.center.longitude = values[1]
+        circle.radius = 5000.0
+        circle.color = 'green'
+        circle.border.width = 3
+        circle.opacity = 0.25
+        map.addMapItem(circle)
     }
 
     function getPlugins()
