@@ -130,7 +130,7 @@ ApplicationWindow {
         circle = Qt.createQmlObject('import QtLocation 5.3; MapCircle {}', page)
         circle.center.latitude = values[0]
         circle.center.longitude = values[1]
-        circle.radius = 5000.0
+        circle.radius = values[2]
         circle.color = 'green'
         circle.border.width = 3
         circle.opacity = 0.25

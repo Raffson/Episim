@@ -20,7 +20,7 @@ using namespace std;
 
 #ifdef USING_QT
 
-int startMap()
+int startMap(geogen::GeoGrid grid)
 {
 #if QT_CONFIG(library)
     const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
@@ -67,17 +67,25 @@ int startMap()
 
     /// To center the map on a specific location: use following code.
     QVariantList coords;
-    coords.push_back(50);
-    coords.push_back(4);
+    coords.push_back(51.2165845);
+    coords.push_back(4.413545489);
     QMetaObject::invokeMethod(item, "setCentre",
                               Q_ARG(QVariant, QVariant::fromValue(coords)));
 
     /// To add cities on the map: use following.
-    QVariantList vals;
-    vals.push_back(50);
-    vals.push_back(4);
-    QMetaObject::invokeMethod(item, "placeCity",
-                              Q_ARG(QVariant, QVariant::fromValue(vals)));
+    auto cities = grid.get_cities();
+    auto pop = grid.GetTotalPop();
+    for (map<int, shared_ptr<geogen::City>>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++){
+        /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
+        shared_ptr<geogen::City> city = (*c_it).second;
+        QVariantList vals;
+        vals.push_back(city->GetCoordinates().latitude);
+        vals.push_back(city->GetCoordinates().longitude);
+        vals.push_back(city->GetPopulation()/10);
+        QMetaObject::invokeMethod(item, "placeCity",
+                                  Q_ARG(QVariant, QVariant::fromValue(vals)));
+    }
+
 
     return application.exec();
 }
@@ -90,6 +98,6 @@ int main(int argc, char** argv)
     grid.GenerateAll();
 #ifdef USING_QT
     //startMap(argc, argv);
-    startMap();
+    startMap(grid);
 #endif
 }
