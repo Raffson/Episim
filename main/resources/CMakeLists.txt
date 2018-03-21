@@ -35,6 +35,6 @@ add_subdirectory( lib )
 #============================================================================
 # Copy directory mapviewer to ${CMAKE_INSTALL_PREFIX}
 #============================================================================
-file(COPY mapviewer DESTINATION ${CMAKE_INSTALL_PREFIX})
+INSTALL(DIRECTORY mapviewer DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 #############################################################################
