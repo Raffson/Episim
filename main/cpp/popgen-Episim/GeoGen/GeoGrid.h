@@ -48,17 +48,26 @@ namespace geogen {
         ///             the population...
         explicit GeoGrid(const boost::filesystem::path& config);
 
-        /// Generates the schools.
+        /// Generates the schools, places them into the cities
+        /// using a discrete distribution.
         void GenerateSchools();
 
+        /// Generates the colleges, places them into the cities
+        /// using a discrete distribution.
         void GenerateColleges();
 
+        /// Generates the workplaces, places them into the cities
+        /// using a discrete distribution.
         void GenerateWorkplaces();
 
+        /// Generates the communties, places them into the cities
+        /// using a discrete distribution.
         void GenerateCommunities();
 
+        /// Calls all other generator functions.
         void GenerateAll();
 
+        /// Returns the map of cities.
         const map<int, shared_ptr<City>>& get_cities();
 
         /// Bunch of getters, mainly for tests atm...
@@ -80,6 +89,7 @@ namespace geogen {
 
         unsigned int GetSchoolCount() const;
 
+        /// Retrieve a city by entering the id of the city in [].
         shared_ptr<City>& operator[](int i);
 
     private:
@@ -98,10 +108,10 @@ namespace geogen {
 
 
         /// Contains all households for the GeoGrid -> perhaps move this into City?
-        vector<Household> m_households;
+        //vector<Household> m_households{}; Not used
 
         /// Contains all cities for the GeoGrid
-        map<int, shared_ptr<City>> m_cities;
+        map<int, shared_ptr<City>> m_cities{};
 
 
         /// Keep a map of all communities?
@@ -116,53 +126,53 @@ namespace geogen {
 
 
         /// Total population of simulation area -> make this const?
-        unsigned int m_total_pop;
+        unsigned int m_total_pop{};
 
         /// Fraction of population that goes to school -> make this const?
-        float m_schooled_frac;
+        float m_schooled_frac{};
 
         /// Fraction of population that are able to work between 18y and 26y -> make this const?
-        float m_workers1_frac;
+        float m_workers1_frac{};
 
         /// Fraction of population that are able to work between 27y and 65y -> make this const?
-        float m_workers2_frac;
+        float m_workers2_frac{};
 
         /// Fraction of population younger than 3y and older than 65y -> make this const?
-        float m_rest_frac;
+        float m_rest_frac{};
 
         /// Fraction of workers1 that is student -> make this const?
-        float m_student_frac;
+        float m_student_frac{};
 
         ///the ratio of commuters that are workers -> make this const?
-        float m_commuting_students_frac;
+        float m_commuting_students_frac{};
 
         ///Total population that is actually working -> make this const?
         /// for workers1 (18y-26y) mind that we first need to exclude the students...
-        float m_active_frac;
+        float m_active_frac{};
 
         ///the ratio of commuters that are workers -> make this const?
-        float m_commuting_workers_frac;
+        float m_commuting_workers_frac{};
 
 
         /// Average size of each school -> make this const?
-        unsigned int m_school_size;
+        unsigned int m_school_size{};
 
         /// Average size of each college -> make this const?
-        unsigned int m_college_size;
+        unsigned int m_college_size{};
 
         /// Maximum nr of "largest cities" -> make this const?
-        unsigned int m_maxlc;
+        unsigned int m_maxlc{};
 
         /// Primary/Secundary community limit -> make this const?
-        unsigned int m_community_size;
+        unsigned int m_community_size{};
 
         /// Average size of each workplaces -> make this const?
-        unsigned int m_worksplace_size;
+        unsigned int m_worksplace_size{};
 
         ///making these members const requires reworking the constructor,
         /// or hack our way around the initialisation...
 
-        unsigned int m_school_count;
+        unsigned int m_school_count{};
 
         trng::lcg64 m_generator;
 

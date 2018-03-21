@@ -8,7 +8,8 @@ using namespace std;
 
 namespace geogen {
 
-    GeoGrid::GeoGrid(const boost::filesystem::path & config_file):m_generator(0) {
+    GeoGrid::GeoGrid(const boost::filesystem::path & config_file):
+            m_generator(0){
 
         this->m_school_count = 0;
         //Setting up property tree to parse xml config file
@@ -164,7 +165,7 @@ namespace geogen {
                 shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
                 city->AddCommunity(community);
 
-                
+
             }
 
         }
