@@ -3,12 +3,12 @@
 //
 
 #include "GeoGrid.h"
-
+#include "trng/uniform_int_dist.hpp"
 using namespace std;
 
 namespace geogen {
 
-    GeoGrid::GeoGrid(const boost::filesystem::path & config_file) {
+    GeoGrid::GeoGrid(const boost::filesystem::path & config_file):m_generator(0) {
 
         this->m_school_count = 0;
         //Setting up property tree to parse xml config file
@@ -33,7 +33,7 @@ namespace geogen {
         //m_total_pop = CountTotalPop();
         //After specifically asking about this, turns out we still need to read it from file...
         //perhaps find a way to verify this number somehow, if the possibility exists of course...
-        m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
+        m_total_pop = this->CountTotalPop();
 
         m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
         m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers1");
@@ -50,6 +50,8 @@ namespace geogen {
         m_maxlc = p_tree.get<unsigned int>("popgen.contactpool_info.college.cities");
         m_community_size = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
         m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
+
+
     }
 
     void GeoGrid::GenerateAll() {
@@ -80,16 +82,12 @@ namespace geogen {
         //Note that this way cuz of rounding we lose a couple of schooled ppl.
         //But this shouldn't affect our city divison.
 
-
-        //Setting up random engine, TODO refactor to somewhere global
-        random_device rand_dev;
-        mt19937 gen (rand_dev()); //TODO need to remember state of this prob should be selectable.
-        uniform_int_distribution<int>  distr(0, (unsigned int) pop_id.size() - 1);
+        trng::uniform_int_dist distr(0, (unsigned int) pop_id.size() - 1);
 
         // assign schools to cities according to our normal distribution
         for(unsigned int i = 0; i < amount_of_schools; i++){
             m_school_count++;
-            int index = pop_id[distr(gen)];
+            int index = pop_id[distr(m_generator)];
             shared_ptr<City> chosen_city = m_cities[index];
             shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
             chosen_city->AddCommunity(nw_school);
@@ -132,7 +130,7 @@ namespace geogen {
             double students = it->GetPopulation()*m_workers1_frac*m_student_frac;
             //doesn't matter if students is a double at this time
             // since this is only an estimate for the number of colleges
-            unsigned int nrcolleges =  round(students / m_college_size);
+            auto nrcolleges = (unsigned int) round(students / m_college_size);
             //is this how we need to calculate the nr of colleges?
             // or did i not understand it properly?
             //cout << students << " students,   " << nrcolleges << " colleges for " << it->GetName() << endl;
@@ -160,11 +158,13 @@ namespace geogen {
             //including locals who work in their own region
             //some percentages of the commuters are students
             double working_commuters = m_commuting_workers_frac * in_commuters;
-            unsigned int number_of_workplaces = round(working_commuters / m_worksplace_size);
+            auto number_of_workplaces =(unsigned int) round(working_commuters / m_worksplace_size);
 
             for(unsigned int i=0; i<number_of_workplaces; i++){
                 shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
                 city->AddCommunity(community);
+
+                
             }
 
         }
