@@ -30,6 +30,7 @@ int startMap(geogen::GeoGrid grid)
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     int dummyargc = 0;
     QGuiApplication application(dummyargc, 0);
+    application.mouseButtons();
 
     QVariantMap parameters;
 

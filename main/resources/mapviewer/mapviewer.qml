@@ -63,6 +63,8 @@ ApplicationWindow {
     property variant minimap
     property variant parameters
     property MapCircle circle
+    property MouseArea mouseArea
+
 
     //defaults
     //! [routecoordinate]
@@ -127,7 +129,23 @@ ApplicationWindow {
 
 
     function placeCity(values){
-        circle = Qt.createQmlObject('import QtLocation 5.3; MapCircle {}', page)
+        circle = Qt.createQmlObject('import QtLocation 5.3; import QtQuick 2.7;
+                                    MapCircle {
+                                        MouseArea {
+                                            anchors.fill:parent
+                                            hoverEnabled: true
+                                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                            onEntered:{
+                                                parent.color = "red";
+                                                console.log("entered");
+                                            }
+                                            onExited:{
+                                                parent.color = "green";
+                                                console.log("exited");
+                                            }
+                                        }
+                                    }', page)
+
         circle.center.latitude = values[0]
         circle.center.longitude = values[1]
         circle.radius = values[2]
