@@ -22,6 +22,8 @@
 
 #include "DesignByContract.h"
 
+#include "trng/lcg64.hpp"
+
 
 using namespace std;
 
@@ -95,16 +97,11 @@ namespace geogen {
         unsigned int CountTotalPop() const;
 
 
-
-    private:
-
         /// Contains all households for the GeoGrid -> perhaps move this into City?
         vector<Household> m_households;
 
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities;
-
-
 
 
         /// Keep a map of all communities?
@@ -166,6 +163,8 @@ namespace geogen {
         /// or hack our way around the initialisation...
 
         unsigned int m_school_count;
+
+        trng::lcg64 m_generator;
 
 
     };
