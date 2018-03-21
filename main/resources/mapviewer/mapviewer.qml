@@ -63,7 +63,6 @@ ApplicationWindow {
     property variant minimap
     property variant parameters
     property MapCircle circle
-    property MouseArea mouseArea
 
 
     //defaults
@@ -131,17 +130,27 @@ ApplicationWindow {
     function placeCity(values){
         circle = Qt.createQmlObject('import QtLocation 5.3; import QtQuick 2.7;
                                     MapCircle {
+                                        property alias area_text: m_area.info_text
                                         MouseArea {
+                                            id: m_area
+                                            property alias info_text: info.text
+                                            Text {
+                                                id: info
+                                                text: "gfeqgefqvzeg"
+                                                color: "blue"
+                                                font.pointSize: 1
+                                                anchors.centerIn: parent
+                                            }
                                             anchors.fill:parent
                                             hoverEnabled: true
                                             acceptedButtons: Qt.LeftButton | Qt.RightButton
                                             onEntered:{
+                                                info.font.pointSize = 16;
                                                 parent.color = "red";
-                                                console.log("entered");
                                             }
                                             onExited:{
+                                                info.font.pointSize = 1;
                                                 parent.color = "green";
-                                                console.log("exited");
                                             }
                                         }
                                     }', page)
@@ -152,6 +161,7 @@ ApplicationWindow {
         circle.color = 'green'
         circle.border.width = 3
         circle.opacity = 0.25
+        circle.area_text = values[2]
         map.addMapItem(circle)
     }
 
