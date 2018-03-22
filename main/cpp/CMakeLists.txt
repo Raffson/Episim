@@ -76,7 +76,7 @@ set(LIB_SRC
 	viewers/CliViewer.cpp
 	viewers/PersonsViewer.cpp
 	viewers/SummaryViewer.cpp
-)
+        popgen-Episim/GeoGen/Utillity.cpp popgen-Episim/GeoGen/Utillity.h)
 
 #============================================================================
 # Build the Stride library.
