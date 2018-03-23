@@ -2,14 +2,17 @@
 // Created by beau on 3/5/18.
 //
 
+#include "Utillity.h"
 #include "GeoGrid.h"
 #include "trng/uniform_int_dist.hpp"
+
 using namespace std;
 
 namespace geogen {
 
-    GeoGrid::GeoGrid(const boost::filesystem::path & config_file):
-            m_generator(0){
+    GeoGrid::GeoGrid(const boost::filesystem::path & config_file): m_generator(0){
+
+        REQUIRE(file_exists(config_file), "Could not find file");
 
         this->m_school_count = 0;
         //Setting up property tree to parse xml config file
@@ -24,21 +27,12 @@ namespace geogen {
 
         m_cities = parser::ParseCities(base_path + city_file, base_path + commuting_file, true);
 
-        //m_commuting = parser::ParseCommuting(base_path + commuting_file);
-
-        //Generating schools
-        //auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
-        //specs ask this to be read out of config, but could be calculated directly
-        //out of the city file?
-        // -> you're right... so let's do it like this:
-        //m_total_pop = CountTotalPop();
-        //After specifically asking about this, turns out we still need to read it from file...
-        //perhaps find a way to verify this number somehow, if the possibility exists of course...
         m_total_pop = this->CountTotalPop();
 
+        //m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled")
         m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
         m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers1");
-        m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers2");
+        m_workers2_frac = p_tree.get<float>("popgen.pop_info.fraction_workers2");
         m_rest_frac = p_tree.get<float>("popgen.pop_info.fraction_rest");
 
         m_student_frac = p_tree.get<float>("popgen.pop_info.fraction_students");
@@ -52,8 +46,11 @@ namespace geogen {
         m_community_size = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
         m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
 
+        ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
+        ENSURE(1 >= m_student_frac >= 0, "fraction is between 0 and 1");
 
-    }
+
+}
 
     void GeoGrid::GenerateAll() {
         GenerateSchools();
@@ -65,8 +62,9 @@ namespace geogen {
 
     void GeoGrid::GenerateSchools() {
 
-        assert(this->m_schooled_frac<=1);
-        assert(this->m_school_size > 0);
+        REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
+        REQUIRE(m_schooled_frac >= 0, "Schooled fract can't be negative");
+        REQUIRE(m_school_size >= 0, "The initial school size can't be negative");
         // Calculating extra data
         // rounded because we don't have a fraction of a person
         auto amount_schooled = (const unsigned int) round(m_total_pop * m_schooled_frac);
@@ -82,7 +80,6 @@ namespace geogen {
         }
         //Note that this way cuz of rounding we lose a couple of schooled ppl.
         //But this shouldn't affect our city divison.
-
         trng::uniform_int_dist distr(0, (unsigned int) pop_id.size() - 1);
 
         // assign schools to cities according to our normal distribution
@@ -94,8 +91,8 @@ namespace geogen {
             chosen_city->AddCommunity(nw_school);
             //m_communities[nw_school->getID()] = nw_school
         }
-
-
+        // We should ENSURE schools are effectifly placed in cities.
+        // The OO nature makes this assertion rather complex -> found in tests
     }
 
     unsigned int GeoGrid::FindSmallest(const vector<shared_ptr<City>> &lc) {
@@ -117,6 +114,12 @@ namespace geogen {
 
     void GeoGrid::GenerateColleges() {
         //need 10 largest cities, largest determined by number of people in the city...
+        //TODO always 10?? specify this in the config file?
+        REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
+        REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");
+        REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");
+        REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");
+        //REQUIRE(m_cities.size() >= 10, "To few cities to place all colleges");
         vector <shared_ptr<City>> lc;
         for (auto &it : m_cities) {
             AdjustLargestCities(lc, it.second);
@@ -135,6 +138,7 @@ namespace geogen {
             //is this how we need to calculate the nr of colleges?
             // or did i not understand it properly?
             //cout << students << " students,   " << nrcolleges << " colleges for " << it->GetName() << endl;
+            //TODO Is it not given wich cities have exactly one college, calculation needed??
 
             for(unsigned int i = 0; i < nrcolleges; i++) {
                 shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
@@ -151,6 +155,8 @@ namespace geogen {
         //double number_of_workplaces = working_population/m_worksplace_size;
 
         //dividing workplaces to cities
+        //TODO This should also be placed according to a discrete distribution!
+        //TODO still figuring out how i should do this for this function
         for (auto it:m_cities){
             shared_ptr<City> city = it.second;
             unsigned int in_commuters = city->GetNumberOfInCommuters();
@@ -172,21 +178,38 @@ namespace geogen {
 
     }
 
-    /// Communities need to be distributed according to the relative population size.
-    /// On average a community has 2000 members.
+    // Communities need to be distributed according to the relative population size.
+    //TODO On average a community has 2000 -> Should not be hardcorded members.
     void GeoGrid::GenerateCommunities() {
-        cout<<"start generating communities"<<endl;
+
         vector<shared_ptr<Community>> primsec_communities;
-        /// First we need to determine the total number of communities to be used.
-        auto total_communities = ceil(m_total_pop/m_community_size);
-        /// Determine how many communities a city should get.
-        for (auto it : m_cities){
-            /// it: pair<int, City>
+        // First we need to determine the total number of communities to be used.
+        auto total_communities = (unsigned int) ceil(m_total_pop/m_community_size);
+
+        vector<unsigned int> pop_id;
+        for(auto& it: m_cities){
+            auto c_schooled_pop = (unsigned int) round(it.second->GetPopulation() * m_schooled_frac);
+            pop_id.insert(pop_id.end(), c_schooled_pop, (const unsigned int &) it.first);
+        }
+
+        //Note that this way cuz of rounding we lose a couple of schooled ppl.
+        //But this shouldn't affect our city divison.
+        trng::uniform_int_dist distr(0, (unsigned int) pop_id.size() - 1);
+
+        for(unsigned int i = 0; i < total_communities; i++){
+            m_school_count++;
+            int index = pop_id[distr(m_generator)];
+            shared_ptr<City> chosen_city = m_cities[index];
+            shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
+            chosen_city->AddCommunity(nw_community);
+        }
+        // Determine how many communities a city should get -> Depricated.
+        /*for (auto it : m_cities){
             shared_ptr<City> city = it.second;
-            /// ratio: the city contains ratio % of the total population.
+            // ratio: the city contains ratio % of the total population.
             double ratio = (city->GetPopulation()/(double)m_total_pop);
             assert(0<ratio<1);
-            /// Now we have the ratio, we know that the city has ratio % of all communities.
+            // Now we have the ratio, we know that the city has ratio % of all communities.
             auto city_communities = (total_communities*ratio);
             assert(city_communities<total_communities);
 
@@ -196,7 +219,7 @@ namespace geogen {
                 city->AddCommunity(community);
                 //m_communities[community->getID()] = community
             }
-        }
+        }*/
     }
 
 
@@ -219,6 +242,6 @@ namespace geogen {
 
     shared_ptr<City> &GeoGrid::operator[](int i) {
         return m_cities[i];
-    };
+    }
 
 }//namespace geogen

@@ -38,26 +38,35 @@ namespace geogen {
     class GeoGrid {
 
     public:
-
-        GeoGrid() = default;
-
-
         /// Takes a filepath to city_config file.
-        /// @param map: a path to a gegogen config file. This file contains
+        /// @param config: a path to a gegogen config file. This file contains
         ///             things like name of the city data file, information about
         ///             the population...
         explicit GeoGrid(const boost::filesystem::path& config);
 
         /// Generates the schools, places them into the cities
         /// using a discrete distribution.
+        /// Preconditions:
+        ///     REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
+        ///     REQUIRE(m_schooled_frac >= 0, "Schooled fract can't be negative");
+        ///     REQUIRE(m_school_size >= 0, "The initial school size can't be negative");
+        ///     ENSURE(Schools are placed in cities according to discrete distribution) -> enforced in test enviroment
         void GenerateSchools();
 
         /// Generates the colleges, places them into the cities
         /// using a discrete distribution.
+        /// Preconditions:
+        ///     REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
+        ///     REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");
+        ///     REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");
+        ///     REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");
+        /// Postconditions:
+        ///     ENSURE(colleges are placed in x biggest cities) -> enforced in test envirorement
         void GenerateColleges();
 
         /// Generates the workplaces, places them into the cities
         /// using a discrete distribution.
+
         void GenerateWorkplaces();
 
         /// Generates the communties, places them into the cities
@@ -125,12 +134,17 @@ namespace geogen {
         ///map<unsigned int, <map<unsigned int, unsigned int> > > m_commuting;
 
 
-        /// Total population of simulation area -> make this const?
+        /// Total population of simulation area
         unsigned int m_total_pop{};
 
-        /// Fraction of population that goes to school -> make this const?
+        /// Fraction of population that goes to school
         float m_schooled_frac{};
 
+        /*TODO: Next need to be constant -> re designing constructor othewise not possible.
+        /(not that i know of)
+        /Tought update: maybe users wants to 'experiment with those parameters in
+        /the interface
+        */
         /// Fraction of population that are able to work between 18y and 26y -> make this const?
         float m_workers1_frac{};
 
