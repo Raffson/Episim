@@ -183,10 +183,8 @@ namespace geogen {
         for (auto it : m_cities){
             /// it: pair<int, City>
             shared_ptr<City> city = it.second;
-            cout<<"city found"<<endl;
             /// ratio: the city contains ratio % of the total population.
             double ratio = (city->GetPopulation()/(double)m_total_pop);
-            cout<< city->GetPopulation()<<" / "<<(double)m_total_pop<<endl;
             assert(0<ratio<1);
             /// Now we have the ratio, we know that the city has ratio % of all communities.
             auto city_communities = (total_communities*ratio);

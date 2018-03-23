@@ -55,6 +55,7 @@ import QtPositioning 5.5
 import "map"
 import "menus"
 import "helper.js" as Helper
+import "custom"
 
 
 ApplicationWindow {
@@ -62,7 +63,7 @@ ApplicationWindow {
     property variant map
     property variant minimap
     property variant parameters
-    property MapCircle circle
+    property variant circle
 
 
     //defaults
@@ -128,40 +129,16 @@ ApplicationWindow {
 
 
     function placeCity(values){
-        circle = Qt.createQmlObject('import QtLocation 5.3; import QtQuick 2.7;
-                                    MapCircle {
-                                        property alias area_text: m_area.info_text
-                                        MouseArea {
-                                            id: m_area
-                                            property alias info_text: info.text
-                                            Text {
-                                                id: info
-                                                text: "gfeqgefqvzeg"
-                                                color: "blue"
-                                                font.pointSize: 1
-                                                anchors.centerIn: parent
-                                            }
-                                            anchors.fill:parent
-                                            hoverEnabled: true
-                                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                            onEntered:{
-                                                info.font.pointSize = 16;
-                                                parent.color = "red";
-                                            }
-                                            onExited:{
-                                                info.font.pointSize = 1;
-                                                parent.color = "green";
-                                            }
-                                        }
-                                    }', page)
+        circle = Qt.createQmlObject('CityCircle {}', page)
 
-        circle.center.latitude = values[0]
-        circle.center.longitude = values[1]
-        circle.radius = values[2]
+        circle.center.latitude = values["latitude"]
+        circle.center.longitude = values["longitude"]
+        circle.radius = values["radius"]
         circle.color = 'green'
         circle.border.width = 3
         circle.opacity = 0.25
-        circle.area_text = values[2]
+        circle.area_text = values["info"]
+        circle.population = values["population"]
         map.addMapItem(circle)
     }
 
@@ -283,33 +260,11 @@ ApplicationWindow {
                 stackView.currentItem.showRoute.connect(map.calculateCoordinateRoute)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
-            case "Geocode":
-                stackView.pop({item:page, immediate: true})
-                stackView.push({ item: Qt.resolvedUrl("forms/Geocode.qml") ,
-                                   properties: { "address": fromAddress}})
-                stackView.currentItem.showPlace.connect(map.geocode)
-                stackView.currentItem.closeForm.connect(stackView.closeForm)
-                break
-            case "RevGeocode":
-                stackView.pop({item:page, immediate: true})
-                stackView.push({ item: Qt.resolvedUrl("forms/ReverseGeocode.qml") ,
-                                   properties: { "coordinate": fromCoordinate}})
-                stackView.currentItem.showPlace.connect(map.geocode)
-                stackView.currentItem.closeForm.connect(stackView.closeForm)
-                break
-            case "Language":
-                stackView.pop({item:page, immediate: true})
-                stackView.push({ item: Qt.resolvedUrl("forms/Locale.qml") ,
-                                   properties: { "locale":  map.plugin.locales[0]}})
-                stackView.currentItem.selectLanguage.connect(setLanguage)
-                stackView.currentItem.closeForm.connect(stackView.closeForm)
-                break
+
             case "Clear":
                 map.clearData()
                 break
-            case "Prefetch":
-                map.prefetchData()
-                break
+
             default:
                 console.log("Unsupported operation")
             }

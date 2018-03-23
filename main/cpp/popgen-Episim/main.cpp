@@ -3,12 +3,15 @@
 //
 
 #include <iostream>
+#include <sstream>
+
 
 #ifdef USING_QT
     #include <QtCore/QTextStream>
     #include <QtGui/QGuiApplication>
     #include <QtQml/QQmlApplicationEngine>
     #include <QtQuick/QQuickItem>
+    #include <QString>
 #endif
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
@@ -75,14 +78,29 @@ int startMap(geogen::GeoGrid grid)
 
     /// To add cities on the map: use following.
     auto cities = grid.get_cities();
-    auto pop = grid.GetTotalPop();
     for (map<int, shared_ptr<geogen::City>>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++){
+        std::stringstream ss;
+        string s;
+        string temp;
         /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
         shared_ptr<geogen::City> city = (*c_it).second;
-        QVariantList vals;
-        vals.push_back(city->GetCoordinates().latitude);
-        vals.push_back(city->GetCoordinates().longitude);
-        vals.push_back(city->GetPopulation()/10);
+        QVariantMap vals;
+        /// Latitude
+        vals["latitude"] = city->GetCoordinates().latitude;
+        /// Longitude
+        vals["longitude"] = city->GetCoordinates().longitude;
+        /// Radius
+        vals["radius"] = 2500;
+        /// Population
+        vals["population"] = city->GetPopulation();
+        /// Info
+        ss<<city->GetPopulation();
+        ss>>s;
+        s += "\n";
+        s.append(city->GetName());
+        s += "\n";
+        QString qs = QString(s.c_str());
+        vals["info"] = qs;
         QMetaObject::invokeMethod(item, "placeCity",
                                   Q_ARG(QVariant, QVariant::fromValue(vals)));
     }
