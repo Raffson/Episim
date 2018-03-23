@@ -20,7 +20,6 @@
  */
 
 #include <boost/property_tree/ptree.hpp>
-#include <cmath>
 
 namespace stride {
 

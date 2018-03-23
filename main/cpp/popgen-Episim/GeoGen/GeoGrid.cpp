@@ -2,9 +2,7 @@
 // Created by beau on 3/5/18.
 //
 
-#include "Utillity.h"
 #include "GeoGrid.h"
-#include "trng/uniform_int_dist.hpp"
 
 using namespace std;
 

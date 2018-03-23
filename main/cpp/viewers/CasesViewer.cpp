@@ -19,6 +19,8 @@
  */
 
 #include "CasesViewer.h"
+
+#include "pop/Population.h"
 #include "sim/SimRunner.h"
 #include "sim/Simulator.h"
 
@@ -30,11 +32,22 @@ namespace viewers {
 
 void CasesViewer::update(const sim_event::Payload& p)
 {
-        const auto pop = p.m_runner->GetSim()->GetPopulation();
         switch (p.m_event_id) {
-        case Id::AtStart: m_cases.push_back(pop->GetInfectedCount()); break;
-        case Id::Stepped: m_cases.push_back(pop->GetInfectedCount()); break;
-        case Id::Finished: m_cases_file.Print(m_cases); break;
+        case Id::AtStart: {
+                const auto pop = p.m_runner->GetSim()->GetPopulation();
+                m_cases.push_back(pop->GetInfectedCount());
+                break;
+        }
+        case Id::Stepped: {
+                const auto pop = p.m_runner->GetSim()->GetPopulation();
+                m_cases.push_back(pop->GetInfectedCount());
+                break;
+        }
+        case Id::Finished: {
+                m_cases_file.Print(m_cases);
+                break;
+        }
+        default: break;
         }
 }
 
