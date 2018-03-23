@@ -8,7 +8,8 @@ using namespace std;
 
 namespace geogen {
 
-    GeoGrid::GeoGrid(const boost::filesystem::path & config_file): m_generator(0){
+    GeoGrid::GeoGrid(const boost::filesystem::path & config_file)
+            : m_generator((unsigned long)0, trng::lcg64::Default){
 
         REQUIRE(file_exists(config_file), "Could not find file");
 

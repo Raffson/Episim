@@ -4,12 +4,16 @@
 // Version     :
 // Copyright   : Project Software Engineering - BA1 Informatica - Serge Demeyer - University of Antwerp
 // Description : Declarations for design by contract in C++
+//
+// Modified by Raphael A.
 //============================================================================
 
-#include <assert.h>
+#include <iostream>
+
+using namespace std;
 
 #define REQUIRE(assertion, what) \
-	if (!(assertion)) __assert (what, __FILE__, __LINE__)
+	if (!(assertion)) { cerr << what << endl; assert(assertion); }
 
 #define ENSURE(assertion, what) \
-	if (!(assertion)) __assert (what, __FILE__, __LINE__)
+	if (!(assertion)) { cerr << what << endl; assert(assertion); }

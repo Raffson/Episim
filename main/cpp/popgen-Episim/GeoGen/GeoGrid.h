@@ -40,6 +40,10 @@ namespace geogen {
     class GeoGrid {
 
     public:
+
+        /// Default constructor which does nothing.
+        GeoGrid() = default;
+
         /// Takes a filepath to city_config file.
         /// @param config: a path to a gegogen config file. This file contains
         ///             things like name of the city data file, information about
