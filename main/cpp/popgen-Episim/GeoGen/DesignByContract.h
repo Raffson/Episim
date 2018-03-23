@@ -8,6 +8,8 @@
 
 #include <assert.h>
 
+using namespace std;
+
 #define REQUIRE(assertion, what) \
 	if (!(assertion)) __assert (what, __FILE__, __LINE__)
 

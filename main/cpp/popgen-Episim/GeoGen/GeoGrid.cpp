@@ -12,8 +12,7 @@ namespace geogen {
 
     GeoGrid::GeoGrid(const boost::filesystem::path & config_file): m_generator(0){
 
-        REQUIRE(file_exists(config_file), "Could not find file");
-
+        //REQUIRE(file_exists(config_file), "Could not find file");
         this->m_school_count = 0;
         //Setting up property tree to parse xml config file
         boost::property_tree::ptree p_tree;
@@ -46,8 +45,8 @@ namespace geogen {
         m_community_size = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
         m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
 
-        ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
-        ENSURE(1 >= m_student_frac >= 0, "fraction is between 0 and 1");
+        //ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
+        //ENSURE(1 >= m_student_frac >= 0, "fraction is between 0 and 1");
 
 
 }
@@ -62,9 +61,9 @@ namespace geogen {
 
     void GeoGrid::GenerateSchools() {
 
-        REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
+        /*REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
         REQUIRE(m_schooled_frac >= 0, "Schooled fract can't be negative");
-        REQUIRE(m_school_size >= 0, "The initial school size can't be negative");
+        REQUIRE(m_school_size >= 0, "The initial school size can't be negative");*/
         // Calculating extra data
         // rounded because we don't have a fraction of a person
         auto amount_schooled = (const unsigned int) round(m_total_pop * m_schooled_frac);
@@ -115,11 +114,11 @@ namespace geogen {
     void GeoGrid::GenerateColleges() {
         //need 10 largest cities, largest determined by number of people in the city...
         //TODO always 10?? specify this in the config file?
-        REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
+        /*REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
         REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");
         REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");
         REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");
-        //REQUIRE(m_cities.size() >= 10, "To few cities to place all colleges");
+        //REQUIRE(m_cities.size() >= 10, "To few cities to place all colleges");*/
         vector <shared_ptr<City>> lc;
         for (auto &it : m_cities) {
             AdjustLargestCities(lc, it.second);
