@@ -33,12 +33,11 @@ tuple<ptree, unsigned int, double> ScenarioData::Get(const string& tag)
 {
         ptree pt = tag.substr(0, 2) != "r0" ? RunConfigPtree::CreateTestsBasic1() : RunConfigPtree::CreateTestsBasic2();
         unsigned int target = 0U;
-        double       margin = 0.03;
+        double       margin = 0.1;
 
         // Influenza data
         if (tag == "influenza_a") {
                 target = 1085U;
-		margin = 0.1;
         }
         if (tag == "influenza_b") {
                 pt.put("run.seeding_rate", 0.0);
