@@ -96,7 +96,7 @@ namespace Tests {
 
         grid.GenerateColleges();
 
-        auto cities = grid.get_cities();
+        auto cities = grid.GetCities();
         ASSERT_EQ(cities[12025]->GetColleges().size(), expMechelen   );
         ASSERT_EQ(cities[41002]->GetColleges().size(), expAalst      );
         ASSERT_EQ(cities[21009]->GetColleges().size(), expElsene     );
@@ -130,7 +130,7 @@ namespace Tests {
         //No input / wrong file...
         EXPECT_THROW( auto grid = GeoGrid("bad input..."), runtime_error);
         auto grid = GeoGrid();
-        EXPECT_EQ(grid.get_cities().size(), 0);
+        EXPECT_EQ(grid.GetCities().size(), 0);
         EXPECT_EQ(grid.GetTotalPop(), 0);
         EXPECT_FLOAT_EQ(grid.GetSchooledFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.GetWorkers1Frac(), 0.0);

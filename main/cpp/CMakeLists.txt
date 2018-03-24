@@ -70,6 +70,9 @@ set(LIB_SRC
 	#popgen-Episim/GeoGen/CommunityTypes/School.cpp
 	#popgen-Episim/GeoGen/CommunityTypes/ContactPool.cpp
 	#popgen-Episim/GeoGen/CommunityTypes/PrimSec.cpp
+
+	popgen-Episim/GenPop/PopulationGenerator.cpp
+
 #---
 	viewers/AdoptedViewer.cpp
 	viewers/CasesViewer.cpp

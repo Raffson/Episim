@@ -34,4 +34,9 @@ namespace geogen {
         return id;
     }
 
+    void Community::AddContactPool(std::shared_ptr<stride::ContactPool> pool)
+    {
+        m_contact_pools.push_back(pool);
+    }
+
 } // namespace geogen

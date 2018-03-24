@@ -57,7 +57,7 @@ namespace geogen {
 
         void GenerateAll();
 
-        const map<int, shared_ptr<City>>& get_cities();
+        const map<int, shared_ptr<City>>& GetCities();
 
         /// Bunch of getters, mainly for tests atm...
         /// Could leave all this out but then we need to work with friend classes...
@@ -77,6 +77,8 @@ namespace geogen {
         unsigned int GetWorkplaceSize() const { return m_worksplace_size; }
 
         unsigned int GetSchoolCount() const;
+
+        vector<Household> GetHouseholds(){ return m_households;}
 
         shared_ptr<City>& operator[](int i);
 

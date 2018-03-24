@@ -18,12 +18,12 @@ namespace geogen {
         //reading the cities data file
         string base_path = "data/";
         string city_file = p_tree.get("popgen.data_files.cities","flanders_cities.csv");
-
-        string commuting_file =  p_tree.get("popgen.data_files.commuting","flanders_commuting.csv");
+        string commuting_file = p_tree.get("popgen.data_files.commuting","flanders_commuting.csv");
+        string household_file = p_tree.get("popgen.data_files.households","households_flanders.xml");
 
         m_cities = parser::ParseCities(base_path + city_file, base_path + commuting_file, true);
 
-        //m_commuting = parser::ParseCommuting(base_path + commuting_file);
+        m_households = parser::ParseHouseholds(base_path + household_file);
 
         //Generating schools
         //auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
@@ -50,6 +50,7 @@ namespace geogen {
         m_maxlc = p_tree.get<unsigned int>("popgen.contactpool_info.college.cities");
         m_community_size = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
         m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
+
     }
 
     void GeoGrid::GenerateAll() {
@@ -210,7 +211,7 @@ namespace geogen {
         return counter;
     }
 
-    const map<int, shared_ptr<City>>& GeoGrid::get_cities(){
+    const map<int, shared_ptr<City>>& GeoGrid::GetCities(){
         return m_cities;
     }
 

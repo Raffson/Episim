@@ -37,6 +37,8 @@ public:
     /// Set Id for city where household lives.
     void SetCityID(size_t city_id);
 
+    void GetSchoolAttendants(vector<Person>&);
+
 private:
     /// Id generator.
     static size_t g_id_generator;
