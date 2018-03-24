@@ -23,6 +23,7 @@
 
 #include "popgen-Episim/GeoGen/Coordinate.h"
 #include "popgen-Episim/GeoGen/Community.h"
+#include "popgen-Episim/GeoGen/Household.h"
 
 using namespace std;
 
@@ -50,14 +51,21 @@ namespace geogen {
 
         const vector<shared_ptr<const Community>> GetColleges() const;
 
+        const vector<shared_ptr<const Community>> GetSchools() const;
+
+        //Raphael@Nishchal, I told you to change this to GetWorkspaces...
         unsigned int GetNumberOfWorkplaces() const;
 
         /// Adds community to the city.
         void AddCommunity(shared_ptr<Community> community);
 
-        map<unsigned int, unsigned int> GetCommuting() const{return m_commuting;};
+        map<unsigned int, unsigned int> GetCommuting() const {return m_commuting;};
 
         void SetInCommuters(unsigned int id, unsigned int number_of_commuters);
+
+        void AddHousehold(Household hh);
+
+        vector<Household> GetHouseholds() const {return m_households;}
 
         /// @return number of commuters entering the city
         unsigned int GetNumberOfInCommuters();
@@ -84,6 +92,9 @@ namespace geogen {
 
         /// Contains number of commuters from this city to other cities
         map<unsigned int, unsigned int>   m_commuting;
+
+        // Raphael@Nishchal, again, shared pointer ffs...
+        vector<Household> m_households;
     };
 
 }//namespace geogen

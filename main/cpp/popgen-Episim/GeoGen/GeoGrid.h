@@ -83,7 +83,7 @@ namespace geogen {
         void GenerateAll();
 
         /// Returns the map of cities.
-        const map<int, shared_ptr<City>>& get_cities();
+        const map<int, shared_ptr<City>>& GetCities();
 
         /// Bunch of getters, mainly for tests atm...
         /// Could leave all this out but then we need to work with friend classes...
@@ -107,6 +107,9 @@ namespace geogen {
         /// Retrieve a city by entering the id of the city in [].
         shared_ptr<City>& operator[](int i);
 
+        /// Return the households of the geogrid
+        vector<Household> GetHouseholds(){ return m_households;}
+
     private:
 
         ///Returns index of city with smallest population from 'lc'
@@ -123,7 +126,9 @@ namespace geogen {
 
 
         /// Contains all households for the GeoGrid -> perhaps move this into City?
-        //vector<Household> m_households{}; Not used
+        /// Raphael@Nishchal, if these households are already in the cities, the why do we need them here?
+        ///         and ffs, too much effort to make this a vector of shared pointers to households?
+        vector<Household> m_households{};
 
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities{};

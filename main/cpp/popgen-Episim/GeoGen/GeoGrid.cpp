@@ -21,12 +21,23 @@ namespace geogen {
         //reading the cities data file
         string base_path = "data/";
         string city_file = p_tree.get("popgen.data_files.cities","flanders_cities.csv");
-
-        string commuting_file =  p_tree.get("popgen.data_files.commuting","flanders_commuting.csv");
+        string commuting_file = p_tree.get("popgen.data_files.commuting","flanders_commuting.csv");
+        string household_file = p_tree.get("popgen.data_files.households","households_flanders.xml");
 
         m_cities = parser::ParseCities(base_path + city_file, base_path + commuting_file, true);
 
-        m_total_pop = this->CountTotalPop();
+        // Raphael@everyone should this really happen here?
+        m_households = parser::ParseHouseholds(base_path + household_file);
+
+        //Generating schools
+        //auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
+        //specs ask this to be read out of config, but could be calculated directly
+        //out of the city file?
+        // -> you're right... so let's do it like this:
+        //m_total_pop = CountTotalPop();
+        //After specifically asking about this, turns out we still need to read it from file...
+        //perhaps find a way to verify this number somehow, if the possibility exists of course...
+        m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
 
         //m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled")
         m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
@@ -47,9 +58,7 @@ namespace geogen {
 
         ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
         ENSURE(1 >= m_student_frac and m_student_frac >= 0, "fraction must be between 0 and 1");
-
-
-}
+    }
 
     void GeoGrid::GenerateAll() {
         GenerateSchools();
@@ -169,8 +178,6 @@ namespace geogen {
             for(unsigned int i=0; i<number_of_workplaces; i++){
                 shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
                 city->AddCommunity(community);
-
-
             }
 
         }
@@ -234,7 +241,7 @@ namespace geogen {
         return counter;
     }
 
-    const map<int, shared_ptr<City>>& GeoGrid::get_cities(){
+    const map<int, shared_ptr<City>>& GeoGrid::GetCities(){
         return m_cities;
     }
 

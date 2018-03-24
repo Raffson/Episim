@@ -62,6 +62,15 @@ namespace geogen {
         return colleges;
     }
 
+    const vector<shared_ptr<const Community>> City::GetSchools() const {
+        vector<shared_ptr<const Community>> schools;
+        for( auto &it : m_communities ) {
+            if( it->GetCommunityType() == CommunityType::School ) schools.push_back(it);
+        }
+        return schools;
+    }
+
+
     unsigned int City::GetNumberOfWorkplaces() const{
         unsigned int result = 0;
         for(auto a_community:m_communities){
@@ -88,6 +97,11 @@ namespace geogen {
         }
         return result;
 
+    }
+
+    void City::AddHousehold(Household hh)
+    {
+        m_households.push_back(hh);
     }
 
 

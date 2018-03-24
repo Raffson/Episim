@@ -55,7 +55,7 @@ namespace Tests {
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        map<int, shared_ptr<City>> mp = grid.get_cities();
+        map<int, shared_ptr<City>> mp = grid.GetCities();
 
         shared_ptr<City> antwerp = mp[11002];
         Coordinate coord = antwerp->GetCoordinates();
@@ -131,7 +131,7 @@ namespace Tests {
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        EXPECT_EQ(327, grid.get_cities().size());
+        EXPECT_EQ(327, grid.GetCities().size());
 
     }
 

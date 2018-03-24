@@ -15,6 +15,7 @@
 #endif
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
+#include "popgen-Episim/PopGen/PopulationGenerator.h"
 
 using namespace std;
 
@@ -77,7 +78,8 @@ int startMap(geogen::GeoGrid grid)
                               Q_ARG(QVariant, QVariant::fromValue(coords)));
 
     /// To add cities on the map: use following.
-    auto cities = grid.get_cities();
+    auto cities = grid.GetCities();
+    auto pop = grid.GetTotalPop();
     for (map<int, shared_ptr<geogen::City>>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++){
         std::stringstream ss;
         string s;
@@ -115,8 +117,14 @@ int main(int argc, char** argv)
 {
     geogen::GeoGrid grid("config/geogen_default.xml");
     grid.GenerateAll();
+
+    popgen::PopulationGenerator pop_generator(grid);
+    pop_generator.AssignAll();
+
+
 #ifdef USING_QT
     //startMap(argc, argv);
     startMap(grid);
 #endif
+     
 }
