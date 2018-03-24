@@ -3,8 +3,9 @@
 //
 
 #include "Utility.h"
-#include <sys/stat.h>
+
 using namespace std;
+
 namespace geogen {
 
 
@@ -12,4 +13,5 @@ namespace geogen {
         struct stat buffer;
         return stat(path.string().c_str(), &buffer) == 0;
     }
+
 } // Namespace GeoGen

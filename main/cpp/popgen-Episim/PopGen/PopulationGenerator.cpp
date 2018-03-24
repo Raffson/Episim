@@ -57,6 +57,9 @@ namespace popgen {
         return result;
     }
 
+    //Raphael@Nishchal this is good shit, however on the scale that we're looking
+    // I wonder if it makes sense to go this far since we have euclidian coordinates as well...
+    // nevertheless, this is still good shit and on larger scales this will be essential...
     double PopulationGenerator::GetDistance(geogen::Coordinate c1, geogen::Coordinate c2)
     {
         const double earths_radius = 6371.0; //in kilometer
@@ -80,6 +83,8 @@ namespace popgen {
     void PopulationGenerator::AssignToSchools()
     {
         //TODO Shall we add this information in geogrid?
+        //Raphael@Nishchal this hardcoded value of 20 is a NO-GO!
+        // we'll need to discuss how to handle this properly...
         const unsigned int avg_students_in_contactpool = 20;
         const unsigned int avg_contactpools_per_school = m_geogrid.GetSchoolSize()/avg_students_in_contactpool;
 
@@ -95,6 +100,7 @@ namespace popgen {
             }
 
             //Search schools within 10km radius otherwise double the radius untill we find schools
+            //Raphael@Nishchal again, this hardcoded value is ugly... gotta find a better solution...
             unsigned int radius = 10;
             vector<shared_ptr<geogen::Community>> near_schools;
             map<int, shared_ptr<geogen::City>> all_cities = m_geogrid.GetCities();
@@ -164,6 +170,9 @@ namespace popgen {
         //TODO Must test/make sure that households are assigned before others
         AssignHouseholds();
         AssignToSchools();
+        AssignToColleges();
+        AssignToWorkplaces();
+        AssignToCommunity();
     }
 
 }//namespace popgen

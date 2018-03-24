@@ -68,6 +68,7 @@ namespace geogen {
         ///     REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");
         /// Postconditions:
         ///     ENSURE(colleges are placed in x biggest cities) -> enforced in test envirorement
+        //          Need to enforce this ensure in the code as well...
         void GenerateColleges();
 
         /// Generates the workplaces, places them into the cities
@@ -125,9 +126,11 @@ namespace geogen {
         unsigned int CountTotalPop() const;
 
 
+    private: //DO NOT DELETE! this seperates private members from private methods...
+
         /// Contains all households for the GeoGrid -> perhaps move this into City?
-        /// Raphael@Nishchal, if these households are already in the cities, the why do we need them here?
-        ///         and ffs, too much effort to make this a vector of shared pointers to households?
+        // Raphael@Nishchal, if these households are already in the cities, the why do we need them here?
+        //         and ffs, too much effort to make this a vector of shared pointers to households?
         vector<Household> m_households{};
 
         /// Contains all cities for the GeoGrid
@@ -148,21 +151,29 @@ namespace geogen {
         /// Total population of simulation area
         unsigned int m_total_pop{};
 
-        /// Fraction of population that goes to school
+        //According to the professor's mail:
+        // [6,12) -> elementary school
+        // [12, 18) -> middle+highschool
+        // [18, 26) -> college/university
+        // [18, 65) -> workers except those who go to college/university
+
+        /// Fraction of population that goes to school (3y - 17y)
         float m_schooled_frac{};
 
         /*TODO: Next need to be constant -> re designing constructor othewise not possible.
         /(not that i know of)
         /Tought update: maybe users wants to 'experiment with those parameters in
         /the interface
+        /Raphael@WhoeverWroteThisComment how? these are private...
+        /and yes, once they are read from the config, this should remain constant...
         */
-        /// Fraction of population that are able to work between 18y and 26y -> make this const?
+        /// Fraction of population that are able to work between 18y and 25y -> make this const?
         float m_workers1_frac{};
 
-        /// Fraction of population that are able to work between 27y and 65y -> make this const?
+        /// Fraction of population that are able to work between 26y and 64y -> make this const?
         float m_workers2_frac{};
 
-        /// Fraction of population younger than 3y and older than 65y -> make this const?
+        /// Fraction of population younger than 3y and older than 64y -> make this const?
         float m_rest_frac{};
 
         /// Fraction of workers1 that is student -> make this const?
@@ -172,7 +183,7 @@ namespace geogen {
         float m_commuting_students_frac{};
 
         ///Total population that is actually working -> make this const?
-        /// for workers1 (18y-26y) mind that we first need to exclude the students...
+        /// for workers1 (18y-25y) mind that we first need to exclude the students...
         float m_active_frac{};
 
         ///the ratio of commuters that are workers -> make this const?

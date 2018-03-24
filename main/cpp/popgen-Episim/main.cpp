@@ -79,7 +79,8 @@ int startMap(geogen::GeoGrid grid)
 
     /// To add cities on the map: use following.
     auto cities = grid.GetCities();
-    auto pop = grid.GetTotalPop();
+    //commenting out pop to suppress warnings...
+    //auto pop = grid.GetTotalPop();
     for (map<int, shared_ptr<geogen::City>>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++){
         std::stringstream ss;
         string s;
