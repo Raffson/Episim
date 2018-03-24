@@ -41,6 +41,7 @@ add_custom_target(run_ctest
 add_custom_target( episim-test
 	COMMAND gtester-episim 
 	${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/EpiSim/etests.txt
+	WORKING_DIR ${TESTS_DIR}
 	COMMENT "Running EpiSim's tests..."
 )
 

@@ -11,7 +11,7 @@ namespace geogen {
     GeoGrid::GeoGrid(const boost::filesystem::path & config_file)
             : m_generator((unsigned long)0, trng::lcg64::Default){
 
-        REQUIRE(file_exists(config_file), "Could not find file");
+        REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
 
         this->m_school_count = 0;
         //Setting up property tree to parse xml config file

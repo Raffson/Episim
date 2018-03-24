@@ -65,7 +65,12 @@ namespace parser{
                 origin_id = (unsigned int) (stoi(origin.erase(0, 3))); //removing id_ from the label
                 unsigned int destination_id = (unsigned int) (stoi(destination.erase(0, 3)));
 
-                cities[destination_id]->SetInCommuters(origin_id, commuters);
+                // we need a safety net here in case cities aren't read correctly..
+                // if city is present, we call SetInCommuters...
+                // else we should generate a warning, or maybe even throw an exception
+                // because this should NOT happen, litterly never...
+                if( cities.count( destination_id ) )
+                    cities[destination_id]->SetInCommuters(origin_id, commuters);
             }
             index++;
         }
