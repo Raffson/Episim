@@ -93,7 +93,6 @@ namespace parser{
             }
             result.push_back(a_household);
         }
-
         return result;
     }
 } // namespace parser
