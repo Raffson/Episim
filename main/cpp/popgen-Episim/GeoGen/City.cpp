@@ -25,7 +25,7 @@ namespace geogen {
                                                                            m_population(population),
                                                                            m_coordinates(coordinates),
                                                                            m_name(name) {}
-
+/*
     const unsigned int City::GetId() const {
         return m_city_id;
     }
@@ -53,6 +53,7 @@ namespace geogen {
     const vector<shared_ptr<Community>>& City::GetAllCommunities() {
         return m_communities;
     }
+*/
 
     const vector<shared_ptr<const Community>> City::GetColleges() const {
         vector<shared_ptr<const Community>> colleges;
@@ -74,9 +75,34 @@ namespace geogen {
     const vector<shared_ptr<const Community>> City::GetWorkplaces() const {
         vector<shared_ptr<const Community>> workplaces;
         for( auto &it : m_communities ) {
-            if( it->GetCommunityType() == CommunityType::Work) workplaces.push_back(it);
+            if( it->GetCommunityType() == CommunityType::Work ) workplaces.push_back(it);
         }
         return workplaces;
+    }
+
+    const vector<shared_ptr<const Community>> City::GetCommunities() const {
+        vector<shared_ptr<const Community>> communities;
+        for( auto &it : m_communities ) {
+            if( it->GetCommunityType() == CommunityType::Primary ) communities.push_back(it);
+            else if( it->GetCommunityType() == CommunityType::Secondary ) communities.push_back(it);
+        }
+        return communities;
+    }
+
+    const vector<shared_ptr<const Community>> City::GetPrimaryCommunities() const {
+        vector<shared_ptr<const Community>> communities;
+        for( auto &it : m_communities ) {
+            if( it->GetCommunityType() == CommunityType::Primary ) communities.push_back(it);
+        }
+        return communities;
+    }
+
+    const vector<shared_ptr<const Community>> City::GetSecondaryCommunities() const {
+        vector<shared_ptr<const Community>> communities;
+        for( auto &it : m_communities ) {
+            if( it->GetCommunityType() == CommunityType::Secondary ) communities.push_back(it);
+        }
+        return communities;
     }
 
 
