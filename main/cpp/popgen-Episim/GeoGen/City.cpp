@@ -71,15 +71,14 @@ namespace geogen {
     }
 
 
-    unsigned int City::GetNumberOfWorkplaces() const{
-        unsigned int result = 0;
-        for(auto a_community:m_communities){
-            if(a_community->GetCommunityType() == CommunityType::Work){
-                result++;
-            }
+    const vector<shared_ptr<const Community>> City::GetWorkplaces() const {
+        vector<shared_ptr<const Community>> workplaces;
+        for( auto &it : m_communities ) {
+            if( it->GetCommunityType() == CommunityType::Work) workplaces.push_back(it);
         }
-        return result;
+        return workplaces;
     }
+
 
     void City::AddCommunity(shared_ptr<Community> community) {
         m_communities.push_back(community);
@@ -99,7 +98,7 @@ namespace geogen {
 
     }
 
-    void City::AddHousehold(Household hh)
+    void City::AddHousehold(std::shared_ptr<Household> hh)
     {
         m_households.push_back(hh);
     }

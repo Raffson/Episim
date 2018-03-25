@@ -46,12 +46,7 @@ public:
      * @param radius km from
      * @param origin
      */
-    //Raphael@Nishchal, again too much effort to add 'Radius' to the end of this function?
-    // like, doens't GetCitiesWithinRadius sound better?
-    // and again, what kind of shit is this? return a vector of shared pointers to cities...
-    // suppose m_geogrid is left out, then you could still provide the cities as argument,
-    // provide the id of the origin and specifiy the radius, return vector of shared pointers as I said...
-    std::vector<unsigned int> GetCitiesWithin(geogen::City origin, unsigned int radius);
+    std::vector<std::shared_ptr<geogen::City>> GetCitiesWithinRadius(geogen::City origin, unsigned int radius);
 
 private:
     // Raphael@Nishchal why? makes this kind of a god class...

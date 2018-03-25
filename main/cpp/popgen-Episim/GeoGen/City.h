@@ -53,8 +53,7 @@ namespace geogen {
 
         const vector<shared_ptr<const Community>> GetSchools() const;
 
-        //Raphael@Nishchal, I told you to change this to GetWorkspaces...
-        unsigned int GetNumberOfWorkplaces() const;
+        const vector<shared_ptr<const Community>> GetWorkplaces() const;
 
         /// Adds community to the city.
         void AddCommunity(shared_ptr<Community> community);
@@ -63,9 +62,9 @@ namespace geogen {
 
         void SetInCommuters(unsigned int id, unsigned int number_of_commuters);
 
-        void AddHousehold(Household hh);
+        void AddHousehold(std::shared_ptr<Household> hh);
 
-        vector<Household> GetHouseholds() const {return m_households;}
+        vector<std::shared_ptr<Household> >GetHouseholds() const {return m_households;}
 
         /// @return number of commuters entering the city
         unsigned int GetNumberOfInCommuters();
@@ -93,8 +92,7 @@ namespace geogen {
         /// Contains number of commuters from this city to other cities
         map<unsigned int, unsigned int>   m_commuting;
 
-        // Raphael@Nishchal, again, shared pointer ffs...
-        vector<Household> m_households;
+        vector<std::shared_ptr<Household> > m_households;
     };
 
 }//namespace geogen
