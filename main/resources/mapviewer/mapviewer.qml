@@ -55,17 +55,21 @@ import QtPositioning 5.5
 import "map"
 import "menus"
 import "helper.js" as Helper
+import "custom"
+
 
 ApplicationWindow {
     id: appWindow
     property variant map
     property variant minimap
     property variant parameters
+    property variant circle
+
 
     //defaults
     //! [routecoordinate]
-    property variant fromCoordinate: QtPositioning.coordinate(59.9483, 10.7695)
-    property variant toCoordinate: QtPositioning.coordinate(59.9645, 10.671)
+    property variant fromCoordinate: QtPositioning.coordinate(51.2165845, 4.413545489)
+    property variant toCoordinate: QtPositioning.coordinate(51.2165845, 4.413545489)
     //! [routecoordinate]
 
     function createMap(provider)
@@ -116,6 +120,26 @@ ApplicationWindow {
         }
 
         map.forceActiveFocus()
+    }
+
+    function setCentre(coords){
+        map.center.latitude = coords[0]
+        map.center.longitude = coords[1]
+    }
+
+
+    function placeCity(values){
+        circle = Qt.createQmlObject('CityCircle {}', page)
+
+        circle.center.latitude = values["latitude"]
+        circle.center.longitude = values["longitude"]
+        circle.radius = values["radius"]
+        circle.color = 'green'
+        circle.border.width = 3
+        circle.opacity = 0.25
+        circle.area_text = values["info"]
+        circle.population = values["population"]
+        map.addMapItem(circle)
     }
 
     function getPlugins()
@@ -236,33 +260,11 @@ ApplicationWindow {
                 stackView.currentItem.showRoute.connect(map.calculateCoordinateRoute)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
-            case "Geocode":
-                stackView.pop({item:page, immediate: true})
-                stackView.push({ item: Qt.resolvedUrl("forms/Geocode.qml") ,
-                                   properties: { "address": fromAddress}})
-                stackView.currentItem.showPlace.connect(map.geocode)
-                stackView.currentItem.closeForm.connect(stackView.closeForm)
-                break
-            case "RevGeocode":
-                stackView.pop({item:page, immediate: true})
-                stackView.push({ item: Qt.resolvedUrl("forms/ReverseGeocode.qml") ,
-                                   properties: { "coordinate": fromCoordinate}})
-                stackView.currentItem.showPlace.connect(map.geocode)
-                stackView.currentItem.closeForm.connect(stackView.closeForm)
-                break
-            case "Language":
-                stackView.pop({item:page, immediate: true})
-                stackView.push({ item: Qt.resolvedUrl("forms/Locale.qml") ,
-                                   properties: { "locale":  map.plugin.locales[0]}})
-                stackView.currentItem.selectLanguage.connect(setLanguage)
-                stackView.currentItem.closeForm.connect(stackView.closeForm)
-                break
+
             case "Clear":
                 map.clearData()
                 break
-            case "Prefetch":
-                map.prefetchData()
-                break
+
             default:
                 console.log("Unsupported operation")
             }

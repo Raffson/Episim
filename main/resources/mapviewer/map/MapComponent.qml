@@ -272,9 +272,9 @@ Map {
 //! [coord]
     zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
     center {
-        // The Qt Company in Oslo
-        latitude: 59.9485
-        longitude: 10.7686
+        // Antwerp
+        latitude: 51.2165845
+        longitude: 4.413545489
     }
 //! [coord]
 
@@ -356,16 +356,17 @@ Map {
         id: poiTheQtComapny
         sourceItem: Rectangle { width: 14; height: 14; color: "#e41e25"; border.width: 2; border.color: "white"; smooth: true; radius: 7 }
         coordinate {
-            latitude: 59.9485
-            longitude: 10.7686
+            latitude: 51.2165845
+            longitude: 4.413545489
         }
         opacity: 1.0
         anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)
     }
 
+    /// Can be used to add text to a certain location
     MapQuickItem {
         sourceItem: Text{
-            text: "The Qt Company"
+            text: "Antwerp"
             color:"#242424"
             font.bold: true
             styleColor: "#ECECEC"

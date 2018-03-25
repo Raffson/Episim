@@ -21,8 +21,9 @@
 
 #include "CSVRow.h"
 
+#include "util/Safeline.h"
 #include "util/StringUtils.h"
-
+#include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <fstream>
 #include <vector>
@@ -35,10 +36,6 @@ namespace util {
  */
 class CSV : protected std::vector<CSVRow>
 {
-protected:
-        std::vector<std::string> labels;
-        size_t                   columnCount = 0;
-
 public:
         /// Initialize from file. If optLabels not specied, the file is required. Otherwise initialize like second
         /// constructor.
@@ -79,7 +76,12 @@ public:
         bool operator==(const CSV& other) const;
 
         /// Labels
-        std::vector<std::string> getLabels();
+        const std::vector<std::string>& getLabels() const {return labels;};
+
+protected:
+        std::vector<std::string> labels;
+        size_t                   columnCount = 0;
+
 };
 
 template <typename... T>

@@ -22,9 +22,11 @@ set( EXEC       gtester     )
 set( SRC
 		main.cpp
 		BatchRuns.cpp
-		InfluenceR0Runs.cpp
-  )
-
+		ScenarioData.cpp
+)
+if (OPENMP_FOUND)
+    set(SRC ${SRC} ParallelRuns.cpp)
+endif()
 
 add_executable(${EXEC}   ${SRC} )
 target_link_libraries( ${EXEC}    ${LIBS} gtest pthread libstride) 

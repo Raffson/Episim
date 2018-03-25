@@ -3,12 +3,15 @@
 //
 
 #include <iostream>
+#include <sstream>
+
 
 #ifdef USING_QT
     #include <QtCore/QTextStream>
     #include <QtGui/QGuiApplication>
     #include <QtQml/QQmlApplicationEngine>
     #include <QtQuick/QQuickItem>
+    #include <QString>
 #endif
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
@@ -20,7 +23,7 @@ using namespace std;
 
 #ifdef USING_QT
 
-int startMap()
+int startMap(geogen::GeoGrid grid)
 {
 #if QT_CONFIG(library)
     const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
@@ -30,6 +33,7 @@ int startMap()
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     int dummyargc = 0;
     QGuiApplication application(dummyargc, 0);
+    application.mouseButtons();
 
     QVariantMap parameters;
 
@@ -61,8 +65,46 @@ int startMap()
     QObject *item = engine.rootObjects().first();
     Q_ASSERT(item);
 
+    /// Call a function from a qml file.
     QMetaObject::invokeMethod(item, "initializeProviders",
                               Q_ARG(QVariant, QVariant::fromValue(parameters)));
+
+    /// To center the map on a specific location: use following code.
+    QVariantList coords;
+    coords.push_back(51.2165845);
+    coords.push_back(4.413545489);
+    QMetaObject::invokeMethod(item, "setCentre",
+                              Q_ARG(QVariant, QVariant::fromValue(coords)));
+
+    /// To add cities on the map: use following.
+    auto cities = grid.get_cities();
+    for (map<int, shared_ptr<geogen::City>>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++){
+        std::stringstream ss;
+        string s;
+        string temp;
+        /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
+        shared_ptr<geogen::City> city = (*c_it).second;
+        QVariantMap vals;
+        /// Latitude
+        vals["latitude"] = city->GetCoordinates().latitude;
+        /// Longitude
+        vals["longitude"] = city->GetCoordinates().longitude;
+        /// Radius
+        vals["radius"] = 2500;
+        /// Population
+        vals["population"] = city->GetPopulation();
+        /// Info
+        ss<<city->GetPopulation();
+        ss>>s;
+        s += "\n";
+        s.append(city->GetName());
+        s += "\n";
+        QString qs = QString(s.c_str());
+        vals["info"] = qs;
+        QMetaObject::invokeMethod(item, "placeCity",
+                                  Q_ARG(QVariant, QVariant::fromValue(vals)));
+    }
+
 
     return application.exec();
 }
@@ -75,6 +117,6 @@ int main(int argc, char** argv)
     grid.GenerateAll();
 #ifdef USING_QT
     //startMap(argc, argv);
-    startMap();
+    startMap(grid);
 #endif
 }

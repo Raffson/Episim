@@ -22,13 +22,13 @@ set(LIB_SRC
 #---
     calendar/Calendar.cpp
 #---
+	core/ContactLogMode.cpp
 	core/ContactPool.cpp
 	core/ContactPoolType.cpp
 	core/ContactProfile.cpp
 	core/DiseaseProfile.cpp
 	core/Health.cpp
 	core/Infector.cpp
-	core/LogMode.cpp
 #---
 	immunity/Immunizer.cpp
 	immunity/Vaccinator.cpp
@@ -46,18 +46,20 @@ set(LIB_SRC
 	sim/SimRunner.cpp
 	sim/Simulator.cpp
 	sim/SimulatorBuilder.cpp
-	sim/python/StrideRunner.cpp
+	#sim/TestsController.cpp
 	sim/event/Id.cpp
 	sim/event/Subject.cpp
+	sim/python/StrideRunner.cpp
 #---
 	util/CSV.cpp
 	util/CSVRow.cpp
-	util/FileUtils.cpp
 	util/FileSys.cpp
 	util/LogUtils.cpp
 	util/PtreeUtils.cpp
 	util/RNEngineType.cpp
 	util/RNManager.cpp
+	util/RunConfigPtree.cpp
+	util/RunConfigString.cpp
 	util/Safeline.cpp
 
 	popgen-Episim/main.cpp
@@ -70,13 +72,14 @@ set(LIB_SRC
 	#popgen-Episim/GeoGen/CommunityTypes/School.cpp
 	#popgen-Episim/GeoGen/CommunityTypes/ContactPool.cpp
 	#popgen-Episim/GeoGen/CommunityTypes/PrimSec.cpp
+	popgen-Episim/GeoGen/Utility.cpp
 #---
 	viewers/AdoptedViewer.cpp
 	viewers/CasesViewer.cpp
 	viewers/CliViewer.cpp
 	viewers/PersonsViewer.cpp
 	viewers/SummaryViewer.cpp
-        popgen-Episim/GeoGen/Utillity.cpp popgen-Episim/GeoGen/Utillity.h)
+)
 
 #============================================================================
 # Build the Stride library.
@@ -90,8 +93,7 @@ set_target_properties(libstride PROPERTIES PREFIX "")
 # Build and install the stride executable.
 #============================================================================
 add_executable(stride sim/main.cpp)
-target_include_directories(stride PUBLIC SYSTEM
-	${CMAKE_HOME_DIRECTORY}/main/resources/lib/tclap/include)
+include_directories(SYSTEM ${CMAKE_HOME_DIRECTORY}/main/resources/lib/tclap/include)
 target_link_libraries(stride ${LIBS} libstride)
 install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
 

@@ -2,17 +2,17 @@
 // Created by beau on 3/5/18.
 //
 
-#include "Utillity.h"
 #include "GeoGrid.h"
-#include "trng/uniform_int_dist.hpp"
 
 using namespace std;
 
 namespace geogen {
 
-    GeoGrid::GeoGrid(const boost::filesystem::path & config_file): m_generator(0){
+    GeoGrid::GeoGrid(const boost::filesystem::path & config_file)
+            : m_generator((unsigned long)0, trng::lcg64::Default){
 
-        //REQUIRE(file_exists(config_file), "Could not find file");
+        REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
+
         this->m_school_count = 0;
         //Setting up property tree to parse xml config file
         boost::property_tree::ptree p_tree;
@@ -45,8 +45,8 @@ namespace geogen {
         m_community_size = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
         m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
 
-        //ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
-        //ENSURE(1 >= m_student_frac >= 0, "fraction is between 0 and 1");
+        ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
+        ENSURE(1 >= m_student_frac and m_student_frac >= 0, "fraction must be between 0 and 1");
 
 
 }
@@ -61,9 +61,9 @@ namespace geogen {
 
     void GeoGrid::GenerateSchools() {
 
-        /*REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
+        REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
         REQUIRE(m_schooled_frac >= 0, "Schooled fract can't be negative");
-        REQUIRE(m_school_size >= 0, "The initial school size can't be negative");*/
+        REQUIRE(m_school_size >= 0, "The initial school size can't be negative");
         // Calculating extra data
         // rounded because we don't have a fraction of a person
         auto amount_schooled = (const unsigned int) round(m_total_pop * m_schooled_frac);
@@ -90,7 +90,7 @@ namespace geogen {
             chosen_city->AddCommunity(nw_school);
             //m_communities[nw_school->getID()] = nw_school
         }
-        // We should ENSURE schools are effectifly placed in cities.
+        // We should ENSURE schools are effectively placed in cities.
         // The OO nature makes this assertion rather complex -> found in tests
     }
 
@@ -112,13 +112,14 @@ namespace geogen {
     }
 
     void GeoGrid::GenerateColleges() {
-        //need 10 largest cities, largest determined by number of people in the city...
+        //need m_maxlc largest cities, largest determined by number of people in the city...
         //TODO always 10?? specify this in the config file?
-        /*REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
+        // -> no not always 10, I deleted the REQUIRE in comments
+        //      should rather be an ENSURE that exactly m_maxlc cities have colleges
+        REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
         REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");
         REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");
         REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");
-        //REQUIRE(m_cities.size() >= 10, "To few cities to place all colleges");*/
         vector <shared_ptr<City>> lc;
         for (auto &it : m_cities) {
             AdjustLargestCities(lc, it.second);
@@ -126,18 +127,16 @@ namespace geogen {
 
         //generate colleges to the respective cities...
         for (auto &it : lc) {
-            //just checking which cities we found...
-            //cout << it->GetId() << "   " << it->GetPopulation() << "   " << it->GetName() << endl;
-
-            //so let's go...
             double students = it->GetPopulation()*m_workers1_frac*m_student_frac;
             //doesn't matter if students is a double at this time
             // since this is only an estimate for the number of colleges
             auto nrcolleges = (unsigned int) round(students / m_college_size);
-            //is this how we need to calculate the nr of colleges?
-            // or did i not understand it properly?
-            //cout << students << " students,   " << nrcolleges << " colleges for " << it->GetName() << endl;
+
             //TODO Is it not given wich cities have exactly one college, calculation needed??
+            // -> tricky question, suppose this city has less than (m_college_size*0.5) students
+            //      then nrcolleges would round to 0 and we would have a problem...
+            //      the result would be that m_maxlc will be bigger than the number of cities with colleges...
+            //      this is a valid remark...
 
             for(unsigned int i = 0; i < nrcolleges; i++) {
                 shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
@@ -156,6 +155,7 @@ namespace geogen {
         //dividing workplaces to cities
         //TODO This should also be placed according to a discrete distribution!
         //TODO still figuring out how i should do this for this function
+        //      -> isn't that nishchal's job?
         for (auto it:m_cities){
             shared_ptr<City> city = it.second;
             unsigned int in_commuters = city->GetNumberOfInCommuters();
@@ -179,6 +179,9 @@ namespace geogen {
 
     // Communities need to be distributed according to the relative population size.
     //TODO On average a community has 2000 -> Should not be hardcorded members.
+    //  -> recall that 2000 was in fact a hard limit...
+    //      we need to ask (tuesday) what happened after the professor's refractoring,
+    //      i.e. if the hard limit still holds...
     void GeoGrid::GenerateCommunities() {
 
         vector<shared_ptr<Community>> primsec_communities;
@@ -207,8 +210,10 @@ namespace geogen {
             shared_ptr<City> city = it.second;
             // ratio: the city contains ratio % of the total population.
             double ratio = (city->GetPopulation()/(double)m_total_pop);
+            assert(0<ratio<1);
             // Now we have the ratio, we know that the city has ratio % of all communities.
-            double city_communities = (total_communities*ratio);
+            auto city_communities = (total_communities*ratio);
+            assert(city_communities<total_communities);
 
             for (int i = 0; i < city_communities; i++){
                 /// Since there currently is no real difference between primary and secundary communities we make them all primary.

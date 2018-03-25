@@ -24,6 +24,8 @@
 #include "output/CasesFile.h"
 #include "output/PersonsFile.h"
 #include "output/SummaryFile.h"
+#include "pop/Population.h"
+#include "sim/Simulator.h"
 #include "sim/SimulatorBuilder.h"
 #include "util/ConfigInfo.h"
 #include "util/FileSys.h"
@@ -31,7 +33,6 @@
 #include "util/TimeStamp.h"
 
 #include <boost/property_tree/xml_parser.hpp>
-#include <omp.h>
 #include <spdlog/spdlog.h>
 
 namespace stride {
@@ -97,7 +98,6 @@ void StrideRunner::Setup(bool track_index_case, const string& config_file_name, 
 #pragma omp parallel
         {
                 num_threads = static_cast<unsigned int>(omp_get_num_threads());
-		num_threads = this->m_pt_config.get("run.threads", num_threads);
         }
         if (ConfigInfo::HaveOpenMP()) {
                 cout << "Using OpenMP threads:  " << num_threads << endl;
@@ -138,31 +138,12 @@ void StrideRunner::Setup(bool track_index_case, const string& config_file_name, 
         // -----------------------------------------------------------------------------------------
         cout << "Setting for track_index_case:  " << boolalpha << track_index_case << endl;
 
-        // -----------------------------------------------------------------------------------------
-        // Create logger
-        // Transmissions:     [TRANSMISSION] <infecterID> <infectedID> <contactpoolID>
-        // <day>
-        // General contacts:  [CNT] <person1ID> <person1AGE> <person2AGE>  <at_home>
-        // <at_work> <at_school> <at_other>
-        // -----------------------------------------------------------------------------------------
-        spdlog::set_async_mode(1048576);
-        boost::filesystem::path logfile_path = m_output_prefix;
-        if (use_install_dirs) {
-                logfile_path += "_logfile";
-        } else {
-                logfile_path /= "logfile";
-        }
-
-        auto file_logger = spdlog::rotating_logger_mt("contact_logger", logfile_path.c_str(),
-                                                      numeric_limits<size_t>::max(), numeric_limits<size_t>::max());
-        file_logger->set_pattern("%v"); // Remove meta data from log => time-stamp of logging
-
         // ------------------------------------------------------------------------------
         // Create the simulator.
         //------------------------------------------------------------------------------
         m_clock.Start();
         cout << "Building the simulator. " << endl;
-        SimulatorBuilder builder(m_pt_config);
+        SimulatorBuilder builder(m_pt_config, nullptr);
         m_sim = builder.Build();
         cout << "Done building the simulator. " << endl;
 
@@ -173,8 +154,7 @@ void StrideRunner::Setup(bool track_index_case, const string& config_file_name, 
         if (m_operational) {
                 cout << "Done checking the simulator. " << endl << endl;
         } else {
-                file_logger->info("[ERROR] Invalid configuration");
-                cout << "Invalid configuration => terminate without output" << endl << endl;
+                cerr << "Invalid configuration => terminate without output" << endl << endl;
         }
 }
 
@@ -214,8 +194,8 @@ void StrideRunner::Run(const bool genFiles)
                 // -----------------------------------------------------------------------------------------
                 // Generate output files
                 // -----------------------------------------------------------------------------------------
-		if( genFiles )
-                	GenerateOutputFiles(m_output_prefix, cases, adopted, m_pt_config,
+                if( genFiles )
+			GenerateOutputFiles(m_output_prefix, cases, adopted, m_pt_config,
                                     static_cast<unsigned int>(duration_cast<milliseconds>(run_clock.Get()).count()),
                                     static_cast<unsigned int>(duration_cast<milliseconds>(m_clock.Get()).count()));
 
@@ -255,7 +235,7 @@ void StrideRunner::GenerateOutputFiles(const string& output_prefix, const vector
                            run_time, total_time);
 
         // Persons
-        if (pt_config.get<double>("run.generate_person_file") == 1) {
+        if (pt_config.get<bool>("run.output_persons", false)) {
                 PersonsFile person_file(output_prefix);
                 person_file.Print(m_sim->GetPopulation());
         }
