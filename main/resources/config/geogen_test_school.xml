@@ -6,6 +6,11 @@
         <commuting>flanders_commuting.csv</commuting>
     </data_files>
 
+    <rng>
+        <seed>0</seed>
+        <type>lcg64</type>
+    </rng>
+
     <pop_info>
         <pop_total>4341923</pop_total>
 
