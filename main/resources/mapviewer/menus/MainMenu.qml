@@ -51,6 +51,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtLocation 5.6
+import "../custom"
 
 MenuBar {
     property variant  providerMenu: providerMenu
@@ -66,20 +67,16 @@ MenuBar {
 
     Menu {
         id: providerMenu
-        title: qsTr("Provider")
+        title: qsTr("")
 
         function createMenu(plugins)
         {
             clear()
-            for (var i = 0; i < plugins.length; i++) {
-                createProviderMenuItem(plugins[i]);
-            }
         }
 
         function createProviderMenuItem(provider)
         {
             var item = addItem(provider);
-            item.checkable = true;
             item.triggered.connect(function(){selectProvider(provider)})
         }
     }
@@ -110,33 +107,40 @@ MenuBar {
         id: toolsMenu
         property bool isFollowMe: false;
         property bool isMiniMap: false;
+        property variant city
+        property variant pop_info
         title: qsTr("Tools")
 
         function createMenu(map)
         {
             clear()
-            if (map.plugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)) {
-                addItem(qsTr("Reverse geocode")).triggered.connect(function(){selectTool("RevGeocode")})
-            }
-            if (map.plugin.supportsGeocoding()) {
-                addItem(qsTr("Geocode")).triggered.connect(function(){selectTool("Geocode")})
-            }
+
             if (map.plugin.supportsRouting()) {
                 addItem(qsTr("Route with coordinates")).triggered.connect(function(){selectTool("CoordinateRoute")})
-                addItem(qsTr("Route with address")).triggered.connect(function(){selectTool("AddressRoute")})
             }
-
-            var item = addItem("")
-            item.text = Qt.binding(function() { return isMiniMap ? qsTr("Hide minimap") : qsTr("Minimap") })
-            item.triggered.connect(function() {toggleMapState("MiniMap")})
-
-            item = addItem("")
-            item.text = Qt.binding(function() { return isFollowMe ? qsTr("Stop following") : qsTr("Follow me")})
-            item.triggered.connect(function() {toggleMapState("FollowMe")})
-
-            addItem(qsTr("Language")).triggered.connect(function(){selectTool("Language")})
-            addItem(qsTr("Prefetch Map Data")).triggered.connect(function(){selectTool("Prefetch")})
-            addItem(qsTr("Clear Map Data")).triggered.connect(function(){selectTool("Clear")})
+            addItem(qsTr("Get total population of selected cities")).triggered.connect(function(){updateSelected(map)})
         }
+
+        function updateSelected(map){
+            pop_info = Qt.createQmlObject(' import QtQuick 2.7; Text {}', map)
+            circle = Qt.createQmlObject('import "../custom"; CityCircle {}', page)
+            var total_count = 0
+            for (var i = 0; i < map.children.length; i++)
+            {
+                if(map.children[i].objectName === "city"){
+                    circle = map.children[i]
+                    var pop = circle.isSelected()
+                    total_count += pop
+                }
+                if(map.children[i].objectName === "pop_info"){
+                    pop_info = map.children[i]
+                }
+            }
+            pop_info.text = total_count
+            pop_info.anchors.top = map.top
+
+        }
+
     }
+
 }

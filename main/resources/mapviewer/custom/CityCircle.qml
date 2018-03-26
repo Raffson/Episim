@@ -3,14 +3,27 @@ import QtQuick 2.7
 
 MapCircle {
     id: cityCircle
+    objectName: "city"
+    property variant count: 0
     property variant population:0
+    property variant is_clicked: false
     property alias area_text: m_area.info_text
+
+    function isSelected(){
+        if (is_clicked == true){
+            return population;
+        }
+        else{
+            return 0;
+        }
+    }
+
     MouseArea {
         id: m_area
         property alias info_text: info.text
         Text {
             id: info
-            text: "gfeqgefqvzeg"
+            text: ""
             color: "blue"
             font.pointSize: 1
             font.bold: true
@@ -28,14 +41,19 @@ MapCircle {
             parent.opacity = 1;
         }
         onExited:{
-            info.font.pointSize = 1;
-            parent.color = "green";
-            parent.opacity = 0.25;
+            if (is_clicked == false){
+                info.font.pointSize = 1;
+                parent.color = "green";
+                parent.opacity = 0.25;
+            }
         }
         onClicked:{
-            info.font.pointSize = 16;
-            parent.color = "red";
-            parent.opacity = 1;
+            if (parent.is_clicked == false){
+                parent.is_clicked = true;
+            }
+            else{
+                parent.is_clicked = false;
+            }
         }
     }
 }

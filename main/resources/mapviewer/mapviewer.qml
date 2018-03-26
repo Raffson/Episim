@@ -52,6 +52,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtLocation 5.6
 import QtPositioning 5.5
+import QtQml.Models 2.2
 import "map"
 import "menus"
 import "helper.js" as Helper
@@ -64,7 +65,7 @@ ApplicationWindow {
     property variant minimap
     property variant parameters
     property variant circle
-
+    property variant pop_info
 
     //defaults
     //! [routecoordinate]
@@ -125,6 +126,18 @@ ApplicationWindow {
     function setCentre(coords){
         map.center.latitude = coords[0]
         map.center.longitude = coords[1]
+        pop_info = Qt.createQmlObject(' import QtQuick 2.7;
+                                        Text {
+                                           id: info
+                                           objectName: "pop_info"
+                                           text: ""
+                                           color: "green"
+                                           font.pointSize: 32
+                                           font.bold: true
+                                           anchors.top: map.top
+                                           anchors.topMargin: 5
+                                        }'
+                                       , map)
     }
 
 
@@ -172,8 +185,8 @@ ApplicationWindow {
     }
 
     title: qsTr("Mapviewer")
-    height: 640
-    width: 360
+    height: 1020
+    width: 1680
     visible: true
     menuBar: mainMenu
 
@@ -199,21 +212,6 @@ ApplicationWindow {
     MainMenu {
         id: mainMenu
 
-        function toggleMiniMapState()
-        {
-            if (minimap) {
-                minimap.destroy()
-                minimap = null
-            } else {
-                minimap = Qt.createQmlObject ('import "map"; MiniMap{ z: map.z + 2 }', map)
-            }
-        }
-
-        function setLanguage(lang)
-        {
-            map.plugin.locales = lang;
-            stackView.pop(page)
-        }
 
         onSelectProvider: {
             stackView.pop()
@@ -270,20 +268,7 @@ ApplicationWindow {
             }
         }
 
-        onToggleMapState: {
-            stackView.pop(page)
-            switch (state) {
-            case "FollowMe":
-                map.followme = !map.followme
-                break
-            case "MiniMap":
-                toggleMiniMapState()
-                isMiniMap = minimap
-                break
-            default:
-                console.log("Unsupported operation")
-            }
-        }
+
     }
 
     MapPopupMenu {
