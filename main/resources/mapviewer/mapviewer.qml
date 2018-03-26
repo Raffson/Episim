@@ -172,8 +172,8 @@ ApplicationWindow {
     }
 
     title: qsTr("Mapviewer")
-    height: 640
-    width: 360
+    height: 1020
+    width: 1680
     visible: true
     menuBar: mainMenu
 
