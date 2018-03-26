@@ -61,6 +61,8 @@ namespace geogen {
 
         std::vector<std::shared_ptr<stride::ContactPool>> GetContactPools() const{return m_contact_pools;}
 
+        int GetSize() const;
+
 
     private:
         static unsigned int& UIDgenerator();

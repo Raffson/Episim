@@ -3,12 +3,12 @@
 //
 
 #include "PopulationGenerator.h"
-
+#include <array>
 
 namespace popgen {
 
     PopulationGenerator::PopulationGenerator(geogen::GeoGrid geogrid)
-            :m_geogrid(geogrid),m_generator((unsigned long)0, trng::lcg64::Default)
+            :m_geogrid(geogrid),m_generator((unsigned long)0, trng::lcg64::Default), m_id_generator(1)
     {
     }
 
@@ -42,7 +42,6 @@ namespace popgen {
                 //cout <<"Household = " << households.at(index).GetID() << " is added to " << a_city.second->GetName()<< endl;
 
             }
-
         }
 
     }
@@ -119,7 +118,11 @@ namespace popgen {
                     for(auto& a_community:near_city->GetAllCommunities()){
                         if(a_community->GetCommunityType() == geogen::CommunityType::School){
                             for(unsigned int i=0; i<avg_contactpools_per_school; i++){
-                                std::shared_ptr<stride::ContactPool> pool;
+                                //Nishchal@everyone Isn't it better idea to create contactpools while creating all communities
+                                stride::ContactProfiles contactProfiles;
+                                auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::School, contactProfiles);
+                                m_id_generator++;
+
                                 a_community->AddContactPool(pool);
                                 contact_pools.push_back(pool);
                             }
@@ -147,8 +150,6 @@ namespace popgen {
                 cout<< a_school_attendant.age << " has been added to contact_pool " << index<<endl;
 
             }
-
-
         }
 
 
@@ -166,7 +167,65 @@ namespace popgen {
 
     void PopulationGenerator::AssignToCommunity()
     {
+        for(auto& a_city: m_geogrid.GetCities()){
+            //TODO must read these values somewhere better
+            int search_radius = 10;
+            const unsigned int avg_people_in_contactpool = 20;
+            const unsigned int avg_contactpools_per_community = m_geogrid.GetSchoolSize()/avg_people_in_contactpool;
+            //const int maximum_person_in_a_community = 2000;
 
+            vector<shared_ptr<geogen::Community>> nearest_communities;
+            vector<shared_ptr<stride::ContactPool>> nearest_contact_pools;
+
+            while(true){
+                vector<shared_ptr<geogen::City>> nearest_cities = GetCitiesWithinRadius(*(a_city.second), search_radius);
+                for(auto& a_nearest_city: nearest_cities){
+                    for(auto& a_community:a_nearest_city->GetAllCommunities()){
+                        if(a_community->GetCommunityType() == geogen::CommunityType::Primary ||
+                                a_community->GetCommunityType() == geogen::CommunityType::Secondary){
+
+                            for(unsigned int i=0; i<avg_contactpools_per_community; i++){
+                                //Nishchal@everyone Isn't it better idea to create contactpools while creating all communities
+                                stride::ContactProfiles contactProfiles;
+                                auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::School, contactProfiles);
+                                m_id_generator++;
+                                a_community->AddContactPool(pool);
+                                nearest_contact_pools.push_back(pool);
+                            }
+                            nearest_communities.push_back(a_community);
+                        }
+                    }
+                }
+
+                //no communities nearby double the radius
+                if(nearest_communities.size() == 0){
+                    search_radius *= 2;
+                }
+                else{
+                    break;
+                }
+            }
+
+            for(auto& a_household:a_city.second->GetHouseholds()){
+                for(auto& a_person: a_household->GetMembers()){
+                    //assign the person to a random contactPool
+                    trng::uniform_int_dist distr(0, (unsigned int) nearest_contact_pools.size() - 1);
+                    unsigned int index = distr(m_generator);
+
+                    //TODO the member has to be a stride::Person to be added to stride::ContactPool
+
+                    //nearest_contact_pools.at(index)->AddMember(a_person);
+                    cout <<"A person of age "<< a_person.age << " is added to contact pool at index " << index <<endl;
+
+                    //TODO check the community for that contactpool
+                    //TODO if the limit is crossed remove from the list of the possible communities(contactpools)
+
+                }
+            }
+
+
+
+        }
     }
 
     void PopulationGenerator::AssignAll()
