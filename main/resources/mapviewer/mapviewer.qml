@@ -65,6 +65,7 @@ ApplicationWindow {
     property variant minimap
     property variant parameters
     property variant circle
+    property variant pop_info
 
     //defaults
     //! [routecoordinate]
@@ -125,6 +126,18 @@ ApplicationWindow {
     function setCentre(coords){
         map.center.latitude = coords[0]
         map.center.longitude = coords[1]
+        pop_info = Qt.createQmlObject(' import QtQuick 2.7;
+                                        Text {
+                                           id: info
+                                           objectName: "pop_info"
+                                           text: ""
+                                           color: "green"
+                                           font.pointSize: 32
+                                           font.bold: true
+                                           anchors.top: map.top
+                                           anchors.topMargin: 5
+                                        }'
+                                       , map)
     }
 
 
