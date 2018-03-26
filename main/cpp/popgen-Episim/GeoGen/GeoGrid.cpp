@@ -3,12 +3,13 @@
 //
 
 #include "GeoGrid.h"
+#include <util/ConfigInfo.h>
 
 using namespace std;
 
 namespace geogen {
 
-GeoGrid::GeoGrid(const boost::filesystem::path& config_file) : m_generator((unsigned long)0, trng::lcg64::Default)
+GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 {
 
         REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
@@ -63,6 +64,11 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file) : m_generator((unsi
         m_community_size  = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
         m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
 
+        // Setting up RNG
+        long   seed = p_tree.get("popgen.rng.seed", 0);
+        string type = p_tree.get("popgen.rng.type", "mrg2");
+        m_generator = stride::util::RNManager(stride::util::RNManager::Info(type, (unsigned long)seed));
+
         ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
         ENSURE(1 >= m_student_frac and m_student_frac >= 0, "fraction must be between 0 and 1");
 }
@@ -98,6 +104,7 @@ void GeoGrid::GenerateSchools()
         trng::uniform_int_dist distr(0, (unsigned int)pop_id.size() - 1);
 
         // assign schools to cities according to our normal distribution
+<<<<<<< HEAD
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
                 int                   index       = pop_id[distr(m_generator)];
@@ -105,6 +112,15 @@ void GeoGrid::GenerateSchools()
                 shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
                 chosen_city->AddCommunity(nw_school);
                 // m_communities[nw_school->getID()] = nw_school
+=======
+        for (unsigned int i = 0; i < amount_of_schools; i++) {
+                m_school_count++;
+                int                   index       = pop_id[m_generator.GetGenerator(distr)()];
+                shared_ptr<City>      chosen_city = m_cities[index];
+                shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
+                chosen_city->AddCommunity(nw_school);
+                // m_communities[nw_school->getID()] = nw_school
+>>>>>>> origin/RobbeHeirman
         }
         // We should ENSURE schools are effectively placed in cities.
         // The OO nature makes this assertion rather complex -> found in tests
@@ -218,12 +234,21 @@ void GeoGrid::GenerateCommunities()
         // But this shouldn't affect our city divison.
         trng::uniform_int_dist distr(0, (unsigned int)pop_id.size() - 1);
 
+<<<<<<< HEAD
         for (unsigned int i = 0; i < total_communities; i++) {
                 m_school_count++;
                 int                   index       = pop_id[distr(m_generator)];
                 shared_ptr<City>      chosen_city = m_cities[index];
                 shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
                 chosen_city->AddCommunity(nw_community);
+=======
+        for (unsigned int i = 0; i < total_communities; i++) {
+                m_school_count++;
+                int                   index       = pop_id[m_generator.GetGenerator(distr)()];
+                shared_ptr<City>      chosen_city = m_cities[index];
+                shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
+                chosen_city->AddCommunity(nw_community);
+>>>>>>> origin/RobbeHeirman
         }
         // Determine how many communities a city should get -> Depricated.
         /*for (auto it : m_cities){

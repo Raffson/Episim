@@ -14,6 +14,8 @@
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
 
+#include "util/RNManager.h"
+
 #include "popgen-Episim/GeoGen/City.h"
 #include "popgen-Episim/GeoGen/Community.h"
 #include "popgen-Episim/GeoGen/Household.h"
@@ -205,8 +207,7 @@ private: // DO NOT DELETE! this seperates private members from private methods..
         /// or hack our way around the initialisation...
 
         unsigned int m_school_count{};
-
-        trng::lcg64 m_generator;
 };
+stride::util::RNManager m_generator;
 
 } // namespace geogen
