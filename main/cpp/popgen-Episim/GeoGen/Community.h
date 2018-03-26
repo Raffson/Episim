@@ -19,6 +19,8 @@
 
 #include <cstddef>
 #include <memory>
+#include "core/ContactPool.h"
+
 
 namespace geogen {
 
@@ -51,9 +53,14 @@ namespace geogen {
         const CommunityType& GetCommunityType() const { return m_community_type; }
 
         /// Return shared pointer of the city,
-        ///  though shouldn't we make it a "const City"?
-        ///  at this point the city can be adjusted... do we want that?
+        //  though shouldn't we make it a "const City"?
+        //  at this point the city can be adjusted... do we want that?
         const std::shared_ptr<City>& GetCity() { return m_city; }
+
+        void AddContactPool(std::shared_ptr<stride::ContactPool> pool);
+
+        std::vector<std::shared_ptr<stride::ContactPool>> GetContactPools() const{return m_contact_pools;}
+
 
     private:
         static unsigned int& UIDgenerator();
@@ -64,6 +71,10 @@ namespace geogen {
         CommunityType m_community_type; ///< The type of community
 
         std::shared_ptr<City> m_city;   ///< Shared pointer to City
+
+        //Raphael@Nishchal see, that wasn't so difficult now was it?
+        // here you use a shared pointer like you should...
+        std::vector<std::shared_ptr<stride::ContactPool>> m_contact_pools;
 
         //Vector of persons to indicate who's part of this community?
         //std::vector<std::shared_ptr<Person>> m_members;

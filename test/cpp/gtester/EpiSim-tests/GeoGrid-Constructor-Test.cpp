@@ -18,7 +18,7 @@ namespace Tests {
 
     using boost::property_tree::ptree;
 
-    class GeoGenCtorTest : public ::testing::TestWithParam<unsigned int>
+    class GeoGridCtorTest : public ::testing::TestWithParam<unsigned int>
     {
     public:
         /// TestCase set up.
@@ -30,7 +30,7 @@ namespace Tests {
 
     protected:
         /// Destructor has to be virtual.
-        ~GeoGenCtorTest() override {}
+        ~GeoGridCtorTest() override {}
 
         /// Set up for the test fixture
         void SetUp() override {}
@@ -39,7 +39,7 @@ namespace Tests {
         void TearDown() override {}
     };
 
-    TEST(GeoGenCtorTest, HappyDayScenario){
+    TEST(GeoGridCtorTest, HappyDayScenario){
 
         ASSERT_NO_THROW(GeoGrid("config/geogen_default.xml"));
 
@@ -55,7 +55,7 @@ namespace Tests {
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        map<int, shared_ptr<City>> mp = grid.get_cities();
+        map<int, shared_ptr<City>> mp = grid.GetCities();
 
         shared_ptr<City> antwerp = mp[11002];
         Coordinate coord = antwerp->GetCoordinates();
@@ -70,7 +70,7 @@ namespace Tests {
 
     }
 
-    TEST(GeoGenCtorTest, FaultyCityRow){
+    TEST(GeoGridCtorTest, FaultyCityRow){
 
         // -----------------------------------------------------------------------------------------
         // Parse cities.
@@ -87,7 +87,7 @@ namespace Tests {
         EXPECT_EQ(326, cty_map.size());
     }
 
-    TEST(GeoGenCtorTest, FaultyCityColumn){
+    TEST(GeoGridCtorTest, FaultyCityColumn){
 
         // -----------------------------------------------------------------------------------------
         // Parse cities.
@@ -117,7 +117,7 @@ namespace Tests {
 
     }
 
-    TEST(GeoGenCtorTest, CityRowCounter){
+    TEST(GeoGridCtorTest, CityRowCounter){
 
         // -----------------------------------------------------------------------------------------
         // Initialize the GeoGrid.
@@ -131,7 +131,7 @@ namespace Tests {
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        EXPECT_EQ(327, grid.get_cities().size());
+        EXPECT_EQ(327, grid.GetCities().size());
 
     }
 
@@ -145,6 +145,6 @@ namespace Tests {
 
     } // namespace
 
-    INSTANTIATE_TEST_CASE_P(Run, GeoGenCtorTest, ValuesIn(threads));
+    INSTANTIATE_TEST_CASE_P(Run, GeoGridCtorTest, ValuesIn(threads));
 
 } // namespace Tests

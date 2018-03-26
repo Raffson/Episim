@@ -58,7 +58,7 @@ namespace Tests {
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        auto cities = grid.get_cities();
+        auto cities = grid.GetCities();
         map<int, shared_ptr<City>>::iterator c_it2 = cities.begin();
         /// Check if the communities are ditributed correctly.
         for (map<int, shared_ptr<City>>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++){

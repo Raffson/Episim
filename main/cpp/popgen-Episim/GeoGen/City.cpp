@@ -25,7 +25,7 @@ namespace geogen {
                                                                            m_population(population),
                                                                            m_coordinates(coordinates),
                                                                            m_name(name) {}
-
+/*
     const unsigned int City::GetId() const {
         return m_city_id;
     }
@@ -53,6 +53,7 @@ namespace geogen {
     const vector<shared_ptr<Community>>& City::GetAllCommunities() {
         return m_communities;
     }
+*/
 
     const vector<shared_ptr<const Community>> City::GetColleges() const {
         vector<shared_ptr<const Community>> colleges;
@@ -62,15 +63,48 @@ namespace geogen {
         return colleges;
     }
 
-    unsigned int City::GetNumberOfWorkplaces() const{
-        unsigned int result = 0;
-        for(auto a_community:m_communities){
-            if(a_community->GetCommunityType() == CommunityType::Work){
-                result++;
-            }
+    const vector<shared_ptr<const Community>> City::GetSchools() const {
+        vector<shared_ptr<const Community>> schools;
+        for( auto &it : m_communities ) {
+            if( it->GetCommunityType() == CommunityType::School ) schools.push_back(it);
         }
-        return result;
+        return schools;
     }
+
+
+    const vector<shared_ptr<const Community>> City::GetWorkplaces() const {
+        vector<shared_ptr<const Community>> workplaces;
+        for( auto &it : m_communities ) {
+            if( it->GetCommunityType() == CommunityType::Work ) workplaces.push_back(it);
+        }
+        return workplaces;
+    }
+
+    const vector<shared_ptr<const Community>> City::GetCommunities() const {
+        vector<shared_ptr<const Community>> communities;
+        for( auto &it : m_communities ) {
+            if( it->GetCommunityType() == CommunityType::Primary ) communities.push_back(it);
+            else if( it->GetCommunityType() == CommunityType::Secondary ) communities.push_back(it);
+        }
+        return communities;
+    }
+
+    const vector<shared_ptr<const Community>> City::GetPrimaryCommunities() const {
+        vector<shared_ptr<const Community>> communities;
+        for( auto &it : m_communities ) {
+            if( it->GetCommunityType() == CommunityType::Primary ) communities.push_back(it);
+        }
+        return communities;
+    }
+
+    const vector<shared_ptr<const Community>> City::GetSecondaryCommunities() const {
+        vector<shared_ptr<const Community>> communities;
+        for( auto &it : m_communities ) {
+            if( it->GetCommunityType() == CommunityType::Secondary ) communities.push_back(it);
+        }
+        return communities;
+    }
+
 
     void City::AddCommunity(shared_ptr<Community> community) {
         m_communities.push_back(community);
@@ -88,6 +122,11 @@ namespace geogen {
         }
         return result;
 
+    }
+
+    void City::AddHousehold(std::shared_ptr<Household> hh)
+    {
+        m_households.push_back(hh);
     }
 
 

@@ -37,7 +37,9 @@ public:
     /// Set Id for city where household lives.
     void SetCityID(size_t city_id);
 
-private:
+    void GetSchoolAttendants(vector<Person>&);
+
+private: // Raphael@everyone replace size_t by unsigned int?
     /// Id generator.
     static size_t g_id_generator;
 
@@ -45,6 +47,7 @@ private:
     size_t              m_id;
 
     /// A vector of ID's referring to the ID of a person.
+    // Raphael@everyone shouldn't we use a vector of shared pointers to Person?
     vector<Person> m_members;
 
     ///< The ID of the city in which the household is located

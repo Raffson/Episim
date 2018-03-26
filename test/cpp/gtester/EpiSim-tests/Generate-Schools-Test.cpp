@@ -84,7 +84,7 @@ namespace Tests {
         auto grid = GeoGrid("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
-        auto mp = grid.get_cities();
+        auto mp = grid.GetCities();
 
         shared_ptr<City> highest_pop_c = mp.begin()->second;
         int highest_pop = highest_pop_c->GetAllCommunities().size();

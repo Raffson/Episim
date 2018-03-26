@@ -4,6 +4,7 @@
     <data_files>
         <cities>flanders_cities.csv</cities>
         <commuting>flanders_commuting.csv</commuting>
+        <households>households_flanders.xml</households>
     </data_files>
 
     <pop_info>

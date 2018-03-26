@@ -74,17 +74,17 @@ namespace Tests {
 
         grid.GenerateWorkplaces();
 
-        auto cities = grid.get_cities();
-        EXPECT_EQ(cities[11002]->GetNumberOfWorkplaces(), antwerpen);
-        EXPECT_EQ(cities[24062]->GetNumberOfWorkplaces(), leuven);
-        EXPECT_EQ(cities[31005]->GetNumberOfWorkplaces(), brugge);
-        EXPECT_EQ(cities[36015]->GetNumberOfWorkplaces(), roeselare);
-        EXPECT_EQ(cities[41002]->GetNumberOfWorkplaces(), aalst);
-        EXPECT_EQ(cities[42006]->GetNumberOfWorkplaces(), dendermonde);
-        EXPECT_EQ(cities[46025]->GetNumberOfWorkplaces(), temse);
-        EXPECT_EQ(cities[71053]->GetNumberOfWorkplaces(), sinttruiden);
-        EXPECT_EQ(cities[73083]->GetNumberOfWorkplaces(), tongeren);
-        EXPECT_EQ(cities[73107]->GetNumberOfWorkplaces(), maasmechelen);
+        auto cities = grid.GetCities();
+        EXPECT_EQ(cities[11002]->GetWorkplaces().size(), antwerpen);
+        EXPECT_EQ(cities[24062]->GetWorkplaces().size(), leuven);
+        EXPECT_EQ(cities[31005]->GetWorkplaces().size(), brugge);
+        EXPECT_EQ(cities[36015]->GetWorkplaces().size(), roeselare);
+        EXPECT_EQ(cities[41002]->GetWorkplaces().size(), aalst);
+        EXPECT_EQ(cities[42006]->GetWorkplaces().size(), dendermonde);
+        EXPECT_EQ(cities[46025]->GetWorkplaces().size(), temse);
+        EXPECT_EQ(cities[71053]->GetWorkplaces().size(), sinttruiden);
+        EXPECT_EQ(cities[73083]->GetWorkplaces().size(), tongeren);
+        EXPECT_EQ(cities[73107]->GetWorkplaces().size(), maasmechelen);
 
     }
 
@@ -102,7 +102,7 @@ namespace Tests {
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        auto cities = grid.get_cities();
+        auto cities = grid.GetCities();
         unsigned int random_city1 = 23096;
         unsigned int random_city2 = 36008;
 
@@ -121,7 +121,7 @@ namespace Tests {
 
         grid.GenerateWorkplaces();
 
-        EXPECT_EQ(cities[random_city1]->GetNumberOfWorkplaces(), cities[random_city2]->GetNumberOfWorkplaces());
+        EXPECT_EQ(cities[random_city1]->GetWorkplaces().size(), cities[random_city2]->GetWorkplaces().size());
 
     }
 
@@ -139,7 +139,7 @@ namespace Tests {
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        auto cities = grid.get_cities();
+        auto cities = grid.GetCities();
         unsigned a_random_city = 11004;
 
         for(auto city: cities){
@@ -149,7 +149,7 @@ namespace Tests {
         grid.GenerateWorkplaces();
 
         //This is an extrem city where everybody commutes to other cities to work
-        EXPECT_EQ(0, cities[a_random_city]->GetNumberOfWorkplaces());
+        EXPECT_EQ(0, cities[a_random_city]->GetWorkplaces().size());
 
     }
     namespace {
