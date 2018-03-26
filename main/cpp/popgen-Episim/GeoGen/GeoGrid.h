@@ -15,6 +15,8 @@
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
 
+#include "util/RNManager.h"
+
 #include "popgen-Episim/GeoGen/Household.h"
 #include "popgen-Episim/GeoGen/City.h"
 #include "popgen-Episim/GeoGen/Parser.h"
@@ -215,7 +217,7 @@ namespace geogen {
 
         unsigned int m_school_count{};
 
-        trng::lcg64 m_generator;
+        stride::util::RNManager m_generator;
 
 
     };
