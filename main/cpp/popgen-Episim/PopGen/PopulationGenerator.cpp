@@ -144,7 +144,7 @@ namespace popgen {
                 //TODO use stride::Person class
                 //contact_pools.at(index)->AddMember(a_school_attendant);
 
-                cout<< a_school_attendant.age << " has been added to contact_pool " << index<<endl;
+                //cout<< a_school_attendant.age << " has been added to contact_pool " << index<<endl;
 
             }
 

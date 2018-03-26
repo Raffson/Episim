@@ -129,7 +129,7 @@ ApplicationWindow {
 
 
     function placeCity(values){
-        circle = Qt.createQmlObject('CityCircle {}', page)
+        circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
 
         circle.center.latitude = values["latitude"]
         circle.center.longitude = values["longitude"]

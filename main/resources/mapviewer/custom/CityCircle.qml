@@ -20,7 +20,8 @@ MapCircle {
         }
         anchors.fill:parent
         hoverEnabled: true
-        acceptedButtons: Qt.AllButtons
+        enabled: true
+        acceptedButtons: Qt.LeftButton
         onEntered:{
             info.font.pointSize = 16;
             parent.color = "red";
