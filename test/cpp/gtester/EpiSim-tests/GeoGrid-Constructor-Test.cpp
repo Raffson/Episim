@@ -5,30 +5,29 @@
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
 
+#include <boost/property_tree/ptree.hpp>
 #include <gtest/gtest.h>
 #include <omp.h>
 #include <spdlog/spdlog.h>
-#include <boost/property_tree/ptree.hpp>
 
 namespace Tests {
 
-    using namespace std;
-    using namespace ::testing;
-    using namespace geogen;
+using namespace std;
+using namespace ::testing;
+using namespace geogen;
 
-    using boost::property_tree::ptree;
+using boost::property_tree::ptree;
 
-    class GeoGridCtorTest : public ::testing::TestWithParam<unsigned int>
-    {
-    public:
+class GeoGridCtorTest : public ::testing::TestWithParam<unsigned int>
+{
+public:
         /// TestCase set up.
         static void SetUpTestCase() {}
 
         /// Tearing down TestCase
         static void TearDownTestCase() {}
 
-
-    protected:
+protected:
         /// Destructor has to be virtual.
         ~GeoGridCtorTest() override {}
 
@@ -37,9 +36,10 @@ namespace Tests {
 
         /// Tearing down the test fixture
         void TearDown() override {}
-    };
+};
 
-    TEST(GeoGridCtorTest, HappyDayScenario){
+TEST(GeoGridCtorTest, HappyDayScenario)
+{
 
         ASSERT_NO_THROW(GeoGrid("config/geogen_default.xml"));
 
@@ -50,7 +50,6 @@ namespace Tests {
         auto grid = GeoGrid("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
-
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
@@ -58,7 +57,7 @@ namespace Tests {
         map<int, shared_ptr<City>> mp = grid.GetCities();
 
         shared_ptr<City> antwerp = mp[11002];
-        Coordinate coord = antwerp->GetCoordinates();
+        Coordinate       coord   = antwerp->GetCoordinates();
 
         EXPECT_EQ(1, antwerp->GetProvince());
         EXPECT_EQ(269954, antwerp->GetPopulation());
@@ -67,35 +66,36 @@ namespace Tests {
         EXPECT_FLOAT_EQ(51.2165845, coord.latitude);
         EXPECT_FLOAT_EQ(4.413545489, coord.longitude);
         EXPECT_EQ("ANTWERPEN", antwerp->GetName());
+}
 
-    }
-
-    TEST(GeoGridCtorTest, FaultyCityRow){
+TEST(GeoGridCtorTest, FaultyCityRow)
+{
 
         // -----------------------------------------------------------------------------------------
         // Parse cities.
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
-        map<int, shared_ptr<City>> cty_map = parser::ParseCities("data/flanders_cities_faulty_row.csv", "data/flanders_commuting.csv", false);
+        map<int, shared_ptr<City>> cty_map =
+            parser::ParseCities("data/flanders_cities_faulty_row.csv", "data/flanders_commuting.csv", false);
         cout << "Done parsing cities." << endl;
-
 
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
         EXPECT_EQ(326, cty_map.size());
-    }
+}
 
-    TEST(GeoGridCtorTest, FaultyCityColumn){
+TEST(GeoGridCtorTest, FaultyCityColumn)
+{
 
         // -----------------------------------------------------------------------------------------
         // Parse cities.
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
-        map<int, shared_ptr<City>> cty_map = parser::ParseCities("data/flanders_cities_faulty_col.csv", "data/flanders_commuting.csv", false);
+        map<int, shared_ptr<City>> cty_map =
+            parser::ParseCities("data/flanders_cities_faulty_col.csv", "data/flanders_commuting.csv", false);
         cout << "Done parsing cities." << endl;
-
 
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
@@ -104,7 +104,7 @@ namespace Tests {
         EXPECT_EQ(327, cty_map.size());
 
         shared_ptr<City> antwerp = cty_map[11002];
-        Coordinate coord = antwerp->GetCoordinates();
+        Coordinate       coord   = antwerp->GetCoordinates();
 
         EXPECT_EQ(1, antwerp->GetProvince());
         EXPECT_EQ(269954, antwerp->GetPopulation());
@@ -114,10 +114,10 @@ namespace Tests {
         EXPECT_FLOAT_EQ(51.2165845, coord.latitude);
         EXPECT_FLOAT_EQ(4.413545489, coord.longitude);
         EXPECT_EQ("ANTWERPEN", antwerp->GetName());
+}
 
-    }
-
-    TEST(GeoGridCtorTest, CityRowCounter){
+TEST(GeoGridCtorTest, CityRowCounter)
+{
 
         // -----------------------------------------------------------------------------------------
         // Initialize the GeoGrid.
@@ -126,25 +126,23 @@ namespace Tests {
         auto grid = GeoGrid("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
-
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
         EXPECT_EQ(327, grid.GetCities().size());
+}
 
-    }
-
-    namespace {
-//OpenMP should have no effect atm...
+namespace {
+// OpenMP should have no effect atm...
 #ifdef _OPENMP
-    unsigned int threads[]{1U, 4U};
+unsigned int threads[]{1U, 4U};
 #else
-    unsigned int threads[]{1U};
+unsigned int threads[]{1U};
 #endif
 
-    } // namespace
+} // namespace
 
-    INSTANTIATE_TEST_CASE_P(Run, GeoGridCtorTest, ValuesIn(threads));
+INSTANTIATE_TEST_CASE_P(Run, GeoGridCtorTest, ValuesIn(threads));
 
 } // namespace Tests

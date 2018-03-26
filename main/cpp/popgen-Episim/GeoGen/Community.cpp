@@ -20,23 +20,20 @@
 
 namespace geogen {
 
-    using namespace std;
+using namespace std;
 
-    Community::Community(CommunityType community_type, shared_ptr<City> city)
-            : m_community_id(UIDgenerator()), m_community_type(community_type), m_city(city)
-    {
+Community::Community(CommunityType community_type, shared_ptr<City> city)
+    : m_community_id(UIDgenerator()), m_community_type(community_type), m_city(city)
+{
         UIDgenerator()++;
-    }
+}
 
-    unsigned int& Community::UIDgenerator()
-    {
+unsigned int& Community::UIDgenerator()
+{
         static unsigned int id = 1; // First id is 1! Needs to be as 0 implies "absent from community".
         return id;
-    }
+}
 
-    void Community::AddContactPool(std::shared_ptr<stride::ContactPool> pool)
-    {
-        m_contact_pools.push_back(pool);
-    }
+void Community::AddContactPool(std::shared_ptr<stride::ContactPool> pool) { m_contact_pools.push_back(pool); }
 
 } // namespace geogen

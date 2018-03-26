@@ -9,30 +9,29 @@
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
 
+#include <boost/property_tree/ptree.hpp>
 #include <gtest/gtest.h>
 #include <omp.h>
 #include <spdlog/spdlog.h>
-#include <boost/property_tree/ptree.hpp>
 
 namespace Tests {
 
-    using namespace std;
-    using namespace ::testing;
-    using namespace geogen;
+using namespace std;
+using namespace ::testing;
+using namespace geogen;
 
-    using boost::property_tree::ptree;
+using boost::property_tree::ptree;
 
-    class CollegeTest : public ::testing::TestWithParam<unsigned int>
-    {
-    public:
+class CollegeTest : public ::testing::TestWithParam<unsigned int>
+{
+public:
         /// TestCase set up.
         static void SetUpTestCase() {}
 
         /// Tearing down TestCase
         static void TearDownTestCase() {}
 
-
-    protected:
+protected:
         /// Destructor has to be virtual.
         ~CollegeTest() override {}
 
@@ -41,10 +40,10 @@ namespace Tests {
 
         /// Tearing down the test fixture
         void TearDown() override {}
-    };
+};
 
-    TEST_P(CollegeTest, HappyDayScenario)
-    {
+TEST_P(CollegeTest, HappyDayScenario)
+{
 
         // -----------------------------------------------------------------------------------------
         // Initialise the GeoGrid.
@@ -52,7 +51,6 @@ namespace Tests {
         cout << "Building the GeoGrid." << endl;
         auto grid = GeoGrid("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
-
 
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
@@ -66,49 +64,43 @@ namespace Tests {
          * 24062,2,57258,173931.7171,174757.824,50.86698143,4.711928375,LEUVEN
          * 21015,2,67992,151137.8935,172542.4363,50.86744,4.37727,SCHAARBEEK/SCHAERBEEK
          * 31005,3,72487,69778.44607,212973.689,51.21760152,3.220079748,BRUGGE
-         * 21004,2,86458,149789.4784,172284.1909,50.86079391,4.35941953,BRUSSEL/BRUXELLES-BRUSSEL PENTAGOON/BRUXELLES PENTAGONE
-         * 44021,4,141210,104032.0404,194183.7006,51.05097848,3.721264108,GENT-GENT CENTRUM
+         * 21004,2,86458,149789.4784,172284.1909,50.86079391,4.35941953,BRUSSEL/BRUXELLES-BRUSSEL PENTAGOON/BRUXELLES
+         * PENTAGONE 44021,4,141210,104032.0404,194183.7006,51.05097848,3.721264108,GENT-GENT CENTRUM
          * 11002,1,269954,153104.586,212271.7101,51.2165845,4.413545489,ANTWERPEN
          *
-        */
+         */
 
-        //Expected nr of colleges
-        unsigned int expMechelen   = round(45736  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
-                                                   grid.GetCollegeSize());
-        unsigned int expAalst      = round(48564  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
-                                                   grid.GetCollegeSize());
-        unsigned int expElsene     = round(52404  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
-                                                   grid.GetCollegeSize());
-        unsigned int expAnderlecht = round(53489  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
-                                                   grid.GetCollegeSize());
-        unsigned int expLeuven     = round(57258  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
-                                                   grid.GetCollegeSize());
-        unsigned int expSchaarbeek = round(67992  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
-                                                   grid.GetCollegeSize());
-        unsigned int expBrugge     = round(72487  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
-                                                   grid.GetCollegeSize());
-        unsigned int expBrussel    = round(86458  * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
-                                                   grid.GetCollegeSize());
-        unsigned int expGent       = round(141210 * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
-                                                   grid.GetCollegeSize());
-        unsigned int expAntwerpen  = round(269954 * grid.GetWorkers1Frac() * grid.GetStudentFrac() /
-                                                   grid.GetCollegeSize());
+        // Expected nr of colleges
+        unsigned int expMechelen =
+            round(45736 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expAalst  = round(48564 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expElsene = round(52404 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expAnderlecht =
+            round(53489 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expLeuven = round(57258 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expSchaarbeek =
+            round(67992 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expBrugge  = round(72487 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expBrussel = round(86458 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expGent = round(141210 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expAntwerpen =
+            round(269954 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
 
         grid.GenerateColleges();
 
         auto cities = grid.GetCities();
-        ASSERT_EQ(cities[12025]->GetColleges().size(), expMechelen   );
-        ASSERT_EQ(cities[41002]->GetColleges().size(), expAalst      );
-        ASSERT_EQ(cities[21009]->GetColleges().size(), expElsene     );
-        ASSERT_EQ(cities[21001]->GetColleges().size(), expAnderlecht );
-        ASSERT_EQ(cities[24062]->GetColleges().size(), expLeuven     );
-        ASSERT_EQ(cities[21015]->GetColleges().size(), expSchaarbeek );
-        ASSERT_EQ(cities[31005]->GetColleges().size(), expBrugge     );
-        ASSERT_EQ(cities[21004]->GetColleges().size(), expBrussel    );
-        ASSERT_EQ(cities[44021]->GetColleges().size(), expGent       );
-        ASSERT_EQ(cities[11002]->GetColleges().size(), expAntwerpen  );
+        ASSERT_EQ(cities[12025]->GetColleges().size(), expMechelen);
+        ASSERT_EQ(cities[41002]->GetColleges().size(), expAalst);
+        ASSERT_EQ(cities[21009]->GetColleges().size(), expElsene);
+        ASSERT_EQ(cities[21001]->GetColleges().size(), expAnderlecht);
+        ASSERT_EQ(cities[24062]->GetColleges().size(), expLeuven);
+        ASSERT_EQ(cities[21015]->GetColleges().size(), expSchaarbeek);
+        ASSERT_EQ(cities[31005]->GetColleges().size(), expBrugge);
+        ASSERT_EQ(cities[21004]->GetColleges().size(), expBrussel);
+        ASSERT_EQ(cities[44021]->GetColleges().size(), expGent);
+        ASSERT_EQ(cities[11002]->GetColleges().size(), expAntwerpen);
 
-        //Now remove these 10 cities and check that all other cities have 0 colleges...
+        // Now remove these 10 cities and check that all other cities have 0 colleges...
         cities.erase(12025);
         cities.erase(41002);
         cities.erase(21009);
@@ -120,15 +112,15 @@ namespace Tests {
         cities.erase(44021);
         cities.erase(11002);
 
-        for( auto &it : cities ) {
-            ASSERT_EQ(it.second->GetColleges().size(), 0 );
+        for (auto& it : cities) {
+                ASSERT_EQ(it.second->GetColleges().size(), 0);
         }
-    }
+}
 
-    TEST_P(CollegeTest, AlternateScenario)
-    {
-        //No input / wrong file...
-        EXPECT_THROW( auto grid = GeoGrid("bad input..."), runtime_error);
+TEST_P(CollegeTest, AlternateScenario)
+{
+        // No input / wrong file...
+        EXPECT_THROW(auto grid = GeoGrid("bad input..."), runtime_error);
         auto grid = GeoGrid();
         EXPECT_EQ(grid.GetCities().size(), 0);
         EXPECT_EQ(grid.GetTotalPop(), 0);
@@ -146,37 +138,41 @@ namespace Tests {
         EXPECT_EQ(grid.GetCommunitySize(), 0);
         EXPECT_EQ(grid.GetWorkplaceSize(), 0);
 
-        //Should we really test partial input? That's more like a job for the parser isn't it?
-        //In fact, this test all together should be part of the constructor's tester imo...
-    }
+        // Should we really test partial input? That's more like a job for the parser isn't it?
+        // In fact, this test all together should be part of the constructor's tester imo...
+}
 
-
-    //Copy of the code since it is a private function and it is used by AdjustLargestCities
-    unsigned int findSmallest(const vector <shared_ptr<City>> &lc) {
+// Copy of the code since it is a private function and it is used by AdjustLargestCities
+unsigned int findSmallest(const vector<shared_ptr<City>>& lc)
+{
         unsigned int smallest = 0;
         for (unsigned int i = 1; i < lc.size(); i++) {
-            if (lc[smallest]->GetPopulation() > lc[i]->GetPopulation()) smallest = i;
+                if (lc[smallest]->GetPopulation() > lc[i]->GetPopulation())
+                        smallest = i;
         }
         return smallest;
-    }
-    //Copy of the code since it is a private function...
-    // small adjustment is needed, m_maxlc must be passed on
-    // because this function is no longer part of the GeoGrid class,
-    // therefore no direct access to m_maxlc...
-    void adjustLargestCities(vector <shared_ptr<City>> &lc, const shared_ptr <City> &city, unsigned int m_maxlc) {
-        if (lc.size() < m_maxlc) lc.push_back(city);
+}
+// Copy of the code since it is a private function...
+// small adjustment is needed, m_maxlc must be passed on
+// because this function is no longer part of the GeoGrid class,
+// therefore no direct access to m_maxlc...
+void adjustLargestCities(vector<shared_ptr<City>>& lc, const shared_ptr<City>& city, unsigned int m_maxlc)
+{
+        if (lc.size() < m_maxlc)
+                lc.push_back(city);
         else {
-            unsigned int citpop = city->GetPopulation();
-            unsigned int smallest = findSmallest(lc);
-            if (citpop > lc[smallest]->GetPopulation()) lc[smallest] = city;
+                unsigned int citpop   = city->GetPopulation();
+                unsigned int smallest = findSmallest(lc);
+                if (citpop > lc[smallest]->GetPopulation())
+                        lc[smallest] = city;
         }
-    }
+}
 
-    TEST_P(CollegeTest, adjustLargestCitiesUnit)
-    {
-        //We'll push 3 cities with m_maxlc=3
+TEST_P(CollegeTest, adjustLargestCitiesUnit)
+{
+        // We'll push 3 cities with m_maxlc=3
         // thus the 4th city will replace iff it has a larger population than one of the 3 cities in lc
-        vector <shared_ptr<City>> lc;
+        vector<shared_ptr<City>> lc;
 
         shared_ptr<City> c1 = make_shared<City>(1, 1, 10, Coordinate(), "TestCity1");
         adjustLargestCities(lc, c1, 3);
@@ -190,7 +186,7 @@ namespace Tests {
         adjustLargestCities(lc, c3, 3);
         ASSERT_EQ(lc.size(), 3);
 
-        //Try adding a city with smaller population than other cities...
+        // Try adding a city with smaller population than other cities...
         // Size should remain 3 and c1, c2, c3 in lc...
         shared_ptr<City> c4 = make_shared<City>(4, 1, 5, Coordinate(), "TestCity4");
         adjustLargestCities(lc, c4, 3);
@@ -199,7 +195,7 @@ namespace Tests {
         ASSERT_EQ(lc[1], c2);
         ASSERT_EQ(lc[2], c3);
 
-        //Try adding a city with larger population than other cities...
+        // Try adding a city with larger population than other cities...
         // Size should remain 3 and c5, c2, c3 in lc...
         shared_ptr<City> c5 = make_shared<City>(5, 1, 15, Coordinate(), "TestCity4");
         adjustLargestCities(lc, c5, 3);
@@ -207,25 +203,23 @@ namespace Tests {
         ASSERT_EQ(lc[0], c5);
         ASSERT_EQ(lc[1], c2);
         ASSERT_EQ(lc[2], c3);
-    }
+}
 
-    //In the testplan I mentioned "assignCollege"
-    // however at this point I figured out that this should be done for City
-    // specifically testing "AddCommunity", and perhaps the rest of the class...
+// In the testplan I mentioned "assignCollege"
+// however at this point I figured out that this should be done for City
+// specifically testing "AddCommunity", and perhaps the rest of the class...
 
-    namespace {
-//OpenMP should have no effect atm...
-//Should we simply leave this out?
+namespace {
+// OpenMP should have no effect atm...
+// Should we simply leave this out?
 #ifdef _OPENMP
-        unsigned int threads[]{1U, 4U};
+unsigned int threads[]{1U, 4U};
 #else
-        unsigned int threads[]{1U};
+unsigned int threads[]{1U};
 #endif
 
-    } // namespace
+} // namespace
 
-    INSTANTIATE_TEST_CASE_P(Run, CollegeTest, ValuesIn(threads));
+INSTANTIATE_TEST_CASE_P(Run, CollegeTest, ValuesIn(threads));
 
 } // namespace Tests
-
-

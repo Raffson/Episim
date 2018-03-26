@@ -15,12 +15,13 @@
 
 #include "Coordinate.h"
 
-
 namespace geogen {
 
-    Coordinate::Coordinate() : x(0), y(0), longitude(0), latitude(0) {}
+Coordinate::Coordinate() : x(0), y(0), longitude(0), latitude(0) {}
 
-    Coordinate::Coordinate(double x, double y, double longitude, double latitude) :
-            x(x), y(y), longitude(longitude), latitude(latitude) {}
+Coordinate::Coordinate(double x, double y, double longitude, double latitude)
+    : x(x), y(y), longitude(longitude), latitude(latitude)
+{
+}
 
-}//namespace geogen
+} // namespace geogen

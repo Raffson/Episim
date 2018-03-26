@@ -9,31 +9,30 @@
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
 
+#include <boost/property_tree/ptree.hpp>
+#include <exception>
 #include <gtest/gtest.h>
 #include <omp.h>
 #include <spdlog/spdlog.h>
-#include <boost/property_tree/ptree.hpp>
-#include <exception>
 
 namespace Tests {
 
-    using namespace std;
-    using namespace ::testing;
-    using namespace geogen;
+using namespace std;
+using namespace ::testing;
+using namespace geogen;
 
-    using boost::property_tree::ptree;
+using boost::property_tree::ptree;
 
-    class CommunityTest : public ::testing::TestWithParam<unsigned int>
-    {
-    public:
+class CommunityTest : public ::testing::TestWithParam<unsigned int>
+{
+public:
         /// TestCase set up.
         static void SetUpTestCase() {}
 
         /// Tearing down TestCase
         static void TearDownTestCase() {}
 
-
-    protected:
+protected:
         /// Destructor has to be virtual.
         ~CommunityTest() override {}
 
@@ -42,10 +41,10 @@ namespace Tests {
 
         /// Tearing down the test fixture
         void TearDown() override {}
-    };
+};
 
-    TEST_P(CommunityTest, Run)
-    {
+TEST_P(CommunityTest, Run)
+{
         // -----------------------------------------------------------------------------------------
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
@@ -53,51 +52,48 @@ namespace Tests {
         auto grid = GeoGrid("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
-
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        auto cities = grid.GetCities();
-        map<int, shared_ptr<City>>::iterator c_it2 = cities.begin();
+        auto                                 cities = grid.GetCities();
+        map<int, shared_ptr<City>>::iterator c_it2  = cities.begin();
         /// Check if the communities are ditributed correctly.
-        for (map<int, shared_ptr<City>>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++){
-            try {
-                if (c_it != cities.end()) {
-                    c_it2 = c_it++;
-                    c_it--;
-                } else {
-                    c_it2 = cities.begin();
+        for (map<int, shared_ptr<City>>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {
+                try {
+                        if (c_it != cities.end()) {
+                                c_it2 = c_it++;
+                                c_it--;
+                        } else {
+                                c_it2 = cities.begin();
+                        }
+                        /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
+                        if ((*c_it).first != (*c_it2).first) {
+                                if ((*c_it).second->GetPopulation() >= (*c_it2).second->GetPopulation()) {
+                                        EXPECT_GE((*c_it).second->GetCommunitySize(),
+                                                  (*c_it2).second->GetCommunitySize());
+                                }
+                                if ((*c_it).second->GetPopulation() <= (*c_it2).second->GetPopulation()) {
+                                        EXPECT_LE((*c_it).second->GetCommunitySize(),
+                                                  (*c_it2).second->GetCommunitySize());
+                                }
+                        }
+                } catch (std::exception& e) {
+                        cout << "error caught: " << e.what() << endl;
                 }
-                /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
-                if ((*c_it).first != (*c_it2).first) {
-                    if ((*c_it).second->GetPopulation() >= (*c_it2).second->GetPopulation()) {
-                        EXPECT_GE((*c_it).second->GetCommunitySize(), (*c_it2).second->GetCommunitySize());
-                    }
-                    if ((*c_it).second->GetPopulation() <= (*c_it2).second->GetPopulation()) {
-                        EXPECT_LE((*c_it).second->GetCommunitySize(), (*c_it2).second->GetCommunitySize());
-                    }
-                }
-            }
-            catch(std::exception& e){
-                cout<<"error caught: "<<e.what()<<endl;
-            }
         }
+}
 
-    }
-
-    namespace {
-//OpenMP should have no effect atm...
+namespace {
+// OpenMP should have no effect atm...
 #ifdef _OPENMP
-        unsigned int threads[]{1U, 4U};
+unsigned int threads[]{1U, 4U};
 #else
-        unsigned int threads[]{1U};
+unsigned int threads[]{1U};
 #endif
 
-    } // namespace
+} // namespace
 
-    INSTANTIATE_TEST_CASE_P(Run, CommunityTest, ValuesIn(threads));
+INSTANTIATE_TEST_CASE_P(Run, CommunityTest, ValuesIn(threads));
 
 } // namespace Tests
-
-

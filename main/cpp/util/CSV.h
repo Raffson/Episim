@@ -76,12 +76,11 @@ public:
         bool operator==(const CSV& other) const;
 
         /// Labels
-        const std::vector<std::string>& getLabels() const {return labels;};
+        const std::vector<std::string>& getLabels() const { return labels; };
 
 protected:
         std::vector<std::string> labels;
         size_t                   columnCount = 0;
-
 };
 
 template <typename... T>
