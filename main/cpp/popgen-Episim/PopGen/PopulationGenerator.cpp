@@ -7,7 +7,7 @@
 namespace popgen {
 
 PopulationGenerator::PopulationGenerator(geogen::GeoGrid geogrid)
-    : m_geogrid(geogrid), m_generator((unsigned long)0, trng::lcg64::Default)
+    : m_geogrid(geogrid)
 {
 }
 
@@ -24,7 +24,7 @@ void PopulationGenerator::AssignHouseholds()
                 while (remaining_population > 0) {
                         // choose random households to be assigned to the city
                         trng::uniform_int_dist distr(0, (unsigned int)households.size() - 1);
-                        unsigned int           index = distr(m_generator);
+                        unsigned int           index = geogen::generator.GetGenerator(distr)();
 
                         households.at(index).SetCityID(a_city.second->GetId());
                         auto a_household = std::make_shared<Household>();
@@ -136,7 +136,7 @@ void PopulationGenerator::AssignToSchools()
                 for (auto& a_school_attendant : school_attendants) {
                         // choose random households to be assigned to the city
                         trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size() - 1);
-                        unsigned int           index = distr(m_generator);
+                        unsigned int           index = geogen::generator.GetGenerator(distr)();
                         // TODO use stride::Person class
                         // contact_pools.at(index)->AddMember(a_school_attendant);
 

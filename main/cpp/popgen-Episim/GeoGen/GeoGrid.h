@@ -208,6 +208,6 @@ private: // DO NOT DELETE! this seperates private members from private methods..
 
         unsigned int m_school_count{};
 };
-stride::util::RNManager m_generator;
+static stride::util::RNManager generator;
 
 } // namespace geogen

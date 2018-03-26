@@ -49,9 +49,6 @@ public:
 private:
         // Raphael@Nishchal why? makes this kind of a god class...
         geogen::GeoGrid m_geogrid;
-
-        // Raphael@Nishchal we should have only 1 generator, must be global for both geogrid and this class...
-        trng::lcg64 m_generator;
 };
 
 } // namespace popgen
