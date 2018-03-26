@@ -52,6 +52,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtLocation 5.6
 import QtPositioning 5.5
+import QtQml.Models 2.2
 import "map"
 import "menus"
 import "helper.js" as Helper
@@ -64,7 +65,6 @@ ApplicationWindow {
     property variant minimap
     property variant parameters
     property variant circle
-
 
     //defaults
     //! [routecoordinate]
@@ -129,7 +129,7 @@ ApplicationWindow {
 
 
     function placeCity(values){
-        circle = Qt.createQmlObject('CityCircle {}', page)
+        circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
 
         circle.center.latitude = values["latitude"]
         circle.center.longitude = values["longitude"]
@@ -199,21 +199,6 @@ ApplicationWindow {
     MainMenu {
         id: mainMenu
 
-        function toggleMiniMapState()
-        {
-            if (minimap) {
-                minimap.destroy()
-                minimap = null
-            } else {
-                minimap = Qt.createQmlObject ('import "map"; MiniMap{ z: map.z + 2 }', map)
-            }
-        }
-
-        function setLanguage(lang)
-        {
-            map.plugin.locales = lang;
-            stackView.pop(page)
-        }
 
         onSelectProvider: {
             stackView.pop()
