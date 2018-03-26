@@ -255,20 +255,7 @@ ApplicationWindow {
             }
         }
 
-        onToggleMapState: {
-            stackView.pop(page)
-            switch (state) {
-            case "FollowMe":
-                map.followme = !map.followme
-                break
-            case "MiniMap":
-                toggleMiniMapState()
-                isMiniMap = minimap
-                break
-            default:
-                console.log("Unsupported operation")
-            }
-        }
+
     }
 
     MapPopupMenu {

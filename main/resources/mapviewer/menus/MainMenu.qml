@@ -122,15 +122,16 @@ MenuBar {
         }
 
         function updateSelected(map){
+            pop_info = 0
             circle = Qt.createQmlObject('import "../custom"; CityCircle {}', page)
             var total_count = 0
-            total_count += map.mapItems.length
-            total_count += 9
-            for (var i = 0; i < map.mapItems.length; i++)
+            for (var i = 0; i < map.children.length; i++)
             {
-                circle = map.mapItems[i]
-                var pop = circle.population
-                total_count += pop
+                if(map.children[i].objectName === "city"){
+                    circle = map.children[i]
+                    var pop = circle.isSelected()
+                    total_count += pop
+                }
             }
             pop_info = Qt.createQmlObject('import QtQuick 2.7;
                                             Text {
