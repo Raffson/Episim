@@ -70,6 +70,7 @@ namespace geogen {
 
         ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
         ENSURE(1 >= m_student_frac and m_student_frac >= 0, "fraction must be between 0 and 1");
+        ENSURE(m_commuting_students_frac <= 1, "Commuting students bigger then 1" );
     }
 
     void GeoGrid::GenerateAll() {
@@ -172,6 +173,11 @@ namespace geogen {
 
         //double working_population = m_active_frac * m_total_pop;
         //double number_of_workplaces = working_population/m_worksplace_size;
+
+        REQUIRE(m_commuting_students_frac <= 1 and m_commuting_students_frac >= 0,
+                " student commuting_frac is not a fractal.");
+        REQUIRE(m_commuting_workers_frac <= 1 and m_commuting_workers_frac >= 0,
+                "Is a commuting workers frac.");
 
         //dividing workplaces to cities
         //TODO This should also be placed according to a discrete distribution!

@@ -5,10 +5,12 @@
 #include "PopulationGenerator.h"
 
 
+using namespace std;
+
 namespace popgen {
 
     PopulationGenerator::PopulationGenerator(geogen::GeoGrid geogrid)
-            :m_geogrid(geogrid),m_generator((unsigned long)0, trng::lcg64::Default)
+            :m_geogrid(move(geogrid)),m_generator((unsigned long)0, trng::lcg64::Default)
     {
     }
 
@@ -20,13 +22,13 @@ namespace popgen {
 
         for(auto& a_city: m_geogrid.GetCities()) {
             const unsigned int max_population =  a_city.second->GetPopulation();
-            int remaining_population = (int) max_population;
+            auto remaining_population = (int) max_population;
 
 
             while(remaining_population > 0){
                 //choose random households to be assigned to the city
                 trng::uniform_int_dist distr(0, (unsigned int) households.size() - 1);
-                unsigned int index = distr(m_generator);
+                auto index = (unsigned int)distr(m_generator);
 
                 households.at(index).SetCityID(a_city.second->GetId());
                 auto a_household = std::make_shared<Household>();
@@ -128,7 +130,7 @@ namespace popgen {
                     }
                 }
 
-                if(near_schools.size() == 0){
+                if(near_schools.empty()){
                     radius *= 2;
                 }
                 else{
@@ -140,7 +142,7 @@ namespace popgen {
             for(auto& a_school_attendant:school_attendants){
                 //choose random households to be assigned to the city
                 trng::uniform_int_dist distr(0, (unsigned int) contact_pools.size() - 1);
-                unsigned int index = distr(m_generator);
+                unsigned int index = distr(m_generator); // TODO: never used
                 //TODO use stride::Person class
                 //contact_pools.at(index)->AddMember(a_school_attendant);
 
