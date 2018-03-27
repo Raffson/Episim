@@ -89,6 +89,7 @@ namespace parser{
             for(auto& v:subtree.get_child("")){
                 Person a_person;
                 a_person.age = stoi(v.second.data());
+                a_person.work_id = 0;
                 a_household.AddMember(a_person);
             }
             result.push_back(a_household);

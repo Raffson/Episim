@@ -160,6 +160,8 @@ namespace geogen {
                 it->AddCommunity(college);
                 //m_communities[college->getID()] = college
             }
+
+            m_cities_with_college.push_back(it);
         }
     }
 

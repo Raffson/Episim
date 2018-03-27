@@ -11,6 +11,7 @@
 using namespace std;
 
 struct Person{
+    unsigned int work_id;
     int age;
 };
 

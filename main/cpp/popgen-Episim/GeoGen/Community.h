@@ -74,8 +74,6 @@ namespace geogen {
 
         std::shared_ptr<City> m_city;   ///< Shared pointer to City
 
-        //Raphael@Nishchal see, that wasn't so difficult now was it?
-        // here you use a shared pointer like you should...
         std::vector<std::shared_ptr<stride::ContactPool>> m_contact_pools;
 
         //Vector of persons to indicate who's part of this community?

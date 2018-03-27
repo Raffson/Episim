@@ -111,6 +111,9 @@ namespace geogen {
         /// Return the households of the geogrid
         vector<Household> GetModelHouseholds(){ return m_model_households;}
 
+
+        vector<shared_ptr<City>> GetCitiesWithCollege(){return m_cities_with_college;}
+
     private:
 
         ///Returns index of city with smallest population from 'lc'
@@ -216,6 +219,8 @@ namespace geogen {
         unsigned int m_school_count{};
 
         trng::lcg64 m_generator;
+
+        vector<shared_ptr<City>> m_cities_with_college{};
 
 
     };

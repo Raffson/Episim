@@ -57,6 +57,9 @@ private:
 
     std::size_t m_id_generator;
 
+    //TODO read this from some file
+    const unsigned int m_initial_search_radius;
+
 };
 
 }//namespace popgen
