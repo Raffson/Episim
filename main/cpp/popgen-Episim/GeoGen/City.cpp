@@ -53,9 +53,9 @@ City::City(const unsigned int city_id, const unsigned int province, unsigned int
     }
 */
 
-const vector<shared_ptr<const Community>> City::GetColleges() const
+vector<shared_ptr<Community>> City::GetColleges()
 {
-        vector<shared_ptr<const Community>> colleges;
+        vector<shared_ptr<Community>> colleges;
         for (auto& it : m_communities) {
                 if (it->GetCommunityType() == CommunityType::College)
                         colleges.push_back(it);
@@ -63,9 +63,9 @@ const vector<shared_ptr<const Community>> City::GetColleges() const
         return colleges;
 }
 
-const vector<shared_ptr<const Community>> City::GetSchools() const
+vector<shared_ptr<Community>> City::GetSchools()
 {
-        vector<shared_ptr<const Community>> schools;
+        vector<shared_ptr<Community>> schools;
         for (auto& it : m_communities) {
                 if (it->GetCommunityType() == CommunityType::School)
                         schools.push_back(it);
@@ -73,9 +73,9 @@ const vector<shared_ptr<const Community>> City::GetSchools() const
         return schools;
 }
 
-const vector<shared_ptr<const Community>> City::GetWorkplaces() const
+vector<shared_ptr<Community>> City::GetWorkplaces()
 {
-        vector<shared_ptr<const Community>> workplaces;
+        vector<shared_ptr<Community>> workplaces;
         for (auto& it : m_communities) {
                 if (it->GetCommunityType() == CommunityType::Work)
                         workplaces.push_back(it);
@@ -83,9 +83,9 @@ const vector<shared_ptr<const Community>> City::GetWorkplaces() const
         return workplaces;
 }
 
-const vector<shared_ptr<const Community>> City::GetCommunities() const
+vector<shared_ptr<Community>> City::GetCommunities()
 {
-        vector<shared_ptr<const Community>> communities;
+        vector<shared_ptr<Community>> communities;
         for (auto& it : m_communities) {
                 if (it->GetCommunityType() == CommunityType::Primary)
                         communities.push_back(it);
@@ -95,9 +95,9 @@ const vector<shared_ptr<const Community>> City::GetCommunities() const
         return communities;
 }
 
-const vector<shared_ptr<const Community>> City::GetPrimaryCommunities() const
+vector<shared_ptr<Community>> City::GetPrimaryCommunities()
 {
-        vector<shared_ptr<const Community>> communities;
+        vector<shared_ptr<Community>> communities;
         for (auto& it : m_communities) {
                 if (it->GetCommunityType() == CommunityType::Primary)
                         communities.push_back(it);
@@ -105,9 +105,9 @@ const vector<shared_ptr<const Community>> City::GetPrimaryCommunities() const
         return communities;
 }
 
-const vector<shared_ptr<const Community>> City::GetSecondaryCommunities() const
+vector<shared_ptr<Community>> City::GetSecondaryCommunities()
 {
-        vector<shared_ptr<const Community>> communities;
+        vector<shared_ptr<Community>> communities;
         for (auto& it : m_communities) {
                 if (it->GetCommunityType() == CommunityType::Secondary)
                         communities.push_back(it);

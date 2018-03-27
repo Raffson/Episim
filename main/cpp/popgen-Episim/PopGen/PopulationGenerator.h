@@ -22,7 +22,7 @@ namespace popgen {
 class PopulationGenerator
 {
 public:
-        PopulationGenerator(geogen::GeoGrid);
+        PopulationGenerator(geogen::GeoGrid, unsigned int rad=10);
 
         void AssignHouseholds();
         void AssignToSchools();
@@ -47,8 +47,12 @@ public:
         std::vector<std::shared_ptr<geogen::City>> GetCitiesWithinRadius(geogen::City origin, unsigned int radius);
 
 private:
-        // Raphael@Nishchal why? makes this kind of a god class...
-        geogen::GeoGrid m_geogrid;
+    geogen::GeoGrid m_geogrid;
+
+    std::size_t m_id_generator;
+
+    //TODO read this from some file
+    const unsigned int m_initial_search_radius;
 };
 
 } // namespace popgen

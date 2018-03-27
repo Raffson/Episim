@@ -109,7 +109,10 @@ public:
         shared_ptr<City>& operator[](int i);
 
         /// Return the households of the geogrid
-        vector<Household> GetModelHouseholds() { return m_model_households; }
+        vector<Household> GetModelHouseholds(){ return m_model_households;}
+
+
+        vector<shared_ptr<City>> GetCitiesWithCollege(){return m_cities_with_college;}
 
 private:
         /// Returns index of city with smallest population from 'lc'
@@ -207,7 +210,11 @@ private: // DO NOT DELETE! this seperates private members from private methods..
         /// or hack our way around the initialisation...
 
         unsigned int m_school_count{};
+
+        vector<shared_ptr<City>> m_cities_with_college{};
 };
+
 static stride::util::RNManager generator;
 
 } // namespace geogen
+

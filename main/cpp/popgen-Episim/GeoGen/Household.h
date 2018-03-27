@@ -10,9 +10,9 @@
 
 using namespace std;
 
-struct Person
-{
-        int age;
+struct Person{
+    unsigned int work_id;
+    int age;
 };
 
 class Household

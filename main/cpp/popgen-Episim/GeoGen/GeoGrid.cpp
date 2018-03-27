@@ -153,24 +153,25 @@ void GeoGrid::GenerateColleges()
                 AdjustLargestCities(lc, it.second);
         }
 
-        // generate colleges to the respective cities...
-        for (auto& it : lc) {
-                double students = it->GetPopulation() * m_workers1_frac * m_student_frac;
-                // doesn't matter if students is a double at this time
-                // since this is only an estimate for the number of colleges
-                auto nrcolleges = (unsigned int)round(students / m_college_size);
+        //generate colleges to the respective cities...
+        for (auto &it : lc) {
+            double students = it->GetPopulation()*m_workers1_frac*m_student_frac;
+            //doesn't matter if students is a double at this time
+            // since this is only an estimate for the number of colleges
+            auto nrcolleges = (unsigned int) round(students / m_college_size);
 
-                // TODO Is it not given wich cities have exactly one college, calculation needed??
-                // -> tricky question, suppose this city has less than (m_college_size*0.5) students
-                //      then nrcolleges would round to 0 and we would have a problem...
-                //      the result would be that m_maxlc will be bigger than the number of cities with colleges...
-                //      this is a valid remark...
+            //TODO Is it not given wich cities have exactly one college, calculation needed??
+            // -> tricky question, suppose this city has less than (m_college_size*0.5) students
+            //      then nrcolleges would round to 0 and we would have a problem...
+            //      the result would be that m_maxlc will be bigger than the number of cities with colleges...
+            //      this is a valid remark...
 
-                for (unsigned int i = 0; i < nrcolleges; i++) {
-                        shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
-                        it->AddCommunity(college);
-                        // m_communities[college->getID()] = college
-                }
+            for(unsigned int i = 0; i < nrcolleges; i++) {
+                shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
+                it->AddCommunity(college);
+                //m_communities[college->getID()] = college
+            }
+
         }
 }
 
