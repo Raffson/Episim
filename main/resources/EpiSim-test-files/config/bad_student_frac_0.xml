@@ -2,8 +2,9 @@
 <popgen>
 
     <data_files>
-        <cities>flanders_cities.csv</cities>
-        <commuting>flanders_commuting.csv</commuting>
+        <cities>flanders_cities_test.csv</cities>
+        <commuting>flanders_commuting_test.csv</commuting>
+        <households>households_flanders_test.xml</households>
     </data_files>
 
     <rng>
@@ -28,7 +29,7 @@
 
 
         <!-- fraction of people able to work that is student (18y-26y) -->
-        <fraction_students>0.5</fraction_students>
+        <fraction_students>1.1</fraction_students>
         <!-- commuting fraction of students -->
         <fraction_commuting_students>0.5</fraction_commuting_students>
 

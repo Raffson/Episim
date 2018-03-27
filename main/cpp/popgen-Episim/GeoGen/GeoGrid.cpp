@@ -17,6 +17,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         this->m_school_count = 0;
         // Setting up property tree to parse xml config file
         boost::property_tree::ptree p_tree;
+
         boost::property_tree::read_xml(config_file.string(), p_tree);
 
         // reading the cities data file
@@ -69,8 +70,13 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         string type = p_tree.get("popgen.rng.type", "mrg2");
         generator = stride::util::RNManager(stride::util::RNManager::Info(type, (unsigned long)seed));
 
+        //float eps = numeric_limits<float>::epsilon(); //rounding errors cause the first ensure to fail in some conditions...
+        //ENSURE(fabs(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac - 1) < eps, "Pop frac should equal 1");
         ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
-        ENSURE(1 >= m_student_frac and m_student_frac >= 0, "fraction must be between 0 and 1");
+        ENSURE(1 >= m_student_frac and m_student_frac >= 0, "Student fraction must be between 0 and 1");
+        ENSURE(1 >= m_commuting_students_frac and m_commuting_students_frac >= 0, "Student Commuting fraction must be between 0 and 1");
+        ENSURE(1 >= m_active_frac and m_active_frac >= 0, "Active workers fraction must be between 0 and 1");
+        ENSURE(1 >= m_commuting_workers_frac and m_commuting_workers_frac >= 0, "Commuting workers fraction must be between 0 and 1");
 }
 
 void GeoGrid::GenerateAll()

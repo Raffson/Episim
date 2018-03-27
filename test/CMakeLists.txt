@@ -38,36 +38,24 @@ add_custom_target(run_ctest
 )
 
 #output isn't written, gotta figure this out...
+#also, need to figure out a way to copy only the files that have been changed...
 add_custom_target( episim-test
+	COMMAND ${CMAKE_COMMAND} -E remove_directory
+		${CMAKE_BINARY_DIR}/test/config
+	COMMAND ${CMAKE_COMMAND} -E remove_directory
+		${CMAKE_BINARY_DIR}/test/data
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/main/resources/EpiSim-test-files/config/
+		${CMAKE_BINARY_DIR}/test/config
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/main/resources/EpiSim-test-files/data/
+		${CMAKE_BINARY_DIR}/test/data
 	COMMAND gtester-episim 
 	${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/EpiSim/etests.txt
 	WORKING_DIR ${TESTS_DIR}
 	COMMENT "Running EpiSim's tests..."
 )
 
-#============================================================================
-# We need a better way to handle the following file dependencies...
-#============================================================================
-configure_file(${CMAKE_SOURCE_DIR}/main/resources/config/geogen_test.xml
-	${CMAKE_BINARY_DIR}/test/config/geogen_default.xml COPYONLY)
-
-configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities_test.csv
-	${CMAKE_BINARY_DIR}/test/data/flanders_cities.csv COPYONLY)
-
-configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_commuting_test.csv
-	${CMAKE_BINARY_DIR}/test/data/flanders_commuting.csv COPYONLY)
-
-configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities_faulty_col.csv
-		${CMAKE_BINARY_DIR}/test/data/flanders_cities_faulty_col.csv COPYONLY)
-
-configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/flanders_cities_faulty_row.csv
-		${CMAKE_BINARY_DIR}/test/data/flanders_cities_faulty_row.csv COPYONLY)
-
-configure_file(${CMAKE_SOURCE_DIR}/main/resources/config/geogen_test_school.xml
-		${CMAKE_BINARY_DIR}/test/config/geogen_test_school.xml COPYONLY)
-
-configure_file(${CMAKE_SOURCE_DIR}/main/resources/data/households_flanders.xml
-		${CMAKE_BINARY_DIR}/test/data/households_flanders.xml COPYONLY)
 #============================================================================
 # Config related to using Google test (src in resources/lib/gtest) for cpp
 #============================================================================

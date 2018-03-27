@@ -45,8 +45,6 @@ public:
 
         unsigned int GetCommunitySize() const { return m_communities.size(); };
 
-        // Raphael@everyone the Communities can still be changed, just not the pointer's value...
-        // do we want this behaviour? (see GetHouseholds further down since it's the same story...)
         const vector<shared_ptr<Community>>& GetAllCommunities() { return m_communities; };
 
         vector<shared_ptr<Community>> GetColleges();

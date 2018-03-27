@@ -18,13 +18,13 @@
 #============================================================================
 # Copy all files from data/* to ${DATA_INSTALL_LOCATION}
 #============================================================================
-file(GLOB DEPLOY_FILES "data/*")
+file(GLOB DEPLOY_FILES "data/*" "EpiSim-test-files/data/*")
 INSTALL( FILES ${DEPLOY_FILES} DESTINATION ${DATA_INSTALL_LOCATION} )
 
 #============================================================================
 # Copy all files from config/* to ${CONFIG_INSTALL_LOCATION}
 #============================================================================
-file(GLOB DEPLOY_FILES "config/*")
+file(GLOB DEPLOY_FILES "config/*" "EpiSim-test-files/config/*")
 INSTALL( FILES ${DEPLOY_FILES} DESTINATION ${CONFIG_INSTALL_LOCATION} )
 
 #============================================================================

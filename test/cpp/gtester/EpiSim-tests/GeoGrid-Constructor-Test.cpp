@@ -68,6 +68,46 @@ TEST(GeoGridCtorTest, HappyDayScenario)
         EXPECT_EQ("ANTWERPEN", antwerp->GetName());
 }
 
+TEST(GeoGridCtorTest, DefaultConstructor)
+{
+        auto grid = GeoGrid();
+        EXPECT_EQ(grid.GetCities().size(), 0);
+        EXPECT_EQ(grid.GetTotalPop(), 0);
+        EXPECT_FLOAT_EQ(grid.GetSchooledFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetWorkers1Frac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetWorkers2Frac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetRestFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetStudentFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetCommutingStudentsFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetActiveFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetCommutingWorkersFrac(), 0.0);
+        EXPECT_EQ(grid.GetSchoolSize(), 0);
+        EXPECT_EQ(grid.GetCollegeSize(), 0);
+        EXPECT_EQ(grid.GetMaxLC(), 0);
+        EXPECT_EQ(grid.GetCommunitySize(), 0);
+        EXPECT_EQ(grid.GetWorkplaceSize(), 0);
+}
+
+TEST(GeoGridCtorTest, NonExistingFile)
+{
+        // Test with a non-existing file
+        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("bad input"), "");
+}
+
+TEST(GeoGridCtorTest, BadFractions)
+{
+        // Test with a non-existing file
+        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_total_frac.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_student_frac_0.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_stucom_frac_0.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_active_frac_0.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_workcom_frac_0.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_student_frac_1.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_stucom_frac_1.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_active_frac_1.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_workcom_frac_1.xml"), "");
+}
+
 TEST(GeoGridCtorTest, FaultyCityRow)
 {
 

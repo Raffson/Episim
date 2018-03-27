@@ -117,29 +117,16 @@ TEST_P(CollegeTest, HappyDayScenario)
         }
 }
 
-TEST_P(CollegeTest, AlternateScenario)
+TEST_P(CollegeTest, WrongInput)
 {
-        // No input / wrong file...
-        EXPECT_THROW(auto grid = GeoGrid("bad input..."), runtime_error);
-        auto grid = GeoGrid();
-        EXPECT_EQ(grid.GetCities().size(), 0);
-        EXPECT_EQ(grid.GetTotalPop(), 0);
-        EXPECT_FLOAT_EQ(grid.GetSchooledFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetWorkers1Frac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetWorkers2Frac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetRestFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetStudentFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetCommutingStudentsFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetActiveFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetCommutingWorkersFrac(), 0.0);
-        EXPECT_EQ(grid.GetSchoolSize(), 0);
-        EXPECT_EQ(grid.GetCollegeSize(), 0);
-        EXPECT_EQ(grid.GetMaxLC(), 0);
-        EXPECT_EQ(grid.GetCommunitySize(), 0);
-        EXPECT_EQ(grid.GetWorkplaceSize(), 0);
-
-        // Should we really test partial input? That's more like a job for the parser isn't it?
-        // In fact, this test all together should be part of the constructor's tester imo...
+        // -----------------------------------------------------------------------------------------
+        // Initialize the GeoGrid.
+        // -----------------------------------------------------------------------------------------
+        // Bad input file with fractions that are FUBAR
+        auto grid = GeoGrid("config/schools&colleges_bad_frac_0.xml");
+        ASSERT_DEATH_IF_SUPPORTED(grid.GenerateColleges(), "");
+        grid = GeoGrid("config/schools&colleges_bad_frac_1.xml");
+        ASSERT_DEATH_IF_SUPPORTED(grid.GenerateColleges(), "");
 }
 
 // Copy of the code since it is a private function and it is used by AdjustLargestCities

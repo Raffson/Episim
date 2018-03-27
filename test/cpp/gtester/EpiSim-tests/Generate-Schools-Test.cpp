@@ -67,11 +67,11 @@ TEST_P(SchoolTest, WrongInput)
         // -----------------------------------------------------------------------------------------
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
-        cout << "Building the GeoGrid." << endl;
-        auto grid = GeoGrid("config/geogen_test_school.xml");
-        cout << "Done building the GeoGrid." << endl;
-
-        // ASSERT_DEATH_IF_SUPPORTED(grid.GenerateSchools(), ".");
+        // Bad input file with fractions that are FUBAR
+        auto grid = GeoGrid("config/schools&colleges_bad_frac_0.xml");
+        ASSERT_DEATH_IF_SUPPORTED(grid.GenerateSchools(), "");
+        grid = GeoGrid("config/schools&colleges_bad_frac_1.xml");
+        ASSERT_DEATH_IF_SUPPORTED(grid.GenerateSchools(), "");
 }
 
 TEST_P(SchoolTest, HighMoreLowLess)

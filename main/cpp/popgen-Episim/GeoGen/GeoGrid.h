@@ -9,6 +9,7 @@
 #include <memory>
 #include <random>
 #include <vector>
+#include <limits>
 
 #include "boost/filesystem.hpp"
 #include "boost/property_tree/ptree.hpp"
