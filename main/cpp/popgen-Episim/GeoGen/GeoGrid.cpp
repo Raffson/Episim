@@ -30,13 +30,12 @@ namespace geogen {
         //      thus cities have a vector of households and each household references their city...
         //      both of those have been done...
         //      I say comment this out like I did with m_communities, and shared pointers should be used...
-
         // Nishchal@everyone According to my opinion the housholds available in households_flanders.xml
-        // are only model of housholds in Flander because if we count the number of people present
-        // there are only 26079. so i'd say model households here (or somewhere else) and in PopulationBuilder
-        // assigning copies of households to a city
-
+        //      are only model of housholds in Flander because if we count the number of people present
+        //      there are only 26079. so i'd say model households here (or somewhere else) and in PopulationBuilder
+        //      assigning copies of households to a city
         m_model_households = parser::ParseHouseholds(base_path + household_file);
+
         //Generating schools
         //auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
         //specs ask this to be read out of config, but could be calculated directly

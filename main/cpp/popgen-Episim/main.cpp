@@ -122,7 +122,6 @@ int main(int argc, char** argv)
     popgen::PopulationGenerator pop_generator(grid);
     pop_generator.AssignAll();
 
-
 #ifdef USING_QT
     //startMap(argc, argv);
     startMap(grid);
