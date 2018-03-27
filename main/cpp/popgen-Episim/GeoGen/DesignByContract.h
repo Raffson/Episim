@@ -19,9 +19,11 @@
 // i.e. in scientific simulating software...
 // I believe it does, however I would like to verify this...
 
-#ifndef NDEBUG
+//#ifndef NDEBUG
 // If NDEBUG is not defined, we abort...
 // (I'm assuming NDEBUG is why we couldn't get our assertions to work...)
+
+//Commenting out the ifndef to abort no matter what...
 #define REQUIRE(assertion, what)                                                                                       \
         if (!(assertion))                                                                                              \
         ((void)printf("%s:%u: failed pre-condition `%s'\n", __FILE__, __LINE__, what), abort())
@@ -30,6 +32,7 @@
         if (!(assertion))                                                                                              \
         ((void)printf("%s:%u: failed post-condition `%s'\n", __FILE__, __LINE__, what), abort())
 
+/*
 #else
 // If NDEBUG is defined, we may not want to abort...
 // Could be useful to see if a crash occurs when a pre-condition or post-condition is not met..
@@ -44,3 +47,4 @@
         ((void)printf("%s:%u: failed post-condition `%s'\n", __FILE__, __LINE__, what))
 
 #endif // NDEBUG
+*/
