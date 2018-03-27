@@ -20,7 +20,7 @@ namespace popgen {
         //households should be assigned to cities
         vector<Household> households = m_geogrid.GetModelHouseholds();
 
-        for(auto& a_city: m_geogrid.GetCities()) {
+        for(auto& a_city: m_geogrid.GetCities()){
             const unsigned int max_population =  a_city.second->GetPopulation();
             auto remaining_population = (int) max_population;
 
@@ -67,6 +67,7 @@ namespace popgen {
     //Raphael@Nishchal this is good shit, however on the scale that we're looking
     // I wonder if it makes sense to go this far since we have euclidian coordinates as well...
     // nevertheless, this is still good shit and on larger scales this will be essential...
+    //ROBBE@Everyone this shuld not be a member function??
     double PopulationGenerator::GetDistance(geogen::Coordinate c1, geogen::Coordinate c2)
     {
         const double earths_radius = 6371.0; //in kilometer
@@ -149,11 +150,7 @@ namespace popgen {
                 //cout<< a_school_attendant.age << " has been added to contact_pool " << index<<endl;
 
             }
-
-
         }
-
-
     }
 
     void PopulationGenerator::AssignToColleges()

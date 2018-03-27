@@ -11,7 +11,8 @@ namespace geogen {
 
     GeoGrid::GeoGrid(const boost::filesystem::path & config_file) {
 
-        REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
+        REQUIRE(file_exists(config_file),
+                "Could not find the provided configuration file");
 
         this->m_school_count = 0;
         //Setting up property tree to parse xml config file
@@ -68,9 +69,14 @@ namespace geogen {
         string type = p_tree.get("popgen.rng.type","mrg2");
         m_generator = stride::util::RNManager(stride::util::RNManager::Info(type,(unsigned long) seed));
 
-        ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
-        ENSURE(1 >= m_student_frac and m_student_frac >= 0, "fraction must be between 0 and 1");
-        ENSURE(m_commuting_students_frac <= 1, "Commuting students bigger then 1" );
+        ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1,
+               "Pop frac should equal 1");
+        ENSURE(1 >= m_student_frac and m_student_frac >= 0,
+               "fraction must be between 0 and 1");
+        ENSURE(m_commuting_students_frac <= 1 and m_commuting_students_frac >= 0,
+               "Commuting students bigger then 1" );
+
+
     }
 
     void GeoGrid::GenerateAll() {
@@ -85,7 +91,6 @@ namespace geogen {
 
         REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
         REQUIRE(m_schooled_frac >= 0, "Schooled fract can't be negative");
-        REQUIRE(m_school_size >= 0, "The initial school size can't be negative");
         // Calculating extra data
         // rounded because we don't have a fraction of a person
         auto amount_schooled = (const unsigned int) round(m_total_pop * m_schooled_frac);
@@ -178,11 +183,14 @@ namespace geogen {
                 " student commuting_frac is not a fractal.");
         REQUIRE(m_commuting_workers_frac <= 1 and m_commuting_workers_frac >= 0,
                 "Is a commuting workers frac.");
+        REQUIRE(m_commuting_students_frac + m_commuting_workers_frac <= 1,
+                "Total commuters fractal is bigger then 1");
 
         //dividing workplaces to cities
         //TODO This should also be placed according to a discrete distribution!
         //TODO still figuring out how i should do this for this function
         //      -> isn't that nishchal's job?
+        //unsigned int total_workplaces =
         for (auto it:m_cities){
             shared_ptr<City> city = it.second;
             unsigned int in_commuters = city->GetNumberOfInCommuters();
@@ -197,9 +205,7 @@ namespace geogen {
                 shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
                 city->AddCommunity(community);
             }
-
         }
-
     }
 
     // Communities need to be distributed according to the relative population size.
