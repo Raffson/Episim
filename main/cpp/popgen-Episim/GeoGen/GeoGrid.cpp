@@ -68,15 +68,18 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // Setting up RNG
         long   seed = p_tree.get("popgen.rng.seed", 0);
         string type = p_tree.get("popgen.rng.type", "mrg2");
-        generator = stride::util::RNManager(stride::util::RNManager::Info(type, (unsigned long)seed));
+        generator   = stride::util::RNManager(stride::util::RNManager::Info(type, (unsigned long)seed));
 
-        //float eps = numeric_limits<float>::epsilon(); //rounding errors cause the first ensure to fail in some conditions...
-        //ENSURE(fabs(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac - 1) < eps, "Pop frac should equal 1");
+        // float eps = numeric_limits<float>::epsilon(); //rounding errors cause the first ensure to fail in some
+        // conditions... ENSURE(fabs(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac - 1) < eps, "Pop
+        // frac should equal 1");
         ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
         ENSURE(1 >= m_student_frac and m_student_frac >= 0, "Student fraction must be between 0 and 1");
-        ENSURE(1 >= m_commuting_students_frac and m_commuting_students_frac >= 0, "Student Commuting fraction must be between 0 and 1");
+        ENSURE(1 >= m_commuting_students_frac and m_commuting_students_frac >= 0,
+               "Student Commuting fraction must be between 0 and 1");
         ENSURE(1 >= m_active_frac and m_active_frac >= 0, "Active workers fraction must be between 0 and 1");
-        ENSURE(1 >= m_commuting_workers_frac and m_commuting_workers_frac >= 0, "Commuting workers fraction must be between 0 and 1");
+        ENSURE(1 >= m_commuting_workers_frac and m_commuting_workers_frac >= 0,
+               "Commuting workers fraction must be between 0 and 1");
 }
 
 void GeoGrid::GenerateAll()
@@ -159,25 +162,24 @@ void GeoGrid::GenerateColleges()
                 AdjustLargestCities(lc, it.second);
         }
 
-        //generate colleges to the respective cities...
-        for (auto &it : lc) {
-            double students = it->GetPopulation()*m_workers1_frac*m_student_frac;
-            //doesn't matter if students is a double at this time
-            // since this is only an estimate for the number of colleges
-            auto nrcolleges = (unsigned int) round(students / m_college_size);
+        // generate colleges to the respective cities...
+        for (auto& it : lc) {
+                double students = it->GetPopulation() * m_workers1_frac * m_student_frac;
+                // doesn't matter if students is a double at this time
+                // since this is only an estimate for the number of colleges
+                auto nrcolleges = (unsigned int)round(students / m_college_size);
 
-            //TODO Is it not given wich cities have exactly one college, calculation needed??
-            // -> tricky question, suppose this city has less than (m_college_size*0.5) students
-            //      then nrcolleges would round to 0 and we would have a problem...
-            //      the result would be that m_maxlc will be bigger than the number of cities with colleges...
-            //      this is a valid remark...
+                // TODO Is it not given wich cities have exactly one college, calculation needed??
+                // -> tricky question, suppose this city has less than (m_college_size*0.5) students
+                //      then nrcolleges would round to 0 and we would have a problem...
+                //      the result would be that m_maxlc will be bigger than the number of cities with colleges...
+                //      this is a valid remark...
 
-            for(unsigned int i = 0; i < nrcolleges; i++) {
-                shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
-                it->AddCommunity(college);
-                //m_communities[college->getID()] = college
-            }
-
+                for (unsigned int i = 0; i < nrcolleges; i++) {
+                        shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
+                        it->AddCommunity(college);
+                        // m_communities[college->getID()] = college
+                }
         }
 }
 

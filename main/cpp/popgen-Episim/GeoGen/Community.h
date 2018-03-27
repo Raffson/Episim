@@ -62,7 +62,6 @@ public:
 
         int GetSize() const;
 
-
 private:
         static unsigned int& UIDgenerator();
 

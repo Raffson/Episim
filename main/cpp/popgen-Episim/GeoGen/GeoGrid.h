@@ -5,11 +5,11 @@
 
 #include <cmath>
 #include <iostream>
+#include <limits>
 #include <map>
 #include <memory>
 #include <random>
 #include <vector>
-#include <limits>
 
 #include "boost/filesystem.hpp"
 #include "boost/property_tree/ptree.hpp"
@@ -110,10 +110,9 @@ public:
         shared_ptr<City>& operator[](int i);
 
         /// Return the households of the geogrid
-        vector<Household> GetModelHouseholds(){ return m_model_households;}
+        vector<Household> GetModelHouseholds() { return m_model_households; }
 
-
-        vector<shared_ptr<City>> GetCitiesWithCollege(){return m_cities_with_college;}
+        vector<shared_ptr<City>> GetCitiesWithCollege() { return m_cities_with_college; }
 
 private:
         /// Returns index of city with smallest population from 'lc'
@@ -218,4 +217,3 @@ private: // DO NOT DELETE! this seperates private members from private methods..
 static stride::util::RNManager generator;
 
 } // namespace geogen
-
