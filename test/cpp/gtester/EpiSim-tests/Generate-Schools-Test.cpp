@@ -59,10 +59,10 @@ TEST_P(SchoolTest, HappyDayScenario)
 
         // Do the test...
         ASSERT_NO_THROW(grid.GenerateSchools()); // happy day
-        //Raphael@Robbe, after deducing fractions from the households, the expected number is incorrect,
+        // Raphael@Robbe, after deducing fractions from the households, the expected number is incorrect,
         // so I changed this to what I believe needs to be done...
-        //EXPECT_EQ(grid.GetSchoolCount(), 1736);
-        unsigned int target = round( round(grid.GetTotalPop() * grid.GetSchooledFrac()) / grid.GetSchoolSize() );
+        // EXPECT_EQ(grid.GetSchoolCount(), 1736);
+        unsigned int target = round(round(grid.GetTotalPop() * grid.GetSchooledFrac()) / grid.GetSchoolSize());
         EXPECT_EQ(grid.GetSchoolCount(), target);
 }
 
@@ -84,9 +84,9 @@ TEST_P(SchoolTest, WrongInput)
         ASSERT_DEATH_IF_SUPPORTED(grid.GenerateSchools(), "");
         */
 
-        //uncomment the next 2 lines once the "unsigned int refractor" has happened...
-        //grid = GeoGrid("config/bad_community_sizes.xml");
-        //ASSERT_DEATH_IF_SUPPORTED(grid.GenerateSchools(), "");
+        // uncomment the next 2 lines once the "unsigned int refractor" has happened...
+        // grid = GeoGrid("config/bad_community_sizes.xml");
+        // ASSERT_DEATH_IF_SUPPORTED(grid.GenerateSchools(), "");
 }
 
 TEST_P(SchoolTest, HighMoreLowLess)

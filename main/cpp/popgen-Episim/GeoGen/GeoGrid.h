@@ -15,8 +15,8 @@
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
 
-#include "util/RNManager.h"
 #include "util/ConfigInfo.h"
+#include "util/RNManager.h"
 
 #include "popgen-Episim/GeoGen/City.h"
 #include "popgen-Episim/GeoGen/Community.h"
@@ -133,7 +133,6 @@ private:
         void GetMainFractions(const vector<shared_ptr<Household>>& hhs);
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
-
         /// Contains all households for the GeoGrid -> perhaps move this into City?
         vector<shared_ptr<Household>> households{};
 

@@ -14,21 +14,23 @@ void GeoGrid::GetMainFractions(const vector<shared_ptr<Household>>& hhs)
         unsigned int workers1 = 0;
         unsigned int workers2 = 0;
         unsigned int rest     = 0;
-        for( auto& house : hhs )
-        {
-                for( auto& member : house->GetMembers() )
-                {
-                        //Ordered these if-else if construction to fall as quickly as possible
+        for (auto& house : hhs) {
+                for (auto& member : house->GetMembers()) {
+                        // Ordered these if-else if construction to fall as quickly as possible
                         // in the (statistically) most likely age-category...
                         // it's agueable whether "rest" is more likely than workers1 since it covers
                         // a bigger interval, i.e. [0,3) U [65, +inf)
-                        if (member.age >= 26 and member.age < 65) workers2 += 1;
-                        else if (member.age >= 3 and member.age < 18) schooled += 1;
-                        else if (member.age >= 18 and member.age < 26) workers1 += 1;
-                        else rest += 1;
+                        if (member.age >= 26 and member.age < 65)
+                                workers2 += 1;
+                        else if (member.age >= 3 and member.age < 18)
+                                schooled += 1;
+                        else if (member.age >= 18 and member.age < 26)
+                                workers1 += 1;
+                        else
+                                rest += 1;
                 }
         }
-        float total = schooled + workers1 + workers2 + rest;
+        float total     = schooled + workers1 + workers2 + rest;
         m_schooled_frac = schooled / total;
         m_workers1_frac = workers1 / total;
         m_workers2_frac = workers2 / total;
@@ -54,7 +56,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 
         m_cities = parser::ParseCities(base_path + city_file, base_path + commuting_file, true);
 
-        //Raphael@everyone, until the refractor occurs, I can't delete/rename this..
+        // Raphael@everyone, until the refractor occurs, I can't delete/rename this..
         // however i want to start making my functions with the correct signatures for after the refractor,
         // therefore I will rename this member to a more appropriate name for after the refractor,
         // as a result, we'll just need to delete some stuff out of the header file and that'll be it...
@@ -71,10 +73,10 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
 
         GetMainFractions(households);
-        //m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
-        //m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers1");
-        //m_workers2_frac = p_tree.get<float>("popgen.pop_info.fraction_workers2");
-        //m_rest_frac     = p_tree.get<float>("popgen.pop_info.fraction_rest");
+        // m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
+        // m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers1");
+        // m_workers2_frac = p_tree.get<float>("popgen.pop_info.fraction_workers2");
+        // m_rest_frac     = p_tree.get<float>("popgen.pop_info.fraction_rest");
 
         m_student_frac            = p_tree.get<float>("popgen.pop_info.fraction_students");
         m_commuting_students_frac = p_tree.get<float>("popgen.pop_info.fraction_commuting_students");
@@ -93,14 +95,14 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         string type = p_tree.get("popgen.rng.type", "mrg2");
         generator   = stride::util::RNManager(stride::util::RNManager::Info(type, (unsigned long)seed));
 
-        //rounding errors cause the first ensure to fail in some conditions...
+        // rounding errors cause the first ensure to fail in some conditions...
         // however, is this first ENSURE necessary?
         // it should never fail since we decude the fractions from the households,
         // so removed the correspronding death test until we find a better test...
-        float epsilon = 0.000001;
-        float totalfrac = m_workers1_frac+m_workers2_frac+m_rest_frac+m_schooled_frac;
+        float epsilon   = 0.000001;
+        float totalfrac = m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac;
         ENSURE(fabs(totalfrac - 1) < epsilon, "Pop frac should equal 1");
-        //ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
+        // ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
         ENSURE(1 >= m_student_frac and m_student_frac >= 0, "Student fraction must be between 0 and 1");
         ENSURE(1 >= m_commuting_students_frac and m_commuting_students_frac >= 0,
                "Student Commuting fraction must be between 0 and 1");
@@ -151,9 +153,10 @@ void GeoGrid::GenerateSchools()
                 shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
 
                 // Add contactpools
-                for (auto j = 0; j<cps; j++){
+                for (auto j = 0; j < cps; j++) {
                         stride::ContactProfiles contactProfiles;
-                        auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::School,contactProfiles);
+                        auto                    pool = std::make_shared<stride::ContactPool>(
+                            m_id_generator, stride::ContactPoolType::Id::School, contactProfiles);
                         m_id_generator++;
                         nw_school->AddContactPool(pool);
                 }
@@ -225,9 +228,10 @@ void GeoGrid::GenerateColleges()
                 for (unsigned int i = 0; i < nrcolleges; i++) {
                         shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
                         // Add contactpools
-                        for (auto j = 0; j<cps; j++){
+                        for (auto j = 0; j < cps; j++) {
                                 stride::ContactProfiles contactProfiles;
-                                auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::School,contactProfiles);
+                                auto                    pool = std::make_shared<stride::ContactPool>(
+                                    m_id_generator, stride::ContactPoolType::Id::School, contactProfiles);
                                 m_id_generator++;
                                 college->AddContactPool(pool);
                         }
@@ -249,7 +253,6 @@ void GeoGrid::GenerateWorkplaces()
         // TODO still figuring out how i should do this for this function
         //      -> isn't that nishchal's job?
 
-
         for (auto it : m_cities) {
                 shared_ptr<City> city         = it.second;
                 unsigned int     in_commuters = city->GetNumberOfInCommuters();
@@ -264,7 +267,8 @@ void GeoGrid::GenerateWorkplaces()
                         shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
                         /// Add contactpools
                         stride::ContactProfiles contactProfiles;
-                        auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::Work,contactProfiles);
+                        auto                    pool = std::make_shared<stride::ContactPool>(
+                            m_id_generator, stride::ContactPoolType::Id::Work, contactProfiles);
                         m_id_generator++;
                         community->AddContactPool(pool);
                         city->AddCommunity(community);
@@ -303,9 +307,10 @@ void GeoGrid::GenerateCommunities()
                 shared_ptr<City>      chosen_city = m_cities[index];
                 shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
                 // Add contactpools
-                for (auto j = 0; j<cps; j++){
+                for (auto j = 0; j < cps; j++) {
                         stride::ContactProfiles contactProfiles;
-                        auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::PrimaryCommunity,contactProfiles);
+                        auto                    pool = std::make_shared<stride::ContactPool>(
+                            m_id_generator, stride::ContactPoolType::Id::PrimaryCommunity, contactProfiles);
                         m_id_generator++;
                         nw_community->AddContactPool(pool);
                 }

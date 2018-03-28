@@ -135,20 +135,20 @@ TEST_P(CollegeTest, WrongInput)
         ASSERT_DEATH_IF_SUPPORTED(grid.GenerateColleges(), "");
         */
 
-        //uncomment the next 2 lines once the "unsigned int refractor" has happened...
-        //grid = GeoGrid("config/bad_community_sizes.xml");
-        //ASSERT_DEATH_IF_SUPPORTED(grid.GenerateColleges(), "");
+        // uncomment the next 2 lines once the "unsigned int refractor" has happened...
+        // grid = GeoGrid("config/bad_community_sizes.xml");
+        // ASSERT_DEATH_IF_SUPPORTED(grid.GenerateColleges(), "");
 }
 
 // Copy of the code since it is a private function and it is used by AdjustLargestCities
 unsigned int findSmallest(const vector<shared_ptr<City>>& lc)
 {
-unsigned int smallest = 0;
-for (unsigned int i = 1; i < lc.size(); i++) {
-        if (lc[smallest]->GetPopulation() > lc[i]->GetPopulation())
-                smallest = i;
-}
-return smallest;
+        unsigned int smallest = 0;
+        for (unsigned int i = 1; i < lc.size(); i++) {
+                if (lc[smallest]->GetPopulation() > lc[i]->GetPopulation())
+                        smallest = i;
+        }
+        return smallest;
 }
 // Copy of the code since it is a private function...
 // small adjustment is needed, m_maxlc must be passed on
@@ -156,51 +156,51 @@ return smallest;
 // therefore no direct access to m_maxlc...
 void adjustLargestCities(vector<shared_ptr<City>>& lc, const shared_ptr<City>& city, unsigned int m_maxlc)
 {
-if (lc.size() < m_maxlc)
-        lc.push_back(city);
-else {
-        unsigned int citpop   = city->GetPopulation();
-        unsigned int smallest = findSmallest(lc);
-        if (citpop > lc[smallest]->GetPopulation())
-                lc[smallest] = city;
-}
+        if (lc.size() < m_maxlc)
+                lc.push_back(city);
+        else {
+                unsigned int citpop   = city->GetPopulation();
+                unsigned int smallest = findSmallest(lc);
+                if (citpop > lc[smallest]->GetPopulation())
+                        lc[smallest] = city;
+        }
 }
 
 TEST_P(CollegeTest, adjustLargestCitiesUnit)
 {
-// We'll push 3 cities with m_maxlc=3
-// thus the 4th city will replace iff it has a larger population than one of the 3 cities in lc
-vector<shared_ptr<City>> lc;
+        // We'll push 3 cities with m_maxlc=3
+        // thus the 4th city will replace iff it has a larger population than one of the 3 cities in lc
+        vector<shared_ptr<City>> lc;
 
-shared_ptr<City> c1 = make_shared<City>(1, 1, 10, Coordinate(), "TestCity1");
-adjustLargestCities(lc, c1, 3);
-ASSERT_EQ(lc.size(), 1);
+        shared_ptr<City> c1 = make_shared<City>(1, 1, 10, Coordinate(), "TestCity1");
+        adjustLargestCities(lc, c1, 3);
+        ASSERT_EQ(lc.size(), 1);
 
-shared_ptr<City> c2 = make_shared<City>(2, 1, 20, Coordinate(), "TestCity2");
-adjustLargestCities(lc, c2, 3);
-ASSERT_EQ(lc.size(), 2);
+        shared_ptr<City> c2 = make_shared<City>(2, 1, 20, Coordinate(), "TestCity2");
+        adjustLargestCities(lc, c2, 3);
+        ASSERT_EQ(lc.size(), 2);
 
-shared_ptr<City> c3 = make_shared<City>(3, 1, 30, Coordinate(), "TestCity3");
-adjustLargestCities(lc, c3, 3);
-ASSERT_EQ(lc.size(), 3);
+        shared_ptr<City> c3 = make_shared<City>(3, 1, 30, Coordinate(), "TestCity3");
+        adjustLargestCities(lc, c3, 3);
+        ASSERT_EQ(lc.size(), 3);
 
-// Try adding a city with smaller population than other cities...
-// Size should remain 3 and c1, c2, c3 in lc...
-shared_ptr<City> c4 = make_shared<City>(4, 1, 5, Coordinate(), "TestCity4");
-adjustLargestCities(lc, c4, 3);
-ASSERT_EQ(lc.size(), 3);
-ASSERT_EQ(lc[0], c1);
-ASSERT_EQ(lc[1], c2);
-ASSERT_EQ(lc[2], c3);
+        // Try adding a city with smaller population than other cities...
+        // Size should remain 3 and c1, c2, c3 in lc...
+        shared_ptr<City> c4 = make_shared<City>(4, 1, 5, Coordinate(), "TestCity4");
+        adjustLargestCities(lc, c4, 3);
+        ASSERT_EQ(lc.size(), 3);
+        ASSERT_EQ(lc[0], c1);
+        ASSERT_EQ(lc[1], c2);
+        ASSERT_EQ(lc[2], c3);
 
-// Try adding a city with larger population than other cities...
-// Size should remain 3 and c5, c2, c3 in lc...
-shared_ptr<City> c5 = make_shared<City>(5, 1, 15, Coordinate(), "TestCity4");
-adjustLargestCities(lc, c5, 3);
-ASSERT_EQ(lc.size(), 3);
-ASSERT_EQ(lc[0], c5);
-ASSERT_EQ(lc[1], c2);
-ASSERT_EQ(lc[2], c3);
+        // Try adding a city with larger population than other cities...
+        // Size should remain 3 and c5, c2, c3 in lc...
+        shared_ptr<City> c5 = make_shared<City>(5, 1, 15, Coordinate(), "TestCity4");
+        adjustLargestCities(lc, c5, 3);
+        ASSERT_EQ(lc.size(), 3);
+        ASSERT_EQ(lc[0], c5);
+        ASSERT_EQ(lc[1], c2);
+        ASSERT_EQ(lc[2], c3);
 }
 
 // In the testplan I mentioned "assignCollege"

@@ -106,10 +106,10 @@ TEST(GeoGridCtorTest, BadFractions)
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_active_frac_1.xml"), "");
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_workcom_frac_1.xml"), "");
 
-        //This last test will check a wrong contactpool size,
+        // This last test will check a wrong contactpool size,
         // which is technically not a fraction but we need to test it somewhere...
-        //uncomment the next line once the "unsigned int refractor" has happened...
-        //ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_contactpool_size.xml"), "");
+        // uncomment the next line once the "unsigned int refractor" has happened...
+        // ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_contactpool_size.xml"), "");
 }
 
 TEST(GeoGridCtorTest, FaultyCityRow)

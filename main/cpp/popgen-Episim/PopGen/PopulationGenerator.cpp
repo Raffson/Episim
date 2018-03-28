@@ -224,7 +224,7 @@ void PopulationGenerator::AssignToCommunity()
                                 for (auto& a_community : a_nearest_city->GetAllCommunities()) {
                                         if (a_community->GetCommunityType() == geogen::CommunityType::Primary ||
                                             a_community->GetCommunityType() == geogen::CommunityType::Secondary) {
-                                             nearest_communities.push_back(a_community);
+                                                nearest_communities.push_back(a_community);
                                         }
                                 }
                         }

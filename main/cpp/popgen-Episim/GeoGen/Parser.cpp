@@ -83,7 +83,7 @@ vector<shared_ptr<Household>> ParseHouseholds(const boost::filesystem::path& pat
 
         for (auto& node : p_tree.get_child("HouseholdProfile")) {
                 shared_ptr<Household> a_household(new Household());
-                auto      subtree = node.second;
+                auto                  subtree = node.second;
                 for (auto& v : subtree.get_child("")) {
                         Person a_person;
                         a_person.age     = stoi(v.second.data());
