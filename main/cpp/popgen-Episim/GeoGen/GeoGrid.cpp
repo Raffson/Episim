@@ -204,16 +204,15 @@ void GeoGrid::GenerateColleges()
         REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");
         REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");
         REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");
-        vector<shared_ptr<City>> lc;
         for (auto& it : m_cities) {
-                AdjustLargestCities(lc, it.second);
+                AdjustLargestCities(m_cities_with_college, it.second);
         }
 
         // Determine number of contactpools
         auto cps = round(m_college_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         // generate colleges to the respective cities...
-        for (auto& it : lc) {
+        for (auto& it : m_cities_with_college) {
                 double students = it->GetPopulation() * m_workers1_frac * m_student_frac;
                 // doesn't matter if students is a double at this time
                 // since this is only an estimate for the number of colleges

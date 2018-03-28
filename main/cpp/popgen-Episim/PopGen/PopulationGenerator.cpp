@@ -180,7 +180,6 @@ void PopulationGenerator::AssignToColleges()
                                                                 search_radius *= 2;
                                                         }
                                                 }
-                                                cout << "Stuck?" << endl;
                                                 vector<shared_ptr<stride::ContactPool>> selected_contact_pools;
 
                                                 trng::uniform_int_dist distr2(0, selected_contact_pools.size());
