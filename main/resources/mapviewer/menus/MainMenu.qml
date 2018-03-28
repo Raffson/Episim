@@ -137,8 +137,6 @@ MenuBar {
                 }
             }
             pop_info.text = total_count
-            pop_info.anchors.top = map.top
-
         }
 
     }
