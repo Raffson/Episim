@@ -152,7 +152,7 @@ void PopulationGenerator::AssignToColleges()
 {
         vector<Person*> college_students_commuters;
         vector<Person*> college_students_home;
-    
+
         for (auto& a_city : m_geogrid.GetCities()) {
                 for (auto& hh : a_city.second->GetHouseholds()) {
                         for (auto& a_person : hh->GetMembers()) {

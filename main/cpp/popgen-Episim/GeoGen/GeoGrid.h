@@ -180,7 +180,7 @@ private: // DO NOT DELETE! this seperates private members from private methods..
         /// Fraction of workers1 that is student -> make this const?
         float m_student_frac{};
 
-        /// the ratio of commuters that are workers -> make this const?
+        /// the ratio of commuters that are students -> make this const?
         float m_commuting_students_frac{};
 
         /// Total population that is actually working -> make this const?

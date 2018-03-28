@@ -97,7 +97,6 @@ TEST(GeoGridCtorTest, NonExistingFile)
 TEST(GeoGridCtorTest, BadFractions)
 {
         // Test with a non-existing file
-        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_total_frac.xml"), "");
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_student_frac_0.xml"), "");
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_stucom_frac_0.xml"), "");
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_active_frac_0.xml"), "");
@@ -106,6 +105,11 @@ TEST(GeoGridCtorTest, BadFractions)
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_stucom_frac_1.xml"), "");
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_active_frac_1.xml"), "");
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_workcom_frac_1.xml"), "");
+
+        //This last test will check a wrong contactpool size,
+        // which is technically not a fraction but we need to test it somewhere...
+        //uncomment the next line once the "unsigned int refractor" has happened...
+        //ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_contactpool_size.xml"), "");
 }
 
 TEST(GeoGridCtorTest, FaultyCityRow)

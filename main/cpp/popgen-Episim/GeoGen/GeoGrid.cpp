@@ -3,7 +3,6 @@
 //
 
 #include "GeoGrid.h"
-#include <stdio.h>
 
 using namespace std;
 
@@ -91,6 +90,9 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         generator   = stride::util::RNManager(stride::util::RNManager::Info(type, (unsigned long)seed));
 
         //rounding errors cause the first ensure to fail in some conditions...
+        // however, is this first ENSURE necessary?
+        // it should never fail since we decude the fractions from the households,
+        // so removed the correspronding death test until we find a better test...
         float epsilon = 0.000001;
         float totalfrac = m_workers1_frac+m_workers2_frac+m_rest_frac+m_schooled_frac;
         ENSURE(fabs(totalfrac - 1) < epsilon, "Pop frac should equal 1");
@@ -101,6 +103,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         ENSURE(1 >= m_active_frac and m_active_frac >= 0, "Active workers fraction must be between 0 and 1");
         ENSURE(1 >= m_commuting_workers_frac and m_commuting_workers_frac >= 0,
                "Commuting workers fraction must be between 0 and 1");
+        ENSURE(m_avg_cp_size > 0, "Contactpool's size must be bigger than 0");
 }
 
 void GeoGrid::GenerateAll()
@@ -187,6 +190,10 @@ void GeoGrid::GenerateColleges()
         // TODO always 10?? specify this in the config file?
         // -> no not always 10, I deleted the REQUIRE in comments
         //      should rather be an ENSURE that exactly m_maxlc cities have colleges
+
+        // After deducing fractions from households, these should never fail,
+        // they also become difficult to test since we can no longer play with the fractions,
+        // gotta come up with new tests for this...
         REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
         REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");
         REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");
