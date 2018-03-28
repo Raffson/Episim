@@ -110,7 +110,7 @@ public:
         shared_ptr<City>& operator[](int i);
 
         /// Return the households of the geogrid
-        vector<Household> GetModelHouseholds() { return m_model_households; }
+        vector<shared_ptr<Household>> GetModelHouseholds() { return m_model_households; }
 
         vector<shared_ptr<City>> GetCitiesWithCollege() { return m_cities_with_college; }
 
@@ -128,15 +128,9 @@ private:
         unsigned int CountTotalPop() const;
 
 private: // DO NOT DELETE! this seperates private members from private methods...
-        /// Contains all households for the GeoGrid -> perhaps move this into City?
-        // Raphael@Nishchal, if these households are already in the cities, the why do we need them here?
-        //         and ffs, too much effort to make this a vector of shared pointers to households?
 
-        // Nishchal@Rapahel These are models of households available in the xml file. there are only 26079 people
-        // in that structure. What is done atm is when household is assigned to cities a copy from this model household
-        // is taken and assigned to a city. That's why we have it here and in city
-        // renamed to avoid confusion
-        vector<Household> m_model_households{};
+        /// Contains all households for the GeoGrid -> perhaps move this into City?
+        vector<shared_ptr<Household>> m_model_households{};
 
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities{};

@@ -15,7 +15,7 @@ void PopulationGenerator::AssignHouseholds()
 {
 
         // households should be assigned to cities
-        vector<Household> households = m_geogrid.GetModelHouseholds();
+        vector<shared_ptr<Household>> households = m_geogrid.GetModelHouseholds();
 
         for (auto& a_city : m_geogrid.GetCities()) {
                 const unsigned int max_population       = a_city.second->GetPopulation();
@@ -26,10 +26,10 @@ void PopulationGenerator::AssignHouseholds()
                         trng::uniform_int_dist distr(0, (unsigned int)households.size() - 1);
                         unsigned int           index = geogen::generator.GetGenerator(distr)();
 
-                        households.at(index).SetCityID(a_city.second->GetId());
+                        households.at(index)->SetCityID(a_city.second->GetId());
                         auto a_household = std::make_shared<Household>();
 
-                        for (auto& a_member : households.at(index).GetMembers()) {
+                        for (auto& a_member : households.at(index)->GetMembers()) {
 
                                 if (a_member.age >= 18 && a_member.age < 26) {
                                         // 50% probability that he works and 50% that he goes to college
@@ -43,9 +43,9 @@ void PopulationGenerator::AssignHouseholds()
                         }
 
                         a_city.second->AddHousehold(a_household);
-                        remaining_population -= households.at(index).GetSize();
+                        remaining_population -= households.at(index)->GetSize();
 
-                        for (auto a_member : households.at(index).GetMembers()) {
+                        for (auto a_member : households.at(index)->GetMembers()) {
                                 a_household->AddMember(a_member);
                         }
 

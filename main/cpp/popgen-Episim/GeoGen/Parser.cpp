@@ -75,11 +75,11 @@ void ParseCommuting(const boost::filesystem::path& filename, map<int, shared_ptr
         }
 }
 
-vector<Household> ParseHouseholds(const boost::filesystem::path& path)
+vector<shared_ptr<Household>> ParseHouseholds(const boost::filesystem::path& path)
 {
         boost::property_tree::ptree p_tree;
         boost::property_tree::read_xml(path.string(), p_tree);
-        vector<Household> result;
+        vector<shared_ptr<Household>> result;
 
         for (auto& node : p_tree.get_child("HouseholdProfile")) {
                 Household a_household;
@@ -90,7 +90,7 @@ vector<Household> ParseHouseholds(const boost::filesystem::path& path)
                         a_person.work_id = 0;
                         a_household.AddMember(a_person);
                 }
-                result.push_back(a_household);
+                result.push_back(make_shared<Household>(a_household));
         }
         return result;
 }

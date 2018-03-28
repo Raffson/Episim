@@ -9,6 +9,7 @@ using namespace std;
 
 namespace geogen {
 
+
 GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 {
 
