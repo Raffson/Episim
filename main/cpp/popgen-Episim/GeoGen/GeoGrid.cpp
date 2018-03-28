@@ -18,9 +18,13 @@ void GeoGrid::GetMainFractions(const vector<shared_ptr<Household>>& hhs)
         {
                 for( auto& member : house->GetMembers() )
                 {
+                        //Ordered these if-else if construction to fall as quickly as possible
+                        // in the (statistically) most likely age-category...
+                        // it's agueable whether "rest" is more likely than workers1 since it covers
+                        // a bigger interval, i.e. [0,3) U [65, +inf)
                         if (member.age >= 26 and member.age < 65) workers2 += 1;
-                        else if (member.age >= 18 and member.age < 26) workers1 += 1;
                         else if (member.age >= 3 and member.age < 18) schooled += 1;
+                        else if (member.age >= 18 and member.age < 26) workers1 += 1;
                         else rest += 1;
                 }
         }
@@ -126,8 +130,7 @@ void GeoGrid::GenerateSchools()
         // round because we do not build half a school
         auto amount_of_schools = (const unsigned int)round(amount_schooled / m_school_size);
 
-        /// Determine number of contactpools
-        /// Don't hate me for doing it this way, I'm thinking of a better one
+        // Determine number of contactpools
         auto cps = round(m_school_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         // Setting up to divide the schools to cities
@@ -147,7 +150,7 @@ void GeoGrid::GenerateSchools()
                 shared_ptr<City>      chosen_city = m_cities[index];
                 shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
 
-                /// Add contactpools
+                // Add contactpools
                 for (auto j = 0; j<cps; j++){
                         stride::ContactProfiles contactProfiles;
                         auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::School,contactProfiles);
@@ -203,8 +206,7 @@ void GeoGrid::GenerateColleges()
                 AdjustLargestCities(lc, it.second);
         }
 
-        /// Determine number of contactpools
-        /// Don't hate me for doing it this way, I'm thinking of a better one
+        // Determine number of contactpools
         auto cps = round(m_college_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         // generate colleges to the respective cities...
@@ -222,7 +224,7 @@ void GeoGrid::GenerateColleges()
 
                 for (unsigned int i = 0; i < nrcolleges; i++) {
                         shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
-                        /// Add contactpools
+                        // Add contactpools
                         for (auto j = 0; j<cps; j++){
                                 stride::ContactProfiles contactProfiles;
                                 auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::School,contactProfiles);
@@ -278,8 +280,7 @@ void GeoGrid::GenerateWorkplaces()
 void GeoGrid::GenerateCommunities()
 {
 
-        /// Determine number of contactpools
-        /// Don't hate me for doing it this way, I'm thinking of a better one
+        // Determine number of contactpools
         auto cps = round(m_community_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         vector<shared_ptr<Community>> primsec_communities;
@@ -301,7 +302,7 @@ void GeoGrid::GenerateCommunities()
                 int                   index       = pop_id[generator.GetGenerator(distr)()];
                 shared_ptr<City>      chosen_city = m_cities[index];
                 shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
-                /// Add contactpools
+                // Add contactpools
                 for (auto j = 0; j<cps; j++){
                         stride::ContactProfiles contactProfiles;
                         auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::PrimaryCommunity,contactProfiles);

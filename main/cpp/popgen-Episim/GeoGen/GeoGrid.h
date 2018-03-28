@@ -132,7 +132,7 @@ private:
         /// Assigns the main fractions: schooled, worker1, worker2 & rest
         void GetMainFractions(const vector<shared_ptr<Household>>& hhs);
 
-private: // DO NOT DELETE! this seperates private members from private methods...
+private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
 
         /// Contains all households for the GeoGrid -> perhaps move this into City?
         vector<shared_ptr<Household>> households{};

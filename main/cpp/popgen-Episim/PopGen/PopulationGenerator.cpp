@@ -182,19 +182,6 @@ void PopulationGenerator::AssignToColleges()
                                                 }
                                                 cout << "Stuck?" << endl;
                                                 vector<shared_ptr<stride::ContactPool>> selected_contact_pools;
-                                                // contact_pools.at(index)
-//                                                for (auto& a_city : nearest_cities) {
-//                                                        for (auto& a_community : a_city->GetAllCommunities()) {
-//                                                                if (a_community->GetCommunityType() ==
-//                                                                    geogen::CommunityType::College) {
-//                                                                        for (auto& a_contact_pool :
-//                                                                             a_community->GetContactPools()) {
-//                                                                                selected_contact_pools.push_back(
-//                                                                                    a_contact_pool);
-//                                                                        }
-//                                                                }
-//                                                        }
-//                                                }
 
                                                 trng::uniform_int_dist distr2(0, selected_contact_pools.size());
                                                 // Raphael@Nishchal, again suppressing warnings...
