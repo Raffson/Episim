@@ -122,6 +122,10 @@ void GeoGrid::GenerateSchools()
         // round because we do not build half a school
         auto amount_of_schools = (const unsigned int)round(amount_schooled / m_school_size);
 
+        /// Determine number of contactpools
+        /// Don't hate me for doing it this way, I'm thinking of a better one
+        auto cps = round(500 / 20); /// We need enough pools to distribute all persons
+
         // Setting up to divide the schools to cities
         vector<unsigned int> pop_id; // We will push the id's of the cities for each pop member.
         for (auto& it : m_cities) {
@@ -138,6 +142,15 @@ void GeoGrid::GenerateSchools()
                 int                   index       = pop_id[generator.GetGenerator(distr)()];
                 shared_ptr<City>      chosen_city = m_cities[index];
                 shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
+
+                /// Add contactpools
+                for (auto j = 0; j<cps; j++){
+                        stride::ContactProfiles contactProfiles;
+                        auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::School,contactProfiles);
+                        m_id_generator++;
+                        nw_school->AddContactPool(pool);
+                }
+
                 chosen_city->AddCommunity(nw_school);
                 // m_communities[nw_school->getID()] = nw_school
         }
@@ -182,6 +195,10 @@ void GeoGrid::GenerateColleges()
                 AdjustLargestCities(lc, it.second);
         }
 
+        /// Determine number of contactpools
+        /// Don't hate me for doing it this way, I'm thinking of a better one
+        auto cps = round(3000 / 20); /// We need enough pools to distribute all persons
+
         // generate colleges to the respective cities...
         for (auto& it : lc) {
                 double students = it->GetPopulation() * m_workers1_frac * m_student_frac;
@@ -197,6 +214,13 @@ void GeoGrid::GenerateColleges()
 
                 for (unsigned int i = 0; i < nrcolleges; i++) {
                         shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
+                        /// Add contactpools
+                        for (auto j = 0; j<cps; j++){
+                                stride::ContactProfiles contactProfiles;
+                                auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::School,contactProfiles);
+                                m_id_generator++;
+                                college->AddContactPool(pool);
+                        }
                         it->AddCommunity(college);
                         // m_communities[college->getID()] = college
                 }
@@ -214,6 +238,8 @@ void GeoGrid::GenerateWorkplaces()
         // TODO This should also be placed according to a discrete distribution!
         // TODO still figuring out how i should do this for this function
         //      -> isn't that nishchal's job?
+
+
         for (auto it : m_cities) {
                 shared_ptr<City> city         = it.second;
                 unsigned int     in_commuters = city->GetNumberOfInCommuters();
@@ -226,6 +252,11 @@ void GeoGrid::GenerateWorkplaces()
 
                 for (unsigned int i = 0; i < number_of_workplaces; i++) {
                         shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
+                        /// Add contactpools
+                        stride::ContactProfiles contactProfiles;
+                        auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::Work,contactProfiles);
+                        m_id_generator++;
+                        community->AddContactPool(pool);
                         city->AddCommunity(community);
                 }
         }
@@ -238,6 +269,10 @@ void GeoGrid::GenerateWorkplaces()
 //      i.e. if the hard limit still holds...
 void GeoGrid::GenerateCommunities()
 {
+
+        /// Determine number of contactpools
+        /// Don't hate me for doing it this way, I'm thinking of a better one
+        auto cps = round(2000 / 20); /// We need enough pools to distribute all persons
 
         vector<shared_ptr<Community>> primsec_communities;
         // First we need to determine the total number of communities to be used.
@@ -258,6 +293,13 @@ void GeoGrid::GenerateCommunities()
                 int                   index       = pop_id[generator.GetGenerator(distr)()];
                 shared_ptr<City>      chosen_city = m_cities[index];
                 shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
+                /// Add contactpools
+                for (auto j = 0; j<cps; j++){
+                        stride::ContactProfiles contactProfiles;
+                        auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::PrimaryCommunity,contactProfiles);
+                        m_id_generator++;
+                        nw_community->AddContactPool(pool);
+                }
                 chosen_city->AddCommunity(nw_community);
         }
         // Determine how many communities a city should get -> Depricated.

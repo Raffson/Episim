@@ -124,11 +124,11 @@ void PopulationGenerator::AssignToSchools()
                         for (auto& near_city : near_cities) {
                                 for (auto& a_community : near_city->GetAllCommunities()) {
                                         if (a_community->GetCommunityType() == geogen::CommunityType::School) {
-                                                for (unsigned int i = 0; i < avg_contactpools_per_school; i++) {
-                                                        std::shared_ptr<stride::ContactPool> pool;
-                                                        a_community->AddContactPool(pool);
-                                                        contact_pools.push_back(pool);
-                                                }
+//                                                for (unsigned int i = 0; i < avg_contactpools_per_school; i++) {
+//                                                        std::shared_ptr<stride::ContactPool> pool;
+//                                                        a_community->AddContactPool(pool);
+//                                                        contact_pools.push_back(pool);
+//                                                }
                                                 near_schools.push_back(a_community);
                                         }
                                 }
@@ -167,19 +167,19 @@ void PopulationGenerator::AssignToColleges()
         const unsigned int avg_contact_pools         = m_geogrid.GetCollegeSize() / avg_people_in_contactpool;
 
         // creating contactpools
-        for (auto& a_city : m_geogrid.GetCitiesWithCollege()) {
-                for (auto& a_community : a_city->GetAllCommunities()) {
-                        if (a_community->GetCommunityType() == geogen::CommunityType::College) {
-                                for (unsigned int i = 0; i < avg_contact_pools; i++) {
-                                        stride::ContactProfiles contactProfiles;
-                                        auto                    pool = std::make_shared<stride::ContactPool>(
-                                            m_id_generator, stride::ContactPoolType::Id::School, contactProfiles);
-                                        m_id_generator++;
-                                        a_community->AddContactPool(pool);
-                                }
-                        }
-                }
-        }
+//        for (auto& a_city : m_geogrid.GetCitiesWithCollege()) {
+//                for (auto& a_community : a_city->GetAllCommunities()) {
+//                        if (a_community->GetCommunityType() == geogen::CommunityType::College) {
+//                                for (unsigned int i = 0; i < avg_contact_pools; i++) {
+//                                        stride::ContactProfiles contactProfiles;
+//                                        auto                    pool = std::make_shared<stride::ContactPool>(
+//                                            m_id_generator, stride::ContactPoolType::Id::School, contactProfiles);
+//                                        m_id_generator++;
+//                                        a_community->AddContactPool(pool);
+//                                }
+//                        }
+//                }
+//        }
 
         for (auto& a_city : m_geogrid.GetCities()) {
                 for (auto& hh : a_city.second->GetHouseholds()) {
@@ -211,18 +211,18 @@ void PopulationGenerator::AssignToColleges()
                                                 cout << "Stuck?" << endl;
                                                 vector<shared_ptr<stride::ContactPool>> selected_contact_pools;
                                                 // contact_pools.at(index)
-                                                for (auto& a_city : nearest_cities) {
-                                                        for (auto& a_community : a_city->GetAllCommunities()) {
-                                                                if (a_community->GetCommunityType() ==
-                                                                    geogen::CommunityType::College) {
-                                                                        for (auto& a_contact_pool :
-                                                                             a_community->GetContactPools()) {
-                                                                                selected_contact_pools.push_back(
-                                                                                    a_contact_pool);
-                                                                        }
-                                                                }
-                                                        }
-                                                }
+//                                                for (auto& a_city : nearest_cities) {
+//                                                        for (auto& a_community : a_city->GetAllCommunities()) {
+//                                                                if (a_community->GetCommunityType() ==
+//                                                                    geogen::CommunityType::College) {
+//                                                                        for (auto& a_contact_pool :
+//                                                                             a_community->GetContactPools()) {
+//                                                                                selected_contact_pools.push_back(
+//                                                                                    a_contact_pool);
+//                                                                        }
+//                                                                }
+//                                                        }
+//                                                }
 
                                                 trng::uniform_int_dist distr2(0, selected_contact_pools.size());
                                                 // Raphael@Nishchal, again suppressing warnings...
@@ -270,17 +270,17 @@ void PopulationGenerator::AssignToCommunity()
                                         if (a_community->GetCommunityType() == geogen::CommunityType::Primary ||
                                             a_community->GetCommunityType() == geogen::CommunityType::Secondary) {
 
-                                                for (unsigned int i = 0; i < avg_contactpools_per_community; i++) {
-                                                        // Nishchal@everyone Isn't it better idea to create contactpools
-                                                        // while creating all communities
-                                                        stride::ContactProfiles contactProfiles;
-                                                        auto pool = std::make_shared<stride::ContactPool>(
-                                                            m_id_generator, stride::ContactPoolType::Id::School,
-                                                            contactProfiles);
-                                                        m_id_generator++;
-                                                        a_community->AddContactPool(pool);
-                                                        nearest_contact_pools.push_back(pool);
-                                                }
+//                                                for (unsigned int i = 0; i < avg_contactpools_per_community; i++) {
+//                                                        // Nishchal@everyone Isn't it better idea to create contactpools
+//                                                        // while creating all communities
+//                                                        stride::ContactProfiles contactProfiles;
+//                                                        auto pool = std::make_shared<stride::ContactPool>(
+//                                                            m_id_generator, stride::ContactPoolType::Id::School,
+//                                                            contactProfiles);
+//                                                        m_id_generator++;
+//                                                        a_community->AddContactPool(pool);
+//                                                        nearest_contact_pools.push_back(pool);
+//                                                }
                                                 nearest_communities.push_back(a_community);
                                         }
                                 }

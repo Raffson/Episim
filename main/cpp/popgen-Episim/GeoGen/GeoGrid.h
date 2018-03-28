@@ -210,6 +210,8 @@ private: // DO NOT DELETE! this seperates private members from private methods..
         unsigned int m_school_count{};
 
         vector<shared_ptr<City>> m_cities_with_college{};
+
+        std::size_t m_id_generator;
 };
 
 static stride::util::RNManager generator;

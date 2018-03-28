@@ -136,6 +136,7 @@ ApplicationWindow {
                                            font.bold: true
                                            anchors.top: map.top
                                            anchors.topMargin: 5
+                                           anchors.horizontalCenter: map.horizontalCenter
                                         }'
                                        , map)
     }
