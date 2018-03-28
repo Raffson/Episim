@@ -78,6 +78,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         m_active_frac             = p_tree.get<float>("popgen.pop_info.fraction_active_workers");
         m_commuting_workers_frac  = p_tree.get<float>("popgen.pop_info.fraction_commuting_workers");
 
+        m_avg_cp_size     = p_tree.get<unsigned int>("popgen.contactpool_info.average_size");
         m_school_size     = p_tree.get<unsigned int>("popgen.contactpool_info.school.size");
         m_college_size    = p_tree.get<unsigned int>("popgen.contactpool_info.college.size");
         m_maxlc           = p_tree.get<unsigned int>("popgen.contactpool_info.college.cities");
@@ -124,7 +125,7 @@ void GeoGrid::GenerateSchools()
 
         /// Determine number of contactpools
         /// Don't hate me for doing it this way, I'm thinking of a better one
-        auto cps = round(500 / 20); /// We need enough pools to distribute all persons
+        auto cps = round(m_school_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         // Setting up to divide the schools to cities
         vector<unsigned int> pop_id; // We will push the id's of the cities for each pop member.
@@ -197,7 +198,7 @@ void GeoGrid::GenerateColleges()
 
         /// Determine number of contactpools
         /// Don't hate me for doing it this way, I'm thinking of a better one
-        auto cps = round(3000 / 20); /// We need enough pools to distribute all persons
+        auto cps = round(m_college_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         // generate colleges to the respective cities...
         for (auto& it : lc) {
@@ -272,7 +273,7 @@ void GeoGrid::GenerateCommunities()
 
         /// Determine number of contactpools
         /// Don't hate me for doing it this way, I'm thinking of a better one
-        auto cps = round(2000 / 20); /// We need enough pools to distribute all persons
+        auto cps = round(m_community_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         vector<shared_ptr<Community>> primsec_communities;
         // First we need to determine the total number of communities to be used.

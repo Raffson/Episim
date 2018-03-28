@@ -99,6 +99,7 @@ public:
         float        GetCommutingStudentsFrac() const { return m_commuting_students_frac; }
         float        GetActiveFrac() const { return m_active_frac; }
         float        GetCommutingWorkersFrac() const { return m_commuting_workers_frac; }
+        unsigned int GetAvgCpSize() const { return m_avg_cp_size; }
         unsigned int GetSchoolSize() const { return m_school_size; }
         unsigned int GetCollegeSize() const { return m_college_size; }
         unsigned int GetMaxLC() const { return m_maxlc; }
@@ -188,6 +189,9 @@ private: // DO NOT DELETE! this seperates private members from private methods..
 
         /// the ratio of commuters that are workers -> make this const?
         float m_commuting_workers_frac{};
+
+        /// Average size of each contact pool -> make this const?
+        unsigned int m_avg_cp_size{};
 
         /// Average size of each school -> make this const?
         unsigned int m_school_size{};

@@ -93,11 +93,6 @@ double PopulationGenerator::GetDistance(geogen::Coordinate c1, geogen::Coordinat
 
 void PopulationGenerator::AssignToSchools()
 {
-        // TODO Shall we add this information in geogrid?
-        // Raphael@everyone, this hard limit should be part of one of the config files...
-        const unsigned int avg_students_in_contactpool = 20;
-        const unsigned int avg_contactpools_per_school = m_geogrid.GetSchoolSize() / avg_students_in_contactpool;
-
         // Collecting all the school attendants from the city
         for (auto& a_city : m_geogrid.GetCities()) {
                 vector<Person> school_attendants;
@@ -124,11 +119,6 @@ void PopulationGenerator::AssignToSchools()
                         for (auto& near_city : near_cities) {
                                 for (auto& a_community : near_city->GetAllCommunities()) {
                                         if (a_community->GetCommunityType() == geogen::CommunityType::School) {
-//                                                for (unsigned int i = 0; i < avg_contactpools_per_school; i++) {
-//                                                        std::shared_ptr<stride::ContactPool> pool;
-//                                                        a_community->AddContactPool(pool);
-//                                                        contact_pools.push_back(pool);
-//                                                }
                                                 near_schools.push_back(a_community);
                                         }
                                 }
@@ -162,25 +152,7 @@ void PopulationGenerator::AssignToColleges()
 {
         vector<Person*> college_students_commuters;
         vector<Person*> college_students_home;
-
-        const unsigned int avg_people_in_contactpool = 20;
-        const unsigned int avg_contact_pools         = m_geogrid.GetCollegeSize() / avg_people_in_contactpool;
-
-        // creating contactpools
-//        for (auto& a_city : m_geogrid.GetCitiesWithCollege()) {
-//                for (auto& a_community : a_city->GetAllCommunities()) {
-//                        if (a_community->GetCommunityType() == geogen::CommunityType::College) {
-//                                for (unsigned int i = 0; i < avg_contact_pools; i++) {
-//                                        stride::ContactProfiles contactProfiles;
-//                                        auto                    pool = std::make_shared<stride::ContactPool>(
-//                                            m_id_generator, stride::ContactPoolType::Id::School, contactProfiles);
-//                                        m_id_generator++;
-//                                        a_community->AddContactPool(pool);
-//                                }
-//                        }
-//                }
-//        }
-
+    
         for (auto& a_city : m_geogrid.GetCities()) {
                 for (auto& hh : a_city.second->GetHouseholds()) {
                         for (auto& a_person : hh->GetMembers()) {
@@ -252,11 +224,7 @@ void PopulationGenerator::AssignToWorkplaces() {}
 void PopulationGenerator::AssignToCommunity()
 {
         for (auto& a_city : m_geogrid.GetCities()) {
-                // TODO must read these values somewhere better
-                int                search_radius             = m_initial_search_radius;
-                const unsigned int avg_people_in_contactpool = 20;
-                const unsigned int avg_contactpools_per_community =
-                    m_geogrid.GetCommunitySize() / avg_people_in_contactpool;
+                int search_radius = m_initial_search_radius;
                 // const int maximum_person_in_a_community = 2000;
 
                 vector<shared_ptr<geogen::Community>>   nearest_communities;
@@ -269,19 +237,7 @@ void PopulationGenerator::AssignToCommunity()
                                 for (auto& a_community : a_nearest_city->GetAllCommunities()) {
                                         if (a_community->GetCommunityType() == geogen::CommunityType::Primary ||
                                             a_community->GetCommunityType() == geogen::CommunityType::Secondary) {
-
-//                                                for (unsigned int i = 0; i < avg_contactpools_per_community; i++) {
-//                                                        // Nishchal@everyone Isn't it better idea to create contactpools
-//                                                        // while creating all communities
-//                                                        stride::ContactProfiles contactProfiles;
-//                                                        auto pool = std::make_shared<stride::ContactPool>(
-//                                                            m_id_generator, stride::ContactPoolType::Id::School,
-//                                                            contactProfiles);
-//                                                        m_id_generator++;
-//                                                        a_community->AddContactPool(pool);
-//                                                        nearest_contact_pools.push_back(pool);
-//                                                }
-                                                nearest_communities.push_back(a_community);
+                                             nearest_communities.push_back(a_community);
                                         }
                                 }
                         }
