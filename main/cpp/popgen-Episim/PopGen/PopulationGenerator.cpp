@@ -208,7 +208,7 @@ void PopulationGenerator::AssignToColleges()
                                                                 search_radius *= 2;
                                                         }
                                                 }
-
+                                                cout << "Stuck?" << endl;
                                                 vector<shared_ptr<stride::ContactPool>> selected_contact_pools;
                                                 // contact_pools.at(index)
                                                 for (auto& a_city : nearest_cities) {

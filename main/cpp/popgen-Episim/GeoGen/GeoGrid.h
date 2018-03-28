@@ -16,6 +16,7 @@
 #include "boost/property_tree/xml_parser.hpp"
 
 #include "util/RNManager.h"
+#include "util/ConfigInfo.h"
 
 #include "popgen-Episim/GeoGen/City.h"
 #include "popgen-Episim/GeoGen/Community.h"
@@ -110,7 +111,7 @@ public:
         shared_ptr<City>& operator[](int i);
 
         /// Return the households of the geogrid
-        vector<shared_ptr<Household>> GetModelHouseholds() { return m_model_households; }
+        vector<shared_ptr<Household>> GetModelHouseholds() { return households; }
 
         vector<shared_ptr<City>> GetCitiesWithCollege() { return m_cities_with_college; }
 
@@ -127,10 +128,13 @@ private:
         /// in map cities.
         unsigned int CountTotalPop() const;
 
+        /// Assigns the main fractions: schooled, worker1, worker2 & rest
+        void GetMainFractions(const vector<shared_ptr<Household>>& hhs);
+
 private: // DO NOT DELETE! this seperates private members from private methods...
 
         /// Contains all households for the GeoGrid -> perhaps move this into City?
-        vector<shared_ptr<Household>> m_model_households{};
+        vector<shared_ptr<Household>> households{};
 
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities{};

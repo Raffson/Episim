@@ -3,12 +3,34 @@
 //
 
 #include "GeoGrid.h"
-#include <util/ConfigInfo.h>
+#include <stdio.h>
 
 using namespace std;
 
 namespace geogen {
 
+void GeoGrid::GetMainFractions(const vector<shared_ptr<Household>>& hhs)
+{
+        unsigned int schooled = 0;
+        unsigned int workers1 = 0;
+        unsigned int workers2 = 0;
+        unsigned int rest     = 0;
+        for( auto& house : hhs )
+        {
+                for( auto& member : house->GetMembers() )
+                {
+                        if (member.age >= 26 and member.age < 65) workers2 += 1;
+                        else if (member.age >= 18 and member.age < 26) workers1 += 1;
+                        else if (member.age >= 3 and member.age < 18) schooled += 1;
+                        else rest += 1;
+                }
+        }
+        float total = schooled + workers1 + workers2 + rest;
+        m_schooled_frac = schooled / total;
+        m_workers1_frac = workers1 / total;
+        m_workers2_frac = workers2 / total;
+        m_rest_frac     = rest / total;
+}
 
 GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 {
@@ -29,15 +51,11 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 
         m_cities = parser::ParseCities(base_path + city_file, base_path + commuting_file, true);
 
-        // Raphael@everyone should this really happen here? I say it's like communities...
-        //      thus cities have a vector of households and each household references their city...
-        //      both of those have been done...
-        //      I say comment this out like I did with m_communities, and shared pointers should be used...
-        // Nishchal@everyone According to my opinion the housholds available in households_flanders.xml
-        //      are only model of housholds in Flander because if we count the number of people present
-        //      there are only 26079. so i'd say model households here (or somewhere else) and in PopulationBuilder
-        //      assigning copies of households to a city
-        m_model_households = parser::ParseHouseholds(base_path + household_file);
+        //Raphael@everyone, until the refractor occurs, I can't delete/rename this..
+        // however i want to start making my functions with the correct signatures for after the refractor,
+        // therefore I will rename this member to a more appropriate name for after the refractor,
+        // as a result, we'll just need to delete some stuff out of the header file and that'll be it...
+        households = parser::ParseHouseholds(base_path + household_file);
 
         // Generating schools
         // auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
@@ -49,11 +67,11 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // perhaps find a way to verify this number somehow, if the possibility exists of course...
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
 
-        // m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled")
-        m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
-        m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers1");
-        m_workers2_frac = p_tree.get<float>("popgen.pop_info.fraction_workers2");
-        m_rest_frac     = p_tree.get<float>("popgen.pop_info.fraction_rest");
+        GetMainFractions(households);
+        //m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
+        //m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers1");
+        //m_workers2_frac = p_tree.get<float>("popgen.pop_info.fraction_workers2");
+        //m_rest_frac     = p_tree.get<float>("popgen.pop_info.fraction_rest");
 
         m_student_frac            = p_tree.get<float>("popgen.pop_info.fraction_students");
         m_commuting_students_frac = p_tree.get<float>("popgen.pop_info.fraction_commuting_students");
@@ -71,10 +89,11 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         string type = p_tree.get("popgen.rng.type", "mrg2");
         generator   = stride::util::RNManager(stride::util::RNManager::Info(type, (unsigned long)seed));
 
-        // float eps = numeric_limits<float>::epsilon(); //rounding errors cause the first ensure to fail in some
-        // conditions... ENSURE(fabs(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac - 1) < eps, "Pop
-        // frac should equal 1");
-        ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
+        //rounding errors cause the first ensure to fail in some conditions...
+        float epsilon = 0.000001;
+        float totalfrac = m_workers1_frac+m_workers2_frac+m_rest_frac+m_schooled_frac;
+        ENSURE(fabs(totalfrac - 1) < epsilon, "Pop frac should equal 1");
+        //ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
         ENSURE(1 >= m_student_frac and m_student_frac >= 0, "Student fraction must be between 0 and 1");
         ENSURE(1 >= m_commuting_students_frac and m_commuting_students_frac >= 0,
                "Student Commuting fraction must be between 0 and 1");
