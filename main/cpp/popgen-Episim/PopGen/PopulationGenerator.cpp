@@ -11,6 +11,27 @@ namespace popgen {
 PopulationGenerator::PopulationGenerator(geogen::GeoGrid geogrid, unsigned int rad)
     : m_geogrid(geogrid), m_initial_search_radius(rad)
 {
+        InitializeHouseholdSizeFractions();
+}
+
+void PopulationGenerator::InitializeHouseholdSizeFractions()
+{
+        auto                            households = m_geogrid.GetModelHouseholds();
+        map<unsigned int, unsigned int> sizes;
+        for (auto& household : households)
+                sizes[household->GetMembers().size()] += 1;
+
+        double totalhhs = households.size();
+        for (auto& elem : sizes)
+                m_household_size_fracs.push_back(elem.second / totalhhs);
+}
+
+unsigned int PopulationGenerator::GetRandomHouseholdSize()
+{
+        trng::discrete_dist distr(m_household_size_fracs.begin(), m_household_size_fracs.end());
+        // plus 1 because discrete_dist returns numbers between 0 and (m_household_size_fracs.size() - 1)
+        // we need numbers between 1 and m_household_size_fracs.size()
+        return (geogen::generator.GetGenerator(distr)() + 1);
 }
 
 // this function is still wrong as fuck, but we'll get to that later...

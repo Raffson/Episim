@@ -10,6 +10,7 @@
 
 #include "boost/filesystem.hpp"
 
+#include "trng/discrete_dist.hpp"
 #include "trng/lcg64.hpp"
 #include "trng/uniform_int_dist.hpp"
 
@@ -53,11 +54,18 @@ private:
         std::vector<Person>                               GetSchoolAttendants(const shared_ptr<geogen::City>& city);
         std::shared_ptr<Household>                        GenerateHousehold(std::shared_ptr<Household> household);
         std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
+        void                                              InitializeHouseholdSizeFractions();
+        unsigned int                                      GetRandomHouseholdSize();
 
 private:
         geogen::GeoGrid m_geogrid;
 
         const unsigned int m_initial_search_radius;
+
+        /// This member will represent the chances for households with 1, 2, 3, 4,... members
+        /// The first element is the chance a household has 1 member,
+        /// The second elemenet is the chance that a household has 2 members, and so on...
+        std::vector<double> m_household_size_fracs;
 };
 
 } // namespace popgen
