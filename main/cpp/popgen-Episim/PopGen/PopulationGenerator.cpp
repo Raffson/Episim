@@ -167,59 +167,17 @@ void PopulationGenerator::AssignToSchools()
 
 void PopulationGenerator::AssignToColleges()
 {
-        vector<Person*> college_students_commuters;
-        vector<Person*> college_students_home;
-
-        for (auto& a_city : m_geogrid.GetCities()) {
-                for (auto& hh : a_city.second->GetHouseholds()) {
-                        for (auto& a_person : hh->GetMembers()) {
-                                if (a_person.work_id == 0 && a_person.age >= 18 && a_person.age < 26) {
-
-                                        // 50% studying nearby home
-                                        trng::uniform_int_dist distr(0, 2);
-                                        if (geogen::generator.GetGenerator(distr)()) {
-                                                vector<shared_ptr<geogen::City>> nearest_cities;
-                                                unsigned int search_radius = m_initial_search_radius;
-
-                                                while (true) {
-                                                        for (auto& a_city_with_college :
-                                                             m_geogrid.GetCitiesWithCollege()) {
-                                                                double distance =
-                                                                    GetDistance(a_city.second->GetCoordinates(),
-                                                                                a_city_with_college->GetCoordinates());
-                                                                if (distance <= search_radius) {
-                                                                        nearest_cities.push_back(a_city_with_college);
-                                                                }
-                                                        }
-                                                        if (nearest_cities.size() > 0) {
-                                                                break;
-                                                        } else {
-                                                                search_radius *= 2;
-                                                        }
-                                                }
-                                                vector<shared_ptr<stride::ContactPool>> selected_contact_pools;
-
-                                                trng::uniform_int_dist distr2(0, selected_contact_pools.size());
-                                                // Raphael@Nishchal, again suppressing warnings...
-                                                // unsigned int index = geogen::generator.GetGenerator(distr2)();
-
-                                                // selected_contact_pools.at(index)->AddMember(&(a_person));
-
-                                        }
-
-                                        // Those who commutes
-                                        else {
-                                                college_students_commuters.push_back(&a_person);
-                                        }
-                                }
-                        }
-                }
+    vector<Person> students;
+    for(auto& a_city:m_geogrid.GetCities()){
+        for (auto& hh : a_city.second->GetHouseholds()) {
+            hh->GetCollegeStudents(students);
         }
-        /*
-            for(auto& a_city:m_geogrid.GetCitiesWithCollege()){
+        auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::College);
+        trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
 
-            }
-        */
+        //unsigned int index = (unsigned int)geogen::generator.GetGenerator(distr)();
+
+    }
 }
 
 void PopulationGenerator::AssignToWorkplaces() {}
@@ -227,53 +185,26 @@ void PopulationGenerator::AssignToWorkplaces() {}
 void PopulationGenerator::AssignToCommunity()
 {
         for (auto& a_city : m_geogrid.GetCities()) {
-                unsigned int search_radius = m_initial_search_radius;
-                unsigned int last_radius   = 0;
-                // const int maximum_person_in_a_community = 2000;
+            auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::Primary);
+            for (auto& a_household : a_city.second->GetHouseholds()) {
+                for(auto& a_person: a_household->GetMembers()){
+                    // assign the person to a random contactPool
+                    trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
+                    //unsigned int index = geogen::generator.GetGenerator(distr)();
 
-                vector<shared_ptr<geogen::Community>>   nearest_communities;
-                vector<shared_ptr<stride::ContactPool>> nearest_contact_pools;
+                    // TODO the member has to be a stride::Person to be added to stride::ContactPool
 
-                while (true) {
-                        vector<shared_ptr<geogen::City>> nearest_cities =
-                            GetCitiesWithinRadius(*(a_city.second), search_radius, last_radius);
-                        for (auto& a_nearest_city : nearest_cities) {
-                                for (auto& a_community : a_nearest_city->GetAllCommunities()) {
-                                        if (a_community->GetCommunityType() == geogen::CommunityType::Primary ||
-                                            a_community->GetCommunityType() == geogen::CommunityType::Secondary) {
-                                                nearest_communities.push_back(a_community);
-                                        }
-                                }
-                        }
+                    // nearest_contact_pools.at(index)->AddMember(a_person);
+                    // cout <<"A person of age "<< a_person.age << " is added to contact pool at index " <<
+                    // index <<endl;
 
-                        // no communities nearby double the radius
-                        if (nearest_communities.size() == 0) {
-                                search_radius *= 2;
-                        } else {
-                                break;
-                        }
+                    // TODO check the community for that contactpool
+                    // TODO if the limit is crossed remove from the list of the possible
+                    // communities(contactpools)
+                    //}
+                    cout << a_person.age << " is added to contact pool at index " <<index << endl;
                 }
-
-                for (auto& a_household : a_city.second->GetHouseholds()) {
-                        // Raphael@Nishchal, you know the drill by now...
-                        for (unsigned int i = 0; i < a_household->GetMembers().size(); i++) {
-                                // for(auto& a_person: a_household->GetMembers()){
-                                // assign the person to a random contactPool
-                                trng::uniform_int_dist distr(0, (unsigned int)nearest_contact_pools.size());
-                                // Raphael@Nishchal, again suppressing warning...
-                                // unsigned int index = geogen::generator.GetGenerator(distr)();
-
-                                // TODO the member has to be a stride::Person to be added to stride::ContactPool
-
-                                // nearest_contact_pools.at(index)->AddMember(a_person);
-                                // cout <<"A person of age "<< a_person.age << " is added to contact pool at index " <<
-                                // index <<endl;
-
-                                // TODO check the community for that contactpool
-                                // TODO if the limit is crossed remove from the list of the possible
-                                // communities(contactpools)
-                        }
-                }
+            }
         }
 }
 

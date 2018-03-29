@@ -37,6 +37,11 @@ add_custom_target(run_ctest
 	WORKING_DIR ${TESTS_DIR}
 )
 
+add_custom_target(run_ctest_py
+	COMMAND ctest ${CTEST_VERBOSE_OPTION} -R py* -O ${TESTS_DIR}/ctests.txt
+	WORKING_DIR ${TESTS_DIR}
+)
+
 #output isn't written, gotta figure this out...
 #also, need to figure out a way to copy only the files that have been changed...
 add_custom_target( episim-test
