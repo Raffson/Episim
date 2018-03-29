@@ -45,14 +45,14 @@ public:
          * @param origin
          */
         std::vector<std::shared_ptr<geogen::City>> GetCitiesWithinRadius(geogen::City origin, unsigned int radius);
+private:
+    std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(geogen::City city, geogen::CommunityType);
 
 private:
         geogen::GeoGrid m_geogrid;
 
-        std::size_t m_id_generator;
-
-        // TODO read this from some file
         const unsigned int m_initial_search_radius;
+
 };
 
 } // namespace popgen

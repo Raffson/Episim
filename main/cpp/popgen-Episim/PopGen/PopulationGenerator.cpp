@@ -4,6 +4,8 @@
 
 #include "PopulationGenerator.h"
 
+using std::vector;
+
 namespace popgen {
 
 PopulationGenerator::PopulationGenerator(geogen::GeoGrid geogrid, unsigned int rad)
@@ -90,7 +92,33 @@ double PopulationGenerator::GetDistance(geogen::Coordinate c1, geogen::Coordinat
 
         return earths_radius * c;
 }
+    
+vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPools(geogen::City city,
+                                                                                   geogen::CommunityType community_type)
+{
+    unsigned int search_radius = m_initial_search_radius;
+    std::vector<std::shared_ptr<stride::ContactPool>> result;
 
+    while(true){
+        std::vector<std::shared_ptr<geogen::City>> near_cities = GetCitiesWithinRadius(city, search_radius);
+        for(auto& a_city: near_cities){
+            for(auto& a_community: a_city->GetAllCommunities()){
+                if(a_community->GetCommunityType() == community_type){
+                    for(auto& a_contact_pool:a_community->GetContactPools()){
+                        result.push_back(a_contact_pool);
+                    }
+                }
+            }
+        }
+
+        if(result.size() == 0){
+            search_radius *= 2;
+        }
+        else{
+            return result;
+        }
+    }
+}
 void PopulationGenerator::AssignToSchools()
 {
         // Collecting all the school attendants from the city
@@ -105,31 +133,7 @@ void PopulationGenerator::AssignToSchools()
                 }
 
                 // Search schools within 10km radius otherwise double the radius untill we find schools
-                // Raphael@Nishchal again, this hardcoded value is ugly... gotta find a better solution...
-                unsigned int                            radius = m_initial_search_radius;
-                vector<shared_ptr<geogen::Community>>   near_schools;
-                map<int, shared_ptr<geogen::City>>      all_cities = m_geogrid.GetCities();
-                vector<shared_ptr<stride::ContactPool>> contact_pools;
-
-                while (true) {
-                        std::vector<std::shared_ptr<geogen::City>> near_cities =
-                            GetCitiesWithinRadius(*(a_city.second), radius);
-
-                        // fetching schools
-                        for (auto& near_city : near_cities) {
-                                for (auto& a_community : near_city->GetAllCommunities()) {
-                                        if (a_community->GetCommunityType() == geogen::CommunityType::School) {
-                                                near_schools.push_back(a_community);
-                                        }
-                                }
-                        }
-
-                        if (near_schools.size() == 0) {
-                                radius *= 2;
-                        } else {
-                                break;
-                        }
-                } // end while
+            auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::School);
 
                 // Select a school randomly for every school attendants
                 // Raphael@Nishchal, if you don't need 'a_school_attendant', the use the following:
