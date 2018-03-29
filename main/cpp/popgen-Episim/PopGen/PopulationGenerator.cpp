@@ -165,19 +165,38 @@ void PopulationGenerator::AssignToSchools()
         }
 }
 
+vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetContactPoolsOfColleges()
+{
+    vector<shared_ptr<stride::ContactPool>> result;
+    for(auto& a_city: m_geogrid.GetCitiesWithCollege()){
+        for(auto& a_comunity: a_city->GetCommunitiesOfType(geogen::CommunityType::College)){
+            auto contact_pools = a_comunity->GetContactPools();
+            result.insert(result.end(), contact_pools.begin(), contact_pools.end());
+        }
+    }
+    return result;
+}
+
 void PopulationGenerator::AssignToColleges()
 {
+    auto contact_pools = GetContactPoolsOfColleges();
+
     vector<Person> students;
     for(auto& a_city:m_geogrid.GetCities()){
         for (auto& hh : a_city.second->GetHouseholds()) {
             hh->GetCollegeStudents(students);
         }
-        auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::College);
-        trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
-
-        //unsigned int index = (unsigned int)geogen::generator.GetGenerator(distr)();
-
     }
+
+    for(auto& a_student: students){
+        //it is chosen randomly right now
+        //must look at other factors like possiblity to commute
+        //rate of studying from home and so
+        trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
+        unsigned int index = (unsigned int)geogen::generator.GetGenerator(distr)();
+        cout << a_student.age << " is added to contact pool " << index << endl;
+    }
+
 }
 
 void PopulationGenerator::AssignToWorkplaces() {}
@@ -190,7 +209,7 @@ void PopulationGenerator::AssignToCommunity()
                 for(auto& a_person: a_household->GetMembers()){
                     // assign the person to a random contactPool
                     trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
-                    //unsigned int index = geogen::generator.GetGenerator(distr)();
+                    unsigned int index = geogen::generator.GetGenerator(distr)();
 
                     // TODO the member has to be a stride::Person to be added to stride::ContactPool
 
