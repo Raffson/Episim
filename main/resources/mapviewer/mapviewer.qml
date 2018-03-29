@@ -143,15 +143,26 @@ ApplicationWindow {
 
     function placeCity(values){
         var item = Qt.createQmlObject('import QtQuick 2.7; import QtLocation 5.3; MapQuickItem{objectName: "mqi";}', map, "dynamic")
-        item.anchorPoint.x = Qt.point(values["x"],values["x"])
         item.coordinate = QtPositioning.coordinate(values["latitude"], values["longitude"])
 
-        var circle = Qt.createQmlObject('import "custom"; CityCircle {width: 32; height: 32;}', page)
+        var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
+        var wh = 25000*values["perc"]
+        var max = 125
+        var min = 50
+        if (wh > max){
+            wh = max
+        }
+        if (wh < min){
+            wh = min
+        }
+        circle.width = wh
+        circle.height = wh
         circle.radius = values["radius"]
         circle.opacity = 0.25
         circle.area_text = values["info"]
         circle.population = values["population"]
         item.sourceItem = circle
+        item.anchorPoint = Qt.point(item.sourceItem.width/2, item.sourceItem.height/2)
         map.addMapItem(item)
     }
 

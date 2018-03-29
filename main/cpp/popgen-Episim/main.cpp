@@ -89,7 +89,10 @@ int startMap(geogen::GeoGrid grid)
                 /// Y coordinate
                 vals["y"] = city->GetCoordinates().y;
                 /// Radius
-                vals["radius"] = 2500;
+                vals["radius"] = city->GetPopulation()/(2*M_PI);
+                /// Percentage
+                vals["perc"] = city->GetPopulation()/(double)grid.GetTotalPop();
+                cout<<50000*(city->GetPopulation()/(double)grid.GetTotalPop())<<endl;
                 /// Population
                 vals["population"] = city->GetPopulation();
                 /// Info
