@@ -227,7 +227,8 @@ void PopulationGenerator::AssignToWorkplaces() {}
 void PopulationGenerator::AssignToCommunity()
 {
         for (auto& a_city : m_geogrid.GetCities()) {
-                int search_radius = m_initial_search_radius;
+                unsigned int search_radius = m_initial_search_radius;
+                unsigned int last_radius   = 0;
                 // const int maximum_person_in_a_community = 2000;
 
                 vector<shared_ptr<geogen::Community>>   nearest_communities;
@@ -235,7 +236,7 @@ void PopulationGenerator::AssignToCommunity()
 
                 while (true) {
                         vector<shared_ptr<geogen::City>> nearest_cities =
-                            GetCitiesWithinRadius(*(a_city.second), search_radius);
+                            GetCitiesWithinRadius(*(a_city.second), search_radius, last_radius);
                         for (auto& a_nearest_city : nearest_cities) {
                                 for (auto& a_community : a_nearest_city->GetAllCommunities()) {
                                         if (a_community->GetCommunityType() == geogen::CommunityType::Primary ||
