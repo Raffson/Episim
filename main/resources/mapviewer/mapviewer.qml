@@ -64,7 +64,6 @@ ApplicationWindow {
     property variant map
     property variant minimap
     property variant parameters
-    property variant circle
     property variant pop_info
 
     //defaults
@@ -143,17 +142,18 @@ ApplicationWindow {
 
 
     function placeCity(values){
-        circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
+        var item = Qt.createQmlObject('import QtQuick 2.7; import QtLocation 5.3; MapQuickItem{}', map, "dynamic")
+        item.anchorPoint.x = Qt.point(values["x"],values["x"])
+        item.coordinate = QtPositioning.coordinate(values["latitude"], values["longitude"])
 
-        circle.center.latitude = values["latitude"]
-        circle.center.longitude = values["longitude"]
+        var circle = Qt.createQmlObject('import "custom"; CityCircle {width: 32; height: 32;}', page)
+
         circle.radius = values["radius"]
-        circle.color = 'green'
-        circle.border.width = 3
         circle.opacity = 0.25
         circle.area_text = values["info"]
         circle.population = values["population"]
-        map.addMapItem(circle)
+        item.sourceItem = circle
+        map.addMapItem(item)
     }
 
     function getPlugins()

@@ -84,6 +84,10 @@ int startMap(geogen::GeoGrid grid)
                 vals["latitude"] = city->GetCoordinates().latitude;
                 /// Longitude
                 vals["longitude"] = city->GetCoordinates().longitude;
+                /// X coordinate
+                vals["x"] = city->GetCoordinates().x;
+                /// Y coordinate
+                vals["y"] = city->GetCoordinates().y;
                 /// Radius
                 vals["radius"] = 2500;
                 /// Population

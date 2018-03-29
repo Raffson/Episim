@@ -123,7 +123,7 @@ MenuBar {
 
         function updateSelected(map){
             pop_info = Qt.createQmlObject(' import QtQuick 2.7; Text {}', map)
-            circle = Qt.createQmlObject('import "../custom"; CityCircle {}', page)
+            var circle = Qt.createQmlObject('import "../custom"; CityCircle {}', page)
             var total_count = 0
             for (var i = 0; i < map.children.length; i++)
             {
