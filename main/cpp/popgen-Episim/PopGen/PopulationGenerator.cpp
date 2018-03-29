@@ -62,7 +62,6 @@ void PopulationGenerator::AssignHouseholds()
         }
 }
 
-//first issue, the city should be at the very least a const reference, not a copy...
 vector<shared_ptr<geogen::City>> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
                                                                                       unsigned int radius)
 {
@@ -98,7 +97,6 @@ double PopulationGenerator::GetDistance(geogen::Coordinate c1, geogen::Coordinat
         return earths_radius * c;
 }
 
-//again, const reference!
 vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPools(const geogen::City& city,
                                                                                    geogen::CommunityType community_type)
 {
@@ -126,10 +124,10 @@ vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPoo
 
 //Quick refractor, will need to adjust the return type to vector<shared_ptr<Person>>
 // while using stride's Person class instead of the current struct...
-vector<Person> PopulationGenerator::GetSchoolAttendants(const geogen::City& city)
+vector<Person> PopulationGenerator::GetSchoolAttendants(const shared_ptr<geogen::City>& city)
 {
     vector<Person> school_attendants;
-    for (auto& a_household : city.GetHouseholds()) {
+    for (auto& a_household : city->GetHouseholds()) {
         vector<Person> current_school_attendants;
         a_household->GetSchoolAttendants(current_school_attendants);
         for (auto a_school_attendant : current_school_attendants) {
@@ -143,7 +141,7 @@ void PopulationGenerator::AssignToSchools()
 {
         // Collecting all the school attendants from the city
         for (auto& a_city : m_geogrid.GetCities()) {
-                vector<Person> school_attendants = GetSchoolAttendants(*(a_city.second));
+                vector<Person> school_attendants = GetSchoolAttendants(a_city.second);
 
                 // Search schools within 10km radius otherwise double the radius untill we find schools
                 auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::School);
