@@ -44,9 +44,10 @@ public:
          * @param radius km from
          * @param origin
          */
-        std::vector<std::shared_ptr<geogen::City>> GetCitiesWithinRadius(geogen::City origin, unsigned int radius);
+        std::vector<std::shared_ptr<geogen::City>> GetCitiesWithinRadius(const geogen::City& origin, unsigned int radius);
 private:
-    std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(geogen::City city, geogen::CommunityType);
+    std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(const geogen::City& city, geogen::CommunityType);
+    std::vector<Person> GetSchoolAttendants(const geogen::City& city);
 
 private:
         geogen::GeoGrid m_geogrid;

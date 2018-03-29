@@ -59,6 +59,8 @@ public:
 
         vector<shared_ptr<Community>> GetSecondaryCommunities();
 
+        vector<shared_ptr<Community>> GetCommunitiesOfType(CommunityType ct);
+
         /// Adds community to the city.
         void AddCommunity(shared_ptr<Community> community);
 
@@ -68,7 +70,7 @@ public:
 
         void AddHousehold(std::shared_ptr<Household> hh);
 
-        const vector<std::shared_ptr<Household>>& GetHouseholds() { return m_households; }
+        const vector<std::shared_ptr<Household>>& GetHouseholds() const { return m_households; }
 
         /// @return number of commuters entering the city
         unsigned int GetNumberOfInCommuters();
