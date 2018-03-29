@@ -170,7 +170,8 @@ vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetContactPoolsOfCo
     vector<shared_ptr<stride::ContactPool>> result;
     for(auto& a_city: m_geogrid.GetCitiesWithCollege()){
         for(auto& a_comunity: a_city->GetCommunitiesOfType(geogen::CommunityType::College)){
-            result.insert(result.end(), a_comunity->GetContactPools().begin(), a_comunity->GetContactPools().end());
+            auto contact_pools = a_comunity->GetContactPools();
+            result.insert(result.end(), contact_pools.begin(), contact_pools.end());
         }
     }
     return result;
