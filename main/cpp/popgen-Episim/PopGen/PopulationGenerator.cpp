@@ -4,7 +4,7 @@
 
 #include "PopulationGenerator.h"
 
-using std::vector;
+using namespace std;
 
 namespace popgen {
 
@@ -13,15 +13,36 @@ PopulationGenerator::PopulationGenerator(geogen::GeoGrid geogrid, unsigned int r
 {
 }
 
+//this function is still wrong as fuck, but we'll get to that later...
+shared_ptr<Household> PopulationGenerator::GenerateHousehold(shared_ptr<Household> household)
+{
+        shared_ptr<Household> h = make_shared<Household>();
+        for (auto& a_member : household->GetMembers()) {
+
+                if (a_member.age >= 18 && a_member.age < 26) {
+                        // 50% probability that he works and 50% that he goes to college
+                        trng::uniform_int_dist distr2(0, 2);
+                        if (geogen::generator.GetGenerator(distr2)()) {
+                                // a_member.work_id = numeric_limits<unsigned int>::infinity();
+                                a_member.work_id = 9999; // TODO must make this infinite
+                        }
+                }
+                h->AddMember(a_member);
+        }
+        return h;
+}
+
 void PopulationGenerator::AssignHouseholds()
 {
 
-        // households should be assigned to cities
+        // the next line is wrong, m_model_households from GeoGrid is used to determine fractions...
         vector<shared_ptr<Household>> households = m_geogrid.GetModelHouseholds();
 
         for (auto& a_city : m_geogrid.GetCities()) {
                 const unsigned int max_population       = a_city.second->GetPopulation();
                 int                remaining_population = (int)max_population;
+                //the line above is dangerous if max_population is bigger than the biggest int (2^31 - 1)
+                // however I never heard of a city (not even a country) with more than (2^31 - 1) people...
 
                 while (remaining_population > 0) {
                         // choose random households to be assigned to the city
@@ -29,27 +50,10 @@ void PopulationGenerator::AssignHouseholds()
                         unsigned int           index = geogen::generator.GetGenerator(distr)();
 
                         households.at(index)->SetCityID(a_city.second->GetId());
-                        auto a_household = std::make_shared<Household>();
-
-                        for (auto& a_member : households.at(index)->GetMembers()) {
-
-                                if (a_member.age >= 18 && a_member.age < 26) {
-                                        // 50% probability that he works and 50% that he goes to college
-                                        trng::uniform_int_dist distr2(0, 2);
-                                        if (geogen::generator.GetGenerator(distr2)()) {
-                                                // a_member.work_id = std::numeric_limits<unsigned int>::infinity();
-                                                a_member.work_id = 9999; // TODO must make this infinite
-                                        }
-                                }
-                                a_household->AddMember(a_member);
-                        }
+                        auto a_household = GenerateHousehold(households.at(index));
 
                         a_city.second->AddHousehold(a_household);
                         remaining_population -= households.at(index)->GetSize();
-
-                        for (auto a_member : households.at(index)->GetMembers()) {
-                                a_household->AddMember(a_member);
-                        }
 
                         // This can be uncommented to see which city has what kind of households
                         // cout <<"Household = " << households.at(index).GetID() << " is added to " <<
@@ -59,11 +63,11 @@ void PopulationGenerator::AssignHouseholds()
 }
 
 //first issue, the city should be at the very least a const reference, not a copy...
-std::vector<std::shared_ptr<geogen::City>> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
+vector<shared_ptr<geogen::City>> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
                                                                                       unsigned int radius)
 {
         // TODO to save time we can add distances between two cities in a map but will cost some space
-        std::vector<std::shared_ptr<geogen::City>> result;
+        vector<shared_ptr<geogen::City>> result;
         for (auto a_city : m_geogrid.GetCities()) {
                 double distance = GetDistance(a_city.second->GetCoordinates(), origin.GetCoordinates());
                 if (distance <= radius) {
@@ -99,14 +103,14 @@ vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPoo
                                                                                    geogen::CommunityType community_type)
 {
     unsigned int search_radius = m_initial_search_radius;
-    std::vector<std::shared_ptr<stride::ContactPool>> result;
+    vector<shared_ptr<stride::ContactPool>> result;
 
     //this while(true) loop creaps me the fuck out, thinking about a better solution...
     while(true){
-        std::vector<std::shared_ptr<geogen::City>> near_cities = GetCitiesWithinRadius(city, search_radius);
+        vector<shared_ptr<geogen::City>> near_cities = GetCitiesWithinRadius(city, search_radius);
         for(auto& a_city: near_cities) {
             for (auto &a_community: a_city->GetCommunitiesOfType(community_type)) {
-                std::vector<std::shared_ptr<stride::ContactPool>> compools = a_community->GetContactPools();
+                vector<shared_ptr<stride::ContactPool>> compools = a_community->GetContactPools();
                 result.insert(result.end(), compools.begin(), compools.end());
             }
         }

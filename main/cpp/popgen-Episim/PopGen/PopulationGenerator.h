@@ -48,6 +48,7 @@ public:
 private:
     std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(const geogen::City& city, geogen::CommunityType);
     std::vector<Person> GetSchoolAttendants(const geogen::City& city);
+    std::shared_ptr<Household> GenerateHousehold(std::shared_ptr<Household> household);
 
 private:
         geogen::GeoGrid m_geogrid;
