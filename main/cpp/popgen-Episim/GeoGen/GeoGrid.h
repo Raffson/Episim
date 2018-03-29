@@ -5,7 +5,6 @@
 
 #include <cmath>
 #include <iostream>
-#include <limits>
 #include <map>
 #include <memory>
 #include <random>
@@ -115,6 +114,9 @@ public:
         vector<shared_ptr<Household>> GetModelHouseholds() { return households; }
 
         vector<shared_ptr<City>> GetCitiesWithCollege() { return m_cities_with_college; }
+
+        /// Returns a coordinate representing the center of the grid deduced from all cities in the grid
+        Coordinate GetCenterOfGrid();
 
 private:
         /// Returns index of city with smallest population from 'lc'

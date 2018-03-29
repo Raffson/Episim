@@ -350,4 +350,45 @@ unsigned int GeoGrid::GetSchoolCount() const { return m_school_count; }
 
 shared_ptr<City>& GeoGrid::operator[](int i) { return m_cities[i]; }
 
+Coordinate GeoGrid::GetCenterOfGrid()
+{
+        double smallestX    = numeric_limits<double>::max();
+        double biggestX     = numeric_limits<double>::lowest();
+        double smallestY    = numeric_limits<double>::max();
+        double biggestY     = numeric_limits<double>::lowest();
+        double smallestLat  = 180.0;
+        double biggestLat   = -180.0;
+        double smallestLong = 180.0;
+        double biggestLong  = -180.0;
+
+        // Raphael@everyone, excellent example of something we could run in parallel!!!
+        // don't understand me wrong, not right now, but later when we're going for beta or in the final phase...
+        for (auto& city : m_cities) {
+                Coordinate cc = city.second->GetCoordinates();
+                if (cc.x < smallestX)
+                        smallestX = cc.x;
+                if (cc.x > biggestX)
+                        biggestX = cc.x;
+                if (cc.y < smallestY)
+                        smallestY = cc.y;
+                if (cc.y > biggestY)
+                        biggestY = cc.y;
+                if (cc.latitude < smallestLat)
+                        smallestLat = cc.latitude;
+                if (cc.latitude > biggestLat)
+                        biggestLat = cc.latitude;
+                if (cc.longitude < smallestLong)
+                        smallestLong = cc.longitude;
+                if (cc.longitude > biggestLong)
+                        biggestLong = cc.longitude;
+        }
+
+        double halfX    = (biggestX - smallestX) / 2;
+        double halfY    = (biggestY - smallestY) / 2;
+        double halfLat  = (biggestLat - smallestLat) / 2;
+        double halfLong = (biggestLong - smallestLong) / 2;
+
+        return Coordinate((smallestX + halfX), (smallestY + halfY), (smallestLong + halfLong), (smallestLat + halfLat));
+}
+
 } // namespace geogen
