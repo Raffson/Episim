@@ -44,17 +44,20 @@ public:
          * @param radius km from
          * @param origin
          */
-        std::vector<std::shared_ptr<geogen::City>> GetCitiesWithinRadius(const geogen::City& origin, unsigned int radius, unsigned int last);
+        std::vector<std::shared_ptr<geogen::City>> GetCitiesWithinRadius(const geogen::City& origin,
+                                                                         unsigned int radius, unsigned int last);
+
 private:
-    std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(const geogen::City& city, geogen::CommunityType);
-    std::vector<Person> GetSchoolAttendants(const shared_ptr<geogen::City>& city);
-    std::shared_ptr<Household> GenerateHousehold(std::shared_ptr<Household> household);
-    std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
+        std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(const geogen::City& city,
+                                                                                geogen::CommunityType);
+        std::vector<Person>                               GetSchoolAttendants(const shared_ptr<geogen::City>& city);
+        std::shared_ptr<Household>                        GenerateHousehold(std::shared_ptr<Household> household);
+        std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
+
 private:
         geogen::GeoGrid m_geogrid;
 
         const unsigned int m_initial_search_radius;
-
 };
 
 } // namespace popgen

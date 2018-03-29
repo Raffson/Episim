@@ -13,7 +13,7 @@ PopulationGenerator::PopulationGenerator(geogen::GeoGrid geogrid, unsigned int r
 {
 }
 
-//this function is still wrong as fuck, but we'll get to that later...
+// this function is still wrong as fuck, but we'll get to that later...
 shared_ptr<Household> PopulationGenerator::GenerateHousehold(shared_ptr<Household> household)
 {
         shared_ptr<Household> h = make_shared<Household>();
@@ -41,7 +41,7 @@ void PopulationGenerator::AssignHouseholds()
         for (auto& a_city : m_geogrid.GetCities()) {
                 const unsigned int max_population       = a_city.second->GetPopulation();
                 int                remaining_population = (int)max_population;
-                //the line above is dangerous if max_population is bigger than the biggest int (2^31 - 1)
+                // the line above is dangerous if max_population is bigger than the biggest int (2^31 - 1)
                 // however I never heard of a city (not even a country) with more than (2^31 - 1) people...
 
                 while (remaining_population > 0) {
@@ -63,7 +63,7 @@ void PopulationGenerator::AssignHouseholds()
 }
 
 vector<shared_ptr<geogen::City>> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
-                                                                                      unsigned int radius, unsigned int last)
+                                                                            unsigned int radius, unsigned int last)
 {
         // TODO to save time we can add distances between two cities in a map but will cost some space
         vector<shared_ptr<geogen::City>> result;
@@ -97,46 +97,45 @@ double PopulationGenerator::GetDistance(geogen::Coordinate c1, geogen::Coordinat
         return earths_radius * c;
 }
 
-vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPools(const geogen::City& city,
+vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPools(const geogen::City&   city,
                                                                                    geogen::CommunityType community_type)
 {
-        unsigned int search_radius = m_initial_search_radius;
-        unsigned int last_radius   = 0;
+        unsigned int                            search_radius = m_initial_search_radius;
+        unsigned int                            last_radius   = 0;
         vector<shared_ptr<stride::ContactPool>> result;
 
-        //this while(true) loop creaps me the fuck out, thinking about a better solution...
-        while(true){
+        // this while(true) loop creaps me the fuck out, thinking about a better solution...
+        while (true) {
                 vector<shared_ptr<geogen::City>> near_cities = GetCitiesWithinRadius(city, search_radius, last_radius);
-                for(auto& a_city: near_cities) {
-                        for (auto &a_community: a_city->GetCommunitiesOfType(community_type)) {
+                for (auto& a_city : near_cities) {
+                        for (auto& a_community : a_city->GetCommunitiesOfType(community_type)) {
                                 vector<shared_ptr<stride::ContactPool>> compools = a_community->GetContactPools();
                                 result.insert(result.end(), compools.begin(), compools.end());
                         }
                 }
 
-                if(result.size() == 0){
+                if (result.size() == 0) {
                         last_radius = search_radius;
                         search_radius *= 2;
-                }
-                else{
+                } else {
                         return result;
                 }
         }
 }
 
-//Quick refractor, will need to adjust the return type to vector<shared_ptr<Person>>
+// Quick refractor, will need to adjust the return type to vector<shared_ptr<Person>>
 // while using stride's Person class instead of the current struct...
 vector<Person> PopulationGenerator::GetSchoolAttendants(const shared_ptr<geogen::City>& city)
 {
-    vector<Person> school_attendants;
-    for (auto& a_household : city->GetHouseholds()) {
-        vector<Person> current_school_attendants;
-        a_household->GetSchoolAttendants(current_school_attendants);
-        for (auto a_school_attendant : current_school_attendants) {
-            school_attendants.push_back(a_school_attendant);
+        vector<Person> school_attendants;
+        for (auto& a_household : city->GetHouseholds()) {
+                vector<Person> current_school_attendants;
+                a_household->GetSchoolAttendants(current_school_attendants);
+                for (auto a_school_attendant : current_school_attendants) {
+                        school_attendants.push_back(a_school_attendant);
+                }
         }
-    }
-    return school_attendants;
+        return school_attendants;
 }
 
 void PopulationGenerator::AssignToSchools()
@@ -167,36 +166,35 @@ void PopulationGenerator::AssignToSchools()
 
 vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetContactPoolsOfColleges()
 {
-    vector<shared_ptr<stride::ContactPool>> result;
-    for(auto& a_city: m_geogrid.GetCitiesWithCollege()){
-        for(auto& a_comunity: a_city->GetCommunitiesOfType(geogen::CommunityType::College)){
-            auto contact_pools = a_comunity->GetContactPools();
-            result.insert(result.end(), contact_pools.begin(), contact_pools.end());
+        vector<shared_ptr<stride::ContactPool>> result;
+        for (auto& a_city : m_geogrid.GetCitiesWithCollege()) {
+                for (auto& a_comunity : a_city->GetCommunitiesOfType(geogen::CommunityType::College)) {
+                        auto contact_pools = a_comunity->GetContactPools();
+                        result.insert(result.end(), contact_pools.begin(), contact_pools.end());
+                }
         }
-    }
-    return result;
+        return result;
 }
 
 void PopulationGenerator::AssignToColleges()
 {
-    auto contact_pools = GetContactPoolsOfColleges();
+        auto contact_pools = GetContactPoolsOfColleges();
 
-    vector<Person> students;
-    for(auto& a_city:m_geogrid.GetCities()){
-        for (auto& hh : a_city.second->GetHouseholds()) {
-            hh->GetCollegeStudents(students);
+        vector<Person> students;
+        for (auto& a_city : m_geogrid.GetCities()) {
+                for (auto& hh : a_city.second->GetHouseholds()) {
+                        hh->GetCollegeStudents(students);
+                }
         }
-    }
 
-    for(auto& a_student: students){
-        //it is chosen randomly right now
-        //must look at other factors like possiblity to commute
-        //rate of studying from home and so
-        trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
-        unsigned int index = (unsigned int)geogen::generator.GetGenerator(distr)();
-        cout << a_student.age << " is added to contact pool " << index << endl;
-    }
-
+        for (auto& a_student : students) {
+                // it is chosen randomly right now
+                // must look at other factors like possiblity to commute
+                // rate of studying from home and so
+                trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
+                unsigned int           index = (unsigned int)geogen::generator.GetGenerator(distr)();
+                cout << a_student.age << " is added to contact pool " << index << endl;
+        }
 }
 
 void PopulationGenerator::AssignToWorkplaces() {}
@@ -204,26 +202,26 @@ void PopulationGenerator::AssignToWorkplaces() {}
 void PopulationGenerator::AssignToCommunity()
 {
         for (auto& a_city : m_geogrid.GetCities()) {
-            auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::Primary);
-            for (auto& a_household : a_city.second->GetHouseholds()) {
-                for(auto& a_person: a_household->GetMembers()){
-                    // assign the person to a random contactPool
-                    trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
-                    unsigned int index = geogen::generator.GetGenerator(distr)();
+                auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::Primary);
+                for (auto& a_household : a_city.second->GetHouseholds()) {
+                        for (auto& a_person : a_household->GetMembers()) {
+                                // assign the person to a random contactPool
+                                trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
+                                unsigned int           index = geogen::generator.GetGenerator(distr)();
 
-                    // TODO the member has to be a stride::Person to be added to stride::ContactPool
+                                // TODO the member has to be a stride::Person to be added to stride::ContactPool
 
-                    // nearest_contact_pools.at(index)->AddMember(a_person);
-                    // cout <<"A person of age "<< a_person.age << " is added to contact pool at index " <<
-                    // index <<endl;
+                                // nearest_contact_pools.at(index)->AddMember(a_person);
+                                // cout <<"A person of age "<< a_person.age << " is added to contact pool at index " <<
+                                // index <<endl;
 
-                    // TODO check the community for that contactpool
-                    // TODO if the limit is crossed remove from the list of the possible
-                    // communities(contactpools)
-                    //}
-                    cout << a_person.age << " is added to contact pool at index " <<index << endl;
+                                // TODO check the community for that contactpool
+                                // TODO if the limit is crossed remove from the list of the possible
+                                // communities(contactpools)
+                                //}
+                                cout << a_person.age << " is added to contact pool at index " << index << endl;
+                        }
                 }
-            }
         }
 }
 

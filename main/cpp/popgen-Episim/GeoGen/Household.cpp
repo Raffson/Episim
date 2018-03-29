@@ -34,10 +34,11 @@ void Household::GetSchoolAttendants(vector<Person>& vec)
         }
 }
 
-void Household::GetCollegeStudents(vector<Person>& vec) {
-    for(auto a_member:m_members){
-        if(a_member.age >= 18 && a_member.age < 26 && a_member.work_id == 0){
-            vec.push_back(a_member);
+void Household::GetCollegeStudents(vector<Person>& vec)
+{
+        for (auto a_member : m_members) {
+                if (a_member.age >= 18 && a_member.age < 26 && a_member.work_id == 0) {
+                        vec.push_back(a_member);
+                }
         }
-    }
 }

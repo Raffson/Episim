@@ -115,17 +115,16 @@ vector<shared_ptr<Community>> City::GetSecondaryCommunities()
         return communities;
 }
 
-
-//this is  much better, taking away the need for all the above functions,
+// this is  much better, taking away the need for all the above functions,
 // except the functions above make life easier sometimes, so leaving them for now...
 vector<shared_ptr<Community>> City::GetCommunitiesOfType(CommunityType ct)
 {
-    vector<shared_ptr<Community>> communities;
-    for (auto& it : m_communities) {
-        if (it->GetCommunityType() == ct)
-            communities.push_back(it);
-    }
-    return communities;
+        vector<shared_ptr<Community>> communities;
+        for (auto& it : m_communities) {
+                if (it->GetCommunityType() == ct)
+                        communities.push_back(it);
+        }
+        return communities;
 }
 
 void City::AddCommunity(shared_ptr<Community> community) { m_communities.push_back(community); }
