@@ -63,13 +63,13 @@ void PopulationGenerator::AssignHouseholds()
 }
 
 vector<shared_ptr<geogen::City>> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
-                                                                                      unsigned int radius)
+                                                                                      unsigned int radius, unsigned int last)
 {
         // TODO to save time we can add distances between two cities in a map but will cost some space
         vector<shared_ptr<geogen::City>> result;
         for (auto a_city : m_geogrid.GetCities()) {
                 double distance = GetDistance(a_city.second->GetCoordinates(), origin.GetCoordinates());
-                if (distance <= radius) {
+                if (distance <= radius and distance >= last) {
                         result.push_back(a_city.second);
                 }
         }
@@ -100,26 +100,28 @@ double PopulationGenerator::GetDistance(geogen::Coordinate c1, geogen::Coordinat
 vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPools(const geogen::City& city,
                                                                                    geogen::CommunityType community_type)
 {
-    unsigned int search_radius = m_initial_search_radius;
-    vector<shared_ptr<stride::ContactPool>> result;
+        unsigned int search_radius = m_initial_search_radius;
+        unsigned int last_radius   = 0;
+        vector<shared_ptr<stride::ContactPool>> result;
 
-    //this while(true) loop creaps me the fuck out, thinking about a better solution...
-    while(true){
-        vector<shared_ptr<geogen::City>> near_cities = GetCitiesWithinRadius(city, search_radius);
-        for(auto& a_city: near_cities) {
-            for (auto &a_community: a_city->GetCommunitiesOfType(community_type)) {
-                vector<shared_ptr<stride::ContactPool>> compools = a_community->GetContactPools();
-                result.insert(result.end(), compools.begin(), compools.end());
-            }
-        }
+        //this while(true) loop creaps me the fuck out, thinking about a better solution...
+        while(true){
+                vector<shared_ptr<geogen::City>> near_cities = GetCitiesWithinRadius(city, search_radius, last_radius);
+                for(auto& a_city: near_cities) {
+                        for (auto &a_community: a_city->GetCommunitiesOfType(community_type)) {
+                                vector<shared_ptr<stride::ContactPool>> compools = a_community->GetContactPools();
+                                result.insert(result.end(), compools.begin(), compools.end());
+                        }
+                }
 
-        if(result.size() == 0){
-            search_radius *= 2;
+                if(result.size() == 0){
+                        last_radius = search_radius;
+                        search_radius *= 2;
+                }
+                else{
+                        return result;
+                }
         }
-        else{
-            return result;
-        }
-    }
 }
 
 //Quick refractor, will need to adjust the return type to vector<shared_ptr<Person>>
