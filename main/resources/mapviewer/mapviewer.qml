@@ -142,12 +142,11 @@ ApplicationWindow {
 
 
     function placeCity(values){
-        var item = Qt.createQmlObject('import QtQuick 2.7; import QtLocation 5.3; MapQuickItem{}', map, "dynamic")
+        var item = Qt.createQmlObject('import QtQuick 2.7; import QtLocation 5.3; MapQuickItem{objectName: "mqi";}', map, "dynamic")
         item.anchorPoint.x = Qt.point(values["x"],values["x"])
         item.coordinate = QtPositioning.coordinate(values["latitude"], values["longitude"])
 
         var circle = Qt.createQmlObject('import "custom"; CityCircle {width: 32; height: 32;}', page)
-
         circle.radius = values["radius"]
         circle.opacity = 0.25
         circle.area_text = values["info"]

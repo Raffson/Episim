@@ -127,15 +127,17 @@ MenuBar {
             var total_count = 0
             for (var i = 0; i < map.children.length; i++)
             {
-                if(map.children[i].objectName === "city"){
-                    circle = map.children[i]
+                if(map.children[i].objectName === "mqi"){
+                    circle = map.children[i].sourceItem
                     var pop = circle.isSelected()
                     total_count += pop
+
                 }
                 if(map.children[i].objectName === "pop_info"){
                     pop_info = map.children[i]
                 }
             }
+
             pop_info.text = total_count
         }
 
