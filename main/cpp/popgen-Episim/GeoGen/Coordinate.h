@@ -27,6 +27,14 @@ public:
         Coordinate();
         Coordinate(double x, double y, double longitude, double latitude);
 
+        // TODO move this to an appropriate place
+        /*
+        * Based on haversine formula
+        * credit: https://www.movable-type.co.uk/scripts/latlong.html
+        * @return distance between two coordinates
+        */
+        double GetDistance(geogen::Coordinate c1);
+
         double x;
         double y;
 
