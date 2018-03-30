@@ -76,7 +76,8 @@ TEST(GeoGridCtorTest, DefaultConstructor)
         EXPECT_FLOAT_EQ(grid.GetSchooledFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.GetWorkers1Frac(), 0.0);
         EXPECT_FLOAT_EQ(grid.GetWorkers2Frac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetRestFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetToddlersFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetOldiesFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.GetStudentFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.GetCommutingStudentsFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.GetActiveFrac(), 0.0);

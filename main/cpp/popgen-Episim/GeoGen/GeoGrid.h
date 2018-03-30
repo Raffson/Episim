@@ -93,7 +93,8 @@ public:
         float        GetSchooledFrac() const { return m_schooled_frac; }
         float        GetWorkers1Frac() const { return m_workers1_frac; }
         float        GetWorkers2Frac() const { return m_workers2_frac; }
-        float        GetRestFrac() const { return m_rest_frac; }
+        float        GetToddlersFrac() const { return m_toddlers_frac; }
+        float        GetOldiesFrac() const { return m_oldies_frac; }
         float        GetStudentFrac() const { return m_student_frac; }
         float        GetCommutingStudentsFrac() const { return m_commuting_students_frac; }
         float        GetActiveFrac() const { return m_active_frac; }
@@ -166,17 +167,20 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /(not that i know of)
         /Tought update: maybe users wants to 'experiment with those parameters in
         /the interface
-        /Raphael@WhoeverWroteThisComment how? these are private...
-        /and yes, once they are read from the config, this should remain constant...
+        Raphael's update: the main fractions have to be initialized in the constructor by calling a seperate function
+            this means it becomes very difficult to make the main fractions const...
         */
-        /// Fraction of population that are able to work between 18y and 25y -> make this const?
+        /// Fraction of population that are able to work between 18y and 25y
         float m_workers1_frac{};
 
-        /// Fraction of population that are able to work between 26y and 64y -> make this const?
+        /// Fraction of population that are able to work between 26y and 64y
         float m_workers2_frac{};
 
-        /// Fraction of population younger than 3y and older than 64y -> make this const?
-        float m_rest_frac{};
+        /// Fraction of population younger than 3y
+        float m_toddlers_frac{};
+
+        /// Fraction of population older than 64y
+        float m_oldies_frac{};
 
         /// Fraction of workers1 that is student -> make this const?
         float m_student_frac{};

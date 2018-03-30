@@ -23,7 +23,7 @@ namespace popgen {
 class PopulationGenerator
 {
 public:
-        PopulationGenerator(geogen::GeoGrid, unsigned int rad = 10);
+        PopulationGenerator(geogen::GeoGrid&, unsigned int rad = 10);
 
         void AssignHouseholds();
         void AssignToSchools();
@@ -56,9 +56,14 @@ private:
         std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
         void                                              InitializeHouseholdSizeFractions();
         unsigned int                                      GetRandomHouseholdSize();
+        unsigned int                                      GetRandomAge();
+        bool                                              IsWorkingCommuter();
+        bool                                              IsStudentCommuter();
+        bool                                              IsStudent();
+        bool                                              IsActive();
 
 private:
-        geogen::GeoGrid m_geogrid;
+        geogen::GeoGrid& m_geogrid;
 
         const unsigned int m_initial_search_radius;
 

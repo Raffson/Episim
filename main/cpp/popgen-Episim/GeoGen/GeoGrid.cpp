@@ -13,7 +13,8 @@ void GeoGrid::GetMainFractions(const vector<shared_ptr<Household>>& hhs)
         unsigned int schooled = 0;
         unsigned int workers1 = 0;
         unsigned int workers2 = 0;
-        unsigned int rest     = 0;
+        unsigned int toddlers = 0;
+        unsigned int oldies   = 0;
         for (auto& house : hhs) {
                 for (auto& member : house->GetMembers()) {
                         // Ordered these if-else if construction to fall as quickly as possible
@@ -26,15 +27,18 @@ void GeoGrid::GetMainFractions(const vector<shared_ptr<Household>>& hhs)
                                 schooled += 1;
                         else if (member.age >= 18 and member.age < 26)
                                 workers1 += 1;
+                        else if (member.age >= 65)
+                                oldies += 1;
                         else
-                                rest += 1;
+                                toddlers += 1;
                 }
         }
-        float total     = schooled + workers1 + workers2 + rest;
+        float total     = schooled + workers1 + workers2 + toddlers + oldies;
         m_schooled_frac = schooled / total;
         m_workers1_frac = workers1 / total;
         m_workers2_frac = workers2 / total;
-        m_rest_frac     = rest / total;
+        m_toddlers_frac = toddlers / total;
+        m_oldies_frac   = oldies / total;
 }
 
 GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
@@ -73,10 +77,6 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
 
         GetMainFractions(households);
-        // m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
-        // m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers1");
-        // m_workers2_frac = p_tree.get<float>("popgen.pop_info.fraction_workers2");
-        // m_rest_frac     = p_tree.get<float>("popgen.pop_info.fraction_rest");
 
         m_student_frac            = p_tree.get<float>("popgen.pop_info.fraction_students");
         m_commuting_students_frac = p_tree.get<float>("popgen.pop_info.fraction_commuting_students");
@@ -100,9 +100,8 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // it should never fail since we decude the fractions from the households,
         // so removed the correspronding death test until we find a better test...
         float epsilon   = 0.000001;
-        float totalfrac = m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac;
+        float totalfrac = m_workers1_frac + m_workers2_frac + m_toddlers_frac + m_oldies_frac + m_schooled_frac;
         ENSURE(fabs(totalfrac - 1) < epsilon, "Pop frac should equal 1");
-        // ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
         ENSURE(1 >= m_student_frac and m_student_frac >= 0, "Student fraction must be between 0 and 1");
         ENSURE(1 >= m_commuting_students_frac and m_commuting_students_frac >= 0,
                "Student Commuting fraction must be between 0 and 1");

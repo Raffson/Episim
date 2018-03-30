@@ -8,7 +8,7 @@ using namespace std;
 
 namespace popgen {
 
-PopulationGenerator::PopulationGenerator(geogen::GeoGrid geogrid, unsigned int rad)
+PopulationGenerator::PopulationGenerator(geogen::GeoGrid& geogrid, unsigned int rad)
     : m_geogrid(geogrid), m_initial_search_radius(rad)
 {
         InitializeHouseholdSizeFractions();
@@ -33,6 +33,70 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
         // we need numbers between 1 and m_household_size_fracs.size()
         return (geogen::generator.GetGenerator(distr)() + 1);
 }
+
+unsigned int PopulationGenerator::GetRandomAge()
+{
+        vector<double> popfracs;
+        popfracs.push_back(m_geogrid.GetSchooledFrac()); // [3, 17]
+        popfracs.push_back(m_geogrid.GetWorkers1Frac()); // [18, 25]
+        popfracs.push_back(m_geogrid.GetWorkers2Frac()); // [26, 64]
+        popfracs.push_back(m_geogrid.GetToddlersFrac()); // [0, 2]
+        popfracs.push_back(m_geogrid.GetOldiesFrac());   // [65, 123?]
+        // cause oldest person ever lived was 122 years and 164 days according to wikipedia
+
+        trng::discrete_dist distr(popfracs.begin(), popfracs.end());
+        unsigned int        category = geogen::generator.GetGenerator(distr)();
+
+        switch (category) {
+        case 0: {                                     // [3, 17]
+                trng::uniform_int_dist distr2(3, 18); // generates number between [a, b)
+                return geogen::generator.GetGenerator(distr2)();
+        }
+        case 1: { // [18, 25]
+                trng::uniform_int_dist distr2(18, 26);
+                return geogen::generator.GetGenerator(distr2)();
+        }
+        case 2: { // [26, 64]
+                trng::uniform_int_dist distr2(26, 65);
+                return geogen::generator.GetGenerator(distr2)();
+        }
+        case 3: { // [0, 2]
+                trng::uniform_int_dist distr2(0, 3);
+                return geogen::generator.GetGenerator(distr2)();
+        }
+        case 4: { // [65, 123?]
+                // gotta improve this since we would need [65, 123?] but not with a uniform distribution...
+                // because the chances you become older get smaller and smaller right?
+                trng::uniform_int_dist distr2(65, 123);
+                return geogen::generator.GetGenerator(distr2)();
+        }
+        default: {
+                // cerr << "Bad random number was generated..." << endl;
+                // what else can we do here? perhaps generate a nunber in the entire range?
+                // doing this cause otherwise compiler will generate warning: control may reach end of non-void function
+                // but in fact we should throw an exception here...
+                trng::uniform_int_dist distr2(0, 123);
+                return geogen::generator.GetGenerator(distr2)();
+        }
+        }
+}
+
+bool FlipCoin(const double& frac)
+{
+        vector<double> fracs;
+        fracs.push_back(1 - frac);
+        fracs.push_back(frac);
+        trng::discrete_dist distr(fracs.begin(), fracs.end());
+        return (bool)geogen::generator.GetGenerator(distr)();
+}
+
+bool PopulationGenerator::IsWorkingCommuter() { return FlipCoin(m_geogrid.GetCommutingWorkersFrac()); }
+
+bool PopulationGenerator::IsStudentCommuter() { return FlipCoin(m_geogrid.GetCommutingStudentsFrac()); }
+
+bool PopulationGenerator::IsStudent() { return FlipCoin(m_geogrid.GetStudentFrac()); }
+
+bool PopulationGenerator::IsActive() { return FlipCoin(m_geogrid.GetActiveFrac()); }
 
 // this function is still wrong as fuck, but we'll get to that later...
 shared_ptr<Household> PopulationGenerator::GenerateHousehold(shared_ptr<Household> household)
