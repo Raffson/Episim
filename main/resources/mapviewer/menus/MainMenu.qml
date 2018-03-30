@@ -123,22 +123,22 @@ MenuBar {
 
         function updateSelected(map){
             pop_info = Qt.createQmlObject(' import QtQuick 2.7; Text {}', map)
-            circle = Qt.createQmlObject('import "../custom"; CityCircle {}', page)
+            var circle = Qt.createQmlObject('import "../custom"; CityCircle {}', page)
             var total_count = 0
             for (var i = 0; i < map.children.length; i++)
             {
-                if(map.children[i].objectName === "city"){
-                    circle = map.children[i]
+                if(map.children[i].objectName === "mqi"){
+                    circle = map.children[i].sourceItem
                     var pop = circle.isSelected()
                     total_count += pop
+
                 }
                 if(map.children[i].objectName === "pop_info"){
                     pop_info = map.children[i]
                 }
             }
-            pop_info.text = total_count
-            pop_info.anchors.top = map.top
 
+            pop_info.text = total_count
         }
 
     }

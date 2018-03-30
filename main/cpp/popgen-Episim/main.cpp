@@ -18,9 +18,6 @@
 
 using namespace std;
 
-// currently i just added stuff from mapviewer's main.cpp
-// we need to figure out what exactly is required an what not..
-
 #ifdef USING_QT
 
 int startMap(geogen::GeoGrid grid)
@@ -68,9 +65,10 @@ int startMap(geogen::GeoGrid grid)
         QMetaObject::invokeMethod(item, "initializeProviders", Q_ARG(QVariant, QVariant::fromValue(parameters)));
 
         /// To center the map on a specific location: use following code.
-        QVariantList coords;
-        coords.push_back(51.2165845);
-        coords.push_back(4.413545489);
+        QVariantList       coords;
+        geogen::Coordinate c = grid.GetCenterOfGrid();
+        coords.push_back(c.latitude);
+        coords.push_back(c.longitude);
         QMetaObject::invokeMethod(item, "setCentre", Q_ARG(QVariant, QVariant::fromValue(coords)));
 
         /// To add cities on the map: use following.
@@ -86,8 +84,15 @@ int startMap(geogen::GeoGrid grid)
                 vals["latitude"] = city->GetCoordinates().latitude;
                 /// Longitude
                 vals["longitude"] = city->GetCoordinates().longitude;
+                /// X coordinate
+                vals["x"] = city->GetCoordinates().x;
+                /// Y coordinate
+                vals["y"] = city->GetCoordinates().y;
                 /// Radius
-                vals["radius"] = 2500;
+                vals["radius"] = city->GetPopulation() / (2 * M_PI);
+                /// Percentage
+                vals["perc"] = city->GetPopulation() / (double)grid.GetTotalPop();
+                cout << 50000 * (city->GetPopulation() / (double)grid.GetTotalPop()) << endl;
                 /// Population
                 vals["population"] = city->GetPopulation();
                 /// Info

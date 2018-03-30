@@ -49,7 +49,7 @@ public:
 
 protected:
         /// Destructor has to be virtual.
-        ~ParallelRuns() override {}
+        ~ParallelRuns() override = default;
 
         /// Set up for the test fixture
         void SetUp() override {}

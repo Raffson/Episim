@@ -10,6 +10,7 @@
 
 #include "boost/filesystem.hpp"
 
+#include "trng/discrete_dist.hpp"
 #include "trng/lcg64.hpp"
 #include "trng/uniform_int_dist.hpp"
 
@@ -22,7 +23,7 @@ namespace popgen {
 class PopulationGenerator
 {
 public:
-        PopulationGenerator(geogen::GeoGrid);
+        PopulationGenerator(geogen::GeoGrid&, unsigned int rad = 10);
 
         void AssignHouseholds();
         void AssignToSchools();
@@ -44,11 +45,32 @@ public:
          * @param radius km from
          * @param origin
          */
-        std::vector<std::shared_ptr<geogen::City>> GetCitiesWithinRadius(geogen::City origin, unsigned int radius);
+        std::vector<std::shared_ptr<geogen::City>> GetCitiesWithinRadius(const geogen::City& origin,
+                                                                         unsigned int radius, unsigned int last);
 
 private:
-        // Raphael@Nishchal why? makes this kind of a god class...
-        geogen::GeoGrid m_geogrid;
+        std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(const geogen::City& city,
+                                                                                geogen::CommunityType);
+        std::vector<Person>                               GetSchoolAttendants(const shared_ptr<geogen::City>& city);
+        std::shared_ptr<Household>                        GenerateHousehold(std::shared_ptr<Household> household);
+        std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
+        void                                              InitializeHouseholdSizeFractions();
+        unsigned int                                      GetRandomHouseholdSize();
+        unsigned int                                      GetRandomAge();
+        bool                                              IsWorkingCommuter();
+        bool                                              IsStudentCommuter();
+        bool                                              IsStudent();
+        bool                                              IsActive();
+
+private:
+        geogen::GeoGrid& m_geogrid;
+
+        const unsigned int m_initial_search_radius;
+
+        /// This member will represent the chances for households with 1, 2, 3, 4,... members
+        /// The first element is the chance a household has 1 member,
+        /// The second elemenet is the chance that a household has 2 members, and so on...
+        std::vector<double> m_household_size_fracs;
 };
 
 } // namespace popgen

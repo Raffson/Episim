@@ -2,9 +2,9 @@
 <popgen>
 
     <data_files>
-        <cities>flanders_cities.csv</cities>
-        <commuting>flanders_commuting.csv</commuting>
-        <households>households_flanders.xml</households>
+        <cities>flanders_cities_test.csv</cities>
+        <commuting>flanders_commuting_test.csv</commuting>
+        <households>households_flanders_test.xml</households>
     </data_files>
 
     <rng>
@@ -15,18 +15,6 @@
     <pop_info>
         <pop_total>4341923</pop_total>
 
-        <!-- fraction that goes to school (3y-18y) -->
-        <fraction_schooled>0.2</fraction_schooled>
-
-        <!-- fraction that is able to work (18y-26y) -->
-        <fraction_workers1>0.2</fraction_workers1>
-
-        <!-- fraction that is able to work (27y-65y) -->
-        <fraction_workers2>0.5</fraction_workers2>
-
-        <!-- fraction of people younger than 3y and older than 65y -->
-        <fraction_rest>0.1</fraction_rest>
-
 
         <!-- fraction of people able to work that is student (18y-26y) -->
         <fraction_students>0.5</fraction_students>
@@ -34,7 +22,7 @@
         <fraction_commuting_students>0.5</fraction_commuting_students>
 
         <!-- fraction of people that is able to work and actually working -->
-        <fraction_active_workers>0.5</fraction_active_workers>
+        <fraction_active_workers>-1.1</fraction_active_workers>
         <!-- commuting fraction of active workers -->
         <fraction_commuting_workers>0.5</fraction_commuting_workers>
     </pop_info>

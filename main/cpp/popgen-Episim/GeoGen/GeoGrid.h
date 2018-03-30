@@ -14,6 +14,7 @@
 #include "boost/property_tree/ptree.hpp"
 #include "boost/property_tree/xml_parser.hpp"
 
+#include "util/ConfigInfo.h"
 #include "util/RNManager.h"
 
 #include "popgen-Episim/GeoGen/City.h"
@@ -92,11 +93,13 @@ public:
         float        GetSchooledFrac() const { return m_schooled_frac; }
         float        GetWorkers1Frac() const { return m_workers1_frac; }
         float        GetWorkers2Frac() const { return m_workers2_frac; }
-        float        GetRestFrac() const { return m_rest_frac; }
+        float        GetToddlersFrac() const { return m_toddlers_frac; }
+        float        GetOldiesFrac() const { return m_oldies_frac; }
         float        GetStudentFrac() const { return m_student_frac; }
         float        GetCommutingStudentsFrac() const { return m_commuting_students_frac; }
         float        GetActiveFrac() const { return m_active_frac; }
         float        GetCommutingWorkersFrac() const { return m_commuting_workers_frac; }
+        unsigned int GetAvgCpSize() const { return m_avg_cp_size; }
         unsigned int GetSchoolSize() const { return m_school_size; }
         unsigned int GetCollegeSize() const { return m_college_size; }
         unsigned int GetMaxLC() const { return m_maxlc; }
@@ -109,7 +112,12 @@ public:
         shared_ptr<City>& operator[](int i);
 
         /// Return the households of the geogrid
-        vector<Household> GetModelHouseholds() { return m_model_households; }
+        vector<shared_ptr<Household>> GetModelHouseholds() { return households; }
+
+        vector<shared_ptr<City>> GetCitiesWithCollege() { return m_cities_with_college; }
+
+        /// Returns a coordinate representing the center of the grid deduced from all cities in the grid
+        Coordinate GetCenterOfGrid();
 
 private:
         /// Returns index of city with smallest population from 'lc'
@@ -124,16 +132,12 @@ private:
         /// in map cities.
         unsigned int CountTotalPop() const;
 
-private: // DO NOT DELETE! this seperates private members from private methods...
-        /// Contains all households for the GeoGrid -> perhaps move this into City?
-        // Raphael@Nishchal, if these households are already in the cities, the why do we need them here?
-        //         and ffs, too much effort to make this a vector of shared pointers to households?
+        /// Assigns the main fractions: schooled, worker1, worker2 & rest
+        void GetMainFractions(const vector<shared_ptr<Household>>& hhs);
 
-        // Nishchal@Rapahel These are models of households available in the xml file. there are only 26079 people
-        // in that structure. What is done atm is when household is assigned to cities a copy from this model household
-        // is taken and assigned to a city. That's why we have it here and in city
-        // renamed to avoid confusion
-        vector<Household> m_model_households{};
+private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
+        /// Contains all households for the GeoGrid -> perhaps move this into City?
+        vector<shared_ptr<Household>> households{};
 
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities{};
@@ -163,22 +167,25 @@ private: // DO NOT DELETE! this seperates private members from private methods..
         /(not that i know of)
         /Tought update: maybe users wants to 'experiment with those parameters in
         /the interface
-        /Raphael@WhoeverWroteThisComment how? these are private...
-        /and yes, once they are read from the config, this should remain constant...
+        Raphael's update: the main fractions have to be initialized in the constructor by calling a seperate function
+            this means it becomes very difficult to make the main fractions const...
         */
-        /// Fraction of population that are able to work between 18y and 25y -> make this const?
+        /// Fraction of population that are able to work between 18y and 25y
         float m_workers1_frac{};
 
-        /// Fraction of population that are able to work between 26y and 64y -> make this const?
+        /// Fraction of population that are able to work between 26y and 64y
         float m_workers2_frac{};
 
-        /// Fraction of population younger than 3y and older than 64y -> make this const?
-        float m_rest_frac{};
+        /// Fraction of population younger than 3y
+        float m_toddlers_frac{};
+
+        /// Fraction of population older than 64y
+        float m_oldies_frac{};
 
         /// Fraction of workers1 that is student -> make this const?
         float m_student_frac{};
 
-        /// the ratio of commuters that are workers -> make this const?
+        /// the ratio of commuters that are students -> make this const?
         float m_commuting_students_frac{};
 
         /// Total population that is actually working -> make this const?
@@ -187,6 +194,9 @@ private: // DO NOT DELETE! this seperates private members from private methods..
 
         /// the ratio of commuters that are workers -> make this const?
         float m_commuting_workers_frac{};
+
+        /// Average size of each contact pool -> make this const?
+        unsigned int m_avg_cp_size{};
 
         /// Average size of each school -> make this const?
         unsigned int m_school_size{};
@@ -207,7 +217,12 @@ private: // DO NOT DELETE! this seperates private members from private methods..
         /// or hack our way around the initialisation...
 
         unsigned int m_school_count{};
+
+        vector<shared_ptr<City>> m_cities_with_college{};
+
+        std::size_t m_id_generator;
 };
+
 static stride::util::RNManager generator;
 
 } // namespace geogen

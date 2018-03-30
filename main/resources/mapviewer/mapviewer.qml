@@ -64,7 +64,6 @@ ApplicationWindow {
     property variant map
     property variant minimap
     property variant parameters
-    property variant circle
     property variant pop_info
 
     //defaults
@@ -136,23 +135,35 @@ ApplicationWindow {
                                            font.bold: true
                                            anchors.top: map.top
                                            anchors.topMargin: 5
+                                           anchors.horizontalCenter: map.horizontalCenter
                                         }'
                                        , map)
     }
 
 
     function placeCity(values){
-        circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
+        var item = Qt.createQmlObject('import QtQuick 2.7; import QtLocation 5.3; MapQuickItem{objectName: "mqi";}', map, "dynamic")
+        item.coordinate = QtPositioning.coordinate(values["latitude"], values["longitude"])
 
-        circle.center.latitude = values["latitude"]
-        circle.center.longitude = values["longitude"]
+        var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
+        var wh = 25000*values["perc"]
+        var max = 125
+        var min = 50
+        if (wh > max){
+            wh = max
+        }
+        if (wh < min){
+            wh = min
+        }
+        circle.width = wh
+        circle.height = wh
         circle.radius = values["radius"]
-        circle.color = 'green'
-        circle.border.width = 3
         circle.opacity = 0.25
         circle.area_text = values["info"]
         circle.population = values["population"]
-        map.addMapItem(circle)
+        item.sourceItem = circle
+        item.anchorPoint = Qt.point(item.sourceItem.width/2, item.sourceItem.height/2)
+        map.addMapItem(item)
     }
 
     function getPlugins()

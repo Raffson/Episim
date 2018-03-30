@@ -75,19 +75,20 @@ void ParseCommuting(const boost::filesystem::path& filename, map<int, shared_ptr
         }
 }
 
-vector<Household> ParseHouseholds(const boost::filesystem::path& path)
+vector<shared_ptr<Household>> ParseHouseholds(const boost::filesystem::path& path)
 {
         boost::property_tree::ptree p_tree;
         boost::property_tree::read_xml(path.string(), p_tree);
-        vector<Household> result;
+        vector<shared_ptr<Household>> result;
 
         for (auto& node : p_tree.get_child("HouseholdProfile")) {
-                Household a_household;
-                auto      subtree = node.second;
+                shared_ptr<Household> a_household(new Household());
+                auto                  subtree = node.second;
                 for (auto& v : subtree.get_child("")) {
                         Person a_person;
-                        a_person.age = stoi(v.second.data());
-                        a_household.AddMember(a_person);
+                        a_person.age     = stoi(v.second.data());
+                        a_person.work_id = 0;
+                        a_household->AddMember(a_person);
                 }
                 result.push_back(a_household);
         }

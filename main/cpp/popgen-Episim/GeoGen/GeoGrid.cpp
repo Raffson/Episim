@@ -3,11 +3,43 @@
 //
 
 #include "GeoGrid.h"
-#include <util/ConfigInfo.h>
 
 using namespace std;
 
 namespace geogen {
+
+void GeoGrid::GetMainFractions(const vector<shared_ptr<Household>>& hhs)
+{
+        unsigned int schooled = 0;
+        unsigned int workers1 = 0;
+        unsigned int workers2 = 0;
+        unsigned int toddlers = 0;
+        unsigned int oldies   = 0;
+        for (auto& house : hhs) {
+                for (auto& member : house->GetMembers()) {
+                        // Ordered these if-else if construction to fall as quickly as possible
+                        // in the (statistically) most likely age-category...
+                        // it's agueable whether "rest" is more likely than workers1 since it covers
+                        // a bigger interval, i.e. [0,3) U [65, +inf)
+                        if (member.age >= 26 and member.age < 65)
+                                workers2 += 1;
+                        else if (member.age >= 3 and member.age < 18)
+                                schooled += 1;
+                        else if (member.age >= 18 and member.age < 26)
+                                workers1 += 1;
+                        else if (member.age >= 65)
+                                oldies += 1;
+                        else
+                                toddlers += 1;
+                }
+        }
+        float total     = schooled + workers1 + workers2 + toddlers + oldies;
+        m_schooled_frac = schooled / total;
+        m_workers1_frac = workers1 / total;
+        m_workers2_frac = workers2 / total;
+        m_toddlers_frac = toddlers / total;
+        m_oldies_frac   = oldies / total;
+}
 
 GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 {
@@ -17,6 +49,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         this->m_school_count = 0;
         // Setting up property tree to parse xml config file
         boost::property_tree::ptree p_tree;
+
         boost::property_tree::read_xml(config_file.string(), p_tree);
 
         // reading the cities data file
@@ -27,15 +60,11 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 
         m_cities = parser::ParseCities(base_path + city_file, base_path + commuting_file, true);
 
-        // Raphael@everyone should this really happen here? I say it's like communities...
-        //      thus cities have a vector of households and each household references their city...
-        //      both of those have been done...
-        //      I say comment this out like I did with m_communities, and shared pointers should be used...
-        // Nishchal@everyone According to my opinion the housholds available in households_flanders.xml
-        //      are only model of housholds in Flander because if we count the number of people present
-        //      there are only 26079. so i'd say model households here (or somewhere else) and in PopulationBuilder
-        //      assigning copies of households to a city
-        m_model_households = parser::ParseHouseholds(base_path + household_file);
+        // Raphael@everyone, until the refractor occurs, I can't delete/rename this..
+        // however i want to start making my functions with the correct signatures for after the refractor,
+        // therefore I will rename this member to a more appropriate name for after the refractor,
+        // as a result, we'll just need to delete some stuff out of the header file and that'll be it...
+        households = parser::ParseHouseholds(base_path + household_file);
 
         // Generating schools
         // auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
@@ -47,17 +76,14 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // perhaps find a way to verify this number somehow, if the possibility exists of course...
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
 
-        // m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled")
-        m_schooled_frac = p_tree.get<float>("popgen.pop_info.fraction_schooled");
-        m_workers1_frac = p_tree.get<float>("popgen.pop_info.fraction_workers1");
-        m_workers2_frac = p_tree.get<float>("popgen.pop_info.fraction_workers2");
-        m_rest_frac     = p_tree.get<float>("popgen.pop_info.fraction_rest");
+        GetMainFractions(households);
 
         m_student_frac            = p_tree.get<float>("popgen.pop_info.fraction_students");
         m_commuting_students_frac = p_tree.get<float>("popgen.pop_info.fraction_commuting_students");
         m_active_frac             = p_tree.get<float>("popgen.pop_info.fraction_active_workers");
         m_commuting_workers_frac  = p_tree.get<float>("popgen.pop_info.fraction_commuting_workers");
 
+        m_avg_cp_size     = p_tree.get<unsigned int>("popgen.contactpool_info.average_size");
         m_school_size     = p_tree.get<unsigned int>("popgen.contactpool_info.school.size");
         m_college_size    = p_tree.get<unsigned int>("popgen.contactpool_info.college.size");
         m_maxlc           = p_tree.get<unsigned int>("popgen.contactpool_info.college.cities");
@@ -67,10 +93,22 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // Setting up RNG
         long   seed = p_tree.get("popgen.rng.seed", 0);
         string type = p_tree.get("popgen.rng.type", "mrg2");
-        generator = stride::util::RNManager(stride::util::RNManager::Info(type, (unsigned long)seed));
+        generator   = stride::util::RNManager(stride::util::RNManager::Info(type, (unsigned long)seed));
 
-        ENSURE(m_workers1_frac + m_workers2_frac + m_rest_frac + m_schooled_frac == 1, "Pop frac should equal 1");
-        ENSURE(1 >= m_student_frac and m_student_frac >= 0, "fraction must be between 0 and 1");
+        // rounding errors cause the first ensure to fail in some conditions...
+        // however, is this first ENSURE necessary?
+        // it should never fail since we decude the fractions from the households,
+        // so removed the correspronding death test until we find a better test...
+        float epsilon   = 0.000001;
+        float totalfrac = m_workers1_frac + m_workers2_frac + m_toddlers_frac + m_oldies_frac + m_schooled_frac;
+        ENSURE(fabs(totalfrac - 1) < epsilon, "Pop frac should equal 1");
+        ENSURE(1 >= m_student_frac and m_student_frac >= 0, "Student fraction must be between 0 and 1");
+        ENSURE(1 >= m_commuting_students_frac and m_commuting_students_frac >= 0,
+               "Student Commuting fraction must be between 0 and 1");
+        ENSURE(1 >= m_active_frac and m_active_frac >= 0, "Active workers fraction must be between 0 and 1");
+        ENSURE(1 >= m_commuting_workers_frac and m_commuting_workers_frac >= 0,
+               "Commuting workers fraction must be between 0 and 1");
+        ENSURE(m_avg_cp_size > 0, "Contactpool's size must be bigger than 0");
 }
 
 void GeoGrid::GenerateAll()
@@ -93,6 +131,9 @@ void GeoGrid::GenerateSchools()
         // round because we do not build half a school
         auto amount_of_schools = (const unsigned int)round(amount_schooled / m_school_size);
 
+        // Determine number of contactpools
+        auto cps = round(m_school_size / m_avg_cp_size); /// We need enough pools to distribute all persons
+
         // Setting up to divide the schools to cities
         vector<unsigned int> pop_id; // We will push the id's of the cities for each pop member.
         for (auto& it : m_cities) {
@@ -109,6 +150,16 @@ void GeoGrid::GenerateSchools()
                 int                   index       = pop_id[generator.GetGenerator(distr)()];
                 shared_ptr<City>      chosen_city = m_cities[index];
                 shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
+
+                // Add contactpools
+                for (auto j = 0; j < cps; j++) {
+                        stride::ContactProfiles contactProfiles;
+                        auto                    pool = std::make_shared<stride::ContactPool>(
+                            m_id_generator, stride::ContactPoolType::Id::School, contactProfiles);
+                        m_id_generator++;
+                        nw_school->AddContactPool(pool);
+                }
+
                 chosen_city->AddCommunity(nw_school);
                 // m_communities[nw_school->getID()] = nw_school
         }
@@ -144,17 +195,23 @@ void GeoGrid::GenerateColleges()
         // TODO always 10?? specify this in the config file?
         // -> no not always 10, I deleted the REQUIRE in comments
         //      should rather be an ENSURE that exactly m_maxlc cities have colleges
+
+        // After deducing fractions from households, these should never fail,
+        // they also become difficult to test since we can no longer play with the fractions,
+        // gotta come up with new tests for this...
         REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
         REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");
         REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");
         REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");
-        vector<shared_ptr<City>> lc;
         for (auto& it : m_cities) {
-                AdjustLargestCities(lc, it.second);
+                AdjustLargestCities(m_cities_with_college, it.second);
         }
 
+        // Determine number of contactpools
+        auto cps = round(m_college_size / m_avg_cp_size); /// We need enough pools to distribute all persons
+
         // generate colleges to the respective cities...
-        for (auto& it : lc) {
+        for (auto& it : m_cities_with_college) {
                 double students = it->GetPopulation() * m_workers1_frac * m_student_frac;
                 // doesn't matter if students is a double at this time
                 // since this is only an estimate for the number of colleges
@@ -168,6 +225,14 @@ void GeoGrid::GenerateColleges()
 
                 for (unsigned int i = 0; i < nrcolleges; i++) {
                         shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
+                        // Add contactpools
+                        for (auto j = 0; j < cps; j++) {
+                                stride::ContactProfiles contactProfiles;
+                                auto                    pool = std::make_shared<stride::ContactPool>(
+                                    m_id_generator, stride::ContactPoolType::Id::School, contactProfiles);
+                                m_id_generator++;
+                                college->AddContactPool(pool);
+                        }
                         it->AddCommunity(college);
                         // m_communities[college->getID()] = college
                 }
@@ -185,6 +250,7 @@ void GeoGrid::GenerateWorkplaces()
         // TODO This should also be placed according to a discrete distribution!
         // TODO still figuring out how i should do this for this function
         //      -> isn't that nishchal's job?
+
         for (auto it : m_cities) {
                 shared_ptr<City> city         = it.second;
                 unsigned int     in_commuters = city->GetNumberOfInCommuters();
@@ -197,6 +263,12 @@ void GeoGrid::GenerateWorkplaces()
 
                 for (unsigned int i = 0; i < number_of_workplaces; i++) {
                         shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
+                        /// Add contactpools
+                        stride::ContactProfiles contactProfiles;
+                        auto                    pool = std::make_shared<stride::ContactPool>(
+                            m_id_generator, stride::ContactPoolType::Id::Work, contactProfiles);
+                        m_id_generator++;
+                        community->AddContactPool(pool);
                         city->AddCommunity(community);
                 }
         }
@@ -209,6 +281,9 @@ void GeoGrid::GenerateWorkplaces()
 //      i.e. if the hard limit still holds...
 void GeoGrid::GenerateCommunities()
 {
+
+        // Determine number of contactpools
+        auto cps = round(m_community_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         vector<shared_ptr<Community>> primsec_communities;
         // First we need to determine the total number of communities to be used.
@@ -229,6 +304,14 @@ void GeoGrid::GenerateCommunities()
                 int                   index       = pop_id[generator.GetGenerator(distr)()];
                 shared_ptr<City>      chosen_city = m_cities[index];
                 shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
+                // Add contactpools
+                for (auto j = 0; j < cps; j++) {
+                        stride::ContactProfiles contactProfiles;
+                        auto                    pool = std::make_shared<stride::ContactPool>(
+                            m_id_generator, stride::ContactPoolType::Id::PrimaryCommunity, contactProfiles);
+                        m_id_generator++;
+                        nw_community->AddContactPool(pool);
+                }
                 chosen_city->AddCommunity(nw_community);
         }
         // Determine how many communities a city should get -> Depricated.
@@ -265,5 +348,46 @@ const map<int, shared_ptr<City>>& GeoGrid::GetCities() { return m_cities; }
 unsigned int GeoGrid::GetSchoolCount() const { return m_school_count; }
 
 shared_ptr<City>& GeoGrid::operator[](int i) { return m_cities[i]; }
+
+Coordinate GeoGrid::GetCenterOfGrid()
+{
+        double smallestX    = numeric_limits<double>::max();
+        double biggestX     = numeric_limits<double>::lowest();
+        double smallestY    = numeric_limits<double>::max();
+        double biggestY     = numeric_limits<double>::lowest();
+        double smallestLat  = 180.0;
+        double biggestLat   = -180.0;
+        double smallestLong = 180.0;
+        double biggestLong  = -180.0;
+
+        // Raphael@everyone, excellent example of something we could run in parallel!!!
+        // don't understand me wrong, not right now, but later when we're going for beta or in the final phase...
+        for (auto& city : m_cities) {
+                Coordinate cc = city.second->GetCoordinates();
+                if (cc.x < smallestX)
+                        smallestX = cc.x;
+                if (cc.x > biggestX)
+                        biggestX = cc.x;
+                if (cc.y < smallestY)
+                        smallestY = cc.y;
+                if (cc.y > biggestY)
+                        biggestY = cc.y;
+                if (cc.latitude < smallestLat)
+                        smallestLat = cc.latitude;
+                if (cc.latitude > biggestLat)
+                        biggestLat = cc.latitude;
+                if (cc.longitude < smallestLong)
+                        smallestLong = cc.longitude;
+                if (cc.longitude > biggestLong)
+                        biggestLong = cc.longitude;
+        }
+
+        double halfX    = (biggestX - smallestX) / 2;
+        double halfY    = (biggestY - smallestY) / 2;
+        double halfLat  = (biggestLat - smallestLat) / 2;
+        double halfLong = (biggestLong - smallestLong) / 2;
+
+        return Coordinate((smallestX + halfX), (smallestY + halfY), (smallestLong + halfLong), (smallestLat + halfLat));
+}
 
 } // namespace geogen

@@ -36,4 +36,13 @@ unsigned int& Community::UIDgenerator()
 
 void Community::AddContactPool(std::shared_ptr<stride::ContactPool> pool) { m_contact_pools.push_back(pool); }
 
+int Community::GetSize() const
+{
+        int result = 0;
+        for (auto& a_contact_pool : m_contact_pools) {
+                result += a_contact_pool->GetSize();
+        }
+
+        return result;
+}
 } // namespace geogen

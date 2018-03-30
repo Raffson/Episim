@@ -45,27 +45,21 @@ public:
 
         unsigned int GetCommunitySize() const { return m_communities.size(); };
 
-        // Raphael@everyone the Communities can still be changed, just not the pointer's value...
-        // do we want this behaviour? (see GetHouseholds further down since it's the same story...)
         const vector<shared_ptr<Community>>& GetAllCommunities() { return m_communities; };
 
-        // Raphael@everyone should we keep everything const in the following 6 functions?
-        // or should we leave the const off of the vector since it's a copy anyway...
-        // or should we leave out all the consts all together so we can mess around with the communitites?
-        // my instinct would go for the first option, i.e. leave the const out for the vector itself
-        // specifically: vector<shared_ptr<const Community>>
-        // mind that the method itself should remain const-qualified in this case...
-        const vector<shared_ptr<const Community>> GetColleges() const;
+        vector<shared_ptr<Community>> GetColleges();
 
-        const vector<shared_ptr<const Community>> GetSchools() const;
+        vector<shared_ptr<Community>> GetSchools();
 
-        const vector<shared_ptr<const Community>> GetWorkplaces() const;
+        vector<shared_ptr<Community>> GetWorkplaces();
 
-        const vector<shared_ptr<const Community>> GetCommunities() const;
+        vector<shared_ptr<Community>> GetCommunities();
 
-        const vector<shared_ptr<const Community>> GetPrimaryCommunities() const;
+        vector<shared_ptr<Community>> GetPrimaryCommunities();
 
-        const vector<shared_ptr<const Community>> GetSecondaryCommunities() const;
+        vector<shared_ptr<Community>> GetSecondaryCommunities();
+
+        vector<shared_ptr<Community>> GetCommunitiesOfType(CommunityType ct);
 
         /// Adds community to the city.
         void AddCommunity(shared_ptr<Community> community);
@@ -76,11 +70,6 @@ public:
 
         void AddHousehold(std::shared_ptr<Household> hh);
 
-        // Raphael@Nishchal use const reference here cause even if you don't, the copy
-        // will have shared pointers to the households which means the households can still be changed...
-        // thus this is simply more efficient, however do we want this behaviour?
-        // Raphael@everyone so yeah, do we want the households to be const as well? if so,
-        // we'll need to create a copy that will keep the households const...
         const vector<std::shared_ptr<Household>>& GetHouseholds() { return m_households; }
 
         /// @return number of commuters entering the city

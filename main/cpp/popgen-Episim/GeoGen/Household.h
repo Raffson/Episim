@@ -12,7 +12,8 @@ using namespace std;
 
 struct Person
 {
-        int age;
+        unsigned int work_id;
+        int          age;
 };
 
 class Household
@@ -39,6 +40,8 @@ public:
         void SetCityID(size_t city_id);
 
         void GetSchoolAttendants(vector<Person>&);
+
+        void GetCollegeStudents(vector<Person>&);
 
 private: // Raphael@everyone replace size_t by unsigned int?
         /// Id generator.
