@@ -6,9 +6,7 @@
 #include "boost/filesystem/path.hpp"
 #include <sys/stat.h>
 
-namespace geogen{
+namespace geogen {
 
-    bool file_exists(const boost::filesystem::path& path);
-
+bool file_exists(const boost::filesystem::path& path);
 }
-

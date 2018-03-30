@@ -11,28 +11,25 @@ size_t Household::g_id_generator = 1;
 
 Household::Household()
 {
-    m_id = g_id_generator;
-    g_id_generator++;
+        m_id = g_id_generator;
+        g_id_generator++;
 }
 
-void Household::AddMember(Person member) {
-    m_members.push_back(member);
-}
+void Household::AddMember(Person member) { m_members.push_back(member); }
 
-void Household::SetCityID(size_t city_id) {
-    m_city_id = city_id;
-}
+void Household::SetCityID(size_t city_id) { m_city_id = city_id; }
 
-//Raphael@everyone while this approach is faster if this vector 'vec' becomes large,
+// Raphael@everyone while this approach is faster if this vector 'vec' becomes large,
 // households are usually small and thus we might as well return a copy of a vector we make locally...
 // question is what would be easiest to use? I say return a copy of the vector instead of
 // providing a vector to this function which will be adjusted...
 // nevertheless, this approach should always be more efficient...
-void Household::GetSchoolAttendants(vector<Person>& vec) {
+void Household::GetSchoolAttendants(vector<Person>& vec)
+{
 
-    for(auto a_member:m_members){
-        if(a_member.age < 18){
-            vec.push_back(a_member);
+        for (auto a_member : m_members) {
+                if (a_member.age < 18) {
+                        vec.push_back(a_member);
+                }
         }
-    }
 }

@@ -194,10 +194,11 @@ void StrideRunner::Run(const bool genFiles)
                 // -----------------------------------------------------------------------------------------
                 // Generate output files
                 // -----------------------------------------------------------------------------------------
-                if( genFiles )
-			GenerateOutputFiles(m_output_prefix, cases, adopted, m_pt_config,
-                                    static_cast<unsigned int>(duration_cast<milliseconds>(run_clock.Get()).count()),
-                                    static_cast<unsigned int>(duration_cast<milliseconds>(m_clock.Get()).count()));
+                if (genFiles)
+                        GenerateOutputFiles(
+                            m_output_prefix, cases, adopted, m_pt_config,
+                            static_cast<unsigned int>(duration_cast<milliseconds>(run_clock.Get()).count()),
+                            static_cast<unsigned int>(duration_cast<milliseconds>(m_clock.Get()).count()));
 
                 m_is_running = false;
         }

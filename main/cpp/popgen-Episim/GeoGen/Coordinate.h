@@ -13,27 +13,25 @@
  *
  *
  */
-namespace geogen{
+namespace geogen {
 
-    /*
-     * Basic Coördinate class. container for x & y value's to represent a
-     * position on a grid, map...
-     */
-    class Coordinate {
+/*
+ * Basic Coördinate class. container for x & y value's to represent a
+ * position on a grid, map...
+ */
+class Coordinate
+{
 
-    public:
-
-         // Basic constructor
+public:
+        // Basic constructor
         Coordinate();
         Coordinate(double x, double y, double longitude, double latitude);
-
 
         double x;
         double y;
 
         double longitude;
         double latitude;
-    };
+};
 
-} // namespace: geogen
-
+} // namespace geogen

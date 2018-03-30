@@ -17,29 +17,28 @@
  *  Modified by EpiSim
  */
 
+#include "core/ContactPool.h"
 #include <cstddef>
 #include <memory>
-#include "core/ContactPool.h"
-
 
 namespace geogen {
 
-    /// Forward declaration to avoid problems with includes...
-    class City;
+/// Forward declaration to avoid problems with includes...
+class City;
 
-    enum class CommunityType
-    {
+enum class CommunityType
+{
         School,
         College,
         Work,
         Primary,
         Secondary,
         Null
-    };
+};
 
-    class Community
-    {
-    public:
+class Community
+{
+public:
         ///
         Community() = default;
 
@@ -59,25 +58,24 @@ namespace geogen {
 
         void AddContactPool(std::shared_ptr<stride::ContactPool> pool);
 
-        std::vector<std::shared_ptr<stride::ContactPool>> GetContactPools() const{return m_contact_pools;}
+        std::vector<std::shared_ptr<stride::ContactPool>> GetContactPools() const { return m_contact_pools; }
 
-
-    private:
+private:
         static unsigned int& UIDgenerator();
 
-    private:
-        const unsigned int m_community_id;   ///< A unique ID for the community
+private:
+        const unsigned int m_community_id; ///< A unique ID for the community
 
         CommunityType m_community_type; ///< The type of community
 
-        std::shared_ptr<City> m_city;   ///< Shared pointer to City
+        std::shared_ptr<City> m_city; ///< Shared pointer to City
 
-        //Raphael@Nishchal see, that wasn't so difficult now was it?
+        // Raphael@Nishchal see, that wasn't so difficult now was it?
         // here you use a shared pointer like you should...
         std::vector<std::shared_ptr<stride::ContactPool>> m_contact_pools;
 
-        //Vector of persons to indicate who's part of this community?
-        //std::vector<std::shared_ptr<Person>> m_members;
-    };
+        // Vector of persons to indicate who's part of this community?
+        // std::vector<std::shared_ptr<Person>> m_members;
+};
 
 } // namespace geogen

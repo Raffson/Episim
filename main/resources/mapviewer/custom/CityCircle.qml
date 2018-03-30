@@ -3,18 +3,18 @@ import QtQuick 2.7
 
 MapCircle {
     id: cityCircle
+    objectName: "city"
     property variant count: 0
     property variant population:0
     property variant is_clicked: false
     property alias area_text: m_area.info_text
 
-    function updateSelectedPopulation(counter){
+    function isSelected(){
         if (is_clicked == true){
-            new_count = counter + population;
-            return new_count;
+            return population;
         }
         else{
-            return count;
+            return 0;
         }
     }
 

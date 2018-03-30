@@ -13,15 +13,15 @@
  * See the Licence for the specific language governing
  * permissions and limitations under the Licence.
  *
- * Source of code is taken from https://stackoverflow.com/questions/6089231/getting-std-ifstream-to-handle-lf-cr-and-crlf
+ * Source of code is taken from
+ * https://stackoverflow.com/questions/6089231/getting-std-ifstream-to-handle-lf-cr-and-crlf
  */
-
 
 #include <istream>
 namespace stride {
-    namespace util {
+namespace util {
 
 // Workaround for /r newline ended files.
-        std::istream &safeGetline(std::istream &is, std::string &t);
-    }
-}
+std::istream& safeGetline(std::istream& is, std::string& t);
+} // namespace util
+} // namespace stride
