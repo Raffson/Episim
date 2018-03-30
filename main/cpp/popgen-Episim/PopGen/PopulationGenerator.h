@@ -52,7 +52,7 @@ private:
         std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(const geogen::City& city,
                                                                                 geogen::CommunityType);
         std::vector<Person>                               GetSchoolAttendants(const shared_ptr<geogen::City>& city);
-        std::shared_ptr<Household>                        GenerateHousehold(std::shared_ptr<Household> household);
+        shared_ptr<Household> GenerateHousehold(unsigned int size);
         std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
         void                                              InitializeHouseholdSizeFractions();
         unsigned int                                      GetRandomHouseholdSize();

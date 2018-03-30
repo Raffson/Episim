@@ -98,53 +98,38 @@ bool PopulationGenerator::IsStudent() { return FlipCoin(m_geogrid.GetStudentFrac
 
 bool PopulationGenerator::IsActive() { return FlipCoin(m_geogrid.GetActiveFrac()); }
 
-// this function is still wrong as fuck, but we'll get to that later...
-shared_ptr<Household> PopulationGenerator::GenerateHousehold(shared_ptr<Household> household)
+shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
 {
-        shared_ptr<Household> h = make_shared<Household>();
-        for (auto& a_member : household->GetMembers()) {
-
-                if (a_member.age >= 18 && a_member.age < 26) {
-                        // 50% probability that he works and 50% that he goes to college
-                        trng::uniform_int_dist distr2(0, 2);
-                        if (geogen::generator.GetGenerator(distr2)()) {
-                                // a_member.work_id = numeric_limits<unsigned int>::infinity();
-                                a_member.work_id = 9999; // TODO must make this infinite
-                        }
-                }
-                h->AddMember(a_member);
-        }
-        return h;
+    auto the_household = make_shared<Household>();
+    for(unsigned int i=0; i<size; i++){
+        Person a_person;
+        a_person.age = this->GetRandomAge();
+        the_household->AddMember(a_person);
+        cout << a_person.age << endl;
+    }
+        cout << "------------------" << endl;
+    return the_household;
 }
 
 void PopulationGenerator::AssignHouseholds()
 {
 
-        // the next line is wrong, m_model_households from GeoGrid is used to determine fractions...
-        vector<shared_ptr<Household>> households = m_geogrid.GetModelHouseholds();
+    for(auto& a_city: m_geogrid.GetCities()){
+        const unsigned int max_population = a_city.second->GetPopulation();
+        int remaining_population = (int) max_population;
 
-        for (auto& a_city : m_geogrid.GetCities()) {
-                const unsigned int max_population       = a_city.second->GetPopulation();
-                int                remaining_population = (int)max_population;
-                // the line above is dangerous if max_population is bigger than the biggest int (2^31 - 1)
-                // however I never heard of a city (not even a country) with more than (2^31 - 1) people...
+        while(remaining_population > 0){
+            unsigned int household_size = this->GetRandomHouseholdSize();
 
-                while (remaining_population > 0) {
-                        // choose random households to be assigned to the city
-                        trng::uniform_int_dist distr(0, (unsigned int)households.size() - 1);
-                        unsigned int           index = geogen::generator.GetGenerator(distr)();
-
-                        households.at(index)->SetCityID(a_city.second->GetId());
-                        auto a_household = GenerateHousehold(households.at(index));
-
-                        a_city.second->AddHousehold(a_household);
-                        remaining_population -= households.at(index)->GetSize();
-
-                        // This can be uncommented to see which city has what kind of households
-                        // cout <<"Household = " << households.at(index).GetID() << " is added to " <<
-                        // a_city.second->GetName()<< endl;
-                }
+            //if the population has to be exact according to the one that we read on the file about cities
+            //but this will effect our discrete distribution
+            if(remaining_population - (int)household_size < 0){
+                household_size = remaining_population;
+            }
+            a_city.second->AddHousehold(GenerateHousehold(household_size));
+            remaining_population -= household_size;
         }
+    }
 }
 
 vector<shared_ptr<geogen::City>> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
