@@ -42,3 +42,12 @@ void Household::GetCollegeStudents(vector<Person>& vec)
                 }
         }
 }
+
+void Household::GetPossibleWorkers(vector<Person>& vec)
+{
+    for(auto a_member: m_members){
+        if(a_member.age >= 18 && a_member.age <= 64){
+            vec.push_back(a_member);
+        }
+    }
+}

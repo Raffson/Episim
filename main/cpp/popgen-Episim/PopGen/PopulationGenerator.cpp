@@ -100,14 +100,17 @@ bool PopulationGenerator::IsActive() { return FlipCoin(m_geogrid.GetActiveFrac()
 
 shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
 {
+    //TODO if we generate somebody less than 18 y then s/he should be accompanied by an adult?
+    //A household with 1 person won't be possible in that case
+
     auto the_household = make_shared<Household>();
     for(unsigned int i=0; i<size; i++){
         Person a_person;
         a_person.age = this->GetRandomAge();
         the_household->AddMember(a_person);
-        cout << a_person.age << endl;
+        //cout << a_person.age << endl;
     }
-        cout << "------------------" << endl;
+        //cout << "------------------" << endl;
     return the_household;
 }
 
@@ -126,7 +129,9 @@ void PopulationGenerator::AssignHouseholds()
             if(remaining_population - (int)household_size < 0){
                 household_size = remaining_population;
             }
-            a_city.second->AddHousehold(GenerateHousehold(household_size));
+            auto hh = GenerateHousehold(household_size);
+            hh->SetCityID(a_city.second->GetId());
+            a_city.second->AddHousehold(hh);
             remaining_population -= household_size;
         }
     }
@@ -267,7 +272,43 @@ void PopulationGenerator::AssignToColleges()
         }
 }
 
-void PopulationGenerator::AssignToWorkplaces() {}
+vector<Person> PopulationGenerator::GetActives(const shared_ptr<geogen::City>& city)
+{
+
+    vector<Person> actives;
+
+    for(auto& a_household: city->GetHouseholds()){
+        vector<Person> possible_workers;
+        a_household->GetPossibleWorkers(possible_workers);
+        for(auto& a_possible_worker:possible_workers){
+            if(this->IsActive()){
+                actives.push_back(a_possible_worker);
+            }
+        }
+    }
+
+    return actives;
+}
+
+void PopulationGenerator::AssignToWorkplaces()
+{
+    for(auto& a_city: m_geogrid.GetCities()){
+        for(auto an_active : GetActives(a_city.second)){
+            if(!IsWorkingCommuter()){
+                auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::Work);
+                trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
+                unsigned int           index = geogen::generator.GetGenerator(distr)();
+                cout << an_active.age << " is added to workplace " << index << endl;
+            }
+
+            //Commuting workers
+            else{
+
+            }
+        }
+    }
+
+}
 
 void PopulationGenerator::AssignToCommunity()
 {

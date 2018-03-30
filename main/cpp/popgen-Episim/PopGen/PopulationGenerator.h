@@ -62,6 +62,8 @@ private:
         bool                                              IsStudent();
         bool                                              IsActive();
 
+        std::vector<Person> GetActives(const shared_ptr<geogen::City>&);
+
 private:
         geogen::GeoGrid& m_geogrid;
 
