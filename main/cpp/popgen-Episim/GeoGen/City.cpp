@@ -20,7 +20,8 @@ namespace geogen {
 
 City::City(const unsigned int city_id, const unsigned int province, unsigned int population,
            const Coordinate coordinates, const string name)
-    : m_city_id(city_id), m_province(province), m_population(population), m_coordinates(coordinates), m_name(name)
+    : m_city_id(city_id), m_province(province), m_population(population), m_coordinates(coordinates), m_name(name),
+      m_in_commuter_count(0), m_out_commuter_count(0)
 {
 }
 /*
@@ -129,15 +130,18 @@ vector<shared_ptr<Community>> City::GetCommunitiesOfType(CommunityType ct)
 
 void City::AddCommunity(shared_ptr<Community> community) { m_communities.push_back(community); }
 
-void City::SetInCommuters(unsigned int id, unsigned int number_of_commuters) { m_commuting[id] = number_of_commuters; }
-
-unsigned int City::GetNumberOfInCommuters()
+void City::SetInCommuters(unsigned int id, unsigned int number_of_commuters)
 {
-        unsigned int result = 0;
-        for (auto it : m_commuting) {
-                result += it.second;
-        }
-        return result;
+        m_in_commuting[id] = number_of_commuters;
+        if(id != m_city_id)
+                m_in_commuter_count += number_of_commuters;
+}
+
+void City::SetOutCommuters(unsigned int id, unsigned int number_of_commuters)
+{
+        m_out_commuting[id] = number_of_commuters;
+        if(id != m_city_id)
+                m_out_commuter_count += number_of_commuters;
 }
 
 void City::AddHousehold(std::shared_ptr<Household> hh) { m_households.push_back(hh); }

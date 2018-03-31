@@ -253,7 +253,7 @@ void GeoGrid::GenerateWorkplaces()
 
         for (auto it : m_cities) {
                 shared_ptr<City> city         = it.second;
-                unsigned int     in_commuters = city->GetNumberOfInCommuters();
+                unsigned int     in_commuters = city->GetTotalInCommutersCount();
 
                 // To be confirmed: everybody commutes, the in-commuters have all the people working in that region,
                 // including locals who work in their own region

@@ -68,8 +68,10 @@ void ParseCommuting(const boost::filesystem::path& filename, map<int, shared_ptr
                         // if city is present, we call SetInCommuters...
                         // else we should generate a warning, or maybe even throw an exception
                         // because this should NOT happen, litterly never...
-                        if (cities.count(destination_id))
+                        if (cities.count(destination_id)){
                                 cities[destination_id]->SetInCommuters(origin_id, commuters);
+                                cities[origin_id]->SetOutCommuters(destination_id, commuters);
+                        }
                 }
                 index++;
         }

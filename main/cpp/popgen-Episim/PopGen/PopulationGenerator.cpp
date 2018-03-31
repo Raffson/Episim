@@ -290,6 +290,27 @@ vector<Person> PopulationGenerator::GetActives(const shared_ptr<geogen::City>& c
     return actives;
 }
 
+
+shared_ptr<geogen::City> PopulationGenerator::GetRandomCommutingCity(const geogen::City& origin)
+{
+    vector<double> distribution;
+    vector<unsigned int> city_ids;
+
+    for(auto& a_city: m_geogrid.GetCities()){
+        //We don't want local commuting
+        if(a_city.second->GetId() != origin.GetId()){
+            city_ids.push_back(a_city.second->GetId());
+            distribution.push_back((double) origin.GetOutCommuting().at(a_city.first) /
+                                           origin.GetTotalOutCommutersCount());
+        }
+    }
+
+    trng::discrete_dist distr(distribution.begin(), distribution.end());
+    const unsigned int index = geogen::generator.GetGenerator(distr)();
+    const unsigned int id = city_ids.at(index);
+    return m_geogrid.GetCities().at(id);
+}
+
 void PopulationGenerator::AssignToWorkplaces()
 {
     for(auto& a_city: m_geogrid.GetCities()){
@@ -303,7 +324,18 @@ void PopulationGenerator::AssignToWorkplaces()
 
             //Commuting workers
             else{
+                auto workplace_city = GetRandomCommutingCity(*(a_city.second));
+                auto workplaces = workplace_city->GetCommunitiesOfType(geogen::CommunityType::Work);
 
+                vector<shared_ptr<stride::ContactPool>> contact_pools;
+                for(auto& a_workplace: workplaces){
+                    auto current_cp = a_workplace->GetContactPools();
+                    contact_pools.insert(contact_pools.end(), current_cp.begin(), current_cp.end());
+                }
+
+                trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
+                unsigned int index = geogen::generator.GetGenerator(distr)();
+                cout << an_active.age << " is added to (commuting) workplace " << index << endl;
             }
         }
     }
