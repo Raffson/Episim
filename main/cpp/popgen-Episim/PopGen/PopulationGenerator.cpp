@@ -315,11 +315,10 @@ void PopulationGenerator::AssignToWorkplaces()
 {
     for(auto& a_city: m_geogrid.GetCities()){
         for(auto an_active : GetActives(a_city.second)){
+            vector<shared_ptr<stride::ContactPool>> contact_pools;
             if(!IsWorkingCommuter()){
-                auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::Work);
-                trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
-                unsigned int           index = geogen::generator.GetGenerator(distr)();
-                cout << an_active.age << " is added to workplace " << index << endl;
+                contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::Work);
+
             }
 
             //Commuting workers
@@ -327,16 +326,17 @@ void PopulationGenerator::AssignToWorkplaces()
                 auto workplace_city = GetRandomCommutingCity(*(a_city.second));
                 auto workplaces = workplace_city->GetCommunitiesOfType(geogen::CommunityType::Work);
 
-                vector<shared_ptr<stride::ContactPool>> contact_pools;
+                //Adding possible contactpools to be randomly chosen
                 for(auto& a_workplace: workplaces){
                     auto current_cp = a_workplace->GetContactPools();
                     contact_pools.insert(contact_pools.end(), current_cp.begin(), current_cp.end());
                 }
-
-                trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
-                unsigned int index = geogen::generator.GetGenerator(distr)();
-                cout << an_active.age << " is added to (commuting) workplace " << index << endl;
+                cout << "commuting....";
             }
+
+            trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
+            unsigned int           index = geogen::generator.GetGenerator(distr)();
+            cout << an_active.age << " is added to workplace " << index << endl;
         }
     }
 
