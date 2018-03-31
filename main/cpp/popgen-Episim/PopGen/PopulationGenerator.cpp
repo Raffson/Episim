@@ -17,30 +17,31 @@ PopulationGenerator::PopulationGenerator(geogen::GeoGrid& geogrid, unsigned int 
 
 void PopulationGenerator::InitializeHouseholdSizeFractions()
 {
-        auto                            households = m_geogrid.GetModelHouseholds();
+        auto                            households = m_geogrid.GetModelHouseholds(); //get the model
         map<unsigned int, unsigned int> sizes;
-        for (auto& household : households)
+        for (auto& household : households) //count households with size x
                 sizes[household->GetMembers().size()] += 1;
 
         double totalhhs = households.size();
-        for (auto& elem : sizes)
+        for (auto& elem : sizes) //household-count with size x divided by total nr of households (calculate fraction)
                 m_household_size_fracs.push_back(elem.second / totalhhs);
 }
 
 void PopulationGenerator::InitializeCommutingFractions()
 {
-        for( auto& cityA : m_geogrid.GetCities() ) {
+        for( auto& cityA : m_geogrid.GetCities() ) //for each cityA...
+        {
                 vector<double> distribution;
-                for (auto& cityB: m_geogrid.GetCities()) {
+                double commutersA = cityA.second->GetTotalOutCommutersCount(); //get total out-commuters from cityA
+                for (auto& cityB: m_geogrid.GetCities()) //calculate the chance to commute from cityA to cityB
+                {
                         //We don't want local commuting
-                        if (cityA.first != cityB.first) {
-                                distribution.push_back((double) cityA.second->GetOutCommuting().at(cityB.first) /
-                                                       cityA.second->GetTotalOutCommutersCount());
-                        }
+                        if (cityA.first != cityB.first)
+                                distribution.push_back(cityA.second->GetOutCommuting().at(cityB.first) / commutersA);
                         else //just push a 0, this will make sure this particular index can't be chosen...
-                            distribution.push_back(0);
+                                distribution.push_back(0);
                 }
-                m_commuting_fracs[cityA.first] = distribution;
+                m_commuting_fracs[cityA.first] = distribution; //add the commuting distribution for cityA
         }
 }
 
@@ -99,7 +100,8 @@ unsigned int PopulationGenerator::GetRandomAge()
         }
 }
 
-bool FlipCoin(const double& frac)
+//Unfair, unless you pass frac=0.5
+bool FlipUnfairCoin(const double& frac)
 {
         vector<double> fracs;
         fracs.push_back(1 - frac);
@@ -108,18 +110,22 @@ bool FlipCoin(const double& frac)
         return (bool)geogen::generator.GetGenerator(distr)();
 }
 
-bool PopulationGenerator::IsWorkingCommuter() { return FlipCoin(m_geogrid.GetCommutingWorkersFrac()); }
+bool PopulationGenerator::IsWorkingCommuter() { return FlipUnfairCoin(m_geogrid.GetCommutingWorkersFrac()); }
 
-bool PopulationGenerator::IsStudentCommuter() { return FlipCoin(m_geogrid.GetCommutingStudentsFrac()); }
+bool PopulationGenerator::IsStudentCommuter() { return FlipUnfairCoin(m_geogrid.GetCommutingStudentsFrac()); }
 
-bool PopulationGenerator::IsStudent() { return FlipCoin(m_geogrid.GetStudentFrac()); }
+bool PopulationGenerator::IsStudent() { return FlipUnfairCoin(m_geogrid.GetStudentFrac()); }
 
-bool PopulationGenerator::IsActive() { return FlipCoin(m_geogrid.GetActiveFrac()); }
+bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_geogrid.GetActiveFrac()); }
 
 shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
 {
     //TODO if we generate somebody less than 18 y then s/he should be accompanied by an adult?
     //A household with 1 person won't be possible in that case
+    //Raphael@everyone, not necessarily, we just need to check the age distribution for a household of size x
+    // meaning we need a map sort of like m_commuting_fracs...
+    // mapping the size of a household, i.e. 1,2,3,... (deduced from m_household_size_fracs)
+    // to a distribution for age categories, i.e. a vector sort of like popfracs in GetRandomAge
 
     auto the_household = make_shared<Household>();
     for(unsigned int i=0; i<size; i++){
@@ -144,6 +150,7 @@ void PopulationGenerator::AssignHouseholds()
 
             //if the population has to be exact according to the one that we read on the file about cities
             //but this will effect our discrete distribution
+            // Raphael@everyone, true, but the effect is insignificant given we have enough households...
             if(remaining_population - (int)household_size < 0){
                 household_size = remaining_population;
             }
@@ -241,18 +248,15 @@ void PopulationGenerator::AssignToSchools()
                 auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::School);
 
                 // Select a school randomly for every school attendants
-                // Raphael@Nishchal, if you don't need 'a_school_attendant', the use the following:
-                for (unsigned int i = 0; i < school_attendants.size(); i++) { // eliminates warning...
-                        // for (auto& a_school_attendant : school_attendants) {
+                for (auto& a_school_attendant : school_attendants) {
                         // choose random households to be assigned to the city
                         trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
-                        // Raphael@Nishchal, commenting this out to suppress warning,
-                        // uncomment whenever you start using 'index'
-                        // unsigned int           index = geogen::generator.GetGenerator(distr)();
+                        unsigned int           index = geogen::generator.GetGenerator(distr)();
                         // TODO use stride::Person class
                         // contact_pools.at(index)->AddMember(a_school_attendant);
 
-                        // cout<< a_school_attendant.age << " has been added to contact_pool " << index<<endl;
+                        //this cout actually suppresses the warnings as well...
+                        cout<< a_school_attendant.age << " has been added to contact_pool " << index <<endl;
                 }
         }
 }
@@ -321,7 +325,7 @@ shared_ptr<geogen::City> PopulationGenerator::GetRandomCommutingCity(const geoge
 
 void PopulationGenerator::AssignToWorkplaces()
 {
-    vector<int> city_ids;
+    vector<int> city_ids; //using boost::copy to copy all keys from cities into this vector...
     boost::copy(m_geogrid.GetCities() | boost::adaptors::map_keys, std::back_inserter(city_ids));
     for(auto& a_city: m_geogrid.GetCities()){
         for(auto an_active : GetActives(a_city.second)){
