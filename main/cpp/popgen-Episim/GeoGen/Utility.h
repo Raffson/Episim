@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "boost/filesystem/path.hpp"
+#include <boost/filesystem/path.hpp>
 #include <sys/stat.h>
 
 namespace geogen {

@@ -10,9 +10,9 @@
 #include <random>
 #include <vector>
 
-#include "boost/filesystem.hpp"
-#include "boost/property_tree/ptree.hpp"
-#include "boost/property_tree/xml_parser.hpp"
+#include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 #include "util/ConfigInfo.h"
 #include "util/RNManager.h"
@@ -155,7 +155,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         unsigned int m_total_pop{};
 
         // According to the professor's mail:
-        // [6,12) -> elementary school
+        // [6, 12) -> elementary school
         // [12, 18) -> middle+highschool
         // [18, 26) -> college/university
         // [18, 65) -> workers except those who go to college/university

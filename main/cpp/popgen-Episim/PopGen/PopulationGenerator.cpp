@@ -12,6 +12,7 @@ PopulationGenerator::PopulationGenerator(geogen::GeoGrid& geogrid, unsigned int 
     : m_geogrid(geogrid), m_initial_search_radius(rad)
 {
         InitializeHouseholdSizeFractions();
+        InitializeCommutingFractions();
 }
 
 void PopulationGenerator::InitializeHouseholdSizeFractions()
@@ -24,6 +25,23 @@ void PopulationGenerator::InitializeHouseholdSizeFractions()
         double totalhhs = households.size();
         for (auto& elem : sizes)
                 m_household_size_fracs.push_back(elem.second / totalhhs);
+}
+
+void PopulationGenerator::InitializeCommutingFractions()
+{
+        for( auto& cityA : m_geogrid.GetCities() ) {
+                vector<double> distribution;
+                for (auto& cityB: m_geogrid.GetCities()) {
+                        //We don't want local commuting
+                        if (cityA.first != cityB.first) {
+                                distribution.push_back((double) cityA.second->GetOutCommuting().at(cityB.first) /
+                                                       cityA.second->GetTotalOutCommutersCount());
+                        }
+                        else //just push a 0, this will make sure this particular index can't be chosen...
+                            distribution.push_back(0);
+                }
+                m_commuting_fracs[cityA.first] = distribution;
+        }
 }
 
 unsigned int PopulationGenerator::GetRandomHouseholdSize()
@@ -272,6 +290,8 @@ void PopulationGenerator::AssignToColleges()
         }
 }
 
+// This function may be forgetting about students, however irl we also have working students...
+// though they would be working part-time, we should ask ourselves (or the professor) how this needs to be handled...
 vector<Person> PopulationGenerator::GetActives(const shared_ptr<geogen::City>& city)
 {
 
@@ -290,21 +310,9 @@ vector<Person> PopulationGenerator::GetActives(const shared_ptr<geogen::City>& c
     return actives;
 }
 
-
-shared_ptr<geogen::City> PopulationGenerator::GetRandomCommutingCity(const geogen::City& origin)
+shared_ptr<geogen::City> PopulationGenerator::GetRandomCommutingCity(const geogen::City& origin, const vector<int>& city_ids)
 {
-    vector<double> distribution;
-    vector<unsigned int> city_ids;
-
-    for(auto& a_city: m_geogrid.GetCities()){
-        //We don't want local commuting
-        if(a_city.second->GetId() != origin.GetId()){
-            city_ids.push_back(a_city.second->GetId());
-            distribution.push_back((double) origin.GetOutCommuting().at(a_city.first) /
-                                           origin.GetTotalOutCommutersCount());
-        }
-    }
-
+    vector<double> distribution = m_commuting_fracs[origin.GetId()];
     trng::discrete_dist distr(distribution.begin(), distribution.end());
     const unsigned int index = geogen::generator.GetGenerator(distr)();
     const unsigned int id = city_ids.at(index);
@@ -313,6 +321,8 @@ shared_ptr<geogen::City> PopulationGenerator::GetRandomCommutingCity(const geoge
 
 void PopulationGenerator::AssignToWorkplaces()
 {
+    vector<int> city_ids;
+    boost::copy(m_geogrid.GetCities() | boost::adaptors::map_keys, std::back_inserter(city_ids));
     for(auto& a_city: m_geogrid.GetCities()){
         for(auto an_active : GetActives(a_city.second)){
             vector<shared_ptr<stride::ContactPool>> contact_pools;
@@ -323,7 +333,14 @@ void PopulationGenerator::AssignToWorkplaces()
 
             //Commuting workers
             else{
-                auto workplace_city = GetRandomCommutingCity(*(a_city.second));
+                //Raphael@Nishchal, so GetRandomCommutingCity is being called for every active worker,
+                // meaning that the distributions for all active workers from a particular city should be the same...
+                // therefore I believe we should initialize this in the constructor using a
+                // map<cityID, outCommutingDistributionOfCityWith-cityID>
+                // if my reasoning is incorrect, we will revert,
+                // however I'm pretty sure we're doing too much work now...
+                // i.e. less time-complexity, but more space-complexity
+                auto workplace_city = GetRandomCommutingCity(*(a_city.second), city_ids);
                 auto workplaces = workplace_city->GetCommunitiesOfType(geogen::CommunityType::Work);
 
                 //Adding possible contactpools to be randomly chosen
