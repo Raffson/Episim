@@ -45,8 +45,8 @@ public:
 
         unsigned int GetCommunitySize() const { return m_communities.size(); };
 
-        unsigned int GetTotalInCommutersCount() const{ return m_in_commuter_count;}
-        unsigned int GetTotalOutCommutersCount() const{ return m_out_commuter_count;}
+        unsigned int GetTotalInCommutersCount() const { return m_in_commuter_count; }
+        unsigned int GetTotalOutCommutersCount() const { return m_out_commuter_count; }
 
         const vector<shared_ptr<Community>>& GetAllCommunities() { return m_communities; };
 
@@ -63,7 +63,6 @@ public:
         vector<shared_ptr<Community>> GetSecondaryCommunities();
 
         vector<shared_ptr<Community>> GetCommunitiesOfType(CommunityType ct);
-
 
         /// Adds community to the city.
         void AddCommunity(shared_ptr<Community> community);

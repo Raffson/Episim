@@ -133,14 +133,14 @@ void City::AddCommunity(shared_ptr<Community> community) { m_communities.push_ba
 void City::SetInCommuters(unsigned int id, unsigned int number_of_commuters)
 {
         m_in_commuting[id] = number_of_commuters;
-        if(id != m_city_id)
+        if (id != m_city_id)
                 m_in_commuter_count += number_of_commuters;
 }
 
 void City::SetOutCommuters(unsigned int id, unsigned int number_of_commuters)
 {
         m_out_commuting[id] = number_of_commuters;
-        if(id != m_city_id)
+        if (id != m_city_id)
                 m_out_commuter_count += number_of_commuters;
 }
 

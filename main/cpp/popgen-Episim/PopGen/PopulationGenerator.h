@@ -8,18 +8,18 @@
 #include "popgen-Episim/GeoGen/GeoGrid.h"
 #include "popgen-Episim/GeoGen/Household.h"
 
+#include <boost/assign.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/algorithm/copy.hpp>
-#include <boost/assign.hpp>
 
 #include "trng/discrete_dist.hpp"
 #include "trng/lcg64.hpp"
 #include "trng/uniform_int_dist.hpp"
 
 #include <cmath>
-#include <vector>
 #include <iterator>
+#include <vector>
 
 namespace popgen {
 
@@ -56,7 +56,7 @@ private:
         std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(const geogen::City& city,
                                                                                 geogen::CommunityType);
         std::vector<Person>                               GetSchoolAttendants(const shared_ptr<geogen::City>& city);
-        shared_ptr<Household> GenerateHousehold(unsigned int size);
+        shared_ptr<Household>                             GenerateHousehold(unsigned int size);
         std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
         void                                              InitializeHouseholdSizeFractions();
         void                                              InitializeCommutingFractions();
@@ -67,7 +67,7 @@ private:
         bool                                              IsStudent();
         bool                                              IsActive();
 
-        std::vector<Person> GetActives(const shared_ptr<geogen::City>&);
+        std::vector<Person>           GetActives(const shared_ptr<geogen::City>&);
         std::shared_ptr<geogen::City> GetRandomCommutingCity(const geogen::City&, const std::vector<int>&);
 
 private:

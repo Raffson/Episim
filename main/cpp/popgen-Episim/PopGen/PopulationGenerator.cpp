@@ -17,31 +17,31 @@ PopulationGenerator::PopulationGenerator(geogen::GeoGrid& geogrid, unsigned int 
 
 void PopulationGenerator::InitializeHouseholdSizeFractions()
 {
-        auto                            households = m_geogrid.GetModelHouseholds(); //get the model
+        auto                            households = m_geogrid.GetModelHouseholds(); // get the model
         map<unsigned int, unsigned int> sizes;
-        for (auto& household : households) //count households with size x
+        for (auto& household : households) // count households with size x
                 sizes[household->GetMembers().size()] += 1;
 
         double totalhhs = households.size();
-        for (auto& elem : sizes) //household-count with size x divided by total nr of households (calculate fraction)
+        for (auto& elem : sizes) // household-count with size x divided by total nr of households (calculate fraction)
                 m_household_size_fracs.push_back(elem.second / totalhhs);
 }
 
 void PopulationGenerator::InitializeCommutingFractions()
 {
-        for( auto& cityA : m_geogrid.GetCities() ) //for each cityA...
+        for (auto& cityA : m_geogrid.GetCities()) // for each cityA...
         {
                 vector<double> distribution;
-                double commutersA = cityA.second->GetTotalOutCommutersCount(); //get total out-commuters from cityA
-                for (auto& cityB: m_geogrid.GetCities()) //calculate the chance to commute from cityA to cityB
+                double         commutersA = cityA.second->GetTotalOutCommutersCount(); // get total out-commuters from cityA
+                for (auto& cityB : m_geogrid.GetCities()) // calculate the chance to commute from cityA to cityB
                 {
-                        //We don't want local commuting
+                        // We don't want local commuting
                         if (cityA.first != cityB.first)
                                 distribution.push_back(cityA.second->GetOutCommuting().at(cityB.first) / commutersA);
-                        else //just push a 0, this will make sure this particular index can't be chosen...
+                        else // just push a 0, this will make sure this particular index can't be chosen...
                                 distribution.push_back(0);
                 }
-                m_commuting_fracs[cityA.first] = distribution; //add the commuting distribution for cityA
+                m_commuting_fracs[cityA.first] = distribution; // add the commuting distribution for cityA
         }
 }
 
@@ -100,7 +100,7 @@ unsigned int PopulationGenerator::GetRandomAge()
         }
 }
 
-//Unfair, unless you pass frac=0.5
+// Unfair, unless you pass frac=0.5
 bool FlipUnfairCoin(const double& frac)
 {
         vector<double> fracs;
@@ -120,46 +120,46 @@ bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_geogrid.GetActive
 
 shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
 {
-    //TODO if we generate somebody less than 18 y then s/he should be accompanied by an adult?
-    //A household with 1 person won't be possible in that case
-    //Raphael@everyone, not necessarily, we just need to check the age distribution for a household of size x
-    // meaning we need a map sort of like m_commuting_fracs...
-    // mapping the size of a household, i.e. 1,2,3,... (deduced from m_household_size_fracs)
-    // to a distribution for age categories, i.e. a vector sort of like popfracs in GetRandomAge
+        // TODO if we generate somebody less than 18 y then s/he should be accompanied by an adult?
+        // A household with 1 person won't be possible in that case
+        // Raphael@everyone, not necessarily, we just need to check the age distribution for a household of size x
+        // meaning we need a map sort of like m_commuting_fracs...
+        // mapping the size of a household, i.e. 1,2,3,... (deduced from m_household_size_fracs)
+        // to a distribution for age categories, i.e. a vector sort of like popfracs in GetRandomAge
 
-    auto the_household = make_shared<Household>();
-    for(unsigned int i=0; i<size; i++){
-        Person a_person;
-        a_person.age = this->GetRandomAge();
-        the_household->AddMember(a_person);
-        //cout << a_person.age << endl;
-    }
-        //cout << "------------------" << endl;
-    return the_household;
+        auto the_household = make_shared<Household>();
+        for (unsigned int i = 0; i < size; i++) {
+                Person a_person;
+                a_person.age = this->GetRandomAge();
+                the_household->AddMember(a_person);
+                // cout << a_person.age << endl;
+        }
+        // cout << "------------------" << endl;
+        return the_household;
 }
 
 void PopulationGenerator::AssignHouseholds()
 {
 
-    for(auto& a_city: m_geogrid.GetCities()){
-        const unsigned int max_population = a_city.second->GetPopulation();
-        int remaining_population = (int) max_population;
+        for (auto& a_city : m_geogrid.GetCities()) {
+                const unsigned int max_population       = a_city.second->GetPopulation();
+                int                remaining_population = (int)max_population;
 
-        while(remaining_population > 0){
-            unsigned int household_size = this->GetRandomHouseholdSize();
+                while (remaining_population > 0) {
+                        unsigned int household_size = this->GetRandomHouseholdSize();
 
-            //if the population has to be exact according to the one that we read on the file about cities
-            //but this will effect our discrete distribution
-            // Raphael@everyone, true, but the effect is insignificant given we have enough households...
-            if(remaining_population - (int)household_size < 0){
-                household_size = remaining_population;
-            }
-            auto hh = GenerateHousehold(household_size);
-            hh->SetCityID(a_city.second->GetId());
-            a_city.second->AddHousehold(hh);
-            remaining_population -= household_size;
+                        // if the population has to be exact according to the one that we read on the file about cities
+                        // but this will effect our discrete distribution
+                        // Raphael@everyone, true, but the effect is insignificant given we have enough households...
+                        if (remaining_population - (int)household_size < 0) {
+                                household_size = remaining_population;
+                        }
+                        auto hh = GenerateHousehold(household_size);
+                        hh->SetCityID(a_city.second->GetId());
+                        a_city.second->AddHousehold(hh);
+                        remaining_population -= household_size;
+                }
         }
-    }
 }
 
 vector<shared_ptr<geogen::City>> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
@@ -255,8 +255,8 @@ void PopulationGenerator::AssignToSchools()
                         // TODO use stride::Person class
                         // contact_pools.at(index)->AddMember(a_school_attendant);
 
-                        //this cout actually suppresses the warnings as well...
-                        cout<< a_school_attendant.age << " has been added to contact_pool " << index <<endl;
+                        // this cout actually suppresses the warnings as well...
+                        cout << a_school_attendant.age << " has been added to contact_pool " << index << endl;
                 }
         }
 }
@@ -299,68 +299,67 @@ void PopulationGenerator::AssignToColleges()
 vector<Person> PopulationGenerator::GetActives(const shared_ptr<geogen::City>& city)
 {
 
-    vector<Person> actives;
+        vector<Person> actives;
 
-    for(auto& a_household: city->GetHouseholds()){
-        vector<Person> possible_workers;
-        a_household->GetPossibleWorkers(possible_workers);
-        for(auto& a_possible_worker:possible_workers){
-            if(this->IsActive()){
-                actives.push_back(a_possible_worker);
-            }
+        for (auto& a_household : city->GetHouseholds()) {
+                vector<Person> possible_workers;
+                a_household->GetPossibleWorkers(possible_workers);
+                for (auto& a_possible_worker : possible_workers) {
+                        if (this->IsActive()) {
+                                actives.push_back(a_possible_worker);
+                        }
+                }
         }
-    }
 
-    return actives;
+        return actives;
 }
 
-shared_ptr<geogen::City> PopulationGenerator::GetRandomCommutingCity(const geogen::City& origin, const vector<int>& city_ids)
+shared_ptr<geogen::City> PopulationGenerator::GetRandomCommutingCity(const geogen::City& origin,
+                                                                     const vector<int>&  city_ids)
 {
-    vector<double> distribution = m_commuting_fracs[origin.GetId()];
-    trng::discrete_dist distr(distribution.begin(), distribution.end());
-    const unsigned int index = geogen::generator.GetGenerator(distr)();
-    const unsigned int id = city_ids.at(index);
-    return m_geogrid.GetCities().at(id);
+        vector<double>      distribution = m_commuting_fracs[origin.GetId()];
+        trng::discrete_dist distr(distribution.begin(), distribution.end());
+        const unsigned int  index = geogen::generator.GetGenerator(distr)();
+        const unsigned int  id    = city_ids.at(index);
+        return m_geogrid.GetCities().at(id);
 }
 
 void PopulationGenerator::AssignToWorkplaces()
 {
-    vector<int> city_ids; //using boost::copy to copy all keys from cities into this vector...
-    boost::copy(m_geogrid.GetCities() | boost::adaptors::map_keys, std::back_inserter(city_ids));
-    for(auto& a_city: m_geogrid.GetCities()){
-        for(auto an_active : GetActives(a_city.second)){
-            vector<shared_ptr<stride::ContactPool>> contact_pools;
-            if(!IsWorkingCommuter()){
-                contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::Work);
+        vector<int> city_ids; // using boost::copy to copy all keys from cities into this vector...
+        boost::copy(m_geogrid.GetCities() | boost::adaptors::map_keys, std::back_inserter(city_ids));
+        for (auto& a_city : m_geogrid.GetCities()) {
+                for (auto an_active : GetActives(a_city.second)) {
+                        vector<shared_ptr<stride::ContactPool>> contact_pools;
+                        if (!IsWorkingCommuter()) {
+                                contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::Work);
 
-            }
+                        }
 
-            //Commuting workers
-            else{
-                //Raphael@Nishchal, so GetRandomCommutingCity is being called for every active worker,
-                // meaning that the distributions for all active workers from a particular city should be the same...
-                // therefore I believe we should initialize this in the constructor using a
-                // map<cityID, outCommutingDistributionOfCityWith-cityID>
-                // if my reasoning is incorrect, we will revert,
-                // however I'm pretty sure we're doing too much work now...
-                // i.e. less time-complexity, but more space-complexity
-                auto workplace_city = GetRandomCommutingCity(*(a_city.second), city_ids);
-                auto workplaces = workplace_city->GetCommunitiesOfType(geogen::CommunityType::Work);
+                        // Commuting workers
+                        else {
+                                // Raphael@Nishchal, so GetRandomCommutingCity is being called for every active worker,
+                                // meaning that the distributions for all active workers from a particular city should
+                                // be the same... therefore I believe we should initialize this in the constructor using
+                                // a map<cityID, outCommutingDistributionOfCityWith-cityID> if my reasoning is
+                                // incorrect, we will revert, however I'm pretty sure we're doing too much work now...
+                                // i.e. less time-complexity, but more space-complexity
+                                auto workplace_city = GetRandomCommutingCity(*(a_city.second), city_ids);
+                                auto workplaces     = workplace_city->GetCommunitiesOfType(geogen::CommunityType::Work);
 
-                //Adding possible contactpools to be randomly chosen
-                for(auto& a_workplace: workplaces){
-                    auto current_cp = a_workplace->GetContactPools();
-                    contact_pools.insert(contact_pools.end(), current_cp.begin(), current_cp.end());
+                                // Adding possible contactpools to be randomly chosen
+                                for (auto& a_workplace : workplaces) {
+                                        auto current_cp = a_workplace->GetContactPools();
+                                        contact_pools.insert(contact_pools.end(), current_cp.begin(), current_cp.end());
+                                }
+                                cout << "commuting....";
+                        }
+
+                        trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
+                        unsigned int           index = geogen::generator.GetGenerator(distr)();
+                        cout << an_active.age << " is added to workplace " << index << endl;
                 }
-                cout << "commuting....";
-            }
-
-            trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
-            unsigned int           index = geogen::generator.GetGenerator(distr)();
-            cout << an_active.age << " is added to workplace " << index << endl;
         }
-    }
-
 }
 
 void PopulationGenerator::AssignToCommunity()

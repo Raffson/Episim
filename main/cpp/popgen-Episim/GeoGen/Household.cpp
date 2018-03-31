@@ -43,14 +43,14 @@ void Household::GetCollegeStudents(vector<Person>& vec)
         }
 }
 
-//Raphael@everyone, aren't we forgetting to exclude students in this function?
+// Raphael@everyone, aren't we forgetting to exclude students in this function?
 // I guess it depends on the interpretation,
 // as I mentioned in PopulationGenerator we could have students who also work part-time...
 void Household::GetPossibleWorkers(vector<Person>& vec)
 {
-    for(auto a_member: m_members){
-        if(a_member.age >= 18 && a_member.age <= 64){
-            vec.push_back(a_member);
+        for (auto a_member : m_members) {
+                if (a_member.age >= 18 && a_member.age <= 64) {
+                        vec.push_back(a_member);
+                }
         }
-    }
 }
