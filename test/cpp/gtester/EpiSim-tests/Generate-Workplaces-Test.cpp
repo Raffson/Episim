@@ -72,18 +72,17 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         grid.GenerateWorkplaces();
 
         auto cities = grid.GetCities();
-        /* Raphael@Nishchal, all the following EXPECTS fail, rework this...
-                EXPECT_EQ(cities[11002]->GetWorkplaces().size(), antwerpen);
-                EXPECT_EQ(cities[24062]->GetWorkplaces().size(), leuven);
-                EXPECT_EQ(cities[31005]->GetWorkplaces().size(), brugge);
-                EXPECT_EQ(cities[36015]->GetWorkplaces().size(), roeselare);
-                EXPECT_EQ(cities[41002]->GetWorkplaces().size(), aalst);
-                EXPECT_EQ(cities[42006]->GetWorkplaces().size(), dendermonde);
-                EXPECT_EQ(cities[46025]->GetWorkplaces().size(), temse);
-                EXPECT_EQ(cities[71053]->GetWorkplaces().size(), sinttruiden);
-                EXPECT_EQ(cities[73083]->GetWorkplaces().size(), tongeren);
-                EXPECT_EQ(cities[73107]->GetWorkplaces().size(), maasmechelen);
-        */
+        EXPECT_EQ(cities[11002]->GetWorkplaces().size(), antwerpen);
+        EXPECT_EQ(cities[24062]->GetWorkplaces().size(), leuven);
+        EXPECT_EQ(cities[31005]->GetWorkplaces().size(), brugge);
+        EXPECT_EQ(cities[36015]->GetWorkplaces().size(), roeselare);
+        EXPECT_EQ(cities[41002]->GetWorkplaces().size(), aalst);
+        EXPECT_EQ(cities[42006]->GetWorkplaces().size(), dendermonde);
+        EXPECT_EQ(cities[46025]->GetWorkplaces().size(), temse);
+        EXPECT_EQ(cities[71053]->GetWorkplaces().size(), sinttruiden);
+        EXPECT_EQ(cities[73083]->GetWorkplaces().size(), tongeren);
+        EXPECT_EQ(cities[73107]->GetWorkplaces().size(), maasmechelen);
+
 }
 
 TEST_P(WorkplaceTest, CommuterVsLocal)

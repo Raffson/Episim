@@ -47,8 +47,10 @@ public:
 
         unsigned int GetTotalInCommutersCount() const { return m_in_commuter_count; }
         unsigned int GetTotalOutCommutersCount() const { return m_out_commuter_count; }
+        unsigned int GetLocalCommutersCount() const { return m_local_commuter_count; }
 
-        const vector<shared_ptr<Community>>& GetAllCommunities() { return m_communities; };
+
+    const vector<shared_ptr<Community>>& GetAllCommunities() { return m_communities; };
 
         vector<shared_ptr<Community>> GetColleges();
 
@@ -108,6 +110,8 @@ private:
 
         unsigned int m_in_commuter_count;
         unsigned int m_out_commuter_count;
+        unsigned int m_local_commuter_count;
+
 };
 
 } // namespace geogen
