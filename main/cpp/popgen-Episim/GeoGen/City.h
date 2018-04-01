@@ -45,9 +45,8 @@ public:
 
         unsigned int GetCommunitySize() const { return m_communities.size(); };
 
-        unsigned int GetTotalInCommutersCount() const { return m_in_commuter_count; }
-        unsigned int GetTotalOutCommutersCount() const { return m_out_commuter_count; }
-        unsigned int GetLocalCommutersCount() const { return m_local_commuter_count; }
+        unsigned int GetTotalInCommutersCount();
+        unsigned int GetTotalOutCommutersCount();
 
 
     const vector<shared_ptr<Community>>& GetAllCommunities() { return m_communities; };
@@ -110,7 +109,10 @@ private:
 
         unsigned int m_in_commuter_count;
         unsigned int m_out_commuter_count;
-        unsigned int m_local_commuter_count;
+
+        //These booleans will improve efficiency...
+        bool m_in_commuting_changed;
+        bool m_out_commuting_changed;
 
 };
 

@@ -298,6 +298,8 @@ void PopulationGenerator::AssignToColleges()
 // though they would be working part-time, we should ask ourselves (or the professor) how this needs to be handled...
 // Nishchal@everyone If I am not mistaken it was said during one of the classes that we don't have to take part-time
 // students into account
+// Raphael@Nishchal, roger that! but still, at this point I believe we're mixing students and workers,
+// i.e. if I understood the code correctly...
 vector<Person> PopulationGenerator::GetActives(const shared_ptr<geogen::City>& city)
 {
 
@@ -348,10 +350,14 @@ void PopulationGenerator::AssignToWorkplaces()
                                 // i.e. less time-complexity, but more space-complexity
 
                                 // Nishchal@Raphael I agree with you. We can save time doing this (with some space-
-                                //complexity)
+                                //complexity) -> Raphael@Nishchal, copy that! we'll leave it like this unless we
+                                // run into trouble (which I strongly doubt)
 
                                 //Nishchal@everyone I wonder, can't we do the same for distances between cities also.
                                 //Atm we are repeating calculation of distances between cities more than once
+                                //Raphael@Nishchal, affirmative! however this refractor will require a little bit more
+                                // work which I'd rather postpone atm, we should focus on verifying the correctness
+                                // of all our code right now, indicating all possible issues so we can discuss them...
                                 auto workplace_city = GetRandomCommutingCity(*(a_city.second), city_ids);
                                 auto workplaces     = workplace_city->GetCommunitiesOfType(geogen::CommunityType::Work);
 

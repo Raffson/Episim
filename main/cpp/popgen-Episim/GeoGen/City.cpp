@@ -21,7 +21,7 @@ namespace geogen {
 City::City(const unsigned int city_id, const unsigned int province, unsigned int population,
            const Coordinate coordinates, const string name)
     : m_city_id(city_id), m_province(province), m_population(population), m_coordinates(coordinates), m_name(name),
-      m_in_commuter_count(0), m_out_commuter_count(0), m_local_commuter_count(0)
+      m_in_commuter_count(0), m_out_commuter_count(0), m_in_commuting_changed(false), m_out_commuting_changed(false)
 {
 }
 /*
@@ -132,21 +132,38 @@ void City::AddCommunity(shared_ptr<Community> community) { m_communities.push_ba
 
 void City::SetInCommuters(unsigned int id, unsigned int number_of_commuters)
 {
-        if (id != m_city_id){
-            m_in_commuter_count += number_of_commuters;
-            m_in_commuting[id] = number_of_commuters;
-        } else{
-            m_local_commuter_count = number_of_commuters;
-        }
+        m_in_commuting_changed = true;
+        m_in_commuting[id] = number_of_commuters;
 }
 
 void City::SetOutCommuters(unsigned int id, unsigned int number_of_commuters)
 {
-        if (id != m_city_id){
-            m_out_commuting[id] = number_of_commuters;
-            m_out_commuter_count += number_of_commuters;
-        }
+        m_out_commuting_changed = true;
+        m_out_commuting[id] = number_of_commuters;
 }
+
+unsigned int City::GetTotalInCommutersCount()
+{
+    if( m_in_commuting_changed ) {
+        m_in_commuting_changed = false;
+        m_in_commuter_count = 0;
+        for (auto &it : m_in_commuting)
+            m_in_commuter_count += it.second;
+    }
+    return m_in_commuter_count;
+}
+
+unsigned int City::GetTotalOutCommutersCount()
+{
+    if( m_out_commuting_changed ) {
+        m_out_commuting_changed = false;
+        m_out_commuter_count = 0;
+        for (auto &it : m_out_commuting)
+            m_out_commuter_count += it.second;
+    }
+    return m_out_commuter_count;
+}
+
 
 void City::AddHousehold(std::shared_ptr<Household> hh) { m_households.push_back(hh); }
 
