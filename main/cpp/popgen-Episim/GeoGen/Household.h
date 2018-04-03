@@ -43,6 +43,8 @@ public:
 
         void GetCollegeStudents(vector<Person>&);
 
+        void GetPossibleWorkers(vector<Person>&);
+
 private: // Raphael@everyone replace size_t by unsigned int?
         /// Id generator.
         static size_t g_id_generator;

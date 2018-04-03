@@ -91,6 +91,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
 
         // Setting up RNG
+        //Raphael@Robbe, isn't the seed an unsigned long? even if people start messing with negative numbers...
         long   seed = p_tree.get("popgen.rng.seed", 0);
         string type = p_tree.get("popgen.rng.type", "mrg2");
         generator   = stride::util::RNManager(stride::util::RNManager::Info(type, (unsigned long)seed));
@@ -241,24 +242,16 @@ void GeoGrid::GenerateColleges()
 
 void GeoGrid::GenerateWorkplaces()
 {
-        // calculating the required informations
-
-        // double working_population = m_active_frac * m_total_pop;
-        // double number_of_workplaces = working_population/m_worksplace_size;
-
-        // dividing workplaces to cities
         // TODO This should also be placed according to a discrete distribution!
         // TODO still figuring out how i should do this for this function
-        //      -> isn't that nishchal's job?
+        // is this being done by now?
 
         for (auto it : m_cities) {
                 shared_ptr<City> city         = it.second;
-                unsigned int     in_commuters = city->GetNumberOfInCommuters();
+                unsigned int     in_commuters = city->GetTotalInCommutersCount();
 
-                // To be confirmed: everybody commutes, the in-commuters have all the people working in that region,
-                // including locals who work in their own region
                 // some percentages of the commuters are students
-                double working_commuters    = m_commuting_workers_frac * in_commuters;
+                double working_commuters    = m_commuting_workers_frac * (in_commuters);
                 auto   number_of_workplaces = (unsigned int)round(working_commuters / m_worksplace_size);
 
                 for (unsigned int i = 0; i < number_of_workplaces; i++) {

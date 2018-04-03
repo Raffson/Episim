@@ -69,7 +69,7 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         unsigned int tongeren     = 210;
         unsigned int maasmechelen = 216;
 
-        grid.GenerateWorkplaces();
+        ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
         auto cities = grid.GetCities();
         EXPECT_EQ(cities[11002]->GetWorkplaces().size(), antwerpen);
@@ -82,6 +82,7 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         EXPECT_EQ(cities[71053]->GetWorkplaces().size(), sinttruiden);
         EXPECT_EQ(cities[73083]->GetWorkplaces().size(), tongeren);
         EXPECT_EQ(cities[73107]->GetWorkplaces().size(), maasmechelen);
+
 }
 
 TEST_P(WorkplaceTest, CommuterVsLocal)
@@ -114,7 +115,7 @@ TEST_P(WorkplaceTest, CommuterVsLocal)
         cities[random_city2]->SetInCommuters(35029, 50);
         cities[random_city2]->SetInCommuters(37002, 50);
 
-        grid.GenerateWorkplaces();
+        ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
         EXPECT_EQ(cities[random_city1]->GetWorkplaces().size(), cities[random_city2]->GetWorkplaces().size());
 }
@@ -139,9 +140,9 @@ TEST_P(WorkplaceTest, Extremeregion)
                 cities[a_random_city]->SetInCommuters(city.first, 0);
         }
 
-        grid.GenerateWorkplaces();
+        ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
-        // This is an extrem city where everybody commutes to other cities to work
+        // This is an extreme city where everybody commutes to other cities to work
         EXPECT_EQ(0, cities[a_random_city]->GetWorkplaces().size());
 }
 namespace {

@@ -45,7 +45,11 @@ public:
 
         unsigned int GetCommunitySize() const { return m_communities.size(); };
 
-        const vector<shared_ptr<Community>>& GetAllCommunities() { return m_communities; };
+        unsigned int GetTotalInCommutersCount();
+        unsigned int GetTotalOutCommutersCount();
+
+
+    const vector<shared_ptr<Community>>& GetAllCommunities() { return m_communities; };
 
         vector<shared_ptr<Community>> GetColleges();
 
@@ -64,16 +68,18 @@ public:
         /// Adds community to the city.
         void AddCommunity(shared_ptr<Community> community);
 
-        const map<unsigned int, unsigned int>& GetCommuting() const { return m_commuting; };
+        ///
+        const map<unsigned int, unsigned int>& GetInCommuting() const { return m_in_commuting; };
+
+        const map<unsigned int, unsigned int>& GetOutCommuting() const { return m_out_commuting; };
 
         void SetInCommuters(unsigned int id, unsigned int number_of_commuters);
+
+        void SetOutCommuters(unsigned int id, unsigned int number_of_commuters);
 
         void AddHousehold(std::shared_ptr<Household> hh);
 
         const vector<std::shared_ptr<Household>>& GetHouseholds() { return m_households; }
-
-        /// @return number of commuters entering the city
-        unsigned int GetNumberOfInCommuters();
 
 private:
         /// A unique ID of the city.
@@ -95,9 +101,19 @@ private:
         vector<shared_ptr<Community>> m_communities;
 
         /// Contains number of commuters from this city to other cities
-        map<unsigned int, unsigned int> m_commuting;
+        map<unsigned int, unsigned int> m_in_commuting;
+
+        map<unsigned int, unsigned int> m_out_commuting;
 
         vector<std::shared_ptr<Household>> m_households;
+
+        unsigned int m_in_commuter_count;
+        unsigned int m_out_commuter_count;
+
+        //These booleans will improve efficiency...
+        bool m_in_commuting_changed;
+        bool m_out_commuting_changed;
+
 };
 
 } // namespace geogen
