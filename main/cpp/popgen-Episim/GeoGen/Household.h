@@ -13,7 +13,7 @@ using namespace std;
 struct Person
 {
         unsigned int work_id;
-        int          age;
+        unsigned int          age;
 };
 
 class Household

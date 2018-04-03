@@ -37,7 +37,8 @@ void PopulationGenerator::InitializeCommutingFractions()
                 {
                         // We don't want local commuting
                         if (cityA.first != cityB.first)
-                                distribution.push_back(cityA.second->GetOutCommuting().at(cityB.first) / commutersA);
+                                distribution.push_back(cityA.second->GetOutCommuting().at(
+                                        (const unsigned int &) cityB.first) / commutersA);
                         else // just push a 0, this will make sure this particular index can't be chosen...
                                 distribution.push_back(0);
                 }
@@ -45,7 +46,7 @@ void PopulationGenerator::InitializeCommutingFractions()
         }
 }
 
-unsigned int PopulationGenerator::GetRandomHouseholdSize()
+trng::discrete_dist::result_type PopulationGenerator::GetRandomHouseholdSize()
 {
         trng::discrete_dist distr(m_household_size_fracs.begin(), m_household_size_fracs.end());
         // plus 1 because discrete_dist returns numbers between 0 and (m_household_size_fracs.size() - 1)
@@ -53,7 +54,7 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
         return (geogen::generator.GetGenerator(distr)() + 1);
 }
 
-unsigned int PopulationGenerator::GetRandomAge()
+trng::uniform_int_dist::result_type PopulationGenerator::GetRandomAge()
 {
         vector<double> popfracs;
         popfracs.push_back(m_geogrid.GetSchooledFrac()); // [3, 17]
@@ -64,7 +65,7 @@ unsigned int PopulationGenerator::GetRandomAge()
         // cause oldest person ever lived was 122 years and 164 days according to wikipedia
 
         trng::discrete_dist distr(popfracs.begin(), popfracs.end());
-        unsigned int        category = geogen::generator.GetGenerator(distr)();
+        unsigned int        category = (unsigned int) geogen::generator.GetGenerator(distr)();
 
         switch (category) {
         case 0: {                                     // [3, 17]
@@ -112,9 +113,9 @@ bool FlipUnfairCoin(const double& frac)
 
 bool PopulationGenerator::IsWorkingCommuter() { return FlipUnfairCoin(m_geogrid.GetCommutingWorkersFrac()); }
 
-bool PopulationGenerator::IsStudentCommuter() { return FlipUnfairCoin(m_geogrid.GetCommutingStudentsFrac()); }
+//bool PopulationGenerator::IsStudentCommuter() { return FlipUnfairCoin(m_geogrid.GetCommutingStudentsFrac()); }
 
-bool PopulationGenerator::IsStudent() { return FlipUnfairCoin(m_geogrid.GetStudentFrac()); }
+//bool PopulationGenerator::IsStudent() { return FlipUnfairCoin(m_geogrid.GetStudentFrac()); }
 
 bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_geogrid.GetActiveFrac()); }
 
@@ -129,8 +130,7 @@ shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
 
         auto the_household = make_shared<Household>();
         for (unsigned int i = 0; i < size; i++) {
-                Person a_person;
-                a_person.age = this->GetRandomAge();
+                Person a_person{0, (unsigned int) this->GetRandomAge() };
                 the_household->AddMember(a_person);
                 // cout << a_person.age << endl;
         }
@@ -143,16 +143,16 @@ void PopulationGenerator::AssignHouseholds()
 
         for (auto& a_city : m_geogrid.GetCities()) {
                 const unsigned int max_population       = a_city.second->GetPopulation();
-                int                remaining_population = (int)max_population;
+                auto remaining_population = (int)max_population;
 
                 while (remaining_population > 0) {
-                        unsigned int household_size = this->GetRandomHouseholdSize();
+                        auto household_size = (unsigned int)this->GetRandomHouseholdSize();
 
                         // if the population has to be exact according to the one that we read on the file about cities
                         // but this will effect our discrete distribution
                         // Raphael@everyone, true, but the effect is insignificant given we have enough households...
                         if (remaining_population - (int)household_size < 0) {
-                                household_size = remaining_population;
+                                household_size = (unsigned int) remaining_population;
                         }
                         auto hh = GenerateHousehold(household_size);
                         hh->SetCityID(a_city.second->GetId());
@@ -214,7 +214,7 @@ vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPoo
                         }
                 }
 
-                if (result.size() == 0) {
+                if (result.empty()) {
                         last_radius = search_radius;
                         search_radius *= 2;
                 } else {
@@ -251,7 +251,7 @@ void PopulationGenerator::AssignToSchools()
                 for (auto& a_school_attendant : school_attendants) {
                         // choose random households to be assigned to the city
                         trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
-                        unsigned int           index = geogen::generator.GetGenerator(distr)();
+                        auto           index = (unsigned int) geogen::generator.GetGenerator(distr)();
                         // TODO use stride::Person class
                         // contact_pools.at(index)->AddMember(a_school_attendant);
 
@@ -323,8 +323,8 @@ shared_ptr<geogen::City> PopulationGenerator::GetRandomCommutingCity(const geoge
 {
         vector<double>      distribution = m_commuting_fracs[origin.GetId()];
         trng::discrete_dist distr(distribution.begin(), distribution.end());
-        const unsigned int  index = geogen::generator.GetGenerator(distr)();
-        const unsigned int  id    = city_ids.at(index);
+        auto  index = (const unsigned int)geogen::generator.GetGenerator(distr)();
+        auto  id    = (const unsigned int)city_ids.at(index);
         return m_geogrid.GetCities().at(id);
 }
 
@@ -370,7 +370,7 @@ void PopulationGenerator::AssignToWorkplaces()
                         }
 
                         trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
-                        unsigned int           index = geogen::generator.GetGenerator(distr)();
+                        auto           index = (unsigned int) geogen::generator.GetGenerator(distr)();
                         cout << an_active.age << " is added to workplace " << index << endl;
                 }
         }
@@ -384,7 +384,7 @@ void PopulationGenerator::AssignToCommunity()
                         for (auto& a_person : a_household->GetMembers()) {
                                 // assign the person to a random contactPool
                                 trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
-                                unsigned int           index = geogen::generator.GetGenerator(distr)();
+                                auto           index = (unsigned int) geogen::generator.GetGenerator(distr)();
 
                                 // TODO the member has to be a stride::Person to be added to stride::ContactPool
 

@@ -60,11 +60,11 @@ private:
         std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
         void                                              InitializeHouseholdSizeFractions();
         void                                              InitializeCommutingFractions();
-        unsigned int                                      GetRandomHouseholdSize();
-        unsigned int                                      GetRandomAge();
+        trng::discrete_dist::result_type GetRandomHouseholdSize();
+        trng::uniform_int_dist::result_type GetRandomAge();
         bool                                              IsWorkingCommuter();
-        bool                                              IsStudentCommuter();
-        bool                                              IsStudent();
+        //bool                                              IsStudentCommuter();
+        //bool                                              IsStudent();
         bool                                              IsActive();
 
         std::vector<Person>           GetActives(const shared_ptr<geogen::City>&);

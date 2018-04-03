@@ -49,7 +49,7 @@ public:
         unsigned int GetTotalOutCommutersCount();
 
 
-    const vector<shared_ptr<Community>>& GetAllCommunities() { return m_communities; };
+    const vector<shared_ptr<Community>>& GetAllCommunities(){ return m_communities; };
 
         vector<shared_ptr<Community>> GetColleges();
 
