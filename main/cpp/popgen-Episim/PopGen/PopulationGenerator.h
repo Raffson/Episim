@@ -36,14 +36,6 @@ public:
         void AssignToCommunity();
         void AssignAll();
 
-        // TODO move this to an appropriate place
-        /*
-         * Based on haversine formula
-         * credit: https://www.movable-type.co.uk/scripts/latlong.html
-         * @return distance between two coordinates
-         */
-        double GetDistance(geogen::Coordinate c1, geogen::Coordinate c2);
-
         /*
          * @Returns the id of cities which lie in the radius of
          * @param radius km from
@@ -60,8 +52,8 @@ private:
         std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
         void                                              InitializeHouseholdSizeFractions();
         void                                              InitializeCommutingFractions();
-        trng::discrete_dist::result_type GetRandomHouseholdSize();
-        trng::uniform_int_dist::result_type GetRandomAge();
+        unsigned int                                      GetRandomHouseholdSize();
+        unsigned int                                      GetRandomAge();
         bool                                              IsWorkingCommuter();
         //bool                                              IsStudentCommuter();
         //bool                                              IsStudent();
