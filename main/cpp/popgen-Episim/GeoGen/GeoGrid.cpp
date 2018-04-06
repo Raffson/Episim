@@ -8,7 +8,7 @@ using namespace std;
 
 namespace geogen {
 
-void GeoGrid::GetMainFractions(const vector<shared_ptr<Household>>& hhs)
+void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
 {
         unsigned int schooled = 0;
         unsigned int workers1 = 0;
@@ -16,18 +16,18 @@ void GeoGrid::GetMainFractions(const vector<shared_ptr<Household>>& hhs)
         unsigned int toddlers = 0;
         unsigned int oldies   = 0;
         for (auto& house : hhs) {
-                for (auto& member : house->GetMembers()) {
+                for (auto& age : house) {
                         // Ordered these if-else if construction to fall as quickly as possible
                         // in the (statistically) most likely age-category...
                         // it's agueable whether "rest" is more likely than workers1 since it covers
                         // a bigger interval, i.e. [0,3) U [65, +inf)
-                        if (member.age >= 26 and member.age < 65)
+                        if (age >= 26 and age < 65)
                                 workers2 += 1;
-                        else if (member.age >= 3 and member.age < 18)
+                        else if (age >= 3 and age < 18)
                                 schooled += 1;
-                        else if (member.age >= 18 and member.age < 26)
+                        else if (age >= 18 and age < 26)
                                 workers1 += 1;
-                        else if (member.age >= 65)
+                        else if (age >= 65)
                                 oldies += 1;
                         else
                                 toddlers += 1;
@@ -64,7 +64,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // however i want to start making my functions with the correct signatures for after the refractor,
         // therefore I will rename this member to a more appropriate name for after the refractor,
         // as a result, we'll just need to delete some stuff out of the header file and that'll be it...
-        households = parser::ParseHouseholds(base_path + household_file);
+        m_household_age_distr = parser::ParseHouseholds(base_path + household_file);
 
         // Generating schools
         // auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
@@ -76,7 +76,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // perhaps find a way to verify this number somehow, if the possibility exists of course...
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
 
-        GetMainFractions(households);
+        GetMainFractions(m_household_age_distr);
 
         m_student_frac            = p_tree.get<float>("popgen.pop_info.fraction_students");
         m_commuting_students_frac = p_tree.get<float>("popgen.pop_info.fraction_commuting_students");

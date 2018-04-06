@@ -7,14 +7,10 @@
 
 #include <cstddef>
 #include <vector>
+#include "pop/Person.h"
 
 using namespace std;
 
-struct Person
-{
-        unsigned int work_id;
-        unsigned int          age;
-};
 
 class Household
 {
@@ -22,7 +18,7 @@ public:
         Household();
 
         /// Add a member to the household.
-        void AddMember(Person member);
+        void AddMember(const shared_ptr<stride::Person>& member);
 
         /// Id of city where housholds lives.
         size_t GetCityID() const { return m_city_id; }
@@ -31,7 +27,7 @@ public:
         size_t GetID() const { return m_id; }
 
         /// Id's of members of household.
-        vector<Person> GetMembers() const { return m_members; }
+        vector<shared_ptr<stride::Person>> GetMembers() const { return m_members; }
 
         /// Number of members of the household.
         size_t GetSize() const { return m_members.size(); }
@@ -39,11 +35,11 @@ public:
         /// Set Id for city where household lives.
         void SetCityID(size_t city_id);
 
-        void GetSchoolAttendants(vector<Person>&);
+        void GetSchoolAttendants(vector<shared_ptr<stride::Person>>&);
 
-        void GetCollegeStudents(vector<Person>&);
+        void GetCollegeStudents(vector<shared_ptr<stride::Person>>&);
 
-        void GetPossibleWorkers(vector<Person>&);
+        void GetPossibleWorkers(vector<shared_ptr<stride::Person>>&);
 
 private: // Raphael@everyone replace size_t by unsigned int?
         /// Id generator.
@@ -53,8 +49,7 @@ private: // Raphael@everyone replace size_t by unsigned int?
         size_t m_id;
 
         /// A vector of ID's referring to the ID of a person.
-        // Raphael@everyone shouldn't we use a vector of shared pointers to Person?
-        vector<Person> m_members;
+        vector<shared_ptr<stride::Person>> m_members;
 
         ///< The ID of the city in which the household is located
         size_t m_city_id;

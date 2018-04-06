@@ -20,7 +20,7 @@ void PopulationGenerator::InitializeHouseholdSizeFractions()
         auto                            households = m_geogrid.GetModelHouseholds(); // get the model, model should be const...
         map<unsigned int, unsigned int> sizes;
         for (auto& household : households) // count households with size x
-                sizes[household->GetMembers().size()] += 1;
+                sizes[household.size()] += 1;
 
         double totalhhs = households.size();
         for (auto& elem : sizes) // household-count with size x divided by total nr of households (calculate fraction)
@@ -53,7 +53,7 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
         return (unsigned int)(geogen::generator.GetGenerator(distr)() + 1);
 }
 
-unsigned int PopulationGenerator::GetRandomAge()
+double PopulationGenerator::GetRandomAge()
 {
         //perhaps refractor and keep popfracs as a member?
         vector<double> popfracs;
@@ -61,42 +61,42 @@ unsigned int PopulationGenerator::GetRandomAge()
         popfracs.push_back(m_geogrid.GetWorkers1Frac()); // [18, 25]
         popfracs.push_back(m_geogrid.GetWorkers2Frac()); // [26, 64]
         popfracs.push_back(m_geogrid.GetToddlersFrac()); // [0, 2]
-        popfracs.push_back(m_geogrid.GetOldiesFrac());   // [65, 123?]
-        // cause oldest person ever lived was 122 years and 164 days according to wikipedia
+        popfracs.push_back(m_geogrid.GetOldiesFrac());   // [65, 80]
+        // cause maximum age according to Age.h is 80...
 
         trng::discrete_dist distr(popfracs.begin(), popfracs.end());
         unsigned int        category = (unsigned int) geogen::generator.GetGenerator(distr)();
 
         switch (category) {
         case 0: {                                     // [3, 17]
-                trng::uniform_int_dist distr2(3, 18); // generates number between [a, b)
-                return (unsigned int)geogen::generator.GetGenerator(distr2)();
+                trng::uniform_dist<double> distr2(3.0, 18.0); // generates number between [a, b)
+                return (double)geogen::generator.GetGenerator(distr2)();
         }
         case 1: { // [18, 25]
-                trng::uniform_int_dist distr2(18, 26);
-                return (unsigned int)geogen::generator.GetGenerator(distr2)();
+                trng::uniform_dist<double> distr2(18.0, 26.0);
+                return (double)geogen::generator.GetGenerator(distr2)();
         }
         case 2: { // [26, 64]
-                trng::uniform_int_dist distr2(26, 65);
-                return (unsigned int)geogen::generator.GetGenerator(distr2)();
+                trng::uniform_dist<double> distr2(26.0, 65.0);
+                return (double)geogen::generator.GetGenerator(distr2)();
         }
         case 3: { // [0, 2]
-                trng::uniform_int_dist distr2(0, 3);
-                return (unsigned int)geogen::generator.GetGenerator(distr2)();
+                trng::uniform_dist<double> distr2(0.0, 3.0);
+                return (double)geogen::generator.GetGenerator(distr2)();
         }
-        case 4: { // [65, 123?]
-                // gotta improve this since we would need [65, 123?] but not with a uniform distribution...
+        case 4: { // [65, 80]
+                // gotta improve this since we would need [65, 80] but not with a uniform distribution...
                 // because the chances you become older get smaller and smaller right?
-                trng::uniform_int_dist distr2(65, 123);
-                return (unsigned int)geogen::generator.GetGenerator(distr2)();
+                trng::uniform_dist<double> distr2(65.0, 81.0);
+                return (double)geogen::generator.GetGenerator(distr2)();
         }
         default: {
                 // cerr << "Bad random number was generated..." << endl;
                 // what else can we do here? perhaps generate a nunber in the entire range?
                 // doing this cause otherwise compiler will generate warning: control may reach end of non-void function
                 // but in fact we should throw an exception here...
-                trng::uniform_int_dist distr2(0, 123);
-                return (unsigned int)geogen::generator.GetGenerator(distr2)();
+                trng::uniform_dist<double> distr2(0.0, 81.0);
+                return (double)geogen::generator.GetGenerator(distr2)();
         }
         }
 }
@@ -130,8 +130,10 @@ shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
 
         auto the_household = make_shared<Household>();
         for (unsigned int i = 0; i < size; i++) {
-                Person a_person{0, this->GetRandomAge() };
+                /*
+                shared_ptr<Person> a_person();
                 the_household->AddMember(a_person);
+                */
                 // cout << a_person.age << endl;
         }
         // cout << "------------------" << endl;
@@ -140,6 +142,7 @@ shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
 
 void PopulationGenerator::AssignHouseholds()
 {
+    /*
         //Problems with (unsigned ints) & ints, and fuck the (unsigned int) casts,
         // get rid of auto cause if we leave out the casts we need to know what type we're dealing with...
         for (auto& a_city : m_geogrid.GetCities()) {
@@ -161,6 +164,7 @@ void PopulationGenerator::AssignHouseholds()
                         remaining_population -= household_size;
                 }
         }
+     */
 }
 
 vector<shared_ptr<geogen::City>> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
@@ -208,11 +212,13 @@ vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPoo
 
 // Quick refractor, will need to adjust the return type to vector<shared_ptr<Person>>
 // while using stride's Person class instead of the current struct...
-vector<Person> PopulationGenerator::GetSchoolAttendants(const shared_ptr<geogen::City>& city)
+vector<shared_ptr<stride::Person>> PopulationGenerator::GetSchoolAttendants(const shared_ptr<geogen::City>& city)
 {
-        vector<Person> school_attendants;
+
+        vector<shared_ptr<stride::Person>> school_attendants;
+        /*
         for (auto& a_household : city->GetHouseholds()) {
-                vector<Person> current_school_attendants;
+                vector<shared_ptr<stride::Person>> current_school_attendants;
                 a_household->GetSchoolAttendants(current_school_attendants); //GetSchoolAttendants may be a bad name, creating confusion...
                 //we could also leave the next loop if we'd simply append schoolkids to 'school_attendants'
                 // instead of working with 'current_school_attendants'
@@ -220,14 +226,16 @@ vector<Person> PopulationGenerator::GetSchoolAttendants(const shared_ptr<geogen:
                         school_attendants.push_back(a_school_attendant);
                 }
         }
+        */
         return school_attendants;
 }
 
 void PopulationGenerator::AssignToSchools()
 {
+    /*
         // Collecting all the school attendants from the city
         for (auto& a_city : m_geogrid.GetCities()) {
-                vector<Person> school_attendants = GetSchoolAttendants(a_city.second);
+                vector<shared_ptr<stride::Person>> school_attendants = GetSchoolAttendants(a_city.second);
 
                 // Search schools within 10km radius otherwise double the radius untill we find schools
                 auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::School);
@@ -243,9 +251,10 @@ void PopulationGenerator::AssignToSchools()
                         // contact_pools.at(index)->AddMember(a_school_attendant);
 
                         // this cout actually suppresses the warnings as well...
-                        cout << a_school_attendant.age << " has been added to contact_pool " << index << endl;
+                        //cout << a_school_attendant.age << " has been added to contact_pool " << index << endl;
                 }
         }
+    */
 }
 
 vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetContactPoolsOfColleges()
@@ -262,9 +271,10 @@ vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetContactPoolsOfCo
 
 void PopulationGenerator::AssignToColleges()
 {
+    /*
         auto contact_pools = GetContactPoolsOfColleges();
 
-        vector<Person> students;
+        vector<shared_ptr<stride::Person>> students;
         for (auto& a_city : m_geogrid.GetCities()) {
                 for (auto& hh : a_city.second->GetHouseholds()) {
                         hh->GetCollegeStudents(students);
@@ -279,6 +289,7 @@ void PopulationGenerator::AssignToColleges()
                 unsigned int           index = (unsigned int)geogen::generator.GetGenerator(distr)();
                 cout << a_student.age << " is added to contact pool " << index << endl;
         }
+    */
 }
 
 // This function may be forgetting about students, however irl we also have working students...
@@ -287,13 +298,13 @@ void PopulationGenerator::AssignToColleges()
 // students into account
 // Raphael@Nishchal, roger that! but still, at this point I believe we're mixing students and workers,
 // i.e. if I understood the code correctly... I believe Household::GetPossibleWorkers needs to check work-id != 1
-vector<Person> PopulationGenerator::GetActives(const shared_ptr<geogen::City>& city)
+vector<shared_ptr<stride::Person>> PopulationGenerator::GetActives(const shared_ptr<geogen::City>& city)
 {
 
-        vector<Person> actives;
-
+        vector<shared_ptr<stride::Person>> actives;
+/*
         for (auto& a_household : city->GetHouseholds()) {
-                vector<Person> possible_workers;
+                vector<shared_ptr<stride::Person>> possible_workers;
                 a_household->GetPossibleWorkers(possible_workers);
                 for (auto& a_possible_worker : possible_workers) {
                         if (this->IsActive()) {
@@ -301,7 +312,7 @@ vector<Person> PopulationGenerator::GetActives(const shared_ptr<geogen::City>& c
                         }
                 }
         }
-
+*/
         return actives;
 }
 
@@ -317,6 +328,7 @@ shared_ptr<geogen::City> PopulationGenerator::GetRandomCommutingCity(const geoge
 
 void PopulationGenerator::AssignToWorkplaces()
 {
+    /*
         vector<int> city_ids; // using boost::copy to copy all keys from cities into this vector...
         boost::copy(m_geogrid.GetCities() | boost::adaptors::map_keys, std::back_inserter(city_ids));
         for (auto& a_city : m_geogrid.GetCities()) {
@@ -362,11 +374,13 @@ void PopulationGenerator::AssignToWorkplaces()
                         cout << an_active.age << " is added to workplace " << index << endl;
                 }
         }
+     */
 }
 
 //Finish up this function... and again, fuck auto, fuck casts...
 void PopulationGenerator::AssignToCommunity()
 {
+    /*
         for (auto& a_city : m_geogrid.GetCities()) {
                 auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::Primary);
                 for (auto& a_household : a_city.second->GetHouseholds()) {
@@ -389,6 +403,7 @@ void PopulationGenerator::AssignToCommunity()
                         }
                 }
         }
+    */
 }
 
 void PopulationGenerator::AssignAll()

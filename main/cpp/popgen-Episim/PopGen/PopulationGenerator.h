@@ -12,8 +12,7 @@
 #include <boost/range/algorithm/copy.hpp>
 
 #include "trng/discrete_dist.hpp"
-#include "trng/lcg64.hpp"
-#include "trng/uniform_int_dist.hpp"
+#include "trng/uniform_dist.hpp"
 
 #include <cmath>
 #include <iterator>
@@ -45,20 +44,20 @@ public:
 private:
         std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(const geogen::City& city,
                                                                                 geogen::CommunityType);
-        std::vector<Person>                               GetSchoolAttendants(const shared_ptr<geogen::City>& city);
+        std::vector<shared_ptr<stride::Person>>           GetSchoolAttendants(const shared_ptr<geogen::City>& city);
         shared_ptr<Household>                             GenerateHousehold(unsigned int size);
         std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
         void                                              InitializeHouseholdSizeFractions();
         void                                              InitializeCommutingFractions();
         unsigned int                                      GetRandomHouseholdSize();
-        unsigned int                                      GetRandomAge();
+        double                                            GetRandomAge();
         bool                                              IsWorkingCommuter();
         //bool                                              IsStudentCommuter();
         //bool                                              IsStudent();
         bool                                              IsActive();
 
-        std::vector<Person>           GetActives(const shared_ptr<geogen::City>&);
-        std::shared_ptr<geogen::City> GetRandomCommutingCity(const geogen::City&, const std::vector<int>&);
+        std::vector<shared_ptr<stride::Person>>           GetActives(const shared_ptr<geogen::City>&);
+        std::shared_ptr<geogen::City>                     GetRandomCommutingCity(const geogen::City&, const std::vector<int>&);
 
 private:
         geogen::GeoGrid& m_geogrid;
