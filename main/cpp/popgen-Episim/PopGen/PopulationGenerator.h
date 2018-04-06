@@ -27,8 +27,9 @@ namespace popgen {
 class PopulationGenerator
 {
 public:
-        PopulationGenerator(geogen::GeoGrid&, unsigned int rad = 10);
+        explicit PopulationGenerator(geogen::GeoGrid&, unsigned int rad = 10);
 
+        ///
         void AssignHouseholds();
         void AssignToSchools();
         void AssignToColleges();

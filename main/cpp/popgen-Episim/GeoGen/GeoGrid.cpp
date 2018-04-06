@@ -60,10 +60,6 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 
         m_cities = parser::ParseCities(base_path + city_file, base_path + commuting_file, true);
 
-        // Raphael@everyone, until the refractor occurs, I can't delete/rename this..
-        // however i want to start making my functions with the correct signatures for after the refractor,
-        // therefore I will rename this member to a more appropriate name for after the refractor,
-        // as a result, we'll just need to delete some stuff out of the header file and that'll be it...
         households = parser::ParseHouseholds(base_path + household_file);
 
         // Generating schools

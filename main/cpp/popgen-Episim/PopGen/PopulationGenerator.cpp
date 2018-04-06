@@ -143,7 +143,7 @@ void PopulationGenerator::AssignHouseholds()
 
         for (auto& a_city : m_geogrid.GetCities()) {
                 const unsigned int max_population       = a_city.second->GetPopulation();
-                auto remaining_population = (int)max_population;
+                auto remaining_population = max_population;
 
                 while (remaining_population > 0) {
                         auto household_size = (unsigned int)this->GetRandomHouseholdSize();
@@ -152,7 +152,7 @@ void PopulationGenerator::AssignHouseholds()
                         // but this will effect our discrete distribution
                         // Raphael@everyone, true, but the effect is insignificant given we have enough households...
                         if (remaining_population - (int)household_size < 0) {
-                                household_size = (unsigned int) remaining_population;
+                                household_size = remaining_population;
                         }
                         auto hh = GenerateHousehold(household_size);
                         hh->SetCityID(a_city.second->GetId());
@@ -217,7 +217,8 @@ vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPoo
                 if (result.empty()) {
                         last_radius = search_radius;
                         search_radius *= 2;
-                } else {
+                }
+                else {
                         return result;
                 }
         }
@@ -249,11 +250,11 @@ void PopulationGenerator::AssignToSchools()
 
                 // Select a school randomly for every school attendants
                 for (auto& a_school_attendant : school_attendants) {
-                        // choose random households to be assigned to the city
+
                         trng::uniform_int_dist distr(0, (unsigned int)contact_pools.size());
                         auto           index = (unsigned int) geogen::generator.GetGenerator(distr)();
                         // TODO use stride::Person class
-                        // contact_pools.at(index)->AddMember(a_school_attendant);
+                        //contact_pools.at(index)->AddMember(a_school_attendant);
 
                         // this cout actually suppresses the warnings as well...
                         cout << a_school_attendant.age << " has been added to contact_pool " << index << endl;
