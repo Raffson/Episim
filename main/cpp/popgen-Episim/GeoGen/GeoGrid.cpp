@@ -3,7 +3,7 @@
 //
 
 #include "GeoGrid.h"
-
+#include "trng/discrete_dist.hpp"
 using namespace std;
 
 namespace geogen {
@@ -100,10 +100,8 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // however, is this first ENSURE necessary?
         // it should never fail since we decude the fractions from the households,
         // so removed the correspronding death test until we find a better test...
-        // TODO: Robbe@Raphael: Define this as a constant somewhere??
-        float epsilon   = 0.000001;
         float totalfrac = m_workers1_frac + m_workers2_frac + m_toddlers_frac + m_oldies_frac + m_schooled_frac;
-        ENSURE(fabs(totalfrac - 1) < epsilon, "Pop frac should equal 1");
+        ENSURE(fabs(totalfrac - 1) < constants::EPSILON, "Pop frac should equal 1");
         ENSURE(1 >= m_student_frac and m_student_frac >= 0, "Student fraction must be between 0 and 1");
         ENSURE(1 >= m_commuting_students_frac and m_commuting_students_frac >= 0,
                "Student Commuting fraction must be between 0 and 1");
@@ -137,20 +135,21 @@ void GeoGrid::GenerateSchools()
         auto cps = round(m_school_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         // Setting up to divide the schools to cities
-        vector<unsigned int> pop_id; // We will push the id's of the cities for each pop member.
+        vector<unsigned int> p_vec;
+        vector<shared_ptr<City>> c_vec;
         for (auto& it : m_cities) {
                 auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_schooled_frac);
-                pop_id.insert(pop_id.end(), c_schooled_pop, (const unsigned int&)it.first);
+                p_vec.push_back(c_schooled_pop);
+                c_vec.push_back(it.second);
         }
         // Note that this way cuz of rounding we lose a couple of schooled ppl.
         // But this shouldn't affect our city divison.
-        trng::uniform_int_dist distr(0, (unsigned int)pop_id.size() - 1);
+        trng::discrete_dist distr(p_vec.begin(), p_vec.end());
 
         // assign schools to cities according to our normal distribution
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
-                unsigned int                   index       = pop_id[generator.GetGenerator(distr)()];
-                shared_ptr<City>      chosen_city = m_cities[index];
+                shared_ptr<City>      chosen_city = c_vec[generator.GetGenerator(distr)()];
                 shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
 
                 // Add contactpools
@@ -162,7 +161,7 @@ void GeoGrid::GenerateSchools()
                 }
 
                 chosen_city->AddCommunity(nw_school);
-                // m_communities[nw_school->getID()] = nw_school
+                // m_communities[nw_school->getID()] = nw_school TODO: What is this??
         }
         // We should ENSURE schools are effectively placed in cities.
         // The OO nature makes this assertion rather complex -> found in tests
@@ -235,26 +234,28 @@ void GeoGrid::GenerateWorkplaces(){
     //Meaning a citiy has a proballity to get assigned a workplace equal to the fraction
     //of people working IN the city (not the active working pop in the city).
     //We have to account for the commuters in he city.
-    vector<unsigned int> lottery_vec;
+
+    vector<double> lottery_vec; // vector of relative probabillitys
+    vector<shared_ptr<City>> c_vec;// we will use this to vec to map the city to a set of sequential numbers 0...n
     for(auto& it: m_cities){
 
         // This also calculates people living and working in the same city
-        unsigned work_pop = it.second->GetTotalInCommutersCount();
+        auto work_pop = (unsigned int) round(it.second->GetTotalInCommutersCount() * m_commuting_workers_frac);
         // Inserting the amount of id's of the city equal to the pop working in the city
-        lottery_vec.insert(lottery_vec.end(), work_pop, (const unsigned int&)it.first);
+        lottery_vec.push_back(work_pop);
+        c_vec.push_back(it.second);
     }
 
     // Now we calculate how many workplaces we have to create.
     double working_commuters = m_commuting_workers_frac * m_total_pop;
     auto   number_of_workplaces = (unsigned int)round(working_commuters / m_worksplace_size);
 
-    trng::uniform_int_dist distr(0, (unsigned int)lottery_vec.size() - 1); //Setting up distribution
+    trng::discrete_dist distr(lottery_vec.begin(), lottery_vec.end()); //Setting up distribution
 
     //Now we will place each workplace randomly in our city, making use of our lottery vec.
     for(unsigned int i = 0;  i < number_of_workplaces; i++){
 
-        unsigned int          index       = lottery_vec[generator.GetGenerator(distr)()];
-        shared_ptr<City>      chosen_city = m_cities[index];
+        shared_ptr<City>      chosen_city = c_vec[generator.GetGenerator(distr)()];
         shared_ptr<Community> nw_workplace(new Community(CommunityType::Work, chosen_city));
 
         // A workplace has a contactpool.
@@ -292,10 +293,6 @@ void GeoGrid::GenerateWorkplaces()
 }*/
 
 // Communities need to be distributed according to the relative population size.
-// TODO On average a community has 2000 -> Should not be hardcorded members.
-//  -> recall that 2000 was in fact a hard limit...
-//      we need to ask (tuesday) what happened after the professor's refractoring,
-//      i.e. if the hard limit still holds...
 void GeoGrid::GenerateCommunities()
 {
 
@@ -371,10 +368,10 @@ Coordinate GeoGrid::GetCenterOfGrid()
         double biggestX     = numeric_limits<double>::lowest();
         double smallestY    = numeric_limits<double>::max();
         double biggestY     = numeric_limits<double>::lowest();
-        double smallestLat  = 180.0;
-        double biggestLat   = -180.0;
-        double smallestLong = 180.0;
-        double biggestLong  = -180.0;
+        double smallestLat  = 180.0; // Highest lat possible (initial)
+        double biggestLat   = -180.0; // Lowest lat  possible (initial)
+        double smallestLong = 180.0; // highest long possible (initial)
+        double biggestLong  = -180.0; // lowest long possible (initial)
 
         // Raphael@everyone, excellent example of something we could run in parallel!!!
         // don't understand me wrong, not right now, but later when we're going for beta or in the final phase...

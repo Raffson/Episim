@@ -130,14 +130,14 @@ private:
 
         /// Counts the total population in th GeoGrid based on the cities
         /// in map cities.
-        unsigned int CountTotalPop() const;
+        //unsigned int CountTotalPop() const;
 
         /// Assigns the main fractions: schooled, worker1, worker2 & rest
         void GetMainFractions(const vector<vector<double>>& hhs);
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
         /// Contains the model for the age distribition for households
-        vector<vector<double>> m_household_age_distr;
+        vector<vector<double>> m_household_age_distr{};
 
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities{};
@@ -163,13 +163,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Fraction of population that goes to school (3y - 17y)
         float m_schooled_frac{};
 
-        /*TODO: Next need to be constant -> re designing constructor othewise not possible.
-        /(not that i know of)
-        /Tought update: maybe users wants to 'experiment with those parameters in
-        /the interface
-        Raphael's update: the main fractions have to be initialized in the constructor by calling a seperate function
-            this means it becomes very difficult to make the main fractions const...
-        */
+
         /// Fraction of population that are able to work between 18y and 25y
         float m_workers1_frac{};
 
@@ -182,10 +176,10 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Fraction of population older than 64y
         float m_oldies_frac{};
 
-        /// Fraction of workers1 that is student -> make this const?
+        /// Fraction of workers1 that is student
         float m_student_frac{};
 
-        /// the ratio of commuters that are students -> make this const?
+        /// the ratio of commuters that are students
         float m_commuting_students_frac{};
 
         /// Total population that is actually working -> make this const?
@@ -220,7 +214,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         vector<shared_ptr<City>> m_cities_with_college{};
 
-        std::size_t m_id_generator;
+        std::size_t m_id_generator{};
 };
 
 static stride::util::RNManager generator;

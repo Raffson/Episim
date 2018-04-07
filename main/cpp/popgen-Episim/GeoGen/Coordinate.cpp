@@ -14,7 +14,8 @@
  */
 
 #include "Coordinate.h"
-#include <math.h>
+#include "Utility.h"
+#include <cmath>
 
 using namespace std;
 
@@ -29,12 +30,11 @@ Coordinate::Coordinate(double x, double y, double longitude, double latitude)
 
 double Coordinate::GetDistance(const Coordinate& c1) const
 {
-    const double earths_radius = 6371.0; // in kilometer
 
-    double phi1    = c1.latitude * M_PI / 180.0;  // latitude of the first coordinate converted to radian
-    double phi2    = latitude * M_PI / 180.0;  // latitude of this coordinate converted to radian
-    double lambda1 = c1.longitude * M_PI / 180.0; // longitude of the first coordinate converted to radian
-    double lambda2 = longitude * M_PI / 180.0; // longitude of this coordinate converted to radian
+    double phi1    = convert_to_radians(c1.latitude); // latitude of the first coordinate converted to radian
+    double phi2    = convert_to_radians(latitude);  // latitude of this coordinate converted to radian
+    double lambda1 = convert_to_radians(c1.longitude); // longitude of the first coordinate converted to radian
+    double lambda2 = convert_to_radians(longitude); // longitude of this coordinate converted to radian
 
     double delta_phi    = phi2 - phi1;
     double delta_lambda = lambda2 - lambda1;
@@ -44,7 +44,7 @@ double Coordinate::GetDistance(const Coordinate& c1) const
 
     double c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
 
-    return earths_radius * c;
+    return  constants::EARTH_RADIUS * c;
 }
 
 } // namespace geogen

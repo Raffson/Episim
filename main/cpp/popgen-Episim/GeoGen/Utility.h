@@ -9,4 +9,12 @@
 namespace geogen {
 
 bool file_exists(const boost::filesystem::path& path);
-}
+double convert_to_radians(double degrees);
+
+namespace constants {
+
+    const double EPSILON   = 0.000001;
+    const double EARTH_RADIUS = 6371.0; // in kilometer
+
+}//constants
+}//geogen
