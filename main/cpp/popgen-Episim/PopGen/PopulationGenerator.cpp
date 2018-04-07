@@ -128,7 +128,7 @@ shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
         // mapping the size of a household, i.e. 1,2,3,... (deduced from m_household_size_fracs)
         // to a distribution for age categories, i.e. a vector sort of like popfracs in GetRandomAge
 
-        auto the_household = make_shared<Household>();
+        auto the_household = make_shared<Household>(0);
         for (unsigned int i = 0; i < size; i++) {
                 /*
                 shared_ptr<Person> a_person();

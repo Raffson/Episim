@@ -17,7 +17,6 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "popgen-Episim/GeoGen/City.h"
-#include "popgen-Episim/GeoGen/Household.h"
 
 using namespace std;
 

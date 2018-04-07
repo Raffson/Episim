@@ -3,7 +3,7 @@
 //
 
 #include "GeoGrid.h"
-#include "trng/discrete_dist.hpp"
+
 using namespace std;
 
 namespace geogen {

@@ -27,6 +27,7 @@
 
 #include "trng/lcg64.hpp"
 #include "trng/uniform_int_dist.hpp"
+#include "trng/discrete_dist.hpp"
 
 using namespace std;
 

@@ -1,9 +1,7 @@
+#pragma once
 //
 // Created by beau on 3/5/18.
 //
-
-#ifndef STRIDE_HOUSEHOLD_H
-#define STRIDE_HOUSEHOLD_H
 
 #include <cstddef>
 #include <vector>
@@ -15,7 +13,7 @@ using namespace std;
 class Household
 {
 public:
-        Household();
+        Household(size_t city_id);
 
         /// Add a member to the household.
         void AddMember(const shared_ptr<stride::Person>& member);
@@ -26,21 +24,21 @@ public:
         /// Household Id.
         size_t GetID() const { return m_id; }
 
-        /// Id's of members of household.
-        vector<shared_ptr<stride::Person>> GetMembers() const { return m_members; }
+        /// Return the members of this household.
+        vector<shared_ptr<const stride::Person>> GetMembers() const;
 
         /// Number of members of the household.
-        size_t GetSize() const { return m_members.size(); }
+        size_t GetSize() const { return m_pool->GetSize(); }
 
         /// Set Id for city where household lives.
-        void SetCityID(size_t city_id);
+        //void SetCityID(size_t city_id);
 
         //Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
-        void GetSchoolAttendants(vector<shared_ptr<stride::Person>>&) const;
+        void GetSchoolAttendants(vector<shared_ptr<const stride::Person>>&) const;
 
-        void GetPossibleStudents(vector<shared_ptr<stride::Person>>&) const;
+        void GetPossibleStudents(vector<shared_ptr<const stride::Person>>&) const;
 
-        void GetPossibleWorkers(vector<shared_ptr<stride::Person>>&) const;
+        void GetPossibleWorkers(vector<shared_ptr<const stride::Person>>&) const;
 
 private: // Raphael@everyone replace size_t by unsigned int?
         /// Id generator.
@@ -49,11 +47,11 @@ private: // Raphael@everyone replace size_t by unsigned int?
         /// A unique ID of the household.
         size_t m_id;
 
-        /// A ContactPool with the people belonging to this household.
-        std::shared_ptr<stride::ContactPool> m_members;
-
         ///< The ID of the city in which the household is located
         size_t m_city_id;
-};
 
-#endif // STRIDE_HOUSEHOLD_H
+        /// A ContactPool with the people belonging to this household.
+        std::shared_ptr<stride::ContactPool> m_pool;
+
+
+};
