@@ -303,20 +303,21 @@ void GeoGrid::GenerateCommunities()
         // First we need to determine the total number of communities to be used.
         auto total_communities = (unsigned int)ceil(m_total_pop / m_community_size);
 
-        vector<unsigned int> pop_id;
+        vector<unsigned int> p_vec;
+        vector<shared_ptr<City>>c_vec;
         for (auto& it : m_cities) {
                 auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_schooled_frac);
-                pop_id.insert(pop_id.end(), c_schooled_pop, (const unsigned int&)it.first);
+                p_vec.push_back(c_schooled_pop);
+                c_vec.push_back(it.second);
         }
 
         // Note that this way cuz of rounding we lose a couple of schooled ppl.
         // But this shouldn't affect our city divison.
-        trng::uniform_int_dist distr(0, (unsigned int)pop_id.size() - 1);
+        trng::discrete_dist distr(p_vec.begin(), p_vec.end());
 
         for (unsigned int i = 0; i < total_communities; i++) {
                 m_school_count++;
-                int                   index       = pop_id[generator.GetGenerator(distr)()];
-                shared_ptr<City>      chosen_city = m_cities[index];
+                shared_ptr<City>      chosen_city = c_vec[generator.GetGenerator(distr)()]
                 shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
                 // Add contactpools
                 for (auto j = 0; j < cps; j++) {
