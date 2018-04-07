@@ -25,6 +25,7 @@
 #include <iostream>
 #include <iterator>
 #include <vector>
+#include <array>
 
 namespace stride {
 namespace ContactPoolType {
@@ -55,8 +56,8 @@ std::string ToString(Id w);
 Id ToType(const std::string& s);
 
 /// To allow iteration over the type ids.
-constexpr std::initializer_list<Id> IdList{Id::Household, Id::School, Id::Work, Id::PrimaryCommunity,
-                                           Id::SecondaryCommunity};
+constexpr std::array<Id, 5> IdList{{Id::Household, Id::School, Id::Work, Id::PrimaryCommunity,
+                                           Id::SecondaryCommunity}};
 
 } // namespace ContactPoolType
 } // namespace stride
