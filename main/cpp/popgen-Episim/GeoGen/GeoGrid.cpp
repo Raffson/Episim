@@ -317,7 +317,7 @@ void GeoGrid::GenerateCommunities()
 
         for (unsigned int i = 0; i < total_communities; i++) {
                 m_school_count++;
-                shared_ptr<City>      chosen_city = c_vec[generator.GetGenerator(distr)()]
+                shared_ptr<City>      chosen_city = c_vec[generator.GetGenerator(distr)()];
                 shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
                 // Add contactpools
                 for (auto j = 0; j < cps; j++) {
