@@ -1,9 +1,7 @@
+#pragma once
 //
 // Created by Nishchal Shrestha on 20/03/2018.
 //
-
-#ifndef STRIDE_POPULATIONGENERATOR_H
-#define STRIDE_POPULATIONGENERATOR_H
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
 #include "popgen-Episim/GeoGen/Household.h"
@@ -14,8 +12,7 @@
 #include <boost/range/algorithm/copy.hpp>
 
 #include "trng/discrete_dist.hpp"
-#include "trng/lcg64.hpp"
-#include "trng/uniform_int_dist.hpp"
+#include "trng/uniform_dist.hpp"
 
 #include <cmath>
 #include <iterator>
@@ -37,14 +34,6 @@ public:
         void AssignToCommunity();
         void AssignAll();
 
-        // TODO move this to an appropriate place
-        /*
-         * Based on haversine formula
-         * credit: https://www.movable-type.co.uk/scripts/latlong.html
-         * @return distance between two coordinates
-         */
-        double GetDistance(geogen::Coordinate c1, geogen::Coordinate c2);
-
         /*
          * @Returns the id of cities which lie in the radius of
          * @param radius km from
@@ -56,20 +45,20 @@ public:
 private:
         std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(const geogen::City& city,
                                                                                 geogen::CommunityType);
-        std::vector<Person>                               GetSchoolAttendants(const shared_ptr<geogen::City>& city);
+        std::vector<shared_ptr<stride::Person>>           GetSchoolAttendants(const shared_ptr<geogen::City>& city);
         shared_ptr<Household>                             GenerateHousehold(unsigned int size);
         std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
         void                                              InitializeHouseholdSizeFractions();
         void                                              InitializeCommutingFractions();
-        trng::discrete_dist::result_type GetRandomHouseholdSize();
-        trng::uniform_int_dist::result_type GetRandomAge();
+        unsigned int                                      GetRandomHouseholdSize();
+        double                                            GetRandomAge();
         bool                                              IsWorkingCommuter();
         //bool                                              IsStudentCommuter();
         //bool                                              IsStudent();
         bool                                              IsActive();
 
-        std::vector<Person>           GetActives(const shared_ptr<geogen::City>&);
-        std::shared_ptr<geogen::City> GetRandomCommutingCity(const geogen::City&, const std::vector<int>&);
+        std::vector<shared_ptr<stride::Person>>           GetActives(const shared_ptr<geogen::City>&);
+        std::shared_ptr<geogen::City>                     GetRandomCommutingCity(const geogen::City&, const std::vector<int>&);
 
 private:
         geogen::GeoGrid& m_geogrid;
@@ -87,4 +76,3 @@ private:
 };
 
 } // namespace popgen
-#endif // STRIDE_POPULATIONGENERATOR_H

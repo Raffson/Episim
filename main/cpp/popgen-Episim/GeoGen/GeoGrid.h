@@ -112,7 +112,7 @@ public:
         shared_ptr<City>& operator[](int i);
 
         /// Return the households of the geogrid
-        vector<shared_ptr<Household>> GetModelHouseholds() { return households; }
+        const vector<vector<double>>& GetModelHouseholds() { return m_household_age_distr; }
 
         vector<shared_ptr<City>> GetCitiesWithCollege() { return m_cities_with_college; }
 
@@ -133,11 +133,11 @@ private:
         unsigned int CountTotalPop() const;
 
         /// Assigns the main fractions: schooled, worker1, worker2 & rest
-        void GetMainFractions(const vector<shared_ptr<Household>>& hhs);
+        void GetMainFractions(const vector<vector<double>>& hhs);
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
-        /// Contains all households for the GeoGrid -> perhaps move this into City?
-        vector<shared_ptr<Household>> households{};
+        /// Contains the model for the age distribition for households
+        vector<vector<double>> m_household_age_distr;
 
         /// Contains all cities for the GeoGrid
         map<int, shared_ptr<City>> m_cities{};

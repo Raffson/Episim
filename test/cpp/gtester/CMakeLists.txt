@@ -18,12 +18,12 @@
 #============================================================================
 # Build & install the (OpenMP enabled if OpenMP available) executable.
 #============================================================================
-set( EXEC       gtester     )
-set( SRC
-		main.cpp
-		BatchRuns.cpp
-		ScenarioData.cpp
-		UnitSegmentedVector.cpp
+set(EXEC gtester)
+set(SRC
+    main.cpp
+    BatchRuns.cpp
+    ScenarioData.cpp
+    UnitSegmentedVector.cpp
 )
 if (OPENMP_FOUND)
     set(SRC ${SRC} ParallelRuns.cpp)
@@ -50,10 +50,10 @@ install(TARGETS ${EXEC2}  DESTINATION   ${BIN_INSTALL_LOCATION})
 #============================================================================
 # Define tests.
 #============================================================================
-add_test( NAME  ${EXEC}_all
-        WORKING_DIRECTORY  ${TESTS_DIR}
-		COMMAND   ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_LOCATION}/${EXEC}
-		         --gtest_output=xml:gtester_all.xml
+add_test(NAME  ${EXEC}_all
+    WORKING_DIRECTORY  ${TESTS_DIR}
+    COMMAND   ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_LOCATION}/${EXEC}
+        --gtest_output=xml:gtester_all.xml
 )
 
 #output is still not written to install-dir/tests
@@ -69,4 +69,5 @@ unset( EXEC      )
 unset( SRC       )
 unset( EXEC2      )
 unset( SRC2       )
+
 #############################################################################

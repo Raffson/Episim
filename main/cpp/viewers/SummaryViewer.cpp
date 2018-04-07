@@ -31,7 +31,7 @@ using namespace stride::sim_event;
 namespace stride {
 namespace viewers {
 
-void SummaryViewer::update(const sim_event::Payload& p)
+void SummaryViewer::Update(const sim_event::Payload& p)
 {
         switch (p.m_event_id) {
         case Id::Finished: {
@@ -41,7 +41,7 @@ void SummaryViewer::update(const sim_event::Payload& p)
                 const auto dur       = duration_cast<milliseconds>(p.m_runner->GetClock().Get());
                 const auto milli     = static_cast<unsigned int>(dur.count());
                 m_summary_file.Print(pt_config, static_cast<unsigned int>(pop->size()), pop->GetInfectedCount(),
-                                     sim->GetDiseaseProfile().GetTransmissionRate(), milli, milli);
+                                     sim->GetDiseaseProfile().GetRate(), milli, milli);
                 break;
         }
         default: break;

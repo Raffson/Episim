@@ -19,12 +19,13 @@
  * Header for the Infector class.
  */
 
+#include "ContactLogMode.h"
+#include "TransmissionProfile.h"
 #include "behaviour/information_policies/LocalDiscussion.h"
 #include "behaviour/information_policies/NoLocalInformation.h"
 #include "calendar/Calendar.h"
-#include "core/ContactHandler.h"
-#include "core/ContactLogMode.h"
-#include "core/DiseaseProfile.h"
+#include "contact/AgeContactProfile.h"
+#include "contact/ContactHandler.h"
 
 #include <memory>
 #include <spdlog/spdlog.h>
@@ -65,8 +66,9 @@ class Infector
 {
 public:
         ///
-        static void Exec(ContactPool& pool, DiseaseProfile disease_profile, ContactHandler contact_handler,
-                         std::shared_ptr<const Calendar> calendar, std::shared_ptr<spdlog::logger> contact_logger);
+        static void Exec(ContactPool& pool, const AgeContactProfile& profile, const TransmissionProfile& trans_profile,
+                         ContactHandler& c_handler, unsigned short int sim_day,
+                         std::shared_ptr<spdlog::logger> c_logger);
 };
 
 /// Time-optimized version (Only for NoLocalInformation policy and None || Transmission logging).
@@ -77,8 +79,9 @@ class Infector<LL, TIC, NoLocalInformation, true>
 {
 public:
         ///
-        static void Exec(ContactPool& pool, DiseaseProfile disease_profile, ContactHandler contact_handler,
-                         std::shared_ptr<const Calendar> calendar, std::shared_ptr<spdlog::logger> contact_logger);
+        static void Exec(ContactPool& pool, const AgeContactProfile& profile, const TransmissionProfile& trans_profile,
+                         ContactHandler& c_handler, unsigned short int sim_day,
+                         std::shared_ptr<spdlog::logger> c_logger);
 };
 
 /// Explicit instantiations in cpp file.
@@ -92,14 +95,14 @@ extern template class Infector<ContactLogMode::Id::Transmissions, false, LocalDi
 extern template class Infector<ContactLogMode::Id::Transmissions, true, NoLocalInformation>;
 extern template class Infector<ContactLogMode::Id::Transmissions, true, LocalDiscussion>;
 
-extern template class Infector<ContactLogMode::Id::Contacts, false, NoLocalInformation>;
-extern template class Infector<ContactLogMode::Id::Contacts, false, LocalDiscussion>;
-extern template class Infector<ContactLogMode::Id::Contacts, true, NoLocalInformation>;
-extern template class Infector<ContactLogMode::Id::Contacts, true, LocalDiscussion>;
+extern template class Infector<ContactLogMode::Id::All, false, NoLocalInformation>;
+extern template class Infector<ContactLogMode::Id::All, false, LocalDiscussion>;
+extern template class Infector<ContactLogMode::Id::All, true, NoLocalInformation>;
+extern template class Infector<ContactLogMode::Id::All, true, LocalDiscussion>;
 
-extern template class Infector<ContactLogMode::Id::SusceptibleContacts, false, NoLocalInformation>;
-extern template class Infector<ContactLogMode::Id::SusceptibleContacts, false, LocalDiscussion>;
-extern template class Infector<ContactLogMode::Id::SusceptibleContacts, true, NoLocalInformation>;
-extern template class Infector<ContactLogMode::Id::SusceptibleContacts, true, LocalDiscussion>;
+extern template class Infector<ContactLogMode::Id::Susceptibles, false, NoLocalInformation>;
+extern template class Infector<ContactLogMode::Id::Susceptibles, false, LocalDiscussion>;
+extern template class Infector<ContactLogMode::Id::Susceptibles, true, NoLocalInformation>;
+extern template class Infector<ContactLogMode::Id::Susceptibles, true, LocalDiscussion>;
 
 } // namespace stride

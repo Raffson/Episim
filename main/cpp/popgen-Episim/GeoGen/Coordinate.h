@@ -33,7 +33,7 @@ public:
         * credit: https://www.movable-type.co.uk/scripts/latlong.html
         * @return distance between two coordinates
         */
-        double GetDistance(geogen::Coordinate c1);
+        double GetDistance(const Coordinate& c1) const;
 
         double x;
         double y;

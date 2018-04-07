@@ -27,14 +27,14 @@ Coordinate::Coordinate(double x, double y, double longitude, double latitude)
 {
 }
 
-double Coordinate::GetDistance(geogen::Coordinate c1)
+double Coordinate::GetDistance(const Coordinate& c1) const
 {
     const double earths_radius = 6371.0; // in kilometer
 
     double phi1    = c1.latitude * M_PI / 180.0;  // latitude of the first coordinate converted to radian
-    double phi2    = latitude * M_PI / 180.0;  // latitude of the second coordinate converted to radian
+    double phi2    = latitude * M_PI / 180.0;  // latitude of this coordinate converted to radian
     double lambda1 = c1.longitude * M_PI / 180.0; // longitude of the first coordinate converted to radian
-    double lambda2 = longitude * M_PI / 180.0; // longitude of the second coordinate converted to radian
+    double lambda2 = longitude * M_PI / 180.0; // longitude of this coordinate converted to radian
 
     double delta_phi    = phi2 - phi1;
     double delta_lambda = lambda2 - lambda1;

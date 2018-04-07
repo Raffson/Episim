@@ -16,29 +16,35 @@
 
 /**
  * @file
- * Observer for SimEvents for commandline interface usage.
+ * Header file for the SurveySeeder class.
  */
 
-#include "sim/event/Payload.h"
+#include "util/RNManager.h"
 
+#include <boost/property_tree/ptree_fwd.hpp>
+#include <functional>
+#include <memory>
 #include <spdlog/spdlog.h>
+#include <string>
 
 namespace stride {
-namespace viewers {
 
-/// Viewer of Simulator for commandline interface.
-class CliViewer
+class Population;
+
+/**
+ * Seeds the population with survey participants.
+ */
+class SurveySeeder
 {
 public:
-        /// Instantiate cli viewer.
-        explicit CliViewer(std::shared_ptr<spdlog::logger> logger) : m_logger(std::move(logger)) {}
-
-        /// Let viewer perform update.
-        void Update(const sim_event::Payload& p);
-
-private:
-        std::shared_ptr<spdlog::logger> m_logger;
+        /// Seeds the population with survey participants.
+        ///
+        /// \param config_pt         Configuration parameters.
+        /// \param pop               Population.
+        /// \param rn_manager        Random number manager.
+        /// \param contact_logger    To log contacts/transmission events.
+        static void Seed(const boost::property_tree::ptree& config_pt, std::shared_ptr<Population> pop,
+                         util::RNManager& rn_manager, std::shared_ptr<spdlog::logger> contact_logger);
 };
 
-} // namespace viewers
 } // namespace stride

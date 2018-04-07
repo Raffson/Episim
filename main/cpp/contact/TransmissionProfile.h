@@ -16,25 +16,31 @@
 
 /**
  * @file
- * Contact profile.
+ * Header for the TransmissionProfile class.
  */
 
-#include "core/ContactPoolType.h"
-#include "pop/Age.h"
-
 #include <boost/property_tree/ptree.hpp>
-#include <array>
 
 namespace stride {
 
-class ContactProfile : public std::array<double, MaximumAge() + 1>
+class TransmissionProfile
 {
 public:
-        /// Need to keep the default constructor available.
-        ContactProfile() = default;
+        /// Initialize.
+        TransmissionProfile() : m_transmission_rate(0.0), m_is_operational(false) {}
 
-        /// Explicitly initialize
-        ContactProfile(ContactPoolType::Id pool_type, const boost::property_tree::ptree& pt_contacts);
+        /// Return transmission rate.
+        double GetRate() const { return m_transmission_rate; }
+
+        /// Check if the disease configuration was valid.
+        bool IsOperational() const { return m_is_operational; }
+
+        /// Initialize.
+        bool Initialize(const boost::property_tree::ptree& config_pt, const boost::property_tree::ptree& disease_pt);
+
+private:
+        double m_transmission_rate;
+        bool   m_is_operational;
 };
 
 } // namespace stride

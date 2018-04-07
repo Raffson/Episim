@@ -11,36 +11,41 @@
  *  You should have received a copy of the GNU General Public License
  *  along with the software. If not, see <http://www.gnu.org/licenses/>.
  *
- *  Copyright 2017, Kuylen E, Willem L, Broeckhove J
+ *  Copyright 2018, Kuylen E, Willem L, Broeckhove J
  */
 
 /**
  * @file
- * Disease profile.
+ * Header for the ContactPoolBuilder class.
  */
 
+#include "pool/ContactPoolSys.h"
+
 #include <boost/property_tree/ptree.hpp>
+#include <memory>
+#include <spdlog/spdlog.h>
 
 namespace stride {
 
-class DiseaseProfile
+class Population;
+class Simulator;
+
+/**
+ * Builds the contact pool system and adds members from the population.
+ * The population members should have their pool ids for the various
+ * pools already assigned to them.
+ */
+class PopPoolBuilder
 {
 public:
-        /// Initialize.
-        DiseaseProfile() : m_transmission_rate(0.0), m_is_operational(true) {}
+        /// Initializing ContactPoolBuilder.
+        explicit PopPoolBuilder(std::shared_ptr<spdlog::logger> logger);
 
-        /// Return transmission rate.
-        double GetTransmissionRate() const { return m_transmission_rate; }
-
-        /// Check if the disease configuration was valid.
-        bool IsOperational() const { return m_is_operational; }
-
-        /// Initialize.
-        bool Initialize(const boost::property_tree::ptree& pt_config, const boost::property_tree::ptree& pt_disease);
+        /// Build the contact pool system.
+        void Build(ContactPoolSys& pool_sys, const Population& population);
 
 private:
-        double m_transmission_rate;
-        bool   m_is_operational;
+        std::shared_ptr<spdlog::logger> m_stride_logger; ///< Stride run logger.
 };
 
 } // namespace stride

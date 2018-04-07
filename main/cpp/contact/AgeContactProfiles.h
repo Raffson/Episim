@@ -19,12 +19,12 @@
  * Contact profiles stored in simulator.
  */
 
-#include "core/ContactPoolType.h"
-#include "core/ContactProfile.h"
-#include <array>
+#include "contact/AgeContactProfile.h"
+#include "pool/ContactPoolType.h"
+#include "pool/IdSubscriptArray.h"
 
 namespace stride {
 
-using ContactProfiles = std::array<ContactProfile, ContactPoolType::NumOfTypes()>;
+using AgeContactProfiles = ContactPoolType::IdSubscriptArray<AgeContactProfile>;
 
 } // namespace stride

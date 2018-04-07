@@ -16,18 +16,25 @@
 
 /**
  * @file
- * Helpers for age.
+ * Contact profile.
  */
+
+#include "pool/ContactPoolType.h"
+#include "pop/Age.h"
+
+#include <boost/property_tree/ptree.hpp>
+#include <array>
 
 namespace stride {
 
-/// Maximum age for Person's.
-inline constexpr unsigned int MaximumAge() { return 80U; }
+class AgeContactProfile : public std::array<double, MaximumAge() + 1>
+{
+public:
+        /// Need to keep the default constructor available.
+        AgeContactProfile() = default;
 
-/// Maximum age for Person's.
-inline constexpr unsigned int MinAdultAge() { return 18U; }
-
-/// Effective age (topping of at maximum).
-inline unsigned int EffectiveAge(unsigned int age) { return (age <= MaximumAge()) ? age : MaximumAge(); }
+        /// Explicitly initialize
+        AgeContactProfile(ContactPoolType::Id pool_type, const boost::property_tree::ptree& pt_contacts);
+};
 
 } // namespace stride
