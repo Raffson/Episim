@@ -35,11 +35,12 @@ public:
         /// Set Id for city where household lives.
         void SetCityID(size_t city_id);
 
-        void GetSchoolAttendants(vector<shared_ptr<stride::Person>>&);
+        //Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
+        void GetSchoolAttendants(vector<shared_ptr<stride::Person>>&) const;
 
-        void GetCollegeStudents(vector<shared_ptr<stride::Person>>&);
+        void GetPossibleStudents(vector<shared_ptr<stride::Person>>&) const;
 
-        void GetPossibleWorkers(vector<shared_ptr<stride::Person>>&);
+        void GetPossibleWorkers(vector<shared_ptr<stride::Person>>&) const;
 
 private: // Raphael@everyone replace size_t by unsigned int?
         /// Id generator.
@@ -48,8 +49,8 @@ private: // Raphael@everyone replace size_t by unsigned int?
         /// A unique ID of the household.
         size_t m_id;
 
-        /// A vector of ID's referring to the ID of a person.
-        vector<shared_ptr<stride::Person>> m_members;
+        /// A ContactPool with the people belonging to this household.
+        std::shared_ptr<stride::ContactPool> m_members;
 
         ///< The ID of the city in which the household is located
         size_t m_city_id;

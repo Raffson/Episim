@@ -61,7 +61,7 @@ public:
         std::vector<std::shared_ptr<stride::ContactPool>> GetContactPools() const { return m_contact_pools; }
 
         /// Get the total number members of all contactpools for this community
-        int GetSize() const;
+        unsigned int GetSize() const;
 
 private:
         static unsigned int& UIDgenerator();
@@ -74,9 +74,6 @@ private:
         std::shared_ptr<City> m_city; ///< Shared pointer to City
 
         std::vector<std::shared_ptr<stride::ContactPool>> m_contact_pools;
-
-        // Vector of persons to indicate who's part of this community?
-        // std::vector<std::shared_ptr<Person>> m_members;
 };
 
 } // namespace geogen
