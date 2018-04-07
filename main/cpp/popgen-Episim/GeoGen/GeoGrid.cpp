@@ -78,28 +78,29 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 
         GetMainFractions(m_household_age_distr);
 
-        m_student_frac            = p_tree.get<float>("popgen.pop_info.fraction_students");
-        m_commuting_students_frac = p_tree.get<float>("popgen.pop_info.fraction_commuting_students");
-        m_active_frac             = p_tree.get<float>("popgen.pop_info.fraction_active_workers");
-        m_commuting_workers_frac  = p_tree.get<float>("popgen.pop_info.fraction_commuting_workers");
+        m_student_frac            = abs(p_tree.get<float>("popgen.pop_info.fraction_students"));
+        m_commuting_students_frac = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_students"));
+        m_active_frac             = abs(p_tree.get<float>("popgen.pop_info.fraction_active_workers"));
+        m_commuting_workers_frac  = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_workers"));
 
-        m_avg_cp_size     = p_tree.get<unsigned int>("popgen.contactpool_info.average_size");
-        m_school_size     = p_tree.get<unsigned int>("popgen.contactpool_info.school.size");
-        m_college_size    = p_tree.get<unsigned int>("popgen.contactpool_info.college.size");
-        m_maxlc           = p_tree.get<unsigned int>("popgen.contactpool_info.college.cities");
-        m_community_size  = p_tree.get<unsigned int>("popgen.contactpool_info.community.size");
-        m_worksplace_size = p_tree.get<unsigned int>("popgen.contactpool_info.workplace.size");
+        m_avg_cp_size     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.average_size"));
+        m_school_size     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.school.size"));
+        m_college_size    = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.size"));
+        m_maxlc           = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.cities"));
+        m_community_size  = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.community.size"));
+        m_worksplace_size = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.workplace.size"));
 
         // Setting up RNG
-        //Raphael@Robbe, isn't the seed an unsigned long? even if people start messing with negative numbers...
-        long   seed = p_tree.get("popgen.rng.seed", 0);
-        string type = p_tree.get("popgen.rng.type", "mrg2");
-        generator.Initialize(stride::util::RNManager::Info(type, (unsigned long)seed));
+        unsigned long seed = (unsigned long) abs(p_tree.get("popgen.rng.seed", 0));
+        string type        = p_tree.get("popgen.rng.type", "mrg2");
+        generator.Initialize(stride::util::RNManager::Info(type, seed));
+        //TODO: ^ somewhere else. Wait untill we integrate with stride
 
         // rounding errors cause the first ensure to fail in some conditions...
         // however, is this first ENSURE necessary?
         // it should never fail since we decude the fractions from the households,
         // so removed the correspronding death test until we find a better test...
+        // TODO: Robbe@Raphael: Define this as a constant somewhere??
         float epsilon   = 0.000001;
         float totalfrac = m_workers1_frac + m_workers2_frac + m_toddlers_frac + m_oldies_frac + m_schooled_frac;
         ENSURE(fabs(totalfrac - 1) < epsilon, "Pop frac should equal 1");
@@ -136,7 +137,7 @@ void GeoGrid::GenerateSchools()
         auto cps = round(m_school_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         // Setting up to divide the schools to cities
-        vector<unsigned int> pop_id; // We will push the id's of the cities for each pop member.
+        vector<const unsigned int> pop_id; // We will push the id's of the cities for each pop member.
         for (auto& it : m_cities) {
                 auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_schooled_frac);
                 pop_id.insert(pop_id.end(), c_schooled_pop, (const unsigned int&)it.first);
@@ -148,7 +149,7 @@ void GeoGrid::GenerateSchools()
         // assign schools to cities according to our normal distribution
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
-                int                   index       = pop_id[generator.GetGenerator(distr)()];
+                unsigned int                   index       = pop_id[generator.GetGenerator(distr)()];
                 shared_ptr<City>      chosen_city = m_cities[index];
                 shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
 
@@ -192,10 +193,6 @@ void GeoGrid::AdjustLargestCities(vector<shared_ptr<City>>& lc, const shared_ptr
 void GeoGrid::GenerateColleges()
 {
         // need m_maxlc largest cities, largest determined by number of people in the city...
-        // TODO always 10?? specify this in the config file?
-        // -> no not always 10, I deleted the REQUIRE in comments
-        //      should rather be an ENSURE that exactly m_maxlc cities have colleges
-
         // After deducing fractions from households, these should never fail,
         // they also become difficult to test since we can no longer play with the fractions,
         // gotta come up with new tests for this...
@@ -217,12 +214,6 @@ void GeoGrid::GenerateColleges()
                 // since this is only an estimate for the number of colleges
                 auto nrcolleges = (unsigned int)round(students / m_college_size);
 
-                // TODO Is it not given wich cities have exactly one college, calculation needed??
-                // -> tricky question, suppose this city has less than (m_college_size*0.5) students
-                //      then nrcolleges would round to 0 and we would have a problem...
-                //      the result would be that m_maxlc will be bigger than the number of cities with colleges...
-                //      this is a valid remark...
-
                 for (unsigned int i = 0; i < nrcolleges; i++) {
                         shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
                         // Add contactpools
@@ -238,10 +229,46 @@ void GeoGrid::GenerateColleges()
         }
 }
 
+
+void GeoGrid::GenerateWorkplaces(){
+    //We create the vec we will choose our city_id's out of.
+    //Meaning a citiy has a proballity to get assigned a workplace equal to the fraction
+    //of people working IN the city (not the active working pop in the city).
+    //We have to account for the commuters in he city.
+    vector<const unsigned int> lottery_vec;
+    for(auto& it: m_cities){
+
+        // This also calculates people living and working in the same city
+        unsigned work_pop = it.second->GetTotalInCommutersCount();
+        // Inserting the amount of id's of the city equal to the pop working in the city
+        lottery_vec.insert(lottery_vec.end(), work_pop, (const unsigned int&)it.first);
+    }
+
+    // Now we calculate how many workplaces we have to create.
+    double working_commuters = m_commuting_workers_frac * m_total_pop;
+    auto   number_of_workplaces = (unsigned int)round(working_commuters / m_worksplace_size);
+
+    trng::uniform_int_dist distr(0, (unsigned int)lottery_vec.size() - 1); //Setting up distribution
+
+    //Now we will place each workplace randomly in our city, making use of our lottery vec.
+    for(unsigned int i = 0;  i < number_of_workplaces; i++){
+
+        unsigned int          index       = lottery_vec[generator.GetGenerator(distr)()];
+        shared_ptr<City>      chosen_city = m_cities[index];
+        shared_ptr<Community> nw_workplace(new Community(CommunityType::Work, chosen_city));
+
+        // A workplace has a contactpool.
+        auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::Work);
+        m_id_generator++;
+        nw_workplace->AddContactPool(pool);
+        chosen_city->AddCommunity(nw_workplace);
+    }
+
+}
+
+/* Wrong code -> Depricated
 void GeoGrid::GenerateWorkplaces()
 {
-        // TODO This should also be placed according to a discrete distribution!
-        // TODO still figuring out how i should do this for this function
         // is this being done by now?
 
         for (auto it : m_cities) {
@@ -255,14 +282,14 @@ void GeoGrid::GenerateWorkplaces()
                 for (unsigned int i = 0; i < number_of_workplaces; i++) {
                         shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
                         /// Add contactpools
-                        auto                    pool = std::make_shared<stride::ContactPool>(
-                            m_id_generator, stride::ContactPoolType::Id::Work);
+                        auto pool = std::make_shared<stride::ContactPool>(
+                                    m_id_generator, stride::ContactPoolType::Id::Work);
                         m_id_generator++;
                         community->AddContactPool(pool);
                         city->AddCommunity(community);
                 }
         }
-}
+}*/
 
 // Communities need to be distributed according to the relative population size.
 // TODO On average a community has 2000 -> Should not be hardcorded members.
@@ -322,7 +349,7 @@ void GeoGrid::GenerateCommunities()
         }*/
 }
 
-unsigned int GeoGrid::CountTotalPop() const
+/*unsigned int GeoGrid::CountTotalPop() const
 {
 
         unsigned int counter = 0;
@@ -330,7 +357,7 @@ unsigned int GeoGrid::CountTotalPop() const
                 counter += it.second->GetPopulation();
         }
         return counter;
-}
+}*/
 
 const map<int, shared_ptr<City>>& GeoGrid::GetCities() { return m_cities; }
 
@@ -376,7 +403,8 @@ Coordinate GeoGrid::GetCenterOfGrid()
         double halfLat  = (biggestLat - smallestLat) / 2;
         double halfLong = (biggestLong - smallestLong) / 2;
 
-        return Coordinate((smallestX + halfX), (smallestY + halfY), (smallestLong + halfLong), (smallestLat + halfLat));
+        return {(smallestX + halfX), (smallestY + halfY), (smallestLong + halfLong),
+                (smallestLat + halfLat)};
 }
 
 } // namespace geogen
