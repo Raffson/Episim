@@ -11,23 +11,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with the software. If not, see <http://www.gnu.org/licenses/>.
  *
- *  Copyright 2017, Kuylen E, Willem L, Broeckhove J
+ *  Copyright 2018, Kuylen E, Willem L, Broeckhove J
  */
 
 /**
  * @file
- * Helpers for age.
+ * Container for the contact pools of various type (household, work, ...)..
  */
+
+#include "pool/ContactPool.h"
+#include "pool/ContactPoolType.h"
+#include "pool/IdSubscriptArray.h"
 
 namespace stride {
 
-/// Maximum age for Person's.
-inline constexpr unsigned int MaximumAge() { return 80U; }
-
-/// Maximum age for Person's.
-inline constexpr unsigned int MinAdultAge() { return 18U; }
-
-/// Effective age (topping of at maximum).
-inline unsigned int EffectiveAge(unsigned int age) { return (age <= MaximumAge()) ? age : MaximumAge(); }
+/// ContactPoolSys contains for each of the type of pools (household, school, ...)
+/// a vector of with all of the contcatpools of the type.
+/// The ContactPoolSys container is an std::array extended to be subscriptable
+/// with the enum class of the pool types.
+using ContactPoolSys = ContactPoolType::IdSubscriptArray<std::vector<ContactPool>>;
 
 } // namespace stride

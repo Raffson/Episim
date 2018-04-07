@@ -17,7 +17,7 @@
  *  Modified by EpiSim
  */
 
-#include "core/ContactPool.h"
+#include "pool/ContactPool.h"
 #include <cstddef>
 #include <memory>
 

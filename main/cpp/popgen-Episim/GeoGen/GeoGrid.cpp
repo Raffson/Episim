@@ -94,7 +94,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         //Raphael@Robbe, isn't the seed an unsigned long? even if people start messing with negative numbers...
         long   seed = p_tree.get("popgen.rng.seed", 0);
         string type = p_tree.get("popgen.rng.type", "mrg2");
-        generator   = stride::util::RNManager(stride::util::RNManager::Info(type, (unsigned long)seed));
+        generator.Initialize(stride::util::RNManager::Info(type, (unsigned long)seed));
 
         // rounding errors cause the first ensure to fail in some conditions...
         // however, is this first ENSURE necessary?
@@ -154,9 +154,8 @@ void GeoGrid::GenerateSchools()
 
                 // Add contactpools
                 for (auto j = 0; j < cps; j++) {
-                        stride::ContactProfiles contactProfiles;
                         auto                    pool = std::make_shared<stride::ContactPool>(
-                            m_id_generator, stride::ContactPoolType::Id::School, contactProfiles);
+                            m_id_generator, stride::ContactPoolType::Id::School);
                         m_id_generator++;
                         nw_school->AddContactPool(pool);
                 }
@@ -228,9 +227,8 @@ void GeoGrid::GenerateColleges()
                         shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
                         // Add contactpools
                         for (auto j = 0; j < cps; j++) {
-                                stride::ContactProfiles contactProfiles;
                                 auto                    pool = std::make_shared<stride::ContactPool>(
-                                    m_id_generator, stride::ContactPoolType::Id::School, contactProfiles);
+                                    m_id_generator, stride::ContactPoolType::Id::School);
                                 m_id_generator++;
                                 college->AddContactPool(pool);
                         }
@@ -257,9 +255,8 @@ void GeoGrid::GenerateWorkplaces()
                 for (unsigned int i = 0; i < number_of_workplaces; i++) {
                         shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
                         /// Add contactpools
-                        stride::ContactProfiles contactProfiles;
                         auto                    pool = std::make_shared<stride::ContactPool>(
-                            m_id_generator, stride::ContactPoolType::Id::Work, contactProfiles);
+                            m_id_generator, stride::ContactPoolType::Id::Work);
                         m_id_generator++;
                         community->AddContactPool(pool);
                         city->AddCommunity(community);
@@ -299,9 +296,8 @@ void GeoGrid::GenerateCommunities()
                 shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
                 // Add contactpools
                 for (auto j = 0; j < cps; j++) {
-                        stride::ContactProfiles contactProfiles;
                         auto                    pool = std::make_shared<stride::ContactPool>(
-                            m_id_generator, stride::ContactPoolType::Id::PrimaryCommunity, contactProfiles);
+                            m_id_generator, stride::ContactPoolType::Id::PrimaryCommunity);
                         m_id_generator++;
                         nw_community->AddContactPool(pool);
                 }

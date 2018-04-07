@@ -86,13 +86,13 @@ TEST_P(ParallelRuns, Run)
         // -----------------------------------------------------------------------------------------
         for (const auto n : num_threads) {
                 config_pt.put("num_threads", n);
-                cerr << "test tag: " << test_tag << " with #threads: " << n;
+                cerr << "test tag: " << test_tag << " with #threads: " << n << endl;
                 auto runner = SimRunner::Create();
                 runner->Setup(config_pt);
                 runner->Run();
                 const auto result = runner->GetSim()->GetPopulation()->GetInfectedCount();
                 EXPECT_NEAR(result, target, target * margin)
-                    << "!! CHANGES:" << test_tag << " with threads: " << n << endl;
+                    << "!! CHANGES:" << test_tag << " with #threads: " << n << endl;
         }
 }
 

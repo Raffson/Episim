@@ -11,37 +11,40 @@
  *  You should have received a copy of the GNU General Public License
  *  along with the software. If not, see <http://www.gnu.org/licenses/>.
  *
- *  Copyright 2017, Kuylen E, Willem L, Broeckhove J
+ *  Copyright 2018, Kuylen E, Willem L, Broeckhove J
  */
 
 /**
  * @file
- * Header for the Vaccinator class.
+ * Header for the Immunizer class.
  */
 
-#include "core/ContactPool.h"
-#include "sim/Simulator.h"
-#include "util/RNManager.h"
+#include "pool/ContactPool.h"
 
-#include <boost/property_tree/ptree.hpp>
-#include <memory>
+#include <vector>
 
 namespace stride {
 
-/**
- * Apply the natural immunity and/or vaccination strategy specified in the configuration file.
- */
-class Vaccinator
+namespace util {
+class RNManager;
+}
+
+class Immunizer
 {
 public:
-        Vaccinator(const boost::property_tree::ptree& pt_config, util::RNManager& rn_manager);
-
         ///
-        void Administer(std::string immunity_type, std::string immunization_profile, std::shared_ptr<Simulator> sim);
+        explicit Immunizer(util::RNManager& rn_manager);
+
+        /// Random immunization.
+        void Random(const std::vector<ContactPool>& pools, std::vector<double>& immunity_distribution,
+                    double immunity_link_probability);
+
+        /// Cocoon immunization.
+        void Cocoon(const std::vector<ContactPool>& pools, std::vector<double>& immunity_distribution,
+                    double immunity_link_probability);
 
 private:
-        const boost::property_tree::ptree& m_pt_config;
-        util::RNManager&                   m_rn_manager;
+        util::RNManager& m_rn_manager; ///< Random number manager.
 };
 
 } // namespace stride

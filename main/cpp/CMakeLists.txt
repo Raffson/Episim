@@ -16,50 +16,74 @@
 #############################################################################
 
 #============================================================================
-# Sources.
+# Sources. Includes headers to enable code insight by CLion.
 #============================================================================
 set(LIB_SRC
 #---
     calendar/Calendar.cpp
 #---
-	core/ContactLogMode.cpp
-	core/ContactPool.cpp
-	core/ContactPoolType.cpp
-	core/ContactProfile.cpp
-	core/DiseaseProfile.cpp
-	core/Health.cpp
-	core/Infector.cpp
+	contact/AgeContactProfile.cpp
+	contact/AgeContactProfiles.h
+	contact/ContactHandler.h
+	contact/ContactLogMode.cpp
+	contact/Infector.cpp
+	contact/TransmissionProfile.cpp
 #---
-	immunity/Immunizer.cpp
-	immunity/Vaccinator.cpp
+    disease/DiseaseSeeder.cpp
+	disease/Health.cpp
+    disease/HealthSeeder.cpp
+	disease/Immunizer.cpp
 #---
 	output/AdoptedFile.cpp
 	output/CasesFile.cpp
-	output/PersonsFile.cpp
+    output/PersonsFile.cpp
 	output/SummaryFile.cpp
 #---
-	pop/Person.cpp
-	pop/Population.cpp
-	pop/PopulationBuilder.cpp
+	pool/ContactPool.cpp
+	pool/ContactPoolSys.h
+	pool/ContactPoolType.cpp
+    pool/IdSubscriptArray.h
 #---
-	sim/CliController.cpp
+    pop/Age.h
+    pop/PopPoolBuilder.cpp
+    pop/Person.cpp
+    pop/Population.cpp
+    pop/PopulationBuilder.cpp
+    pop/SurveySeeder.cpp
+#---
+    sim/CliController.cpp
 	sim/SimRunner.cpp
 	sim/Simulator.cpp
 	sim/SimulatorBuilder.cpp
-	sim/event/Id.cpp
+    sim/event/Id.cpp
+    sim/event/Payload.h
 	sim/event/Subject.cpp
 	sim/python/StrideRunner.cpp
 #---
-	util/CSV.cpp
+    util/Any.h
+    util/ConfigInfo.h
+    util/CSV.cpp
 	util/CSVRow.cpp
-	util/FileSys.cpp
+    util/FileSys.cpp
 	util/LogUtils.cpp
-	util/PtreeUtils.cpp
-	util/RNEngineType.cpp
-	util/RNManager.cpp
+    util/RNEngineType.cpp
+    util/RNManager.cpp
 	util/RunConfigPtree.cpp
-	util/RunConfigString.cpp
+    util/RunConfigString.cpp
 	util/Safeline.cpp
+    util/SegmentedVector.h
+    util/Stopwatch.h
+    util/StringUtils.h
+    util/Subject.h
+    util/SVIterator.h
+    util/TimeStamp.h
+    util/TimeToString.h
+#---
+	viewers/AdoptedViewer.cpp
+	viewers/CasesViewer.cpp
+    viewers/CliViewer.cpp
+    viewers/PersonsViewer.cpp
+	viewers/SummaryViewer.cpp
 #---
 	popgen-Episim/main.cpp
 	popgen-Episim/GeoGen/Coordinate.cpp
@@ -70,12 +94,6 @@ set(LIB_SRC
 	popgen-Episim/GeoGen/Parser.cpp
 	popgen-Episim/GeoGen/Utility.cpp
 	popgen-Episim/PopGen/PopulationGenerator.cpp
-#---
-	viewers/AdoptedViewer.cpp
-	viewers/CasesViewer.cpp
-	viewers/CliViewer.cpp
-	viewers/PersonsViewer.cpp
-	viewers/SummaryViewer.cpp
 )
 
 #============================================================================

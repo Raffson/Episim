@@ -1,9 +1,7 @@
+#pragma once
 //
 // Created by Nishchal Shrestha on 20/03/2018.
 //
-
-#ifndef STRIDE_POPULATIONGENERATOR_H
-#define STRIDE_POPULATIONGENERATOR_H
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
 #include "popgen-Episim/GeoGen/Household.h"
@@ -78,4 +76,3 @@ private:
 };
 
 } // namespace popgen
-#endif // STRIDE_POPULATIONGENERATOR_H
