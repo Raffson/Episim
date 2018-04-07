@@ -137,7 +137,7 @@ void GeoGrid::GenerateSchools()
         auto cps = round(m_school_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         // Setting up to divide the schools to cities
-        vector<const unsigned int> pop_id; // We will push the id's of the cities for each pop member.
+        vector<unsigned int> pop_id; // We will push the id's of the cities for each pop member.
         for (auto& it : m_cities) {
                 auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_schooled_frac);
                 pop_id.insert(pop_id.end(), c_schooled_pop, (const unsigned int&)it.first);
@@ -235,7 +235,7 @@ void GeoGrid::GenerateWorkplaces(){
     //Meaning a citiy has a proballity to get assigned a workplace equal to the fraction
     //of people working IN the city (not the active working pop in the city).
     //We have to account for the commuters in he city.
-    vector<const unsigned int> lottery_vec;
+    vector<unsigned int> lottery_vec;
     for(auto& it: m_cities){
 
         // This also calculates people living and working in the same city
