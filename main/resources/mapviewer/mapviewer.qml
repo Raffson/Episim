@@ -141,7 +141,7 @@ ApplicationWindow {
     }
 
 
-    function placeCity(values){
+    function placeCity(values, commuting_in, commuting_out){
         var item = Qt.createQmlObject('import QtQuick 2.7; import QtLocation 5.3; MapQuickItem{objectName: "mqi";}', map, "dynamic")
         item.coordinate = QtPositioning.coordinate(values["latitude"], values["longitude"])
 
@@ -155,6 +155,9 @@ ApplicationWindow {
         if (wh < min){
             wh = min
         }
+        circle.city_id = values["id"]
+        circle.in_commuting = commuting_in
+        circle.out_commuting = commuting_out
         circle.width = wh
         circle.height = wh
         circle.radius = values["radius"]
