@@ -28,6 +28,8 @@
 #include "trng/lcg64.hpp"
 #include "trng/uniform_int_dist.hpp"
 #include "trng/discrete_dist.hpp"
+#include <boost/range/adaptor/map.hpp>
+#include <boost/range/algorithm/copy.hpp>
 
 using namespace std;
 

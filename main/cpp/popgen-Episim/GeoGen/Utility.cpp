@@ -2,10 +2,9 @@
 // Created by robbe on 22/03/18.
 //
 
-#include <cmath>
-#include <util/RNManager.h>
+
 #include "Utility.h"
-#include "trng/discrete_dist.hpp"
+
 
 using namespace std;
 

@@ -7,6 +7,9 @@
 #include <sys/stat.h>
 #include <vector>
 #include "util/RNManager.h"
+#include <cmath>
+#include <util/RNManager.h>
+#include "trng/discrete_dist.hpp"
 
 using namespace std;
 

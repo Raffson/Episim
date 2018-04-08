@@ -3,8 +3,6 @@
 //
 
 #include "GeoGrid.h"
-#include <boost/range/adaptor/map.hpp>
-#include <boost/range/algorithm/copy.hpp>
 
 using namespace std;
 
