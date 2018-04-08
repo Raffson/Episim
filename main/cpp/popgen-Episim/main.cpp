@@ -7,6 +7,7 @@
 
 #ifdef USING_QT
 #include <QString>
+#include <QPair>
 #include <QtCore/QTextStream>
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
@@ -80,6 +81,10 @@ int startMap(geogen::GeoGrid grid)
                 /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
                 shared_ptr<geogen::City> city = (*c_it).second;
                 QVariantMap              vals;
+                QList<QPair<int, int>> in_commuting;
+                QList<QPair<int, int>> out_commuting;
+                /// ID of the city, used for the commuting details
+                vals["id"] = city->GetId();
                 /// Latitude
                 vals["latitude"] = city->GetCoordinates().latitude;
                 /// Longitude
@@ -92,7 +97,7 @@ int startMap(geogen::GeoGrid grid)
                 vals["radius"] = city->GetPopulation() / (2 * M_PI);
                 /// Percentage
                 vals["perc"] = city->GetPopulation() / (double)grid.GetTotalPop();
-                cout << 50000 * (city->GetPopulation() / (double)grid.GetTotalPop()) << endl;
+                // cout << 50000 * (city->GetPopulation() / (double)grid.GetTotalPop()) << endl;
                 /// Population
                 vals["population"] = city->GetPopulation();
                 /// Info
@@ -103,7 +108,24 @@ int startMap(geogen::GeoGrid grid)
                 s += "\n";
                 QString qs   = QString(s.c_str());
                 vals["info"] = qs;
-                QMetaObject::invokeMethod(item, "placeCity", Q_ARG(QVariant, QVariant::fromValue(vals)));
+                /// Commuting information
+                auto com_in = city->GetInCommuting();
+                for (auto it : com_in){
+                    // it.first: id of other city
+                    // it.second: number of commuters
+                    in_commuting.push_back(qMakePair(it.first, it.second));
+                }
+                auto com_out = city->GetOutCommuting();
+                for (auto it : com_out){
+                    // it.first: id of other city
+                    // it.second: number of commuters
+                    out_commuting.push_back(qMakePair(it.first, it.second));
+                }
+
+
+                QMetaObject::invokeMethod(item, "placeCity", Q_ARG(QVariant, QVariant::fromValue(vals)),
+                                          Q_ARG(QVariant, QVariant::fromValue(in_commuting)),
+                                          Q_ARG(QVariant, QVariant::fromValue(out_commuting)) );
         }
 
         return application.exec();
