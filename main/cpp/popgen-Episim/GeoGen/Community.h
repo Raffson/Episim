@@ -57,8 +57,7 @@ public:
         /// Adds a contact pool to the community
         void AddContactPool(std::shared_ptr<stride::ContactPool> pool);
 
-        //this const qualifier is actually wrong... we need to rework this...
-        std::vector<std::shared_ptr<stride::ContactPool>> GetContactPools() const { return m_contact_pools; }
+        const std::vector<std::shared_ptr<stride::ContactPool>>& GetContactPools() const { return m_contact_pools; }
 
         /// Get the total number members of all contactpools for this community
         unsigned int GetSize() const;
