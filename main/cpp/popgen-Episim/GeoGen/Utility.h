@@ -5,11 +5,16 @@
 
 #include <boost/filesystem/path.hpp>
 #include <sys/stat.h>
+#include <vector>
+#include "util/RNManager.h"
+
+using namespace std;
 
 namespace geogen {
 
 bool file_exists(const boost::filesystem::path& path);
 double convert_to_radians(double degrees);
+vector<unsigned int> generate_random(const vector<double>& p_vec, stride::util::RNManager& rndm, unsigned int amount = 1);
 
 namespace constants {
 

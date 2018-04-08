@@ -2,8 +2,10 @@
 // Created by robbe on 22/03/18.
 //
 
-#include <math.h>
+#include <cmath>
+#include <util/RNManager.h>
 #include "Utility.h"
+#include "trng/discrete_dist.hpp"
 
 using namespace std;
 
@@ -18,6 +20,17 @@ bool file_exists(const boost::filesystem::path& path)
 double convert_to_radians(double degrees) {
 
     return degrees * M_PI / 180.0;
+}
+
+vector<unsigned int>
+generate_random(const vector<double> &p_vec, stride::util::RNManager &rndm, unsigned int amount) {
+
+    trng::discrete_dist dist(p_vec.begin(), p_vec.end());
+    vector<unsigned int> ret_vec;
+    for(unsigned int i = 0; i < amount; i++){
+        ret_vec.emplace_back(rndm.GetGenerator(dist)());
+    }
+    return move(ret_vec);
 }
 
 } // namespace geogen

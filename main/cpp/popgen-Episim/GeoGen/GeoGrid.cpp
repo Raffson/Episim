@@ -3,6 +3,8 @@
 //
 
 #include "GeoGrid.h"
+#include <boost/range/adaptor/map.hpp>
+#include <boost/range/algorithm/copy.hpp>
 
 using namespace std;
 
@@ -135,21 +137,20 @@ void GeoGrid::GenerateSchools()
         auto cps = round(m_school_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
         // Setting up to divide the schools to cities
-        vector<unsigned int> p_vec;
+        vector<double> p_vec;
         vector<shared_ptr<City>> c_vec;
+        boost::copy(m_cities | boost::adaptors::map_values, std::back_inserter(c_vec));;
         for (auto& it : m_cities) {
                 auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_schooled_frac);
-                p_vec.push_back(c_schooled_pop);
-                c_vec.push_back(it.second);
+                p_vec.emplace_back(c_schooled_pop);
         }
         // Note that this way cuz of rounding we lose a couple of schooled ppl.
         // But this shouldn't affect our city divison.
-        trng::discrete_dist distr(p_vec.begin(), p_vec.end());
-
+        auto rndm_vec = generate_random(p_vec, generator, amount_of_schools);
         // assign schools to cities according to our normal distribution
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
-                shared_ptr<City>      chosen_city = c_vec[generator.GetGenerator(distr)()];
+                shared_ptr<City>      chosen_city = c_vec[rndm_vec[i]];
                 shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
 
                 // Add contactpools
@@ -237,25 +238,25 @@ void GeoGrid::GenerateWorkplaces(){
 
     vector<double> lottery_vec; // vector of relative probabillitys
     vector<shared_ptr<City>> c_vec;// we will use this to vec to map the city to a set of sequential numbers 0...n
+    boost::copy(m_cities | boost::adaptors::map_values, std::back_inserter(c_vec));;
     for(auto& it: m_cities){
 
         // This also calculates people living and working in the same city
         auto work_pop = (unsigned int) round(it.second->GetTotalInCommutersCount() * m_commuting_workers_frac);
         // Inserting the amount of id's of the city equal to the pop working in the city
-        lottery_vec.push_back(work_pop);
-        c_vec.push_back(it.second);
+        lottery_vec.emplace_back(work_pop);
     }
 
     // Now we calculate how many workplaces we have to create.
     double working_commuters = m_commuting_workers_frac * m_total_pop;
     auto   number_of_workplaces = (unsigned int)round(working_commuters / m_worksplace_size);
 
-    trng::discrete_dist distr(lottery_vec.begin(), lottery_vec.end()); //Setting up distribution
+    auto rndm_vec = generate_random(lottery_vec, generator, number_of_workplaces);
 
     //Now we will place each workplace randomly in our city, making use of our lottery vec.
     for(unsigned int i = 0;  i < number_of_workplaces; i++){
 
-        shared_ptr<City>      chosen_city = c_vec[generator.GetGenerator(distr)()];
+        shared_ptr<City>      chosen_city = c_vec[rndm_vec[i]];
         shared_ptr<Community> nw_workplace(new Community(CommunityType::Work, chosen_city));
 
         // A workplace has a contactpool.
@@ -303,21 +304,21 @@ void GeoGrid::GenerateCommunities()
         // First we need to determine the total number of communities to be used.
         auto total_communities = (unsigned int)ceil(m_total_pop / m_community_size);
 
-        vector<unsigned int> p_vec;
+        vector<double> p_vec;
         vector<shared_ptr<City>>c_vec;
+        boost::copy(m_cities | boost::adaptors::map_values, std::back_inserter(c_vec));;
         for (auto& it : m_cities) {
                 auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_schooled_frac);
-                p_vec.push_back(c_schooled_pop);
-                c_vec.push_back(it.second);
+                p_vec.emplace_back(c_schooled_pop);
         }
 
         // Note that this way cuz of rounding we lose a couple of schooled ppl.
         // But this shouldn't affect our city divison.
-        trng::discrete_dist distr(p_vec.begin(), p_vec.end());
+        auto rndm_vec = generate_random(p_vec, generator, total_communities);
 
         for (unsigned int i = 0; i < total_communities; i++) {
                 m_school_count++;
-                shared_ptr<City>      chosen_city = c_vec[generator.GetGenerator(distr)()];
+                shared_ptr<City>      chosen_city = c_vec[rndm_vec[i]];
                 shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
                 // Add contactpools
                 for (auto j = 0; j < cps; j++) {
