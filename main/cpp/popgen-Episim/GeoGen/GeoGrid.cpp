@@ -78,17 +78,17 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 
         GetMainFractions(m_household_age_distr);
 
-        m_fract_map[STUDENTS]             = abs(p_tree.get<float>("popgen.pop_info.fraction_students"));
-        m_fract_map[COMMUTING_STUDENTS] = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_students"));
-        m_fract_map[ACTIVE]             = abs(p_tree.get<float>("popgen.pop_info.fraction_active_workers"));
-        m_fract_map[COMMUTING_WORKERS]  = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_workers"));
+        m_fract_map[STUDENTS]          = abs(p_tree.get<float>("popgen.pop_info.fraction_students"));
+        m_fract_map[COMMUTING_STUDENTS]= abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_students"));
+        m_fract_map[ACTIVE]            = abs(p_tree.get<float>("popgen.pop_info.fraction_active_workers"));
+        m_fract_map[COMMUTING_WORKERS] = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_workers"));
 
-        m_avg_cp_size     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.average_size"));
-        m_school_size     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.school.size"));
-        m_college_size    = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.size"));
-        m_maxlc           = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.cities"));
-        m_community_size  = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.community.size"));
-        m_worksplace_size = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.workplace.size"));
+        m_sizes_map[AVERAGE_CP]     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.average_size"));
+        m_sizes_map[SCHOOLS]     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.school.size"));
+        m_sizes_map[COLLEGES]    = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.size"));
+        m_sizes_map[MAXLC]           = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.cities"));
+        m_sizes_map[COMMUNITES]  = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.community.size"));
+        m_sizes_map[WORKPLACES] = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.workplace.size"));
 
         // Setting up RNG
         unsigned long seed = (unsigned long) abs(p_tree.get("popgen.rng.seed", 0));
@@ -132,10 +132,10 @@ void GeoGrid::GenerateSchools()
         // rounded because we don't have a fraction of a person
         auto amount_schooled = (const unsigned int)round(m_total_pop * m_fract_map[SCHOOLED]);
         // round because we do not build half a school
-        auto amount_of_schools = (const unsigned int)round(amount_schooled / m_school_size);
+        auto amount_of_schools = (const unsigned int)round(amount_schooled / m_sizes_map[SCHOOLS]);
 
         // Determine number of contactpools
-        auto cps = round(m_school_size / m_avg_cp_size); /// We need enough pools to distribute all persons
+        auto cps = round(m_sizes_map[SCHOOLS] / m_sizes_map[AVERAGE_CP]); /// We need enough pools to distribute all persons
 
         // Setting up to divide the schools to cities
         vector<double> p_vec;
@@ -181,7 +181,7 @@ unsigned int GeoGrid::FindSmallest(const vector<shared_ptr<City>>& lc)
 
 void GeoGrid::AdjustLargestCities(vector<shared_ptr<City>>& lc, const shared_ptr<City>& city)
 {
-        if (lc.size() < m_maxlc)
+        if (lc.size() < m_sizes_map[MAXLC])
                 lc.push_back(city);
         else {
                 unsigned int citpop   = city->GetPopulation();
@@ -206,7 +206,7 @@ void GeoGrid::GenerateColleges()
         }
 
         // Determine number of contactpools
-        auto cps = round(m_college_size / m_avg_cp_size); /// We need enough pools to distribute all persons
+        auto cps = round(m_sizes_map[COLLEGES] / m_sizes_map[AVERAGE_CP]); /// We need enough pools to distribute all persons
 
         // generate colleges to the respective cities...
         for (auto& it : m_cities_with_college) {
@@ -214,7 +214,7 @@ void GeoGrid::GenerateColleges()
                 double students = it->GetPopulation() * m_fract_map[WORKERS1] * m_fract_map[STUDENTS];
                 // doesn't matter if students is a double at this time
                 // since this is only an estimate for the number of colleges
-                auto nrcolleges = (unsigned int)round(students / m_college_size);
+                auto nrcolleges = (unsigned int)round(students / m_sizes_map[COLLEGES]);
 
                 for (unsigned int i = 0; i < nrcolleges; i++) {
                         shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
@@ -251,7 +251,7 @@ void GeoGrid::GenerateWorkplaces(){
 
     // Now we calculate how many workplaces we have to create.
     double working_commuters = m_fract_map[COMMUTING_WORKERS] * m_total_pop;
-    auto   number_of_workplaces = (unsigned int)round(working_commuters / m_worksplace_size);
+    auto   number_of_workplaces = (unsigned int)round(working_commuters / m_sizes_map[WORKPLACES]);
 
     auto rndm_vec = generate_random(lottery_vec, generator, number_of_workplaces);
 
@@ -300,11 +300,11 @@ void GeoGrid::GenerateCommunities()
 {
 
         // Determine number of contactpools
-        auto cps = round(m_community_size / m_avg_cp_size); /// We need enough pools to distribute all persons
+        auto cps = round(m_sizes_map[COMMUNITES] / m_sizes_map[AVERAGE_CP]); /// We need enough pools to distribute all persons
 
         vector<shared_ptr<Community>> primsec_communities;
         // First we need to determine the total number of communities to be used.
-        auto total_communities = (unsigned int)ceil(m_total_pop / m_community_size);
+        auto total_communities = (unsigned int)ceil(m_total_pop / m_sizes_map[COMMUNITES]);
 
         vector<double> p_vec;
         vector<shared_ptr<City>>c_vec;

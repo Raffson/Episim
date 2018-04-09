@@ -94,7 +94,7 @@ public:
 
         enum Fractals{SCHOOLED,ACTIVE, WORKERS1, WORKERS2, TODDLERS, OLDIES, STUDENTS, COMMUTING_STUDENTS,
                       COMMUTING_WORKERS};
-        enum Sizes{SCHOOLS, COLLEGES, COMMUNITES, WORKPLACES};
+        enum Sizes{SCHOOLS, COLLEGES, COMMUNITES, WORKPLACES, AVERAGE_CP, MAXLC};
 
         unsigned int GetTotalPop() const { return m_total_pop; }
         float        GetSchooledFrac() const { return m_fract_map.at(SCHOOLED); }
@@ -106,12 +106,12 @@ public:
         float        GetCommutingStudentsFrac() const { return m_fract_map.at(COMMUTING_STUDENTS); }
         float        GetActiveFrac() const { return m_fract_map.at(ACTIVE); }
         float        GetCommutingWorkersFrac() const { return m_fract_map.at(COMMUTING_WORKERS); }
-        unsigned int GetAvgCpSize() const { return m_avg_cp_size; }
-        unsigned int GetSchoolSize() const { return m_school_size; }
-        unsigned int GetCollegeSize() const { return m_college_size; }
-        unsigned int GetMaxLC() const { return m_maxlc; }
-        unsigned int GetCommunitySize() const { return m_community_size; }
-        unsigned int GetWorkplaceSize() const { return m_worksplace_size; }
+        unsigned int GetAvgCpSize() const { return m_sizes_map.at(AVERAGE_CP); }
+        unsigned int GetSchoolSize() const { return m_sizes_map.at(SCHOOLS); }
+        unsigned int GetCollegeSize() const { return m_sizes_map.at(COLLEGES); }
+        unsigned int GetMaxLC() const { return m_sizes_map.at(MAXLC); }
+        unsigned int GetCommunitySize() const { return m_sizes_map.at(COMMUNITES); }
+        unsigned int GetWorkplaceSize() const { return m_sizes_map.at(WORKPLACES); }
 
         unsigned int GetSchoolCount() const;
 
@@ -194,7 +194,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         float m_active_frac{};
 
         /// the ratio of commuters that are workers -> make this const?
-        float m_commuting_workers_frac{};*/
+        float m_commuting_workers_frac{};
 
         /// Average size of each contact pool -> make this const?
         unsigned int m_avg_cp_size{};
@@ -215,7 +215,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         unsigned int m_worksplace_size{};
 
         /// making these members const requires reworking the constructor,
-        /// or hack our way around the initialisation...
+        /// or hack our way around the initialisation... */
 
         unsigned int m_school_count{};
 
