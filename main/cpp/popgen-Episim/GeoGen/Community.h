@@ -20,6 +20,7 @@
 #include "pool/ContactPool.h"
 #include <cstddef>
 #include <memory>
+#include <map>
 
 namespace geogen {
 
@@ -51,19 +52,20 @@ public:
         /// Return the community's type
         const CommunityType& GetCommunityType() const { return m_community_type; }
 
-        /// Return shared pointer of the city,
+        /// Return reference of the city,
         City& GetCity() { return *m_city; }
 
         /// Adds a contact pool to the community
-        void AddContactPool(std::shared_ptr<stride::ContactPool> pool);
+        stride::ContactPool& AddContactPool(stride::ContactPoolType::Id type);
 
-        const std::vector<std::shared_ptr<stride::ContactPool>>& GetContactPools() const { return m_contact_pools; }
+        std::vector<stride::ContactPool>& GetContactPools() { return m_contact_pools; }
 
         /// Get the total number members of all contactpools for this community
         unsigned int GetSize() const;
 
 private:
         static unsigned int& UIDgenerator();
+        static unsigned int& PIDgenerator(stride::ContactPoolType::Id);
 
 private:
         const unsigned int m_community_id; ///< A unique ID for the community
@@ -72,7 +74,9 @@ private:
 
         City* m_city; ///< Shared pointer to City
 
-        std::vector<std::shared_ptr<stride::ContactPool>> m_contact_pools;
+        static std::map<stride::ContactPoolType::Id, unsigned int> m_pool_ids;
+
+        std::vector<stride::ContactPool> m_contact_pools;
 };
 
 } // namespace geogen

@@ -22,10 +22,17 @@ namespace geogen {
 
 using namespace std;
 
+map<stride::ContactPoolType::Id, unsigned int> Community::m_pool_ids = {
+        { stride::ContactPoolType::Id::Household, 1 },
+        { stride::ContactPoolType::Id::School, 1 },
+        { stride::ContactPoolType::Id::Work, 1 },
+        { stride::ContactPoolType::Id::PrimaryCommunity, 1 },
+        { stride::ContactPoolType::Id::SecondaryCommunity, 1 }
+};
+
 Community::Community(CommunityType community_type, City* city)
-    : m_community_id(UIDgenerator()), m_community_type(community_type), m_city(city)
+    : m_community_id(UIDgenerator()++), m_community_type(community_type), m_city(city)
 {
-        UIDgenerator()++;
 }
 
 unsigned int& Community::UIDgenerator()
@@ -34,13 +41,22 @@ unsigned int& Community::UIDgenerator()
         return id;
 }
 
-void Community::AddContactPool(std::shared_ptr<stride::ContactPool> pool) { m_contact_pools.push_back(pool); }
+unsigned int& Community::PIDgenerator(stride::ContactPoolType::Id type)
+{
+        return m_pool_ids.at(type);
+}
+
+stride::ContactPool& Community::AddContactPool(stride::ContactPoolType::Id type) {
+    unsigned int id = PIDgenerator(type)++;
+    m_contact_pools.emplace_back(stride::ContactPool(id, type));
+    return m_contact_pools.back();
+}
 
 unsigned int Community::GetSize() const
 {
         unsigned int result = 0;
         for (auto& a_contact_pool : m_contact_pools) {
-                result += a_contact_pool->GetSize();
+                result += a_contact_pool.GetSize();
         }
 
         return result;

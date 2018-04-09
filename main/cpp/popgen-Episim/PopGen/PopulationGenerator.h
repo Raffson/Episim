@@ -43,22 +43,21 @@ public:
                                                          unsigned int radius, unsigned int last);
 
 private:
-        std::vector<std::shared_ptr<stride::ContactPool>> GetNearbyContactPools(const geogen::City& city,
-                                                                                geogen::CommunityType);
-        std::vector<shared_ptr<stride::Person>>           GetSchoolAttendants(const shared_ptr<geogen::City>& city);
-        //shared_ptr<Household>                             GenerateHousehold(unsigned int size);
-        std::vector<std::shared_ptr<stride::ContactPool>> GetContactPoolsOfColleges();
-        void                                              InitializeHouseholdSizeFractions();
-        void                                              InitializeCommutingFractions();
-        unsigned int                                      GetRandomHouseholdSize();
-        double                                            GetRandomAge();
-        bool                                              IsWorkingCommuter();
-        //bool                                              IsStudentCommuter();
-        //bool                                              IsStudent();
-        bool                                              IsActive();
+        std::vector<stride::ContactPool*> GetNearbyContactPools(const geogen::City& city, geogen::CommunityType);
+        std::vector<stride::Person*>      GetSchoolAttendants(geogen::City& city);
+        //Household&                        GenerateHousehold(unsigned int size);
+        std::vector<stride::ContactPool*> GetContactPoolsOfColleges();
+        void                              InitializeHouseholdSizeFractions();
+        void                              InitializeCommutingFractions();
+        unsigned int                      GetRandomHouseholdSize();
+        double                            GetRandomAge();
+        bool                              IsWorkingCommuter();
+        //bool                              IsStudentCommuter();
+        //bool                              IsStudent();
+        bool                              IsActive();
 
-        std::vector<shared_ptr<stride::Person>>           GetActives(const shared_ptr<geogen::City>&);
-        geogen::City&                                     GetRandomCommutingCity(geogen::City&, const std::vector<int>&);
+        std::vector<stride::Person*>      GetActives(geogen::City&);
+        geogen::City&                     GetRandomCommutingCity(geogen::City&, const std::vector<int>&);
 
 private:
         geogen::GeoGrid& m_geogrid;

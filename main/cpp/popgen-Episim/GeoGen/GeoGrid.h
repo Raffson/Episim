@@ -148,7 +148,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Keep a map of all communities?
         /// -> will put everything in place in comments,
         ///     if we need it, just uncomment it...
-        /// map<unsigned int, shared_ptr<Community>> m_communities;
+        /// map<unsigned int, Community*> m_communities;
 
         /// doing the same for commuters
         /// Contains information about number of commuters from a city to a city
@@ -216,8 +216,6 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         unsigned int m_school_count{};
 
         vector<City*> m_cities_with_college{};
-
-        std::size_t m_id_generator{};
 };
 
 static stride::util::RNManager generator;

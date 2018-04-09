@@ -153,10 +153,9 @@ void GeoGrid::GenerateSchools()
 
                 // Add contactpools
                 for (auto j = 0; j < cps; j++) {
-                        auto                    pool = std::make_shared<stride::ContactPool>(
-                            m_id_generator, stride::ContactPoolType::Id::School);
-                        m_id_generator++;
-                        nw_school.AddContactPool(pool);
+                        stride::ContactPool& pool = nw_school.AddContactPool(stride::ContactPoolType::Id::School);
+                        //anything else that needs to be done here? otherwise we can remove the braces {}
+                        // as well as the assignment...
                 }
                 // m_communities[nw_school->getID()] = nw_school TODO: What is this??
         }
@@ -214,10 +213,9 @@ void GeoGrid::GenerateColleges()
                         Community& college = it->AddCommunity(CommunityType::College);
                         // Add contactpools
                         for (auto j = 0; j < cps; j++) {
-                                auto                    pool = std::make_shared<stride::ContactPool>(
-                                    m_id_generator, stride::ContactPoolType::Id::School);
-                                m_id_generator++;
-                                college.AddContactPool(pool);
+                                stride::ContactPool& pool = college.AddContactPool(stride::ContactPoolType::Id::School);
+                                //anything else that needs to be done here? otherwise we can remove the braces {}
+                                // as well as the assignment...
                         }
                         // m_communities[college->getID()] = college
                 }
@@ -255,10 +253,8 @@ void GeoGrid::GenerateWorkplaces(){
         Community& nw_workplace = chosen_city.AddCommunity(CommunityType::Work);
 
         // A workplace has a contactpool.
-        auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::Work);
-        m_id_generator++;
-        nw_workplace.AddContactPool(pool);
-
+        stride::ContactPool& pool = nw_workplace.AddContactPool(stride::ContactPoolType::Id::Work);
+        //If nothing needs to be done with this pool, we can leave out the assignment...
     }
 
 }
@@ -269,21 +265,18 @@ void GeoGrid::GenerateWorkplaces()
         // is this being done by now?
 
         for (auto it : m_cities) {
-                shared_ptr<City> city         = it.second;
-                unsigned int     in_commuters = city->GetTotalInCommutersCount();
+                City&            city         = it.second;
+                unsigned int     in_commuters = city.GetTotalInCommutersCount();
 
                 // some percentages of the commuters are students
                 double working_commuters    = m_commuting_workers_frac * (in_commuters);
                 auto   number_of_workplaces = (unsigned int)round(working_commuters / m_worksplace_size);
 
                 for (unsigned int i = 0; i < number_of_workplaces; i++) {
-                        shared_ptr<Community> community = make_shared<Community>(CommunityType::Work, city);
+                        Community& community = city.AddCommunity(CommunityType::Work, &city);
                         /// Add contactpools
-                        auto pool = std::make_shared<stride::ContactPool>(
-                                    m_id_generator, stride::ContactPoolType::Id::Work);
-                        m_id_generator++;
-                        community->AddContactPool(pool);
-                        city->AddCommunity(community);
+                        stride::ContactPool& pool = community->AddContactPool(stride::ContactPoolType::Id::Work);
+                        // If nothing else needs to be done here, well yeah, y'all know the drill...
                 }
         }
 }*/
@@ -316,15 +309,14 @@ void GeoGrid::GenerateCommunities()
                 Community& nw_community = chosen_city.AddCommunity(CommunityType::Primary);
                 // Add contactpools
                 for (auto j = 0; j < cps; j++) {
-                        auto                    pool = std::make_shared<stride::ContactPool>(
-                            m_id_generator, stride::ContactPoolType::Id::PrimaryCommunity);
-                        m_id_generator++;
-                        nw_community.AddContactPool(pool);
+                        stride::ContactPool& pool = nw_community.AddContactPool(stride::ContactPoolType::Id::PrimaryCommunity);
+                        //anything else that needs to be done here? otherwise we can remove the braces {}
+                        // as well as the assignment...
                 }
         }
         // Determine how many communities a city should get -> Depricated.
         /*for (auto it : m_cities){
-            shared_ptr<City> city = it.second;
+            City& city = it.second;
             // ratio: the city contains ratio % of the total population.
             double ratio = (city->GetPopulation()/(double)m_total_pop);
             assert(0<ratio<1);
@@ -334,9 +326,8 @@ void GeoGrid::GenerateCommunities()
 
             for (int i = 0; i < city_communities; i++){
                 /// Since there currently is no real difference between primary and secundary communities we make them
-        all primary. shared_ptr<Community> community = make_shared<Community>(CommunityType::Primary, city);
-                city->AddCommunity(community);
-                //m_communities[community->getID()] = community
+        all primary. Community& community = city.AddCommunity(CommunityType::Primary, &city);
+                //m_communities[community.getID()] = community
             }
         }*/
 }

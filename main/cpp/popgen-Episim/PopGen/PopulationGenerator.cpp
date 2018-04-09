@@ -185,12 +185,12 @@ vector<geogen::City*> PopulationGenerator::GetCitiesWithinRadius(const geogen::C
         return result;
 }
 
-vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPools(const geogen::City&   city,
-                                                                                   geogen::CommunityType community_type)
+vector<stride::ContactPool*> PopulationGenerator::GetNearbyContactPools(const geogen::City&   city,
+                                                                        geogen::CommunityType community_type)
 {
         unsigned int                            search_radius = m_initial_search_radius;
         unsigned int                            last_radius   = 0;
-        vector<shared_ptr<stride::ContactPool>> result;
+        vector<stride::ContactPool*> result;
 
         // this while(true) loop creaps me the fuck out, thinking about a better solution...
         // still need a better solution....
@@ -198,8 +198,8 @@ vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPoo
                 vector<geogen::City*> near_cities = GetCitiesWithinRadius(city, search_radius, last_radius);
                 for (auto& a_city : near_cities) {
                         for (auto& a_community : a_city->GetCommunitiesOfType(community_type)) {
-                                vector<shared_ptr<stride::ContactPool>> compools = a_community->GetContactPools();
-                                result.insert(result.end(), compools.begin(), compools.end());
+                                for (auto& pool : a_community->GetContactPools() )
+                                        result.emplace_back(&pool);
                         }
                 }
 
@@ -212,12 +212,12 @@ vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPoo
         }
 }
 
-// Quick refractor, will need to adjust the return type to vector<shared_ptr<Person>>
+// Quick refractor, will need to adjust the return type to vector<Person*>
 // while using stride's Person class instead of the current struct...
-vector<shared_ptr<stride::Person>> PopulationGenerator::GetSchoolAttendants(const shared_ptr<geogen::City>& city)
+vector<stride::Person*> PopulationGenerator::GetSchoolAttendants(geogen::City& city)
 {
 
-        vector<shared_ptr<stride::Person>> school_attendants;
+        vector<stride::Person*> school_attendants;
         /*
         for (auto& a_household : city->GetHouseholds()) {
                 vector<shared_ptr<stride::Person>> current_school_attendants;
@@ -259,13 +259,13 @@ void PopulationGenerator::AssignToSchools()
     */
 }
 
-vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetContactPoolsOfColleges()
+vector<stride::ContactPool*> PopulationGenerator::GetContactPoolsOfColleges()
 {
-        vector<shared_ptr<stride::ContactPool>> result;
+        vector<stride::ContactPool*> result;
         for (auto& a_city : m_geogrid.GetCitiesWithCollege()) {
                 for (auto& a_comunity : a_city->GetCommunitiesOfType(geogen::CommunityType::College)) {
-                        auto contact_pools = a_comunity->GetContactPools();
-                        result.insert(result.end(), contact_pools.begin(), contact_pools.end());
+                        for (auto& pool : a_comunity->GetContactPools())
+                                result.emplace_back(&pool);
                 }
         }
         return result;
@@ -300,10 +300,10 @@ void PopulationGenerator::AssignToColleges()
 // students into account
 // Raphael@Nishchal, roger that! but still, at this point I believe we're mixing students and workers,
 // i.e. if I understood the code correctly... I believe Household::GetPossibleWorkers needs to check work-id != 1
-vector<shared_ptr<stride::Person>> PopulationGenerator::GetActives(const shared_ptr<geogen::City>& city)
+vector<stride::Person*> PopulationGenerator::GetActives(geogen::City& city)
 {
 
-        vector<shared_ptr<stride::Person>> actives;
+        vector<stride::Person*> actives;
 /*
         for (auto& a_household : city->GetHouseholds()) {
                 vector<shared_ptr<stride::Person>> possible_workers;
