@@ -72,19 +72,19 @@ TEST_P(CollegeTest, HappyDayScenario)
 
         // Expected nr of colleges
         unsigned int expMechelen =
-            round(45736 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
-        unsigned int expAalst  = round(48564 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
-        unsigned int expElsene = round(52404 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+            round(45736 * grid.GetYoungWorkersFrac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expAalst  = round(48564 * grid.GetYoungWorkersFrac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expElsene = round(52404 * grid.GetYoungWorkersFrac() * grid.GetStudentFrac() / grid.GetCollegeSize());
         unsigned int expAnderlecht =
-            round(53489 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
-        unsigned int expLeuven = round(57258 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+            round(53489 * grid.GetYoungWorkersFrac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expLeuven = round(57258 * grid.GetYoungWorkersFrac() * grid.GetStudentFrac() / grid.GetCollegeSize());
         unsigned int expSchaarbeek =
-            round(67992 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
-        unsigned int expBrugge  = round(72487 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
-        unsigned int expBrussel = round(86458 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
-        unsigned int expGent = round(141210 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+            round(67992 * grid.GetYoungWorkersFrac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expBrugge  = round(72487 * grid.GetYoungWorkersFrac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expBrussel = round(86458 * grid.GetYoungWorkersFrac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+        unsigned int expGent = round(141210 * grid.GetYoungWorkersFrac() * grid.GetStudentFrac() / grid.GetCollegeSize());
         unsigned int expAntwerpen =
-            round(269954 * grid.GetWorkers1Frac() * grid.GetStudentFrac() / grid.GetCollegeSize());
+            round(269954 * grid.GetYoungWorkersFrac() * grid.GetStudentFrac() / grid.GetCollegeSize());
 
         grid.GenerateColleges();
 

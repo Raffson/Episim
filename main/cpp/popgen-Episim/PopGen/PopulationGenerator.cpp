@@ -58,8 +58,8 @@ double PopulationGenerator::GetRandomAge()
         //perhaps refractor and keep popfracs as a member?
         vector<double> popfracs;
         popfracs.push_back(m_geogrid.GetSchooledFrac()); // [3, 17]
-        popfracs.push_back(m_geogrid.GetWorkers1Frac()); // [18, 25]
-        popfracs.push_back(m_geogrid.GetWorkers2Frac()); // [26, 64]
+        popfracs.push_back(m_geogrid.GetYoungWorkersFrac()); // [18, 25]
+        popfracs.push_back(m_geogrid.GetOldWorkersFrac()); // [26, 64]
         popfracs.push_back(m_geogrid.GetToddlersFrac()); // [0, 2]
         popfracs.push_back(m_geogrid.GetOldiesFrac());   // [65, 80]
         // cause maximum age according to Age.h is 80...
@@ -170,7 +170,7 @@ void PopulationGenerator::AssignHouseholds()
 }
 
 vector<geogen::City*> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
-                                                                            unsigned int radius, unsigned int last)
+                                                                 unsigned int radius, unsigned int last)
 {
         // TODO to save time we can add distances between two cities in a map but will cost some space
         // This will take like A LOT of space.. not sure if it's worth it...

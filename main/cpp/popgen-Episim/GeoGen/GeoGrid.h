@@ -45,7 +45,7 @@ class GeoGrid
 {
 
 public:
-        /// Default constructor which does nothing.
+        /// Default constructor which does nothing.TODO: Do we need this??
         GeoGrid() = default;
 
         /// Takes a filepath to city_config file.
@@ -75,51 +75,110 @@ public:
         //          Need to enforce this ensure in the code as well...
         void GenerateColleges();
 
-        /// Generates the workplaces, places them into the cities
-        /// using a discrete distribution.
-
+        /// Generates the workplaces, places them into the cities a random with chances
+        /// discretly distributed according to size. Generates contactpools for the communities.
         void GenerateWorkplaces();
 
-        /// Generates the communties, places them into the cities
-        /// using a discrete distribution.
+        /// Generates the communties, places them into the cities a random with chances
+        /// discretly distributed according to size. Generates contactpools for the communities.
         void GenerateCommunities();
 
         /// Calls all other generator functions.
         void GenerateAll();
 
-        /// Returns the map of cities.
+        /// Getter
+        /// @retval <map<unsigned unt, City>&> returns the map of Cities in GeoGrid. Cities are
+        ///                                       indexed according to their City ID.
         map<unsigned int, City>& GetCities() { return m_cities; }
 
-        /// Bunch of getters, mainly for tests atm...
-        /// Could leave all this out but then we need to work with friend classes...
+        /// Getter
+        /// @retval <unsigned int> returns the total population of GeoGrid.
         unsigned int GetTotalPop() const { return m_total_pop; }
-        float        GetSchooledFrac() const { return m_schooled_frac; }
-        float        GetWorkers1Frac() const { return m_workers1_frac; }
-        float        GetWorkers2Frac() const { return m_workers2_frac; }
-        float        GetToddlersFrac() const { return m_toddlers_frac; }
-        float        GetOldiesFrac() const { return m_oldies_frac; }
-        float        GetStudentFrac() const { return m_student_frac; }
-        float        GetCommutingStudentsFrac() const { return m_commuting_students_frac; }
-        float        GetActiveFrac() const { return m_active_frac; }
-        float        GetCommutingWorkersFrac() const { return m_commuting_workers_frac; }
-        unsigned int GetAvgCpSize() const { return m_avg_cp_size; }
-        unsigned int GetSchoolSize() const { return m_school_size; }
-        unsigned int GetCollegeSize() const { return m_college_size; }
-        unsigned int GetMaxLC() const { return m_maxlc; }
-        unsigned int GetCommunitySize() const { return m_community_size; }
-        unsigned int GetWorkplaceSize() const { return m_worksplace_size; }
 
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our population that will go
+        ///                 to school [6yrs, 18yrs).
+        float        GetSchooledFrac() const { return m_fract_map.at(SCHOOLED); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our workerrs in [18yrs,26yrs)
+        float        GetYoungWorkersFrac() const { return m_fract_map.at(YOUNG_WORKERS); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our workers in age range [26yrs, 65).
+        float        GetOldWorkersFrac() const { return m_fract_map.at(OLD_WORKERS); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our population that is in
+        ///                 age range [0yrs, 6yrs)
+        float        GetToddlersFrac() const { return m_fract_map.at(TODDLERS); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our population
+        ///                 in age range [65, Oldest person].
+        float        GetOldiesFrac() const { return m_fract_map.at(OLDIES); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our population in
+        ///                 age range [18, 26) that studies.
+        float        GetStudentFrac() const { return m_fract_map.at(STUDENTS); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of students that commute
+        ///                 to another city.
+        float        GetCommutingStudentsFrac() const { return m_fract_map.at(COMMUTING_STUDENTS); }
+
+        /// Getter
+        /// @retval <float> returns the fraction of our population that is working.
+        float        GetActiveFrac() const { return m_fract_map.at(ACTIVE); }
+
+        /// Getter
+        /// @retval <float> returns the fraction of our workers that commute to another city.
+        float        GetCommutingWorkersFrac() const { return m_fract_map.at(COMMUTING_WORKERS); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the average size of a contactpool.
+        unsigned int GetAvgCpSize() const { return m_sizes_map.at(AVERAGE_CP); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the average size of a School.
+        unsigned int GetSchoolSize() const { return m_sizes_map.at(SCHOOLS); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the average size of a College.
+        unsigned int GetCollegeSize() const { return m_sizes_map.at(COLLEGES); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the Max largest cities.
+        unsigned int GetMaxLC() const { return m_sizes_map.at(MAXLC); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the average size of a community
+        unsigned int GetCommunitySize() const { return m_sizes_map.at(COMMUNITES); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the average size of a workplace.
+        unsigned int GetWorkplaceSize() const { return m_sizes_map.at(WORKPLACES); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the number of schools
         unsigned int GetSchoolCount() const { return m_school_count; }
 
         /// Retrieve a city by entering the id of the city in [].
         City& operator[](unsigned int i) { return m_cities.at(i); }
 
-        /// Return the households of the geogrid
+        /// Getter
+        /// @retval <const vector<vector<double>>&> returns the age distribution of our houses as a 2D vector.
+        ///                             With every vector representing a household.
         const vector<vector<double>>& GetModelHouseholds() const { return m_household_age_distr; }
 
+        /// Getter
+        /// @retval <const vector<City*>>> Returns the Cities that contain a College.
         const vector<City*>& GetCitiesWithCollege() { return m_cities_with_college; }
 
-        /// Returns a coordinate representing the center of the grid deduced from all cities in the grid
+        /// Getter
+        /// @retval <Coordinate> Returns a coordinate representing the center of the grid
+        ///                      deduced from all cities in the grid.
         Coordinate GetCenterOfGrid();
 
 private:
@@ -139,6 +198,38 @@ private:
         void GetMainFractions(const vector<vector<double>>& hhs);
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
+
+        /// Enum that represent indexes of Fractals map. That map contains all fraction data of our
+        /// population
+        enum Fractals{
+            SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
+                                // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
+            ACTIVE,             // % of pop that is activly working.
+            YOUNG_WORKERS,      // % of pop in [18yrs, 26yrs) that is working.
+            OLD_WORKERS,        // % of pop in [26yrs, 65yrs) that is working.
+            TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
+            OLDIES,             // % of pop that is in [65yrs, oldest_person].
+            STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
+            COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit and commutes.
+            COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
+        };
+        /// Effective map of all our fractals. Read the Fractals Enum what it will contain.
+        map<Fractals, float> m_fract_map{};
+
+        /// Enum that represent indexes of sizes map. That map contains all size data
+        /// of our communities
+        enum Sizes{
+            SCHOOLS,    // Average size of a school.
+            COLLEGES,   // Average size of a college.
+            COMMUNITES, // Average size of a community
+            WORKPLACES, // Average size of a workplace
+            AVERAGE_CP, // Average size of a contactpool
+            MAXLC       // Amount of largest cities (cities with a college)
+        };
+
+        /// Effective map of all our sizes. Read the Sizes Enum what it will contain.
+        map<Sizes, unsigned int> m_sizes_map{};
+
         /// Contains the model for the age distribition for households
         vector<vector<double>> m_household_age_distr{};
 
@@ -157,64 +248,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Total population of simulation area
         unsigned int m_total_pop{};
 
-        // According to the professor's mail:
-        // [6, 12) -> elementary school
-        // [12, 18) -> middle+highschool
-        // [18, 26) -> college/university
-        // [18, 65) -> workers except those who go to college/university
-
-        /// Fraction of population that goes to school (3y - 17y)
-        float m_schooled_frac{};
-
-
-        /// Fraction of population that are able to work between 18y and 25y
-        float m_workers1_frac{};
-
-        /// Fraction of population that are able to work between 26y and 64y
-        float m_workers2_frac{};
-
-        /// Fraction of population younger than 3y
-        float m_toddlers_frac{};
-
-        /// Fraction of population older than 64y
-        float m_oldies_frac{};
-
-        /// Fraction of workers1 that is student
-        float m_student_frac{};
-
-        /// the ratio of commuters that are students
-        float m_commuting_students_frac{};
-
-        /// Total population that is actually working -> make this const?
-        /// for workers1 (18y-25y) mind that we first need to exclude the students...
-        float m_active_frac{};
-
-        /// the ratio of commuters that are workers -> make this const?
-        float m_commuting_workers_frac{};
-
-        /// Average size of each contact pool -> make this const?
-        unsigned int m_avg_cp_size{};
-
-        /// Average size of each school -> make this const?
-        unsigned int m_school_size{};
-
-        /// Average size of each college -> make this const?
-        unsigned int m_college_size{};
-
-        /// Maximum nr of "largest cities" -> make this const?
-        unsigned int m_maxlc{};
-
-        /// Primary/Secundary community limit -> make this const?
-        unsigned int m_community_size{};
-
-        /// Average size of each workplaces -> make this const?
-        unsigned int m_worksplace_size{};
-
-        // making these members const requires reworking the constructor,
-        // or hack our way around the initialisation...
-
         unsigned int m_school_count{};
-
         vector<City*> m_cities_with_college{};
 };
 

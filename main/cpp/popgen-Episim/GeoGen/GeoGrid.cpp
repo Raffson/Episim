@@ -34,11 +34,11 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
                 }
         }
         float total     = schooled + workers1 + workers2 + toddlers + oldies;
-        m_schooled_frac = schooled / total;
-        m_workers1_frac = workers1 / total;
-        m_workers2_frac = workers2 / total;
-        m_toddlers_frac = toddlers / total;
-        m_oldies_frac   = oldies / total;
+        m_fract_map[SCHOOLED] = schooled / total;
+        m_fract_map[YOUNG_WORKERS] = workers1 / total;
+        m_fract_map[OLD_WORKERS] = workers2 / total;
+        m_fract_map[TODDLERS] = toddlers / total;
+        m_fract_map[OLDIES]   = oldies / total;
 }
 
 GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
@@ -78,17 +78,17 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 
         GetMainFractions(m_household_age_distr);
 
-        m_student_frac            = abs(p_tree.get<float>("popgen.pop_info.fraction_students"));
-        m_commuting_students_frac = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_students"));
-        m_active_frac             = abs(p_tree.get<float>("popgen.pop_info.fraction_active_workers"));
-        m_commuting_workers_frac  = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_workers"));
+        m_fract_map[STUDENTS]          = abs(p_tree.get<float>("popgen.pop_info.fraction_students"));
+        m_fract_map[COMMUTING_STUDENTS]= abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_students"));
+        m_fract_map[ACTIVE]            = abs(p_tree.get<float>("popgen.pop_info.fraction_active_workers"));
+        m_fract_map[COMMUTING_WORKERS] = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_workers"));
 
-        m_avg_cp_size     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.average_size"));
-        m_school_size     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.school.size"));
-        m_college_size    = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.size"));
-        m_maxlc           = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.cities"));
-        m_community_size  = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.community.size"));
-        m_worksplace_size = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.workplace.size"));
+        m_sizes_map[AVERAGE_CP]     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.average_size"));
+        m_sizes_map[SCHOOLS]     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.school.size"));
+        m_sizes_map[COLLEGES]    = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.size"));
+        m_sizes_map[MAXLC]           = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.cities"));
+        m_sizes_map[COMMUNITES]  = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.community.size"));
+        m_sizes_map[WORKPLACES] = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.workplace.size"));
 
         // Setting up RNG
         unsigned long seed = (unsigned long) abs(p_tree.get("popgen.rng.seed", 0));
@@ -100,7 +100,9 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // however, is this first ENSURE necessary?
         // it should never fail since we decude the fractions from the households,
         // so removed the correspronding death test until we find a better test...
-        float totalfrac = m_workers1_frac + m_workers2_frac + m_toddlers_frac + m_oldies_frac + m_schooled_frac;
+        //TODO: Working with DesignByContract still relevant?
+        /*float totalfrac = m_fract_map[WORKERS1] + m_fract_map[WORKERS2] + m_fract_map[TODDLERS] +
+                m_fract_map[OLDIES] + m_fract_map[SCHOOLED];
         ENSURE(fabs(totalfrac - 1) < constants::EPSILON, "Pop frac should equal 1");
         ENSURE(1 >= m_student_frac and m_student_frac >= 0, "Student fraction must be between 0 and 1");
         ENSURE(1 >= m_commuting_students_frac and m_commuting_students_frac >= 0,
@@ -108,7 +110,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         ENSURE(1 >= m_active_frac and m_active_frac >= 0, "Active workers fraction must be between 0 and 1");
         ENSURE(1 >= m_commuting_workers_frac and m_commuting_workers_frac >= 0,
                "Commuting workers fraction must be between 0 and 1");
-        ENSURE(m_avg_cp_size > 0, "Contactpool's size must be bigger than 0");
+        ENSURE(m_avg_cp_size > 0, "Contactpool's size must be bigger than 0");*/
 }
 
 void GeoGrid::GenerateAll()
@@ -117,28 +119,29 @@ void GeoGrid::GenerateAll()
         GenerateColleges();
         GenerateWorkplaces();
         GenerateCommunities();
+
 }
 
 void GeoGrid::GenerateSchools()
 {
 
-        REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
+        /*REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
         REQUIRE(m_schooled_frac >= 0, "Schooled fract can't be negative");
-        REQUIRE(m_school_size >= 0, "The initial school size can't be negative");
+        REQUIRE(m_school_size >= 0, "The initial school size can't be negative");*/
         // Calculating extra data
         // rounded because we don't have a fraction of a person
-        auto amount_schooled = (const unsigned int)round(m_total_pop * m_schooled_frac);
+        auto amount_schooled = (const unsigned int)round(m_total_pop * m_fract_map[SCHOOLED]);
         // round because we do not build half a school
-        auto amount_of_schools = (const unsigned int)round(amount_schooled / m_school_size);
+        auto amount_of_schools = (const unsigned int)round(amount_schooled / m_sizes_map[SCHOOLS]);
 
         // Determine number of contactpools
-        auto cps = round(m_school_size / m_avg_cp_size); /// We need enough pools to distribute all persons
+        auto cps = round(m_sizes_map[SCHOOLS] / m_sizes_map[AVERAGE_CP]); /// We need enough pools to distribute all persons
 
         // Setting up to divide the schools to cities
         vector<double> p_vec;
         vector<City*> c_vec;
         for (auto& it : m_cities) {
-                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_schooled_frac);
+                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_fract_map[SCHOOLED]);
                 c_vec.emplace_back(&it.second);
                 p_vec.emplace_back(c_schooled_pop);
         }
@@ -152,11 +155,8 @@ void GeoGrid::GenerateSchools()
                 Community& nw_school = chosen_city.AddCommunity(CommunityType::School);
 
                 // Add contactpools
-                for (auto j = 0; j < cps; j++) {
-                        stride::ContactPool& pool = nw_school.AddContactPool(stride::ContactPoolType::Id::School);
-                        //anything else that needs to be done here? otherwise we can remove the braces {}
-                        // as well as the assignment...
-                }
+                for (auto j = 0; j < cps; j++)
+                        nw_school.AddContactPool(stride::ContactPoolType::Id::School);
                 // m_communities[nw_school->getID()] = nw_school TODO: What is this??
         }
         // We should ENSURE schools are effectively placed in cities.
@@ -175,7 +175,7 @@ unsigned int GeoGrid::FindSmallest(const vector<City*>& lc)
 
 void GeoGrid::AdjustLargestCities(vector<City*>& lc, City& city)
 {
-        if (lc.size() < m_maxlc)
+        if (lc.size() < m_sizes_map[MAXLC])
                 lc.emplace_back(&city);
         else {
                 unsigned int citpop   = city.GetPopulation();
@@ -191,32 +191,30 @@ void GeoGrid::GenerateColleges()
         // After deducing fractions from households, these should never fail,
         // they also become difficult to test since we can no longer play with the fractions,
         // gotta come up with new tests for this...
-        REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
+        /*REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
         REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");
         REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");
-        REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");
+        REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");*/
         for (auto& it : m_cities) {
                 AdjustLargestCities(m_cities_with_college, it.second);
         }
 
         // Determine number of contactpools
-        auto cps = round(m_college_size / m_avg_cp_size); /// We need enough pools to distribute all persons
+        auto cps = round(m_sizes_map[COLLEGES] / m_sizes_map[AVERAGE_CP]); /// We need enough pools to distribute all persons
 
         // generate colleges to the respective cities...
         for (auto& it : m_cities_with_college) {
-                double students = it->GetPopulation() * m_workers1_frac * m_student_frac;
+                //TODO why is this multiplied with WORKERS 1?
+                double students = it->GetPopulation() * m_fract_map[YOUNG_WORKERS] * m_fract_map[STUDENTS];
                 // doesn't matter if students is a double at this time
                 // since this is only an estimate for the number of colleges
-                auto nrcolleges = (unsigned int)round(students / m_college_size);
+                auto nrcolleges = (unsigned int)round(students / m_sizes_map[COLLEGES]);
 
                 for (unsigned int i = 0; i < nrcolleges; i++) {
                         Community& college = it->AddCommunity(CommunityType::College);
                         // Add contactpools
-                        for (auto j = 0; j < cps; j++) {
-                                stride::ContactPool& pool = college.AddContactPool(stride::ContactPoolType::Id::School);
-                                //anything else that needs to be done here? otherwise we can remove the braces {}
-                                // as well as the assignment...
-                        }
+                        for (auto j = 0; j < cps; j++)
+                                college.AddContactPool(stride::ContactPoolType::Id::School);
                         // m_communities[college->getID()] = college
                 }
         }
@@ -234,15 +232,15 @@ void GeoGrid::GenerateWorkplaces(){
     for(auto& it: m_cities){
 
         // This also calculates people living and working in the same city
-        auto work_pop = (unsigned int) round(it.second.GetTotalInCommutersCount() * m_commuting_workers_frac);
+        auto work_pop = (unsigned int) round(it.second.GetTotalInCommutersCount() * m_fract_map[COMMUTING_WORKERS]);
         // Inserting the amount of id's of the city equal to the pop working in the city
         c_vec.emplace_back(&it.second);
         lottery_vec.emplace_back(work_pop);
     }
 
     // Now we calculate how many workplaces we have to create.
-    double working_commuters = m_commuting_workers_frac * m_total_pop;
-    auto   number_of_workplaces = (unsigned int)round(working_commuters / m_worksplace_size);
+    double working_commuters = m_fract_map[COMMUTING_WORKERS] * m_total_pop;
+    auto   number_of_workplaces = (unsigned int)round(working_commuters / m_sizes_map[WORKPLACES]);
 
     auto rndm_vec = generate_random(lottery_vec, generator, number_of_workplaces);
 
@@ -253,8 +251,7 @@ void GeoGrid::GenerateWorkplaces(){
         Community& nw_workplace = chosen_city.AddCommunity(CommunityType::Work);
 
         // A workplace has a contactpool.
-        stride::ContactPool& pool = nw_workplace.AddContactPool(stride::ContactPoolType::Id::Work);
-        //If nothing needs to be done with this pool, we can leave out the assignment...
+        nw_workplace.AddContactPool(stride::ContactPoolType::Id::Work);
     }
 
 }
@@ -275,8 +272,7 @@ void GeoGrid::GenerateWorkplaces()
                 for (unsigned int i = 0; i < number_of_workplaces; i++) {
                         Community& community = city.AddCommunity(CommunityType::Work, &city);
                         /// Add contactpools
-                        stride::ContactPool& pool = community->AddContactPool(stride::ContactPoolType::Id::Work);
-                        // If nothing else needs to be done here, well yeah, y'all know the drill...
+                        community->AddContactPool(stride::ContactPoolType::Id::Work);
                 }
         }
 }*/
@@ -286,15 +282,15 @@ void GeoGrid::GenerateCommunities()
 {
 
         // Determine number of contactpools
-        auto cps = round(m_community_size / m_avg_cp_size); /// We need enough pools to distribute all persons
+        auto cps = round(m_sizes_map[COMMUNITES] / m_sizes_map[AVERAGE_CP]); /// We need enough pools to distribute all persons
 
         // First we need to determine the total number of communities to be used.
-        auto total_communities = (unsigned int)ceil(m_total_pop / m_community_size);
+        auto total_communities = (unsigned int)ceil(m_total_pop / m_sizes_map[COMMUNITES]);
 
         vector<double> p_vec;
         vector<City*>c_vec;
         for (auto& it : m_cities) {
-                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_schooled_frac);
+                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_fract_map[SCHOOLED]);
                 c_vec.emplace_back(&it.second);
                 p_vec.emplace_back(c_schooled_pop);
         }
@@ -309,9 +305,7 @@ void GeoGrid::GenerateCommunities()
                 Community& nw_community = chosen_city.AddCommunity(CommunityType::Primary);
                 // Add contactpools
                 for (auto j = 0; j < cps; j++) {
-                        stride::ContactPool& pool = nw_community.AddContactPool(stride::ContactPoolType::Id::PrimaryCommunity);
-                        //anything else that needs to be done here? otherwise we can remove the braces {}
-                        // as well as the assignment...
+                        nw_community.AddContactPool(stride::ContactPoolType::Id::PrimaryCommunity);
                 }
         }
         // Determine how many communities a city should get -> Depricated.
