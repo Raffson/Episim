@@ -49,24 +49,24 @@ public:
         unsigned int GetTotalOutCommutersCount();
 
 
-        const vector<shared_ptr<Community>>& GetAllCommunities(){ return m_communities; };
+        vector<Community>& GetAllCommunities(){ return m_communities; };
 
-        vector<shared_ptr<Community>> GetColleges();
+        vector<Community*> GetColleges();
 
-        vector<shared_ptr<Community>> GetSchools();
+        vector<Community*> GetSchools();
 
-        vector<shared_ptr<Community>> GetWorkplaces();
+        vector<Community*> GetWorkplaces();
 
-        vector<shared_ptr<Community>> GetCommunities();
+        vector<Community*> GetCommunities();
 
-        vector<shared_ptr<Community>> GetPrimaryCommunities();
+        vector<Community*> GetPrimaryCommunities();
 
-        vector<shared_ptr<Community>> GetSecondaryCommunities();
+        vector<Community*> GetSecondaryCommunities();
 
-        vector<shared_ptr<Community>> GetCommunitiesOfType(CommunityType ct);
+        vector<Community*> GetCommunitiesOfType(CommunityType ct);
 
         /// Adds community to the city.
-        void AddCommunity(shared_ptr<Community> community);
+        Community& AddCommunity(CommunityType community_type);
 
         ///
         const map<unsigned int, unsigned int>& GetInCommuting() const { return m_in_commuting; };
@@ -77,9 +77,9 @@ public:
 
         void SetOutCommuters(unsigned int id, unsigned int number_of_commuters);
 
-        void AddHousehold(std::shared_ptr<Household> hh);
+        Household& AddHousehold();
 
-        const vector<std::shared_ptr<Household>>& GetHouseholds() { return m_households; }
+        vector<Household>& GetHouseholds() { return m_households; }
 
 private:
         /// A unique ID of the city.
@@ -97,15 +97,15 @@ private:
         /// Name of the city.
         const string m_name;
 
-        /// Vector of schools
-        vector<shared_ptr<Community>> m_communities;
+        /// Vector of Communities
+        vector<Community> m_communities;
 
         /// Contains number of commuters from this city to other cities
         map<unsigned int, unsigned int> m_in_commuting;
 
         map<unsigned int, unsigned int> m_out_commuting;
 
-        vector<std::shared_ptr<Household>> m_households;
+        vector<Household> m_households;
 
         unsigned int m_in_commuter_count;
         unsigned int m_out_commuter_count;

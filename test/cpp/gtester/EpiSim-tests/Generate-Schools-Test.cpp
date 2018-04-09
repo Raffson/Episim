@@ -100,15 +100,16 @@ TEST_P(SchoolTest, HighMoreLowLess)
 
         auto mp = grid.GetCities();
 
-        shared_ptr<City> highest_pop_c = mp.begin()->second;
-        int              highest_pop   = highest_pop_c->GetAllCommunities().size();
+        //Raphael@everyone, is it just me, or are we counting communities instead of population?
+        City*        highest_pop_c = &mp.begin()->second;
+        unsigned int highest_pop   = highest_pop_c->GetAllCommunities().size();
 
-        shared_ptr<City> lowest_pop_c = mp.begin()->second;
-        int              lowest_pop   = lowest_pop_c->GetAllCommunities().size();
+        City*        lowest_pop_c = &mp.begin()->second;
+        unsigned int lowest_pop   = lowest_pop_c->GetAllCommunities().size();
 
         for (auto& it : mp) {
-                shared_ptr<City> t_city = it.second;
-                int              pop    = t_city->GetPopulation();
+                City*        t_city = &it.second;
+                unsigned int pop    = t_city->GetPopulation();
 
                 if (highest_pop < pop) {
                         highest_pop   = pop;
@@ -121,7 +122,8 @@ TEST_P(SchoolTest, HighMoreLowLess)
                 }
         }
 
-        EXPECT_LE(lowest_pop_c->GetAllCommunities(), highest_pop_c->GetAllCommunities());
+        //Redo whatever it is that your doing here... meanwhile I'll simply compare sizes...
+        EXPECT_LE(lowest_pop_c->GetAllCommunities().size(), highest_pop_c->GetAllCommunities().size());
 }
 
 namespace {

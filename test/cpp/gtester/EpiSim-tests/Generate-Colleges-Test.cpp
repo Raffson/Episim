@@ -64,8 +64,8 @@ TEST_P(CollegeTest, HappyDayScenario)
          * 24062,2,57258,173931.7171,174757.824,50.86698143,4.711928375,LEUVEN
          * 21015,2,67992,151137.8935,172542.4363,50.86744,4.37727,SCHAARBEEK/SCHAERBEEK
          * 31005,3,72487,69778.44607,212973.689,51.21760152,3.220079748,BRUGGE
-         * 21004,2,86458,149789.4784,172284.1909,50.86079391,4.35941953,BRUSSEL/BRUXELLES-BRUSSEL PENTAGOON/BRUXELLES
-         * PENTAGONE 44021,4,141210,104032.0404,194183.7006,51.05097848,3.721264108,GENT-GENT CENTRUM
+         * 21004,2,86458,149789.4784,172284.1909,50.86079391,4.35941953,BRUSSEL/BRUXELLES
+         * 44021,4,141210,104032.0404,194183.7006,51.05097848,3.721264108,GENT-GENT CENTRUM
          * 11002,1,269954,153104.586,212271.7101,51.2165845,4.413545489,ANTWERPEN
          *
          */
@@ -89,16 +89,16 @@ TEST_P(CollegeTest, HappyDayScenario)
         grid.GenerateColleges();
 
         auto cities = grid.GetCities();
-        ASSERT_EQ(cities[12025]->GetColleges().size(), expMechelen);
-        ASSERT_EQ(cities[41002]->GetColleges().size(), expAalst);
-        ASSERT_EQ(cities[21009]->GetColleges().size(), expElsene);
-        ASSERT_EQ(cities[21001]->GetColleges().size(), expAnderlecht);
-        ASSERT_EQ(cities[24062]->GetColleges().size(), expLeuven);
-        ASSERT_EQ(cities[21015]->GetColleges().size(), expSchaarbeek);
-        ASSERT_EQ(cities[31005]->GetColleges().size(), expBrugge);
-        ASSERT_EQ(cities[21004]->GetColleges().size(), expBrussel);
-        ASSERT_EQ(cities[44021]->GetColleges().size(), expGent);
-        ASSERT_EQ(cities[11002]->GetColleges().size(), expAntwerpen);
+        ASSERT_EQ(cities.at(12025).GetColleges().size(), expMechelen);
+        ASSERT_EQ(cities.at(41002).GetColleges().size(), expAalst);
+        ASSERT_EQ(cities.at(21009).GetColleges().size(), expElsene);
+        ASSERT_EQ(cities.at(21001).GetColleges().size(), expAnderlecht);
+        ASSERT_EQ(cities.at(24062).GetColleges().size(), expLeuven);
+        ASSERT_EQ(cities.at(21015).GetColleges().size(), expSchaarbeek);
+        ASSERT_EQ(cities.at(31005).GetColleges().size(), expBrugge);
+        ASSERT_EQ(cities.at(21004).GetColleges().size(), expBrussel);
+        ASSERT_EQ(cities.at(44021).GetColleges().size(), expGent);
+        ASSERT_EQ(cities.at(11002).GetColleges().size(), expAntwerpen);
 
         // Now remove these 10 cities and check that all other cities have 0 colleges...
         cities.erase(12025);
@@ -113,7 +113,7 @@ TEST_P(CollegeTest, HappyDayScenario)
         cities.erase(11002);
 
         for (auto& it : cities) {
-                ASSERT_EQ(it.second->GetColleges().size(), 0);
+                ASSERT_EQ(it.second.GetColleges().size(), 0);
         }
 }
 
@@ -141,7 +141,7 @@ TEST_P(CollegeTest, WrongInput)
 }
 
 // Copy of the code since it is a private function and it is used by AdjustLargestCities
-unsigned int findSmallest(const vector<shared_ptr<City>>& lc)
+unsigned int findSmallest(const vector<City*>& lc)
 {
         unsigned int smallest = 0;
         for (unsigned int i = 1; i < lc.size(); i++) {
@@ -154,15 +154,15 @@ unsigned int findSmallest(const vector<shared_ptr<City>>& lc)
 // small adjustment is needed, m_maxlc must be passed on
 // because this function is no longer part of the GeoGrid class,
 // therefore no direct access to m_maxlc...
-void adjustLargestCities(vector<shared_ptr<City>>& lc, const shared_ptr<City>& city, unsigned int m_maxlc)
+void adjustLargestCities(vector<City*>& lc, City& city, unsigned int m_maxlc)
 {
         if (lc.size() < m_maxlc)
-                lc.push_back(city);
+                lc.push_back(&city);
         else {
-                unsigned int citpop   = city->GetPopulation();
+                unsigned int citpop   = city.GetPopulation();
                 unsigned int smallest = findSmallest(lc);
                 if (citpop > lc[smallest]->GetPopulation())
-                        lc[smallest] = city;
+                        lc[smallest] = &city;
         }
 }
 
@@ -170,37 +170,37 @@ TEST_P(CollegeTest, adjustLargestCitiesUnit)
 {
         // We'll push 3 cities with m_maxlc=3
         // thus the 4th city will replace iff it has a larger population than one of the 3 cities in lc
-        vector<shared_ptr<City>> lc;
+        vector<City*> lc;
 
-        shared_ptr<City> c1 = make_shared<City>(1, 1, 10, Coordinate(), "TestCity1");
+        City c1(1, 1, 10, Coordinate(), "TestCity1");
         adjustLargestCities(lc, c1, 3);
         ASSERT_EQ(lc.size(), 1);
 
-        shared_ptr<City> c2 = make_shared<City>(2, 1, 20, Coordinate(), "TestCity2");
+        City c2(2, 1, 20, Coordinate(), "TestCity2");
         adjustLargestCities(lc, c2, 3);
         ASSERT_EQ(lc.size(), 2);
 
-        shared_ptr<City> c3 = make_shared<City>(3, 1, 30, Coordinate(), "TestCity3");
+        City c3(3, 1, 30, Coordinate(), "TestCity3");
         adjustLargestCities(lc, c3, 3);
         ASSERT_EQ(lc.size(), 3);
 
         // Try adding a city with smaller population than other cities...
         // Size should remain 3 and c1, c2, c3 in lc...
-        shared_ptr<City> c4 = make_shared<City>(4, 1, 5, Coordinate(), "TestCity4");
+        City c4(4, 1, 5, Coordinate(), "TestCity4");
         adjustLargestCities(lc, c4, 3);
         ASSERT_EQ(lc.size(), 3);
-        ASSERT_EQ(lc[0], c1);
-        ASSERT_EQ(lc[1], c2);
-        ASSERT_EQ(lc[2], c3);
+        ASSERT_EQ(lc[0], &c1); //comparing addresses, if they're the same => same object...
+        ASSERT_EQ(lc[1], &c2);
+        ASSERT_EQ(lc[2], &c3);
 
         // Try adding a city with larger population than other cities...
         // Size should remain 3 and c5, c2, c3 in lc...
-        shared_ptr<City> c5 = make_shared<City>(5, 1, 15, Coordinate(), "TestCity4");
+        City c5(5, 1, 15, Coordinate(), "TestCity4");
         adjustLargestCities(lc, c5, 3);
         ASSERT_EQ(lc.size(), 3);
-        ASSERT_EQ(lc[0], c5);
-        ASSERT_EQ(lc[1], c2);
-        ASSERT_EQ(lc[2], c3);
+        ASSERT_EQ(lc[0], &c5);
+        ASSERT_EQ(lc[1], &c2);
+        ASSERT_EQ(lc[2], &c3);
 }
 
 // In the testplan I mentioned "assignCollege"

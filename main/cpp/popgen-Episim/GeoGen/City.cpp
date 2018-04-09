@@ -24,111 +24,85 @@ City::City(const unsigned int city_id, const unsigned int province, unsigned int
       m_in_commuter_count(0), m_out_commuter_count(0), m_in_commuting_changed(false), m_out_commuting_changed(false)
 {
 }
-/*
-    const unsigned int City::GetId() const {
-        return m_city_id;
-    }
 
-    const unsigned int City::GetProvince() const {
-        return m_province;
-    }
-
-    unsigned int City::GetPopulation() const {
-        return m_population;
-    }
-
-    const Coordinate City::GetCoordinates() const {
-        return m_coordinates;
-    }
-
-    const string City::GetName() const {
-        return m_name;
-    }
-
-    unsigned int City::GetCommunitySize() const {
-        return m_communities.size();
-    }
-
-    const vector<shared_ptr<Community>>& City::GetAllCommunities() {
-        return m_communities;
-    }
-*/
-
-vector<shared_ptr<Community>> City::GetColleges()
+vector<Community*> City::GetColleges()
 {
-        vector<shared_ptr<Community>> colleges;
+        vector<Community*> colleges;
         for (auto& it : m_communities) {
-                if (it->GetCommunityType() == CommunityType::College)
-                        colleges.push_back(it);
+                if (it.GetCommunityType() == CommunityType::College)
+                        colleges.emplace_back(&it);
         }
         return colleges;
 }
 
-vector<shared_ptr<Community>> City::GetSchools()
+vector<Community*> City::GetSchools()
 {
-        vector<shared_ptr<Community>> schools;
+        vector<Community*> schools;
         for (auto& it : m_communities) {
-                if (it->GetCommunityType() == CommunityType::School)
-                        schools.push_back(it);
+                if (it.GetCommunityType() == CommunityType::School)
+                        schools.emplace_back(&it);
         }
         return schools;
 }
 
-vector<shared_ptr<Community>> City::GetWorkplaces()
+vector<Community*> City::GetWorkplaces()
 {
-        vector<shared_ptr<Community>> workplaces;
+        vector<Community*> workplaces;
         for (auto& it : m_communities) {
-                if (it->GetCommunityType() == CommunityType::Work)
-                        workplaces.push_back(it);
+                if (it.GetCommunityType() == CommunityType::Work)
+                        workplaces.emplace_back(&it);
         }
         return workplaces;
 }
 
-vector<shared_ptr<Community>> City::GetCommunities()
+vector<Community*> City::GetCommunities()
 {
-        vector<shared_ptr<Community>> communities;
+        vector<Community*> communities;
         for (auto& it : m_communities) {
-                if (it->GetCommunityType() == CommunityType::Primary)
-                        communities.push_back(it);
-                else if (it->GetCommunityType() == CommunityType::Secondary)
-                        communities.push_back(it);
+                if (it.GetCommunityType() == CommunityType::Primary)
+                        communities.emplace_back(&it);
+                else if (it.GetCommunityType() == CommunityType::Secondary)
+                        communities.emplace_back(&it);
         }
         return communities;
 }
 
-vector<shared_ptr<Community>> City::GetPrimaryCommunities()
+vector<Community*> City::GetPrimaryCommunities()
 {
-        vector<shared_ptr<Community>> communities;
+        vector<Community*> communities;
         for (auto& it : m_communities) {
-                if (it->GetCommunityType() == CommunityType::Primary)
-                        communities.push_back(it);
+                if (it.GetCommunityType() == CommunityType::Primary)
+                        communities.emplace_back(&it);
         }
         return communities;
 }
 
-vector<shared_ptr<Community>> City::GetSecondaryCommunities()
+vector<Community*> City::GetSecondaryCommunities()
 {
-        vector<shared_ptr<Community>> communities;
+        vector<Community*> communities;
         for (auto& it : m_communities) {
-                if (it->GetCommunityType() == CommunityType::Secondary)
-                        communities.push_back(it);
+                if (it.GetCommunityType() == CommunityType::Secondary)
+                        communities.emplace_back(&it);
         }
         return communities;
 }
 
 // this is  much better, taking away the need for all the above functions,
 // except the functions above make life easier sometimes, so leaving them for now...
-vector<shared_ptr<Community>> City::GetCommunitiesOfType(CommunityType ct)
+vector<Community*> City::GetCommunitiesOfType(CommunityType ct)
 {
-        vector<shared_ptr<Community>> communities;
+        vector<Community*> communities;
         for (auto& it : m_communities) {
-                if (it->GetCommunityType() == ct)
-                        communities.push_back(it);
+                if (it.GetCommunityType() == ct)
+                        communities.emplace_back(&it);
         }
         return communities;
 }
 
-void City::AddCommunity(shared_ptr<Community> community) { m_communities.push_back(community); }
+Community& City::AddCommunity(CommunityType community_type) {
+    m_communities.emplace_back(Community(community_type, this));
+    return m_communities.back();
+}
 
 void City::SetInCommuters(unsigned int id, unsigned int number_of_commuters)
 {
@@ -165,7 +139,10 @@ unsigned int City::GetTotalOutCommutersCount()
 }
 
 
-void City::AddHousehold(std::shared_ptr<Household> hh) { m_households.push_back(hh); }
+Household& City::AddHousehold() {
+    m_households.emplace_back(Household(this));
+    return m_households.back();
+}
 
 
 } // namespace geogen

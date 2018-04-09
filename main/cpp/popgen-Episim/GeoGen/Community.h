@@ -43,7 +43,7 @@ public:
         Community() = default;
 
         /// Constructor, pretty straight forward...
-        Community(CommunityType community_type, std::shared_ptr<City> city);
+        Community(CommunityType community_type, City* city);
 
         /// Return the community's ID
         const unsigned int GetID() const { return m_community_id; }
@@ -52,7 +52,7 @@ public:
         const CommunityType& GetCommunityType() const { return m_community_type; }
 
         /// Return shared pointer of the city,
-        const std::shared_ptr<City>& GetCity() { return m_city; }
+        City& GetCity() { return *m_city; }
 
         /// Adds a contact pool to the community
         void AddContactPool(std::shared_ptr<stride::ContactPool> pool);
@@ -70,7 +70,7 @@ private:
 
         CommunityType m_community_type; ///< The type of community
 
-        std::shared_ptr<City> m_city; ///< Shared pointer to City
+        City* m_city; ///< Shared pointer to City
 
         std::vector<std::shared_ptr<stride::ContactPool>> m_contact_pools;
 };

@@ -56,10 +56,10 @@ TEST_P(CommunityTest, Run)
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        auto                                 cities = grid.GetCities();
-        map<int, shared_ptr<City>>::iterator c_it2  = cities.begin();
+        auto                                       cities = grid.GetCities();
+        map<unsigned int, City>::iterator c_it2  = cities.begin();
         /// Check if the communities are ditributed correctly.
-        for (map<int, shared_ptr<City>>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {
+        for (map<unsigned int, City>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {
                 try {
                         if (c_it != cities.end()) {
                                 c_it2 = c_it++;
@@ -69,13 +69,13 @@ TEST_P(CommunityTest, Run)
                         }
                         /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
                         if ((*c_it).first != (*c_it2).first) {
-                                if ((*c_it).second->GetPopulation() >= (*c_it2).second->GetPopulation()) {
-                                        EXPECT_GE((*c_it).second->GetCommunitySize(),
-                                                  (*c_it2).second->GetCommunitySize());
+                                if ((*c_it).second.GetPopulation() >= (*c_it2).second.GetPopulation()) {
+                                        EXPECT_GE((*c_it).second.GetCommunitySize(),
+                                                  (*c_it2).second.GetCommunitySize());
                                 }
-                                if ((*c_it).second->GetPopulation() <= (*c_it2).second->GetPopulation()) {
-                                        EXPECT_LE((*c_it).second->GetCommunitySize(),
-                                                  (*c_it2).second->GetCommunitySize());
+                                if ((*c_it).second.GetPopulation() <= (*c_it2).second.GetPopulation()) {
+                                        EXPECT_LE((*c_it).second.GetCommunitySize(),
+                                                  (*c_it2).second.GetCommunitySize());
                                 }
                         }
                 } catch (std::exception& e) {

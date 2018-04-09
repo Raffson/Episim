@@ -58,7 +58,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         string commuting_file = p_tree.get("popgen.data_files.commuting", "flanders_commuting.csv");
         string household_file = p_tree.get("popgen.data_files.households", "households_flanders.xml");
 
-        m_cities = parser::ParseCities(base_path + city_file, base_path + commuting_file, true);
+        parser::ParseCities(base_path + city_file, base_path + commuting_file, m_cities, true);
 
         // Raphael@everyone, until the refractor occurs, I can't delete/rename this..
         // however i want to start making my functions with the correct signatures for after the refractor,
@@ -136,10 +136,10 @@ void GeoGrid::GenerateSchools()
 
         // Setting up to divide the schools to cities
         vector<double> p_vec;
-        vector<shared_ptr<City>> c_vec;
-        boost::copy(m_cities | boost::adaptors::map_values, std::back_inserter(c_vec));;
+        vector<City*> c_vec;
         for (auto& it : m_cities) {
-                auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_schooled_frac);
+                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_schooled_frac);
+                c_vec.emplace_back(&it.second);
                 p_vec.emplace_back(c_schooled_pop);
         }
         // Note that this way cuz of rounding we lose a couple of schooled ppl.
@@ -148,25 +148,23 @@ void GeoGrid::GenerateSchools()
         // assign schools to cities according to our normal distribution
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
-                shared_ptr<City>      chosen_city = c_vec[rndm_vec[i]];
-                shared_ptr<Community> nw_school(new Community(CommunityType::School, chosen_city));
+                City&      chosen_city = *c_vec[rndm_vec[i]];
+                Community& nw_school = chosen_city.AddCommunity(CommunityType::School);
 
                 // Add contactpools
                 for (auto j = 0; j < cps; j++) {
                         auto                    pool = std::make_shared<stride::ContactPool>(
                             m_id_generator, stride::ContactPoolType::Id::School);
                         m_id_generator++;
-                        nw_school->AddContactPool(pool);
+                        nw_school.AddContactPool(pool);
                 }
-
-                chosen_city->AddCommunity(nw_school);
                 // m_communities[nw_school->getID()] = nw_school TODO: What is this??
         }
         // We should ENSURE schools are effectively placed in cities.
         // The OO nature makes this assertion rather complex -> found in tests
 }
 
-unsigned int GeoGrid::FindSmallest(const vector<shared_ptr<City>>& lc)
+unsigned int GeoGrid::FindSmallest(const vector<City*>& lc)
 {
         unsigned int smallest = 0;
         for (unsigned int i = 1; i < lc.size(); i++) {
@@ -176,15 +174,15 @@ unsigned int GeoGrid::FindSmallest(const vector<shared_ptr<City>>& lc)
         return smallest;
 }
 
-void GeoGrid::AdjustLargestCities(vector<shared_ptr<City>>& lc, const shared_ptr<City>& city)
+void GeoGrid::AdjustLargestCities(vector<City*>& lc, City& city)
 {
         if (lc.size() < m_maxlc)
-                lc.push_back(city);
+                lc.emplace_back(&city);
         else {
-                unsigned int citpop   = city->GetPopulation();
+                unsigned int citpop   = city.GetPopulation();
                 unsigned int smallest = FindSmallest(lc);
                 if (citpop > lc[smallest]->GetPopulation())
-                        lc[smallest] = city;
+                        lc[smallest] = &city;
         }
 }
 
@@ -213,15 +211,14 @@ void GeoGrid::GenerateColleges()
                 auto nrcolleges = (unsigned int)round(students / m_college_size);
 
                 for (unsigned int i = 0; i < nrcolleges; i++) {
-                        shared_ptr<Community> college = make_shared<Community>(CommunityType::College, it);
+                        Community& college = it->AddCommunity(CommunityType::College);
                         // Add contactpools
                         for (auto j = 0; j < cps; j++) {
                                 auto                    pool = std::make_shared<stride::ContactPool>(
                                     m_id_generator, stride::ContactPoolType::Id::School);
                                 m_id_generator++;
-                                college->AddContactPool(pool);
+                                college.AddContactPool(pool);
                         }
-                        it->AddCommunity(college);
                         // m_communities[college->getID()] = college
                 }
         }
@@ -235,13 +232,13 @@ void GeoGrid::GenerateWorkplaces(){
     //We have to account for the commuters in he city.
 
     vector<double> lottery_vec; // vector of relative probabillitys
-    vector<shared_ptr<City>> c_vec;// we will use this to vec to map the city to a set of sequential numbers 0...n
-    boost::copy(m_cities | boost::adaptors::map_values, std::back_inserter(c_vec));;
+    vector<City*> c_vec;// we will use this to vec to map the city to a set of sequential numbers 0...n
     for(auto& it: m_cities){
 
         // This also calculates people living and working in the same city
-        auto work_pop = (unsigned int) round(it.second->GetTotalInCommutersCount() * m_commuting_workers_frac);
+        auto work_pop = (unsigned int) round(it.second.GetTotalInCommutersCount() * m_commuting_workers_frac);
         // Inserting the amount of id's of the city equal to the pop working in the city
+        c_vec.emplace_back(&it.second);
         lottery_vec.emplace_back(work_pop);
     }
 
@@ -254,14 +251,14 @@ void GeoGrid::GenerateWorkplaces(){
     //Now we will place each workplace randomly in our city, making use of our lottery vec.
     for(unsigned int i = 0;  i < number_of_workplaces; i++){
 
-        shared_ptr<City>      chosen_city = c_vec[rndm_vec[i]];
-        shared_ptr<Community> nw_workplace(new Community(CommunityType::Work, chosen_city));
+        City&      chosen_city = *c_vec[rndm_vec[i]];
+        Community& nw_workplace = chosen_city.AddCommunity(CommunityType::Work);
 
         // A workplace has a contactpool.
         auto pool = std::make_shared<stride::ContactPool>(m_id_generator, stride::ContactPoolType::Id::Work);
         m_id_generator++;
-        nw_workplace->AddContactPool(pool);
-        chosen_city->AddCommunity(nw_workplace);
+        nw_workplace.AddContactPool(pool);
+
     }
 
 }
@@ -298,15 +295,14 @@ void GeoGrid::GenerateCommunities()
         // Determine number of contactpools
         auto cps = round(m_community_size / m_avg_cp_size); /// We need enough pools to distribute all persons
 
-        vector<shared_ptr<Community>> primsec_communities;
         // First we need to determine the total number of communities to be used.
         auto total_communities = (unsigned int)ceil(m_total_pop / m_community_size);
 
         vector<double> p_vec;
-        vector<shared_ptr<City>>c_vec;
-        boost::copy(m_cities | boost::adaptors::map_values, std::back_inserter(c_vec));;
+        vector<City*>c_vec;
         for (auto& it : m_cities) {
-                auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_schooled_frac);
+                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_schooled_frac);
+                c_vec.emplace_back(&it.second);
                 p_vec.emplace_back(c_schooled_pop);
         }
 
@@ -316,16 +312,15 @@ void GeoGrid::GenerateCommunities()
 
         for (unsigned int i = 0; i < total_communities; i++) {
                 m_school_count++;
-                shared_ptr<City>      chosen_city = c_vec[rndm_vec[i]];
-                shared_ptr<Community> nw_community(new Community(CommunityType::Primary, chosen_city));
+                City&      chosen_city = *c_vec[rndm_vec[i]];
+                Community& nw_community = chosen_city.AddCommunity(CommunityType::Primary);
                 // Add contactpools
                 for (auto j = 0; j < cps; j++) {
                         auto                    pool = std::make_shared<stride::ContactPool>(
                             m_id_generator, stride::ContactPoolType::Id::PrimaryCommunity);
                         m_id_generator++;
-                        nw_community->AddContactPool(pool);
+                        nw_community.AddContactPool(pool);
                 }
-                chosen_city->AddCommunity(nw_community);
         }
         // Determine how many communities a city should get -> Depricated.
         /*for (auto it : m_cities){
@@ -356,12 +351,6 @@ void GeoGrid::GenerateCommunities()
         return counter;
 }*/
 
-const map<int, shared_ptr<City>>& GeoGrid::GetCities() { return m_cities; }
-
-unsigned int GeoGrid::GetSchoolCount() const { return m_school_count; }
-
-shared_ptr<City>& GeoGrid::operator[](int i) { return m_cities[i]; }
-
 Coordinate GeoGrid::GetCenterOfGrid()
 {
         double smallestX    = numeric_limits<double>::max();
@@ -376,7 +365,7 @@ Coordinate GeoGrid::GetCenterOfGrid()
         // Raphael@everyone, excellent example of something we could run in parallel!!!
         // don't understand me wrong, not right now, but later when we're going for beta or in the final phase...
         for (auto& city : m_cities) {
-                Coordinate cc = city.second->GetCoordinates();
+                Coordinate cc = city.second.GetCoordinates();
                 if (cc.x < smallestX)
                         smallestX = cc.x;
                 if (cc.x > biggestX)

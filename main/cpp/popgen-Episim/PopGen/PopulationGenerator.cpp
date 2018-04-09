@@ -32,12 +32,12 @@ void PopulationGenerator::InitializeCommutingFractions()
         for (auto& cityA : m_geogrid.GetCities()) // for each cityA...
         {
                 vector<double> distribution;
-                double         commutersA = cityA.second->GetTotalOutCommutersCount(); // get total out-commuters from cityA
+                double         commutersA = cityA.second.GetTotalOutCommutersCount(); // get total out-commuters from cityA
                 for (auto& cityB : m_geogrid.GetCities()) // calculate the chance to commute from cityA to cityB
                 {
                         // We don't want local commuting
                         if (cityA.first != cityB.first)
-                                distribution.push_back(cityA.second->GetOutCommuting().at(cityB.first) / commutersA);
+                                distribution.push_back(cityA.second.GetOutCommuting().at(cityB.first) / commutersA);
                         else // just push a 0, this will make sure this particular index can't be chosen...
                                 distribution.push_back(0);
                 }
@@ -119,6 +119,7 @@ bool PopulationGenerator::IsWorkingCommuter() { return FlipUnfairCoin(m_geogrid.
 
 bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_geogrid.GetActiveFrac()); }
 
+    /*
 shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
 {
         // TODO if we generate somebody less than 18 y then s/he should be accompanied by an adult?
@@ -128,17 +129,18 @@ shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
         // mapping the size of a household, i.e. 1,2,3,... (deduced from m_household_size_fracs)
         // to a distribution for age categories, i.e. a vector sort of like popfracs in GetRandomAge
 
+
         auto the_household = make_shared<Household>(0);
         for (unsigned int i = 0; i < size; i++) {
-                /*
+
                 shared_ptr<Person> a_person();
                 the_household->AddMember(a_person);
-                */
+
                 // cout << a_person.age << endl;
         }
         // cout << "------------------" << endl;
         return the_household;
-}
+}*/
 
 void PopulationGenerator::AssignHouseholds()
 {
@@ -167,16 +169,16 @@ void PopulationGenerator::AssignHouseholds()
      */
 }
 
-vector<shared_ptr<geogen::City>> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
+vector<geogen::City*> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
                                                                             unsigned int radius, unsigned int last)
 {
         // TODO to save time we can add distances between two cities in a map but will cost some space
         // This will take like A LOT of space.. not sure if it's worth it...
-        vector<shared_ptr<geogen::City>> result;
+        vector<geogen::City*> result;
         for (auto a_city : m_geogrid.GetCities()) {
-                double distance = a_city.second->GetCoordinates().GetDistance(origin.GetCoordinates());
+                double distance = a_city.second.GetCoordinates().GetDistance(origin.GetCoordinates());
                 if (distance <= radius and distance >= last) {
-                        result.push_back(a_city.second);
+                        result.push_back(&a_city.second);
                 }
         }
 
@@ -193,7 +195,7 @@ vector<shared_ptr<stride::ContactPool>> PopulationGenerator::GetNearbyContactPoo
         // this while(true) loop creaps me the fuck out, thinking about a better solution...
         // still need a better solution....
         while (true) {
-                vector<shared_ptr<geogen::City>> near_cities = GetCitiesWithinRadius(city, search_radius, last_radius);
+                vector<geogen::City*> near_cities = GetCitiesWithinRadius(city, search_radius, last_radius);
                 for (auto& a_city : near_cities) {
                         for (auto& a_community : a_city->GetCommunitiesOfType(community_type)) {
                                 vector<shared_ptr<stride::ContactPool>> compools = a_community->GetContactPools();
@@ -316,8 +318,8 @@ vector<shared_ptr<stride::Person>> PopulationGenerator::GetActives(const shared_
         return actives;
 }
 
-shared_ptr<geogen::City> PopulationGenerator::GetRandomCommutingCity(const geogen::City& origin,
-                                                                     const vector<int>&  city_ids)
+geogen::City& PopulationGenerator::GetRandomCommutingCity(geogen::City& origin,
+                                                          const vector<int>&  city_ids)
 {
         vector<double>      distribution = m_commuting_fracs[origin.GetId()];
         trng::discrete_dist distr(distribution.begin(), distribution.end());

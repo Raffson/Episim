@@ -73,33 +73,33 @@ int startMap(geogen::GeoGrid grid)
 
         /// To add cities on the map: use following.
         auto cities = grid.GetCities();
-        for (map<int, shared_ptr<geogen::City>>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {
+        for (map<unsigned int, geogen::City>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {
                 std::stringstream ss;
                 string            s;
                 string            temp;
                 /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
-                shared_ptr<geogen::City> city = (*c_it).second;
+                geogen::City& city = (*c_it).second;
                 QVariantMap              vals;
                 /// Latitude
-                vals["latitude"] = city->GetCoordinates().latitude;
+                vals["latitude"] = city.GetCoordinates().latitude;
                 /// Longitude
-                vals["longitude"] = city->GetCoordinates().longitude;
+                vals["longitude"] = city.GetCoordinates().longitude;
                 /// X coordinate
-                vals["x"] = city->GetCoordinates().x;
+                vals["x"] = city.GetCoordinates().x;
                 /// Y coordinate
-                vals["y"] = city->GetCoordinates().y;
+                vals["y"] = city.GetCoordinates().y;
                 /// Radius
-                vals["radius"] = city->GetPopulation() / (2 * M_PI);
+                vals["radius"] = city.GetPopulation() / (2 * M_PI);
                 /// Percentage
-                vals["perc"] = city->GetPopulation() / (double)grid.GetTotalPop();
-                cout << 50000 * (city->GetPopulation() / (double)grid.GetTotalPop()) << endl;
+                vals["perc"] = city.GetPopulation() / (double)grid.GetTotalPop();
+                cout << 50000 * (city.GetPopulation() / (double)grid.GetTotalPop()) << endl;
                 /// Population
-                vals["population"] = city->GetPopulation();
+                vals["population"] = city.GetPopulation();
                 /// Info
-                ss << city->GetPopulation();
+                ss << city.GetPopulation();
                 ss >> s;
                 s += "\n";
-                s.append(city->GetName());
+                s.append(city.GetName());
                 s += "\n";
                 QString qs   = QString(s.c_str());
                 vals["info"] = qs;

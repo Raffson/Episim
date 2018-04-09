@@ -73,16 +73,16 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
         auto cities = grid.GetCities();
-        EXPECT_EQ(cities[11002]->GetWorkplaces().size(), antwerpen);
-        EXPECT_EQ(cities[24062]->GetWorkplaces().size(), leuven);
-        EXPECT_EQ(cities[31005]->GetWorkplaces().size(), brugge);
-        EXPECT_EQ(cities[36015]->GetWorkplaces().size(), roeselare);
-        EXPECT_EQ(cities[41002]->GetWorkplaces().size(), aalst);
-        EXPECT_EQ(cities[42006]->GetWorkplaces().size(), dendermonde);
-        EXPECT_EQ(cities[46025]->GetWorkplaces().size(), temse);
-        EXPECT_EQ(cities[71053]->GetWorkplaces().size(), sinttruiden);
-        EXPECT_EQ(cities[73083]->GetWorkplaces().size(), tongeren);
-        EXPECT_EQ(cities[73107]->GetWorkplaces().size(), maasmechelen);
+        EXPECT_EQ(cities.at(11002).GetWorkplaces().size(), antwerpen);
+        EXPECT_EQ(cities.at(24062).GetWorkplaces().size(), leuven);
+        EXPECT_EQ(cities.at(31005).GetWorkplaces().size(), brugge);
+        EXPECT_EQ(cities.at(36015).GetWorkplaces().size(), roeselare);
+        EXPECT_EQ(cities.at(41002).GetWorkplaces().size(), aalst);
+        EXPECT_EQ(cities.at(42006).GetWorkplaces().size(), dendermonde);
+        EXPECT_EQ(cities.at(46025).GetWorkplaces().size(), temse);
+        EXPECT_EQ(cities.at(71053).GetWorkplaces().size(), sinttruiden);
+        EXPECT_EQ(cities.at(73083).GetWorkplaces().size(), tongeren);
+        EXPECT_EQ(cities.at(73107).GetWorkplaces().size(), maasmechelen);
 */
 }
 
@@ -105,21 +105,21 @@ TEST_P(WorkplaceTest, CommuterVsLocal)
 
         // setting local_commuters and no commuters from other cities
         for (auto city : cities) {
-                cities[random_city1]->SetInCommuters(city.first, 0);
-                cities[random_city2]->SetInCommuters(city.first, 0);
+                cities.at(random_city1).SetInCommuters(city.first, 0);
+                cities.at(random_city2).SetInCommuters(city.first, 0);
         }
 
-        cities[random_city1]->SetInCommuters(random_city1, 200);
+        cities.at(random_city1).SetInCommuters(random_city1, 200);
 
         // the other city will have commuters from other cities but no locals
-        cities[random_city2]->SetInCommuters(35014, 100);
-        cities[random_city2]->SetInCommuters(35029, 50);
-        cities[random_city2]->SetInCommuters(37002, 50);
+        cities.at(random_city2).SetInCommuters(35014, 100);
+        cities.at(random_city2).SetInCommuters(35029, 50);
+        cities.at(random_city2).SetInCommuters(37002, 50);
 
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
         // commenting this out until we verify that GenerateWorkplaces was implemented correctly
-        //EXPECT_EQ(cities[random_city1]->GetWorkplaces().size(), cities[random_city2]->GetWorkplaces().size());
+        //EXPECT_EQ(cities.at(random_city1).GetWorkplaces().size(), cities.at(random_city2).GetWorkplaces().size());
 }
 
 TEST_P(WorkplaceTest, Extremeregion)
@@ -139,13 +139,13 @@ TEST_P(WorkplaceTest, Extremeregion)
         unsigned a_random_city = 11004;
 
         for (auto city : cities) {
-                cities[a_random_city]->SetInCommuters(city.first, 0);
+                cities.at(a_random_city).SetInCommuters(city.first, 0);
         }
 
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
         // This is an extreme city where everybody commutes to other cities to work
-        EXPECT_EQ(0, cities[a_random_city]->GetWorkplaces().size());
+        EXPECT_EQ(0, cities.at(a_random_city).GetWorkplaces().size());
 }
 namespace {
 // OpenMP should have no effect atm...

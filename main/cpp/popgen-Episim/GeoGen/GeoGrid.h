@@ -88,7 +88,7 @@ public:
         void GenerateAll();
 
         /// Returns the map of cities.
-        const map<int, shared_ptr<City>>& GetCities();
+        map<unsigned int, City>& GetCities() { return m_cities; }
 
         /// Bunch of getters, mainly for tests atm...
         /// Could leave all this out but then we need to work with friend classes...
@@ -109,15 +109,15 @@ public:
         unsigned int GetCommunitySize() const { return m_community_size; }
         unsigned int GetWorkplaceSize() const { return m_worksplace_size; }
 
-        unsigned int GetSchoolCount() const;
+        unsigned int GetSchoolCount() const { return m_school_count; }
 
         /// Retrieve a city by entering the id of the city in [].
-        shared_ptr<City>& operator[](int i);
+        City& operator[](unsigned int i) { return m_cities.at(i); }
 
         /// Return the households of the geogrid
-        const vector<vector<double>>& GetModelHouseholds() { return m_household_age_distr; }
+        const vector<vector<double>>& GetModelHouseholds() const { return m_household_age_distr; }
 
-        vector<shared_ptr<City>> GetCitiesWithCollege() { return m_cities_with_college; }
+        const vector<City*>& GetCitiesWithCollege() { return m_cities_with_college; }
 
         /// Returns a coordinate representing the center of the grid deduced from all cities in the grid
         Coordinate GetCenterOfGrid();
@@ -125,11 +125,11 @@ public:
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
-        unsigned int FindSmallest(const vector<shared_ptr<City>>& lc);
+        unsigned int FindSmallest(const vector<City*>& lc);
 
         /// Adjusts 'lc' iff 'city' has more people than the city with the smallest population in 'lc'
         /// used by generate_colleges()
-        void AdjustLargestCities(vector<shared_ptr<City>>& lc, const shared_ptr<City>& city);
+        void AdjustLargestCities(vector<City*>& lc, City& city);
 
         /// Counts the total population in th GeoGrid based on the cities
         /// in map cities.
@@ -143,7 +143,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         vector<vector<double>> m_household_age_distr{};
 
         /// Contains all cities for the GeoGrid
-        map<int, shared_ptr<City>> m_cities{};
+        map<unsigned int, City> m_cities{};
 
         /// Keep a map of all communities?
         /// -> will put everything in place in comments,
@@ -210,12 +210,12 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Average size of each workplaces -> make this const?
         unsigned int m_worksplace_size{};
 
-        /// making these members const requires reworking the constructor,
-        /// or hack our way around the initialisation...
+        // making these members const requires reworking the constructor,
+        // or hack our way around the initialisation...
 
         unsigned int m_school_count{};
 
-        vector<shared_ptr<City>> m_cities_with_college{};
+        vector<City*> m_cities_with_college{};
 
         std::size_t m_id_generator{};
 };

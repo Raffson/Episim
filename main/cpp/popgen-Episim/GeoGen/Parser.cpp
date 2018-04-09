@@ -9,14 +9,11 @@ using namespace std;
 namespace geogen {
 namespace parser {
 
-map<int, shared_ptr<City>> ParseCities(const boost::filesystem::path& city_file,
-                                       const boost::filesystem::path& commuting_file, bool parse_commuting)
+void ParseCities(const boost::filesystem::path& city_file, const boost::filesystem::path& commuting_file,
+                 map<unsigned int, City>& cities, bool parse_commuting)
 {
-
-        map<int, shared_ptr<City>> result;
-        stride::util::CSV          read_in(city_file);
-
-        unsigned int counter = 0;
+        stride::util::CSV read_in(city_file);
+        unsigned int      counter = 0;
         for (auto& it : read_in) {
                 counter++;
                 try {
@@ -30,22 +27,18 @@ map<int, shared_ptr<City>> ParseCities(const boost::filesystem::path& city_file,
                         float        latitude   = stof(it.getValue("latitude"));
                         string       name       = it.getValue("name");
 
-                        Coordinate       coord(x_coord, y_coord, longitude, latitude);
-                        shared_ptr<City> cty(new City(id, province, population, coord, name));
-
-                        result[id] = cty;
+                        Coordinate   coord(x_coord, y_coord, longitude, latitude);
+                        cities.emplace(id, City(id, province, population, coord, name));
                 } catch (exception& e) {
                         cout << e.what() << endl << "at row: " << counter << endl;
                 }
         }
 
         if (parse_commuting)
-                ParseCommuting(commuting_file, result);
-
-        return result;
+                ParseCommuting(commuting_file, cities);
 }
 
-void ParseCommuting(const boost::filesystem::path& filename, map<int, shared_ptr<City>>& cities)
+void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, City>& cities)
 {
 
         stride::util::CSV read_in(filename);
@@ -69,8 +62,8 @@ void ParseCommuting(const boost::filesystem::path& filename, map<int, shared_ptr
                         // else we should generate a warning, or maybe even throw an exception
                         // because this should NOT happen, litterly never...
                         if (cities.count(destination_id)) {
-                                cities[destination_id]->SetInCommuters(origin_id, commuters);
-                                cities[origin_id]->SetOutCommuters(destination_id, commuters);
+                                cities.at(destination_id).SetInCommuters(origin_id, commuters);
+                                cities.at(origin_id).SetOutCommuters(destination_id, commuters);
                         }
                 }
                 index++;

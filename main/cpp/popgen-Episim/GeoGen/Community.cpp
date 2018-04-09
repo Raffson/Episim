@@ -22,7 +22,7 @@ namespace geogen {
 
 using namespace std;
 
-Community::Community(CommunityType community_type, shared_ptr<City> city)
+Community::Community(CommunityType community_type, City* city)
     : m_community_id(UIDgenerator()), m_community_type(community_type), m_city(city)
 {
         UIDgenerator()++;

@@ -54,18 +54,18 @@ TEST(GeoGridCtorTest, HappyDayScenario)
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        map<int, shared_ptr<City>> mp = grid.GetCities();
+        map<unsigned int, City> mp = grid.GetCities();
 
-        shared_ptr<City> antwerp = mp[11002];
-        Coordinate       coord   = antwerp->GetCoordinates();
+        City&      antwerp = mp.at(11002);
+        Coordinate coord   = antwerp.GetCoordinates();
 
-        EXPECT_EQ(1, antwerp->GetProvince());
-        EXPECT_EQ(269954, antwerp->GetPopulation());
+        EXPECT_EQ(1, antwerp.GetProvince());
+        EXPECT_EQ(269954, antwerp.GetPopulation());
         EXPECT_FLOAT_EQ(153104.586, coord.x);
         EXPECT_FLOAT_EQ(212271.7101, coord.y);
         EXPECT_FLOAT_EQ(51.2165845, coord.latitude);
         EXPECT_FLOAT_EQ(4.413545489, coord.longitude);
-        EXPECT_EQ("ANTWERPEN", antwerp->GetName());
+        EXPECT_EQ("ANTWERPEN", antwerp.GetName());
 }
 
 TEST(GeoGridCtorTest, DefaultConstructor)
@@ -120,8 +120,8 @@ TEST(GeoGridCtorTest, FaultyCityRow)
         // Parse cities.
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
-        map<int, shared_ptr<City>> cty_map =
-            parser::ParseCities("data/flanders_cities_faulty_row.csv", "data/flanders_commuting.csv", false);
+        map<unsigned int, City> cty_map;
+        parser::ParseCities("data/flanders_cities_faulty_row.csv", "data/flanders_commuting.csv", cty_map, false);
         cout << "Done parsing cities." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -138,8 +138,8 @@ TEST(GeoGridCtorTest, FaultyCityColumn)
         // Parse cities.
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
-        map<int, shared_ptr<City>> cty_map =
-            parser::ParseCities("data/flanders_cities_faulty_col.csv", "data/flanders_commuting.csv", false);
+        map<unsigned int, City> cty_map;
+        parser::ParseCities("data/flanders_cities_faulty_col.csv", "data/flanders_commuting.csv", cty_map, false);
         cout << "Done parsing cities." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -148,17 +148,17 @@ TEST(GeoGridCtorTest, FaultyCityColumn)
 
         EXPECT_EQ(327, cty_map.size());
 
-        shared_ptr<City> antwerp = cty_map[11002];
-        Coordinate       coord   = antwerp->GetCoordinates();
+        City&      antwerp = cty_map.at(11002);
+        Coordinate coord   = antwerp.GetCoordinates();
 
-        EXPECT_EQ(1, antwerp->GetProvince());
-        EXPECT_EQ(269954, antwerp->GetPopulation());
+        EXPECT_EQ(1, antwerp.GetProvince());
+        EXPECT_EQ(269954, antwerp.GetPopulation());
 
         EXPECT_FLOAT_EQ(153104.586, coord.x);
         EXPECT_FLOAT_EQ(212271.7101, coord.y);
         EXPECT_FLOAT_EQ(51.2165845, coord.latitude);
         EXPECT_FLOAT_EQ(4.413545489, coord.longitude);
-        EXPECT_EQ("ANTWERPEN", antwerp->GetName());
+        EXPECT_EQ("ANTWERPEN", antwerp.GetName());
 }
 
 TEST(GeoGridCtorTest, CityRowCounter)

@@ -23,10 +23,10 @@ using namespace std;
 namespace geogen {
 namespace parser {
 
-map<int, shared_ptr<City>> ParseCities(const boost::filesystem::path&, const boost::filesystem::path&,
-                                       bool parse_commuting);
-/// @return map of pair of (origin_id, destination_id) as key and number of commuters as value
-void ParseCommuting(const boost::filesystem::path&, map<int, shared_ptr<City>>&);
+void ParseCities(const boost::filesystem::path&, const boost::filesystem::path&,
+                 map<unsigned int, City>& cities, bool parse_commuting);
+
+void ParseCommuting(const boost::filesystem::path&, map<unsigned int, City>&);
 
 vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path);
 
