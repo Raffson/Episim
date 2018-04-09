@@ -5,9 +5,12 @@ import QtQuick 2.7
 Rectangle {
         id: cityCircle
         objectName: "city"
+        property variant city_id: 0
         property variant count: 0
         property variant population:0
         property variant is_clicked: false
+        property variant in_commuting: 0
+        property variant out_commuting: 0
         property alias area_text: m_area.info_text
 
         color: 'green'
