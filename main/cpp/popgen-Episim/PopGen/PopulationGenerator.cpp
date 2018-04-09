@@ -57,12 +57,7 @@ double PopulationGenerator::GetRandomAge()
 {
         //perhaps refractor and keep popfracs as a member?
         vector<double> popfracs;
-        popfracs.push_back(m_geogrid.GetSchooledFrac()); // [3, 17]
-        popfracs.push_back(m_geogrid.GetYoungWorkersFrac()); // [18, 25]
-        popfracs.push_back(m_geogrid.GetOldWorkersFrac()); // [26, 64]
-        popfracs.push_back(m_geogrid.GetToddlersFrac()); // [0, 2]
-        popfracs.push_back(m_geogrid.GetOldiesFrac());   // [65, 80]
-        // cause maximum age according to Age.h is 80...
+        m_geogrid.GetAgeFractions(popfracs);
 
         trng::discrete_dist distr(popfracs.begin(), popfracs.end());
         unsigned int        category = (unsigned int) geogen::generator.GetGenerator(distr)();
@@ -84,7 +79,7 @@ double PopulationGenerator::GetRandomAge()
                 trng::uniform_dist<double> distr2(0.0, 3.0);
                 return (double)geogen::generator.GetGenerator(distr2)();
         }
-        case 4: { // [65, 80]
+        case 4: { // [65, 80], cause maximum age according to Age.h is 80...
                 // gotta improve this since we would need [65, 80] but not with a uniform distribution...
                 // because the chances you become older get smaller and smaller right?
                 trng::uniform_dist<double> distr2(65.0, 81.0);

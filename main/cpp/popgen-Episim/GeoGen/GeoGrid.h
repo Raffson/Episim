@@ -187,6 +187,9 @@ public:
         ///                      deduced from all cities in the grid.
         Coordinate GetCenterOfGrid();
 
+        /// Assigns the age fractions to the provided vector
+        void GetAgeFractions(vector<double>& popfracs);
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)

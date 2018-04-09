@@ -42,6 +42,15 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
         m_fract_map[OLDIES]   = oldies / total;
 }
 
+void GeoGrid::GetAgeFractions(vector<double>& popfracs)
+{
+    popfracs.push_back(m_fract_map[SCHOOLED]);
+    popfracs.push_back(m_fract_map[YOUNG_WORKERS]);
+    popfracs.push_back(m_fract_map[OLD_WORKERS]);
+    popfracs.push_back(m_fract_map[TODDLERS]);
+    popfracs.push_back(m_fract_map[OLDIES]);
+}
+
 GeoGrid::GeoGrid()
 {
         m_fract_map[SCHOOLED] = 0;
