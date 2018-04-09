@@ -140,8 +140,8 @@ private:
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
 
-        // Enum that represent indexes of Fractals map. That map contains all fraction data of our
-        // population
+        /// Enum that represent indexes of Fractals map. That map contains all fraction data of our
+        /// population
         enum Fractals{
             SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
                                 // [6, 12) -> elementary school, [12, 18) -> middle+highschool.
@@ -154,7 +154,23 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
             COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit that commutes.
             COMMUTING_WORKERS   // % of pop in [18,65) that works that commutes.
         };
-        enum Sizes{SCHOOLS, COLLEGES, COMMUNITES, WORKPLACES, AVERAGE_CP, MAXLC};
+        /// Effective map of all our fractals. Read the Fractals Enum what it will contain.
+        map<Fractals, float> m_fract_map{};
+
+        /// Enum that represent indexes of sizes map. That map contains all size data
+        /// of our communities
+        enum Sizes{
+            SCHOOLS,    // Average size of a school.
+            COLLEGES,   // Average size of a college.
+            COMMUNITES, // Average size of a community
+            WORKPLACES, // Average size of a workplace
+            AVERAGE_CP, // Average size of a contactpool
+            MAXLC       // TODO: ??
+        };
+
+        /// Effective map of all our sizes. Read the Sizes Enum what it will contain.
+        map<Sizes, unsigned int> m_sizes_map{};
+
         /// Contains the model for the age distribition for households
         vector<vector<double>> m_household_age_distr{};
 
@@ -172,68 +188,11 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         /// Total population of simulation area
         unsigned int m_total_pop{};
-
-        // According to the professor's mail:
-        // [6, 12) -> elementary school
-        // [12, 18) -> middle+highschool
-        // [18, 26) -> college/university
-        // [18, 65) -> workers except those who go to college/university
-
-        /// Fraction of population that goes to school (3y - 17y)
-        /*float m_schooled_frac{};
-
-
-        /// Fraction of population that are able to work between 18y and 25y
-        float m_workers1_frac{};
-
-        /// Fraction of population that are able to work between 26y and 64y
-        float m_workers2_frac{};
-
-        /// Fraction of population younger than 3y
-        float m_toddlers_frac{};
-
-        /// Fraction of population older than 64y
-        float m_oldies_frac{};
-
-        /// Fraction of workers1 that is student
-        float m_student_frac{};
-
-        /// the ratio of commuters that are students
-        float m_commuting_students_frac{};
-
-        /// Total population that is actually working -> make this const?
-        /// for workers1 (18y-25y) mind that we first need to exclude the students...
-        float m_active_frac{};
-
-        /// the ratio of commuters that are workers -> make this const?
-        float m_commuting_workers_frac{};
-
-        /// Average size of each contact pool -> make this const?
-        unsigned int m_avg_cp_size{};
-
-        /// Average size of each school -> make this const?
-        unsigned int m_school_size{};
-
-        /// Average size of each college -> make this const?
-        unsigned int m_college_size{};
-
-        /// Maximum nr of "largest cities" -> make this const?
-        unsigned int m_maxlc{};
-
-        /// Primary/Secundary community limit -> make this const?
-        unsigned int m_community_size{};
-
-        /// Average size of each workplaces -> make this const?
-        unsigned int m_worksplace_size{};
-
-        /// making these members const requires reworking the constructor,
-        /// or hack our way around the initialisation... */
-
         unsigned int m_school_count{};
         vector<shared_ptr<City>> m_cities_with_college{};
         std::size_t m_id_generator{};
-        map<Fractals, float> m_fract_map{};
-        map<Sizes, unsigned int> m_sizes_map{};
+
+
 };
 
 static stride::util::RNManager generator;
