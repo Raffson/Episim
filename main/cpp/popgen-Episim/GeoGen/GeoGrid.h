@@ -95,17 +95,17 @@ public:
         enum Fractals{SCHOOLED,ACTIVE, WORKERS1, WORKERS2, TODDLERS, OLDIES, STUDENTS, COMMUTING_STUDENTS,
                       COMMUTING_WORKERS};
         enum Sizes{SCHOOLS, COLLEGES, COMMUNITES, WORKPLACES};
-    
+
         unsigned int GetTotalPop() const { return m_total_pop; }
-        float        GetSchooledFrac() const { return m_schooled_frac; }
-        float        GetWorkers1Frac() const { return m_workers1_frac; }
-        float        GetWorkers2Frac() const { return m_workers2_frac; }
-        float        GetToddlersFrac() const { return m_toddlers_frac; }
-        float        GetOldiesFrac() const { return m_oldies_frac; }
-        float        GetStudentFrac() const { return m_student_frac; }
-        float        GetCommutingStudentsFrac() const { return m_commuting_students_frac; }
-        float        GetActiveFrac() const { return m_active_frac; }
-        float        GetCommutingWorkersFrac() const { return m_commuting_workers_frac; }
+        float        GetSchooledFrac() const { return m_fract_map.at(SCHOOLED); }
+        float        GetWorkers1Frac() const { return m_fract_map.at(WORKERS1); }
+        float        GetWorkers2Frac() const { return m_fract_map.at(WORKERS2); }
+        float        GetToddlersFrac() const { return m_fract_map.at(TODDLERS); }
+        float        GetOldiesFrac() const { return m_fract_map.at(OLDIES); }
+        float        GetStudentFrac() const { return m_fract_map.at(STUDENTS); }
+        float        GetCommutingStudentsFrac() const { return m_fract_map.at(COMMUTING_STUDENTS); }
+        float        GetActiveFrac() const { return m_fract_map.at(ACTIVE); }
+        float        GetCommutingWorkersFrac() const { return m_fract_map.at(COMMUTING_WORKERS); }
         unsigned int GetAvgCpSize() const { return m_avg_cp_size; }
         unsigned int GetSchoolSize() const { return m_school_size; }
         unsigned int GetCollegeSize() const { return m_college_size; }
@@ -168,7 +168,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         // [18, 65) -> workers except those who go to college/university
 
         /// Fraction of population that goes to school (3y - 17y)
-        float m_schooled_frac{};
+        /*float m_schooled_frac{};
 
 
         /// Fraction of population that are able to work between 18y and 25y
@@ -194,7 +194,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         float m_active_frac{};
 
         /// the ratio of commuters that are workers -> make this const?
-        float m_commuting_workers_frac{};
+        float m_commuting_workers_frac{};*/
 
         /// Average size of each contact pool -> make this const?
         unsigned int m_avg_cp_size{};
@@ -222,6 +222,9 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         vector<shared_ptr<City>> m_cities_with_college{};
 
         std::size_t m_id_generator{};
+
+        map<Fractals, float> m_fract_map;
+        map<Sizes, unsigned int> m_sizes_map;
 };
 
 static stride::util::RNManager generator;

@@ -34,11 +34,11 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
                 }
         }
         float total     = schooled + workers1 + workers2 + toddlers + oldies;
-        m_schooled_frac = schooled / total;
-        m_workers1_frac = workers1 / total;
-        m_workers2_frac = workers2 / total;
-        m_toddlers_frac = toddlers / total;
-        m_oldies_frac   = oldies / total;
+        m_fract_map[SCHOOLED] = schooled / total;
+        m_fract_map[WORKERS1] = workers1 / total;
+        m_fract_map[WORKERS2] = workers2 / total;
+        m_fract_map[TODDLERS] = toddlers / total;
+        m_fract_map[OLDIES]   = oldies / total;
 }
 
 GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
@@ -78,10 +78,10 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 
         GetMainFractions(m_household_age_distr);
 
-        m_student_frac            = abs(p_tree.get<float>("popgen.pop_info.fraction_students"));
-        m_commuting_students_frac = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_students"));
-        m_active_frac             = abs(p_tree.get<float>("popgen.pop_info.fraction_active_workers"));
-        m_commuting_workers_frac  = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_workers"));
+        m_fract_map[STUDENTS]             = abs(p_tree.get<float>("popgen.pop_info.fraction_students"));
+        m_fract_map[COMMUTING_STUDENTS] = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_students"));
+        m_fract_map[ACTIVE]             = abs(p_tree.get<float>("popgen.pop_info.fraction_active_workers"));
+        m_fract_map[COMMUTING_WORKERS]  = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_workers"));
 
         m_avg_cp_size     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.average_size"));
         m_school_size     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.school.size"));
@@ -100,7 +100,9 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // however, is this first ENSURE necessary?
         // it should never fail since we decude the fractions from the households,
         // so removed the correspronding death test until we find a better test...
-        float totalfrac = m_workers1_frac + m_workers2_frac + m_toddlers_frac + m_oldies_frac + m_schooled_frac;
+        //TODO: Working with DesignByContract still relevant?
+        /*float totalfrac = m_fract_map[WORKERS1] + m_fract_map[WORKERS2] + m_fract_map[TODDLERS] +
+                m_fract_map[OLDIES] + m_fract_map[SCHOOLED];
         ENSURE(fabs(totalfrac - 1) < constants::EPSILON, "Pop frac should equal 1");
         ENSURE(1 >= m_student_frac and m_student_frac >= 0, "Student fraction must be between 0 and 1");
         ENSURE(1 >= m_commuting_students_frac and m_commuting_students_frac >= 0,
@@ -108,7 +110,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         ENSURE(1 >= m_active_frac and m_active_frac >= 0, "Active workers fraction must be between 0 and 1");
         ENSURE(1 >= m_commuting_workers_frac and m_commuting_workers_frac >= 0,
                "Commuting workers fraction must be between 0 and 1");
-        ENSURE(m_avg_cp_size > 0, "Contactpool's size must be bigger than 0");
+        ENSURE(m_avg_cp_size > 0, "Contactpool's size must be bigger than 0");*/
 }
 
 void GeoGrid::GenerateAll()
@@ -117,17 +119,18 @@ void GeoGrid::GenerateAll()
         GenerateColleges();
         GenerateWorkplaces();
         GenerateCommunities();
+
 }
 
 void GeoGrid::GenerateSchools()
 {
 
-        REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
+        /*REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
         REQUIRE(m_schooled_frac >= 0, "Schooled fract can't be negative");
-        REQUIRE(m_school_size >= 0, "The initial school size can't be negative");
+        REQUIRE(m_school_size >= 0, "The initial school size can't be negative");*/
         // Calculating extra data
         // rounded because we don't have a fraction of a person
-        auto amount_schooled = (const unsigned int)round(m_total_pop * m_schooled_frac);
+        auto amount_schooled = (const unsigned int)round(m_total_pop * m_fract_map[SCHOOLED]);
         // round because we do not build half a school
         auto amount_of_schools = (const unsigned int)round(amount_schooled / m_school_size);
 
@@ -139,7 +142,7 @@ void GeoGrid::GenerateSchools()
         vector<shared_ptr<City>> c_vec;
         boost::copy(m_cities | boost::adaptors::map_values, std::back_inserter(c_vec));;
         for (auto& it : m_cities) {
-                auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_schooled_frac);
+                auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_fract_map[SCHOOLED]);
                 p_vec.emplace_back(c_schooled_pop);
         }
         // Note that this way cuz of rounding we lose a couple of schooled ppl.
@@ -194,10 +197,10 @@ void GeoGrid::GenerateColleges()
         // After deducing fractions from households, these should never fail,
         // they also become difficult to test since we can no longer play with the fractions,
         // gotta come up with new tests for this...
-        REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
+        /*REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
         REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");
         REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");
-        REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");
+        REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");*/
         for (auto& it : m_cities) {
                 AdjustLargestCities(m_cities_with_college, it.second);
         }
@@ -207,7 +210,8 @@ void GeoGrid::GenerateColleges()
 
         // generate colleges to the respective cities...
         for (auto& it : m_cities_with_college) {
-                double students = it->GetPopulation() * m_workers1_frac * m_student_frac;
+                //TODO why is this multiplied with WORKERS 1?
+                double students = it->GetPopulation() * m_fract_map[WORKERS1] * m_fract_map[STUDENTS];
                 // doesn't matter if students is a double at this time
                 // since this is only an estimate for the number of colleges
                 auto nrcolleges = (unsigned int)round(students / m_college_size);
@@ -240,13 +244,13 @@ void GeoGrid::GenerateWorkplaces(){
     for(auto& it: m_cities){
 
         // This also calculates people living and working in the same city
-        auto work_pop = (unsigned int) round(it.second->GetTotalInCommutersCount() * m_commuting_workers_frac);
+        auto work_pop = (unsigned int) round(it.second->GetTotalInCommutersCount() * m_fract_map[COMMUTING_WORKERS]);
         // Inserting the amount of id's of the city equal to the pop working in the city
         lottery_vec.emplace_back(work_pop);
     }
 
     // Now we calculate how many workplaces we have to create.
-    double working_commuters = m_commuting_workers_frac * m_total_pop;
+    double working_commuters = m_fract_map[COMMUTING_WORKERS] * m_total_pop;
     auto   number_of_workplaces = (unsigned int)round(working_commuters / m_worksplace_size);
 
     auto rndm_vec = generate_random(lottery_vec, generator, number_of_workplaces);
@@ -306,7 +310,7 @@ void GeoGrid::GenerateCommunities()
         vector<shared_ptr<City>>c_vec;
         boost::copy(m_cities | boost::adaptors::map_values, std::back_inserter(c_vec));;
         for (auto& it : m_cities) {
-                auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_schooled_frac);
+                auto c_schooled_pop = (unsigned int)round(it.second->GetPopulation() * m_fract_map[SCHOOLED]);
                 p_vec.emplace_back(c_schooled_pop);
         }
 
