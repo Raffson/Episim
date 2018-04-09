@@ -74,8 +74,8 @@ TEST(GeoGridCtorTest, HappyDayScenario)
         EXPECT_EQ(grid.GetCities().size(), 0);
         EXPECT_EQ(grid.GetTotalPop(), 0);
         EXPECT_FLOAT_EQ(grid.GetSchooledFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetWorkers1Frac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetWorkers2Frac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetYoungWorkersFrac(), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetOldWorkersFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.GetToddlersFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.GetOldiesFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.GetStudentFrac(), 0.0);

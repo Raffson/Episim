@@ -45,7 +45,7 @@ class GeoGrid
 {
 
 public:
-        /// Default constructor which does nothing.
+        /// Default constructor which does nothing.TODO: Do we need this??
         GeoGrid() = default;
 
         /// Takes a filepath to city_config file.
@@ -86,40 +86,99 @@ public:
         /// Calls all other generator functions.
         void GenerateAll();
 
-        /// Returns the map of cities.
+        /// Getter
+        /// @retval <map<int, shared_ptr<City>>&> returns the map of Cities in GeoGrid. Cities are
+        ///                                       indexed according to their City ID.
         const map<int, shared_ptr<City>>& GetCities();
 
-        /// Bunch of getters, mainly for tests atm...
-        /// Could leave all this out but then we need to work with friend classes...
-
+        /// Getter
+        /// @retval <unsigned int> returns the total population of GeoGrid.
         unsigned int GetTotalPop() const { return m_total_pop; }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our population that will go
+        ///                 to school [6yrs, 18yrs).
         float        GetSchooledFrac() const { return m_fract_map.at(SCHOOLED); }
-        float        GetWorkers1Frac() const { return m_fract_map.at(YOUNG_WORKERS); }
-        float        GetWorkers2Frac() const { return m_fract_map.at(OLD_WORKERS); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our workerrs in [18yrs,26yrs)
+        float        GetYoungWorkersFrac() const { return m_fract_map.at(YOUNG_WORKERS); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our workers in age range [26yrs, 65).
+        float        GetOldWorkersFrac() const { return m_fract_map.at(OLD_WORKERS); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our population that is in
+        ///                 age range [0yrs, 6yrs)
         float        GetToddlersFrac() const { return m_fract_map.at(TODDLERS); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our population
+        ///                 in age range [65, Oldest person].
         float        GetOldiesFrac() const { return m_fract_map.at(OLDIES); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of our population in
+        ///                 age range [18, 26) that studies.
         float        GetStudentFrac() const { return m_fract_map.at(STUDENTS); }
+
+        /// Getter
+        /// @retval <float> returns a fraction. This is the fraction of students that commute
+        ///                 to another city.
         float        GetCommutingStudentsFrac() const { return m_fract_map.at(COMMUTING_STUDENTS); }
+
+        /// Getter
+        /// @retval <float> returns the fraction of our population that is working.
         float        GetActiveFrac() const { return m_fract_map.at(ACTIVE); }
+
+        /// Getter
+        /// @retval <float> returns the fraction of our workers that commute to another city.
         float        GetCommutingWorkersFrac() const { return m_fract_map.at(COMMUTING_WORKERS); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the average size of a contactpool.
         unsigned int GetAvgCpSize() const { return m_sizes_map.at(AVERAGE_CP); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the average size of a School.
         unsigned int GetSchoolSize() const { return m_sizes_map.at(SCHOOLS); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the average size of a College.
         unsigned int GetCollegeSize() const { return m_sizes_map.at(COLLEGES); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the Max largest cities.
         unsigned int GetMaxLC() const { return m_sizes_map.at(MAXLC); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the average size of a community
         unsigned int GetCommunitySize() const { return m_sizes_map.at(COMMUNITES); }
+
+        /// Getter
+        /// @retval <unsigned int> returns the average size of a workplace.
         unsigned int GetWorkplaceSize() const { return m_sizes_map.at(WORKPLACES); }
 
+        /// Getter
+        /// @retval <unsigned int> returns the
         unsigned int GetSchoolCount() const;
 
         /// Retrieve a city by entering the id of the city in [].
         shared_ptr<City>& operator[](int i);
 
-        /// Return the households of the geogrid
+        /// Getter
+        /// @retval <vector<<vector>>&> returns the age distribution of our houses as a 2D vector.
+        ///                             With every vector representing a household.
         const vector<vector<double>>& GetModelHouseholds() { return m_household_age_distr; }
 
+        /// Getter
+        /// @retval <vector<shared_ptr<city>>> Returns the Cities that contain a College.
         vector<shared_ptr<City>> GetCitiesWithCollege() { return m_cities_with_college; }
 
-        /// Returns a coordinate representing the center of the grid deduced from all cities in the grid
+        /// Getter
+        /// @retval <Coordinate> Returns a coordinate representing the center of the grid
+        ///                      deduced from all cities in the grid.
         Coordinate GetCenterOfGrid();
 
 private:
@@ -165,7 +224,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
             COMMUNITES, // Average size of a community
             WORKPLACES, // Average size of a workplace
             AVERAGE_CP, // Average size of a contactpool
-            MAXLC       // TODO: ??
+            MAXLC       // Amount of largest cities (cities with a college)
         };
 
         /// Effective map of all our sizes. Read the Sizes Enum what it will contain.
