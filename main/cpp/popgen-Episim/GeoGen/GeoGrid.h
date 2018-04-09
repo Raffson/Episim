@@ -45,8 +45,14 @@ class GeoGrid
 {
 
 public:
-        /// Default constructor which does nothing.TODO: Do we need this??
-        GeoGrid() = default;
+        /// Default constructor which does nothing.
+        // TODO: Do we need this??
+        // Raphael@everyone, well now we do...
+        // to initialize the fractals/sizes maps so that people don't try to access those maps,
+        // expecting to get a value of 0 out of it...
+        // either that, or the GeoGrid-Constructor-Test must expect throws...
+        // for now I will implement the default constructor real quick, we can still throw it away afterwards...
+        GeoGrid();
 
         /// Takes a filepath to city_config file.
         /// @param config: a path to a gegogen config file. This file contains

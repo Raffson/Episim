@@ -68,7 +68,7 @@ TEST(GeoGridCtorTest, HappyDayScenario)
         EXPECT_EQ("ANTWERPEN", antwerp.GetName());
 }
 
-/*TEST(GeoGridCtorTest, DefaultConstructor)
+TEST(GeoGridCtorTest, DefaultConstructor)
 {
         auto grid = GeoGrid();
         EXPECT_EQ(grid.GetCities().size(), 0);
@@ -82,12 +82,13 @@ TEST(GeoGridCtorTest, HappyDayScenario)
         EXPECT_FLOAT_EQ(grid.GetCommutingStudentsFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.GetActiveFrac(), 0.0);
         EXPECT_FLOAT_EQ(grid.GetCommutingWorkersFrac(), 0.0);
+        EXPECT_EQ(grid.GetAvgCpSize(), 0);
         EXPECT_EQ(grid.GetSchoolSize(), 0);
         EXPECT_EQ(grid.GetCollegeSize(), 0);
         EXPECT_EQ(grid.GetMaxLC(), 0);
         EXPECT_EQ(grid.GetCommunitySize(), 0);
         EXPECT_EQ(grid.GetWorkplaceSize(), 0);
-}*/
+}
 
 TEST(GeoGridCtorTest, NonExistingFile)
 {
@@ -95,7 +96,7 @@ TEST(GeoGridCtorTest, NonExistingFile)
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("bad input"), "");
 }
 
-/*TEST(GeoGridCtorTest, BadFractions)
+TEST(GeoGridCtorTest, BadFractions)
 {
         // Test with a non-existing file
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_student_frac_0.xml"), "");
@@ -107,11 +108,9 @@ TEST(GeoGridCtorTest, NonExistingFile)
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_active_frac_1.xml"), "");
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_workcom_frac_1.xml"), "");
 
-        // This last test will check a wrong contactpool size,
-        // which is technically not a fraction but we need to test it somewhere...
-        // uncomment the next line once the "unsigned int refractor" has happened...
-        // ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_contactpool_size.xml"), "");
-}*/
+        // This last test will check a contactpool's size that exceeds the cap op 1000...
+        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_contactpool_size.xml"), "");
+}
 
 TEST(GeoGridCtorTest, FaultyCityRow)
 {

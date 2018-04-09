@@ -41,12 +41,32 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
         m_fract_map[OLDIES]   = oldies / total;
 }
 
+GeoGrid::GeoGrid()
+{
+        m_fract_map[SCHOOLED] = 0;
+        m_fract_map[ACTIVE] = 0;
+        m_fract_map[YOUNG_WORKERS] = 0;
+        m_fract_map[OLD_WORKERS] = 0;
+        m_fract_map[TODDLERS] = 0;
+        m_fract_map[OLDIES] = 0;
+        m_fract_map[STUDENTS] = 0;
+        m_fract_map[COMMUTING_STUDENTS] = 0;
+        m_fract_map[COMMUTING_WORKERS] = 0;
+
+        m_sizes_map[SCHOOLS] = 0;
+        m_sizes_map[COLLEGES] = 0;
+        m_sizes_map[COMMUNITES] = 0;
+        m_sizes_map[WORKPLACES] = 0;
+        m_sizes_map[AVERAGE_CP] = 0;
+        m_sizes_map[MAXLC] = 0;
+}
+
 GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 {
 
         REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
 
-        this->m_school_count = 0;
+        m_school_count = 0;
         // Setting up property tree to parse xml config file
         boost::property_tree::ptree p_tree;
 
@@ -101,16 +121,19 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // it should never fail since we decude the fractions from the households,
         // so removed the correspronding death test until we find a better test...
         //TODO: Working with DesignByContract still relevant?
-        /*float totalfrac = m_fract_map[WORKERS1] + m_fract_map[WORKERS2] + m_fract_map[TODDLERS] +
+        // Raphael@Robbe, of course it is, everywhere where we have these REQUIRES and ENSURES, let them be...
+        float totalfrac = m_fract_map[YOUNG_WORKERS] + m_fract_map[OLD_WORKERS] + m_fract_map[TODDLERS] +
                 m_fract_map[OLDIES] + m_fract_map[SCHOOLED];
         ENSURE(fabs(totalfrac - 1) < constants::EPSILON, "Pop frac should equal 1");
-        ENSURE(1 >= m_student_frac and m_student_frac >= 0, "Student fraction must be between 0 and 1");
-        ENSURE(1 >= m_commuting_students_frac and m_commuting_students_frac >= 0,
+        ENSURE(1 >= m_fract_map[STUDENTS] and m_fract_map[STUDENTS] >= 0, "Student fraction must be between 0 and 1");
+        ENSURE(1 >= m_fract_map[COMMUTING_STUDENTS] and m_fract_map[COMMUTING_STUDENTS] >= 0,
                "Student Commuting fraction must be between 0 and 1");
-        ENSURE(1 >= m_active_frac and m_active_frac >= 0, "Active workers fraction must be between 0 and 1");
-        ENSURE(1 >= m_commuting_workers_frac and m_commuting_workers_frac >= 0,
+        ENSURE(1 >= m_fract_map[ACTIVE] and m_fract_map[ACTIVE] >= 0, "Active workers fraction must be between 0 and 1");
+        ENSURE(1 >= m_fract_map[COMMUTING_WORKERS] and m_fract_map[COMMUTING_WORKERS] >= 0,
                "Commuting workers fraction must be between 0 and 1");
-        ENSURE(m_avg_cp_size > 0, "Contactpool's size must be bigger than 0");*/
+        //Capping pool size at 1000, gotta ask the professor what the actual cap should be...
+        ENSURE(m_sizes_map[AVERAGE_CP] > 0 and m_sizes_map[AVERAGE_CP] <= 1000,
+               "Contactpool's size must be bigger than 0 and smaller than or equal to 1000");
 }
 
 void GeoGrid::GenerateAll()
@@ -125,9 +148,9 @@ void GeoGrid::GenerateAll()
 void GeoGrid::GenerateSchools()
 {
 
-        /*REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");
-        REQUIRE(m_schooled_frac >= 0, "Schooled fract can't be negative");
-        REQUIRE(m_school_size >= 0, "The initial school size can't be negative");*/
+        REQUIRE(m_fract_map[SCHOOLED] <= 1, "Schooled Fract is bigger then 1, not possible!");
+        REQUIRE(m_fract_map[SCHOOLED] >= 0, "Schooled fract can't be negative");
+        REQUIRE(m_sizes_map[SCHOOLS] >= 0, "The initial school size can't be negative");
         // Calculating extra data
         // rounded because we don't have a fraction of a person
         auto amount_schooled = (const unsigned int)round(m_total_pop * m_fract_map[SCHOOLED]);
@@ -191,10 +214,10 @@ void GeoGrid::GenerateColleges()
         // After deducing fractions from households, these should never fail,
         // they also become difficult to test since we can no longer play with the fractions,
         // gotta come up with new tests for this...
-        /*REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");
-        REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");
-        REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");
-        REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");*/
+        REQUIRE(m_fract_map[STUDENTS] >= 0, "Student fractal can't be negative");
+        REQUIRE(m_fract_map[STUDENTS] <= 1, "Student fractal can't be more then 100%");
+        REQUIRE(m_fract_map[YOUNG_WORKERS] >= 0, "Worker fractal can't be negative");
+        REQUIRE(m_fract_map[YOUNG_WORKERS] <= 1, "Worker fractal can't be more then 100%");
         for (auto& it : m_cities) {
                 AdjustLargestCities(m_cities_with_college, it.second);
         }
