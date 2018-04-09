@@ -29,7 +29,7 @@ generate_random(const vector<double> &p_vec, stride::util::RNManager &rndm, unsi
     for(unsigned int i = 0; i < amount; i++){
         ret_vec.emplace_back(rndm.GetGenerator(dist)());
     }
-    return move(ret_vec);
+    return ret_vec;
 }
 
 } // namespace geogen
