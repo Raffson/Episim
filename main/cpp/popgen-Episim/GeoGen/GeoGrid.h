@@ -92,10 +92,6 @@ public:
         /// Bunch of getters, mainly for tests atm...
         /// Could leave all this out but then we need to work with friend classes...
 
-        enum Fractals{SCHOOLED,ACTIVE, WORKERS1, WORKERS2, TODDLERS, OLDIES, STUDENTS, COMMUTING_STUDENTS,
-                      COMMUTING_WORKERS};
-        enum Sizes{SCHOOLS, COLLEGES, COMMUNITES, WORKPLACES, AVERAGE_CP, MAXLC};
-
         unsigned int GetTotalPop() const { return m_total_pop; }
         float        GetSchooledFrac() const { return m_fract_map.at(SCHOOLED); }
         float        GetWorkers1Frac() const { return m_fract_map.at(WORKERS1); }
@@ -144,6 +140,9 @@ private:
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
         /// Contains the model for the age distribition for households
+        enum Fractals{SCHOOLED,ACTIVE, WORKERS1, WORKERS2, TODDLERS, OLDIES, STUDENTS, COMMUTING_STUDENTS,
+            COMMUTING_WORKERS};
+        enum Sizes{SCHOOLS, COLLEGES, COMMUNITES, WORKPLACES, AVERAGE_CP, MAXLC};
         vector<vector<double>> m_household_age_distr{};
 
         /// Contains all cities for the GeoGrid
@@ -218,13 +217,10 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// or hack our way around the initialisation... */
 
         unsigned int m_school_count{};
-
         vector<shared_ptr<City>> m_cities_with_college{};
-
         std::size_t m_id_generator{};
-
-        map<Fractals, float> m_fract_map;
-        map<Sizes, unsigned int> m_sizes_map;
+        map<Fractals, float> m_fract_map{};
+        map<Sizes, unsigned int> m_sizes_map{};
 };
 
 static stride::util::RNManager generator;
