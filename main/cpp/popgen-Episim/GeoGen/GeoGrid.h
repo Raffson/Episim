@@ -94,8 +94,8 @@ public:
 
         unsigned int GetTotalPop() const { return m_total_pop; }
         float        GetSchooledFrac() const { return m_fract_map.at(SCHOOLED); }
-        float        GetWorkers1Frac() const { return m_fract_map.at(WORKERS1); }
-        float        GetWorkers2Frac() const { return m_fract_map.at(WORKERS2); }
+        float        GetWorkers1Frac() const { return m_fract_map.at(YOUNG_WORKERS); }
+        float        GetWorkers2Frac() const { return m_fract_map.at(OLD_WORKERS); }
         float        GetToddlersFrac() const { return m_fract_map.at(TODDLERS); }
         float        GetOldiesFrac() const { return m_fract_map.at(OLDIES); }
         float        GetStudentFrac() const { return m_fract_map.at(STUDENTS); }
@@ -139,10 +139,23 @@ private:
         void GetMainFractions(const vector<vector<double>>& hhs);
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
-        /// Contains the model for the age distribition for households
-        enum Fractals{SCHOOLED,ACTIVE, WORKERS1, WORKERS2, TODDLERS, OLDIES, STUDENTS, COMMUTING_STUDENTS,
-            COMMUTING_WORKERS};
+
+        // Enum that represent indexes of Fractals map. That map contains all fraction data of our
+        // population
+        enum Fractals{
+            SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
+                                // [6, 12) -> elementary school, [12, 18) -> middle+highschool.
+            ACTIVE,             // % of pop that is activly working.
+            YOUNG_WORKERS,      // % of pop in [18yrs, 26yrs) that is working.
+            OLD_WORKERS,        // % of pop in [26yrs, 65yrs) that is working.
+            TODDLERS,           // % of pop that is in  [0yrs, 6yrs).
+            OLDIES,             // % of pop that is in [65yrs, oldest_person].
+            STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
+            COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit that commutes.
+            COMMUTING_WORKERS   // % of pop in [18,65) that works that commutes.
+        };
         enum Sizes{SCHOOLS, COLLEGES, COMMUNITES, WORKPLACES, AVERAGE_CP, MAXLC};
+        /// Contains the model for the age distribition for households
         vector<vector<double>> m_household_age_distr{};
 
         /// Contains all cities for the GeoGrid
