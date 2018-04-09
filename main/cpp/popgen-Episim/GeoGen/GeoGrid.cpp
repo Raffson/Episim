@@ -3,6 +3,7 @@
 //
 
 #include "GeoGrid.h"
+#include <cstdio>
 
 using namespace std;
 
@@ -33,7 +34,7 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
                                 toddlers += 1;
                 }
         }
-        float total     = schooled + workers1 + workers2 + toddlers + oldies;
+        double total     = schooled + workers1 + workers2 + toddlers + oldies;
         m_fract_map[SCHOOLED] = schooled / total;
         m_fract_map[YOUNG_WORKERS] = workers1 / total;
         m_fract_map[OLD_WORKERS] = workers2 / total;
@@ -98,10 +99,10 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 
         GetMainFractions(m_household_age_distr);
 
-        m_fract_map[STUDENTS]          = abs(p_tree.get<float>("popgen.pop_info.fraction_students"));
-        m_fract_map[COMMUTING_STUDENTS]= abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_students"));
-        m_fract_map[ACTIVE]            = abs(p_tree.get<float>("popgen.pop_info.fraction_active_workers"));
-        m_fract_map[COMMUTING_WORKERS] = abs(p_tree.get<float>("popgen.pop_info.fraction_commuting_workers"));
+        m_fract_map[STUDENTS]          = abs(p_tree.get<double>("popgen.pop_info.fraction_students"));
+        m_fract_map[COMMUTING_STUDENTS]= abs(p_tree.get<double>("popgen.pop_info.fraction_commuting_students"));
+        m_fract_map[ACTIVE]            = abs(p_tree.get<double>("popgen.pop_info.fraction_active_workers"));
+        m_fract_map[COMMUTING_WORKERS] = abs(p_tree.get<double>("popgen.pop_info.fraction_commuting_workers"));
 
         m_sizes_map[AVERAGE_CP]     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.average_size"));
         m_sizes_map[SCHOOLS]     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.school.size"));
@@ -122,8 +123,9 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // so removed the correspronding death test until we find a better test...
         //TODO: Working with DesignByContract still relevant?
         // Raphael@Robbe, of course it is, everywhere where we have these REQUIRES and ENSURES, let them be...
-        float totalfrac = m_fract_map[YOUNG_WORKERS] + m_fract_map[OLD_WORKERS] + m_fract_map[TODDLERS] +
+        double totalfrac = m_fract_map[YOUNG_WORKERS] + m_fract_map[OLD_WORKERS] + m_fract_map[TODDLERS] +
                 m_fract_map[OLDIES] + m_fract_map[SCHOOLED];
+        printf("%.16f", totalfrac);
         ENSURE(fabs(totalfrac - 1) < constants::EPSILON, "Pop frac should equal 1");
         ENSURE(1 >= m_fract_map[STUDENTS] and m_fract_map[STUDENTS] >= 0, "Student fraction must be between 0 and 1");
         ENSURE(1 >= m_fract_map[COMMUTING_STUDENTS] and m_fract_map[COMMUTING_STUDENTS] >= 0,

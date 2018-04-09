@@ -39,8 +39,9 @@ vector<unsigned int> generate_random(const vector<double>& p_vec, stride::util::
 
 namespace constants {
 
-    /// Own defined EPSILON, to determine correctness of floats
-    const double EPSILON   = 0.000001;
+    /// Own defined EPSILON, to determine correctness of doubles
+    //Changed to 10^(-12) after refactor to double...
+    const double EPSILON   = 0.000000000001;
     /// Radius of the earth ~= 6371.0 km
     const double EARTH_RADIUS = 6371.0; // in kilometer
 

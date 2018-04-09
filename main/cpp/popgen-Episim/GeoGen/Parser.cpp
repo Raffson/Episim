@@ -20,11 +20,10 @@ void ParseCities(const boost::filesystem::path& city_file, const boost::filesyst
                         unsigned int id         = (unsigned int)(stoi(it.getValue("id")));
                         unsigned int province   = (unsigned int)(stoi(it.getValue("province")));
                         unsigned int population = (unsigned int)(stoi(it.getValue("population")));
-                        string       reader     = it.getValue("x_coord");
-                        auto         x_coord    = stof(reader);
-                        float        y_coord    = stof(it.getValue("y_coord"));
-                        float        longitude  = stof(it.getValue("longitude"));
-                        float        latitude   = stof(it.getValue("latitude"));
+                        double       x_coord    = stod(it.getValue("x_coord"));
+                        double       y_coord    = stod(it.getValue("y_coord"));
+                        double       longitude  = stod(it.getValue("longitude"));
+                        double       latitude   = stod(it.getValue("latitude"));
                         string       name       = it.getValue("name");
 
                         Coordinate   coord(x_coord, y_coord, longitude, latitude);

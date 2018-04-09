@@ -102,45 +102,45 @@ public:
         unsigned int GetTotalPop() const { return m_total_pop; }
 
         /// Getter
-        /// @retval <float> returns a fraction. This is the fraction of our population that will go
+        /// @retval <double> returns a fraction. This is the fraction of our population that will go
         ///                 to school [6yrs, 18yrs).
-        float        GetSchooledFrac() const { return m_fract_map.at(SCHOOLED); }
+        double       GetSchooledFrac() const { return m_fract_map.at(SCHOOLED); }
 
         /// Getter
-        /// @retval <float> returns a fraction. This is the fraction of our workerrs in [18yrs,26yrs)
-        float        GetYoungWorkersFrac() const { return m_fract_map.at(YOUNG_WORKERS); }
+        /// @retval <double> returns a fraction. This is the fraction of our workerrs in [18yrs,26yrs)
+        double       GetYoungWorkersFrac() const { return m_fract_map.at(YOUNG_WORKERS); }
 
         /// Getter
-        /// @retval <float> returns a fraction. This is the fraction of our workers in age range [26yrs, 65).
-        float        GetOldWorkersFrac() const { return m_fract_map.at(OLD_WORKERS); }
+        /// @retval <double> returns a fraction. This is the fraction of our workers in age range [26yrs, 65).
+        double       GetOldWorkersFrac() const { return m_fract_map.at(OLD_WORKERS); }
 
         /// Getter
-        /// @retval <float> returns a fraction. This is the fraction of our population that is in
+        /// @retval <double> returns a fraction. This is the fraction of our population that is in
         ///                 age range [0yrs, 6yrs)
-        float        GetToddlersFrac() const { return m_fract_map.at(TODDLERS); }
+        double       GetToddlersFrac() const { return m_fract_map.at(TODDLERS); }
 
         /// Getter
-        /// @retval <float> returns a fraction. This is the fraction of our population
+        /// @retval <double> returns a fraction. This is the fraction of our population
         ///                 in age range [65, Oldest person].
-        float        GetOldiesFrac() const { return m_fract_map.at(OLDIES); }
+        double       GetOldiesFrac() const { return m_fract_map.at(OLDIES); }
 
         /// Getter
-        /// @retval <float> returns a fraction. This is the fraction of our population in
+        /// @retval <double> returns a fraction. This is the fraction of our population in
         ///                 age range [18, 26) that studies.
-        float        GetStudentFrac() const { return m_fract_map.at(STUDENTS); }
+        double       GetStudentFrac() const { return m_fract_map.at(STUDENTS); }
 
         /// Getter
-        /// @retval <float> returns a fraction. This is the fraction of students that commute
+        /// @retval <double> returns a fraction. This is the fraction of students that commute
         ///                 to another city.
-        float        GetCommutingStudentsFrac() const { return m_fract_map.at(COMMUTING_STUDENTS); }
+        double       GetCommutingStudentsFrac() const { return m_fract_map.at(COMMUTING_STUDENTS); }
 
         /// Getter
-        /// @retval <float> returns the fraction of our population that is working.
-        float        GetActiveFrac() const { return m_fract_map.at(ACTIVE); }
+        /// @retval <double> returns the fraction of our population that is working.
+        double       GetActiveFrac() const { return m_fract_map.at(ACTIVE); }
 
         /// Getter
-        /// @retval <float> returns the fraction of our workers that commute to another city.
-        float        GetCommutingWorkersFrac() const { return m_fract_map.at(COMMUTING_WORKERS); }
+        /// @retval <double> returns the fraction of our workers that commute to another city.
+        double       GetCommutingWorkersFrac() const { return m_fract_map.at(COMMUTING_WORKERS); }
 
         /// Getter
         /// @retval <unsigned int> returns the average size of a contactpool.
@@ -220,7 +220,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
             COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
         };
         /// Effective map of all our fractals. Read the Fractals Enum what it will contain.
-        map<Fractals, float> m_fract_map{};
+        map<Fractals, double> m_fract_map{};
 
         /// Enum that represent indexes of sizes map. That map contains all size data
         /// of our communities
