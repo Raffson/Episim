@@ -75,13 +75,12 @@ public:
         //          Need to enforce this ensure in the code as well...
         void GenerateColleges();
 
-        /// Generates the workplaces, places them into the cities
-        /// using a discrete distribution.
-
+        /// Generates the workplaces, places them into the cities a random with chances
+        /// discretly distributed according to size. Generates contactpools for the communities.
         void GenerateWorkplaces();
 
-        /// Generates the communties, places them into the cities
-        /// using a discrete distribution.
+        /// Generates the communties, places them into the cities a random with chances
+        /// discretly distributed according to size. Generates contactpools for the communities.
         void GenerateCommunities();
 
         /// Calls all other generator functions.
@@ -92,6 +91,11 @@ public:
 
         /// Bunch of getters, mainly for tests atm...
         /// Could leave all this out but then we need to work with friend classes...
+
+        enum Fractals{SCHOOLED,ACTIVE, WORKERS1, WORKERS2, TODDLERS, OLDIES, STUDENTS, COMMUTING_STUDENTS,
+                      COMMUTING_WORKERS};
+        enum Sizes{SCHOOLS, COLLEGES, COMMUNITES, WORKPLACES};
+    
         unsigned int GetTotalPop() const { return m_total_pop; }
         float        GetSchooledFrac() const { return m_schooled_frac; }
         float        GetWorkers1Frac() const { return m_workers1_frac; }
