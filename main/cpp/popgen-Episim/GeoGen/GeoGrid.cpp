@@ -35,8 +35,8 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
         }
         float total     = schooled + workers1 + workers2 + toddlers + oldies;
         m_fract_map[SCHOOLED] = schooled / total;
-        m_fract_map[WORKERS1] = workers1 / total;
-        m_fract_map[WORKERS2] = workers2 / total;
+        m_fract_map[YOUNG_WORKERS] = workers1 / total;
+        m_fract_map[OLD_WORKERS] = workers2 / total;
         m_fract_map[TODDLERS] = toddlers / total;
         m_fract_map[OLDIES]   = oldies / total;
 }
@@ -211,7 +211,7 @@ void GeoGrid::GenerateColleges()
         // generate colleges to the respective cities...
         for (auto& it : m_cities_with_college) {
                 //TODO why is this multiplied with WORKERS 1?
-                double students = it->GetPopulation() * m_fract_map[WORKERS1] * m_fract_map[STUDENTS];
+                double students = it->GetPopulation() * m_fract_map[YOUNG_WORKERS] * m_fract_map[STUDENTS];
                 // doesn't matter if students is a double at this time
                 // since this is only an estimate for the number of colleges
                 auto nrcolleges = (unsigned int)round(students / m_sizes_map[COLLEGES]);
