@@ -50,6 +50,10 @@ enum class Fractions{
     COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
 };
 
+/// To allow iteration over the age Fractions.
+constexpr std::array<Fractions, 5> AgeList{{Fractions::SCHOOLED, Fractions::YOUNG_WORKERS, Fractions::OLD_WORKERS,
+                                                   Fractions::TODDLERS, Fractions::OLDIES}};
+
 /// Enum that represent indexes of sizes map. That map contains all size data
 /// of our communities
 enum class Sizes{

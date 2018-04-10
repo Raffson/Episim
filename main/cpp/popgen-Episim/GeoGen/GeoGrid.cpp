@@ -3,7 +3,6 @@
 //
 
 #include "GeoGrid.h"
-#include <cstdio>
 
 using namespace std;
 
@@ -44,11 +43,11 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
 
 void GeoGrid::GetAgeFractions(vector<double>& popfracs)
 {
-    popfracs.push_back(m_fract_map[Fractions::SCHOOLED]);
-    popfracs.push_back(m_fract_map[Fractions::YOUNG_WORKERS]);
-    popfracs.push_back(m_fract_map[Fractions::OLD_WORKERS]);
-    popfracs.push_back(m_fract_map[Fractions::TODDLERS]);
-    popfracs.push_back(m_fract_map[Fractions::OLDIES]);
+    popfracs.emplace_back(m_fract_map[Fractions::SCHOOLED]);
+    popfracs.emplace_back(m_fract_map[Fractions::YOUNG_WORKERS]);
+    popfracs.emplace_back(m_fract_map[Fractions::OLD_WORKERS]);
+    popfracs.emplace_back(m_fract_map[Fractions::TODDLERS]);
+    popfracs.emplace_back(m_fract_map[Fractions::OLDIES]);
 }
 
 GeoGrid::GeoGrid()
@@ -135,7 +134,6 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         double totalfrac = m_fract_map[Fractions::YOUNG_WORKERS] + m_fract_map[Fractions::OLD_WORKERS]
                            + m_fract_map[Fractions::TODDLERS] + m_fract_map[Fractions::OLDIES]
                            + m_fract_map[Fractions::SCHOOLED];
-        printf("%.16f", totalfrac);
         ENSURE(fabs(totalfrac - 1) < constants::EPSILON, "Pop frac should equal 1");
         ENSURE(1 >= m_fract_map[Fractions::STUDENTS] and m_fract_map[Fractions::STUDENTS] >= 0,
                "Student fraction must be between 0 and 1");

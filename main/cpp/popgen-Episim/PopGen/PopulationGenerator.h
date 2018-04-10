@@ -45,12 +45,12 @@ public:
 private:
         std::vector<stride::ContactPool*> GetNearbyContactPools(const geogen::City& city, geogen::CommunityType);
         std::vector<stride::Person*>      GetSchoolAttendants(geogen::City& city);
-        //Household&                        GenerateHousehold(unsigned int size);
+        void                              GenerateHousehold(unsigned int size, geogen::City& city);
         std::vector<stride::ContactPool*> GetContactPoolsOfColleges();
         void                              InitializeHouseholdFractions();
         void                              InitializeCommutingFractions();
         unsigned int                      GetRandomHouseholdSize();
-        double                            GetRandomAge();
+        double                            GetRandomAge(unsigned int hhsize);
         bool                              IsWorkingCommuter();
         //bool                              IsStudentCommuter();
         //bool                              IsStudent();

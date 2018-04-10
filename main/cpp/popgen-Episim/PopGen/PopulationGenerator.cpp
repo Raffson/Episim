@@ -15,17 +15,50 @@ PopulationGenerator::PopulationGenerator(geogen::GeoGrid& geogrid, unsigned int 
         InitializeCommutingFractions();
 }
 
+geogen::Fractions GetCategory(const double& age)
+{
+        //Same ordering of if-else if as in GeoGrid::GetMainFractions, for the same reasons...
+        if (age >= 26 and age < 65)
+            return geogen::Fractions::OLD_WORKERS;
+        else if (age >= 3 and age < 18)
+            return geogen::Fractions::SCHOOLED;
+        else if (age >= 18 and age < 26)
+            return geogen::Fractions::YOUNG_WORKERS;
+        else if (age >= 65)
+            return geogen::Fractions::OLDIES;
+        else
+            return geogen::Fractions::TODDLERS;
+}
+
 void PopulationGenerator::InitializeHouseholdFractions()
 {
         auto                            households = m_geogrid.GetModelHouseholds(); // get the model, model should be const...
         map<unsigned int, unsigned int> sizes;
-        //map<unsigned int, map<>> ages;
+        //The next map 'ages' will map a household's size to a 2nd map cotaining a Fraction type
+        // which maps to the number people that belong to an age-category...
+        // Thus we'll only be using SCHOOLED, YOUNG_WORKERS, OLD_WORKERS, TODDLERS & OLDIES from the Fractions enum...
+        map<unsigned int, map<geogen::Fractions, double>> ages;
+        //The next map 'total_ages' will simply map a household's 'size'
+        // to the total amount of people that belong to a household with 'size'
+        map<unsigned int, unsigned int> total_ages;
         for (auto& household : households) // count households with size x
+        {
                 sizes[household.size()] += 1;
+                total_ages[household.size()] += household.size();
+                for (auto& age : household)
+                    ages[household.size()][GetCategory(age)] += 1;
+        }
 
         double totalhhs = households.size();
         for (auto& elem : sizes) // household-count with size x divided by total nr of households (calculate fraction)
-                m_household_size_fracs.push_back(elem.second / totalhhs);
+                m_household_size_fracs.emplace_back(elem.second / totalhhs);
+        for (auto& elem : ages)
+        {
+                vector<double> composition_fracs;
+                for(auto& cat : geogen::AgeList)
+                        composition_fracs.emplace_back(elem.second[cat] / total_ages[elem.first]);
+                m_household_comp_fracs.emplace(elem.first, composition_fracs);
+        }
 }
 
 void PopulationGenerator::InitializeCommutingFractions()
@@ -54,13 +87,15 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
         return (unsigned int)(geogen::generator.GetGenerator(distr)() + 1);
 }
 
-double PopulationGenerator::GetRandomAge()
+double PopulationGenerator::GetRandomAge(unsigned int hhsize)
 {
         //perhaps refractor and keep popfracs as a member?
-        vector<double> popfracs;
-        m_geogrid.GetAgeFractions(popfracs);
+        //->well after computing household composition fractions, we don't really need this anymore...
+        //   depending on the size of the household we have a different age-distribution...
+        //vector<double> popfracs;
+        //m_geogrid.GetAgeFractions(popfracs);
 
-        trng::discrete_dist distr(popfracs.begin(), popfracs.end());
+        trng::discrete_dist distr(m_household_comp_fracs[hhsize].begin(), m_household_comp_fracs[hhsize].end());
         unsigned int        category = (unsigned int) geogen::generator.GetGenerator(distr)();
 
         switch (category) {
@@ -115,8 +150,7 @@ bool PopulationGenerator::IsWorkingCommuter() { return FlipUnfairCoin(m_geogrid.
 
 bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_geogrid.GetFraction(geogen::Fractions::ACTIVE)); }
 
-    /*
-shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
+void PopulationGenerator::GenerateHousehold(unsigned int size, geogen::City& city)
 {
         // TODO if we generate somebody less than 18 y then s/he should be accompanied by an adult?
         // A household with 1 person won't be possible in that case
@@ -124,45 +158,35 @@ shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)
         // meaning we need a map sort of like m_commuting_fracs...
         // mapping the size of a household, i.e. 1,2,3,... (deduced from m_household_size_fracs)
         // to a distribution for age categories, i.e. a vector sort of like popfracs in GetRandomAge
+        // update: turns out the household file has a very slim chance that a person between 3y en 18y old
+        //    can be living alone... we're gonna have to notify the professor next time we get feedback...
 
-
-        auto the_household = make_shared<Household>(0);
-        for (unsigned int i = 0; i < size; i++) {
-
+        auto the_household = city.AddHousehold(); //Returns a reference to the new household...
+        /*for (unsigned int i = 0; i < size; i++) {
                 shared_ptr<Person> a_person();
                 the_household->AddMember(a_person);
-
-                // cout << a_person.age << endl;
-        }
-        // cout << "------------------" << endl;
-        return the_household;
-}*/
+        }*/
+}
 
 void PopulationGenerator::AssignHouseholds()
 {
-    /*
-        //Problems with (unsigned ints) & ints, and fuck the (unsigned int) casts,
-        // get rid of auto cause if we leave out the casts we need to know what type we're dealing with...
         for (auto& a_city : m_geogrid.GetCities()) {
-                const unsigned int max_population       = a_city.second->GetPopulation();
-                auto remaining_population = max_population;
+                const unsigned int max_population = a_city.second.GetPopulation();
+                long long int remaining_population = max_population; //long long to make sure the unsigned int fits...
 
                 while (remaining_population > 0) {
-                        auto household_size = this->GetRandomHouseholdSize();
+                        auto household_size = GetRandomHouseholdSize();
 
                         // if the population has to be exact according to the one that we read on the file about cities
                         // but this will effect our discrete distribution
                         // Raphael@everyone, true, but the effect is insignificant given we have enough households...
-                        if( (int)(remaining_population - household_size) < 0 ) {
+                        if( remaining_population - household_size < 0 ) {
                                 household_size = remaining_population;
                         }
-                        auto hh = GenerateHousehold(household_size);
-                        hh->SetCityID(a_city.second->GetId());
-                        a_city.second->AddHousehold(hh);
+                        //GenerateHousehold(household_size, a_city);
                         remaining_population -= household_size;
                 }
         }
-     */
 }
 
 vector<geogen::City*> PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin,
