@@ -47,7 +47,7 @@ private:
         std::vector<stride::Person*>      GetSchoolAttendants(geogen::City& city);
         //Household&                        GenerateHousehold(unsigned int size);
         std::vector<stride::ContactPool*> GetContactPoolsOfColleges();
-        void                              InitializeHouseholdSizeFractions();
+        void                              InitializeHouseholdFractions();
         void                              InitializeCommutingFractions();
         unsigned int                      GetRandomHouseholdSize();
         double                            GetRandomAge();
@@ -68,6 +68,10 @@ private:
         /// The first element is the chance a household has 1 member,
         /// The second elemenet is the chance that a household has 2 members, and so on...
         std::vector<double> m_household_size_fracs;
+
+        /// This member will map a household's size onto a vector representing
+        /// the fractions for the age-composition of that household
+        std::map<unsigned int, std::vector<double>> m_household_comp_fracs;
 
         /// This member will keep a commuting distribution for each city...
         /// thus, cityID -> commuting distribution for the city with cityID

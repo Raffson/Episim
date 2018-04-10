@@ -11,14 +11,15 @@ namespace popgen {
 PopulationGenerator::PopulationGenerator(geogen::GeoGrid& geogrid, unsigned int rad)
     : m_geogrid(geogrid), m_initial_search_radius(rad)
 {
-        InitializeHouseholdSizeFractions();
+        InitializeHouseholdFractions();
         InitializeCommutingFractions();
 }
 
-void PopulationGenerator::InitializeHouseholdSizeFractions()
+void PopulationGenerator::InitializeHouseholdFractions()
 {
         auto                            households = m_geogrid.GetModelHouseholds(); // get the model, model should be const...
         map<unsigned int, unsigned int> sizes;
+        //map<unsigned int, map<>> ages;
         for (auto& household : households) // count households with size x
                 sizes[household.size()] += 1;
 
@@ -106,13 +107,13 @@ bool FlipUnfairCoin(const double& frac)
         return (bool)geogen::generator.GetGenerator(distr)();
 }
 
-bool PopulationGenerator::IsWorkingCommuter() { return FlipUnfairCoin(m_geogrid.GetCommutingWorkersFrac()); }
+bool PopulationGenerator::IsWorkingCommuter() { return FlipUnfairCoin(m_geogrid.GetFraction(geogen::Fractions::COMMUTING_WORKERS)); }
 
-//bool PopulationGenerator::IsStudentCommuter() { return FlipUnfairCoin(m_geogrid.GetCommutingStudentsFrac()); }
+//bool PopulationGenerator::IsStudentCommuter() { return FlipUnfairCoin(m_geogrid.GetFraction(geogen::Fractions::COMMUTING_STUDENTS)); }
 
-//bool PopulationGenerator::IsStudent() { return FlipUnfairCoin(m_geogrid.GetStudentFrac()); }
+//bool PopulationGenerator::IsStudent() { return FlipUnfairCoin(m_geogrid.GetFraction(geogen::Fractions::STUDENTS)); }
 
-bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_geogrid.GetActiveFrac()); }
+bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_geogrid.GetFraction(geogen::Fractions::ACTIVE)); }
 
     /*
 shared_ptr<Household> PopulationGenerator::GenerateHousehold(unsigned int size)

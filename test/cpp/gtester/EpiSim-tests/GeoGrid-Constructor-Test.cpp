@@ -73,21 +73,21 @@ TEST(GeoGridCtorTest, DefaultConstructor)
         auto grid = GeoGrid();
         EXPECT_EQ(grid.GetCities().size(), 0);
         EXPECT_EQ(grid.GetTotalPop(), 0);
-        EXPECT_FLOAT_EQ(grid.GetSchooledFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetYoungWorkersFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetOldWorkersFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetToddlersFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetOldiesFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetStudentFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetCommutingStudentsFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetActiveFrac(), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetCommutingWorkersFrac(), 0.0);
-        EXPECT_EQ(grid.GetAvgCpSize(), 0);
-        EXPECT_EQ(grid.GetSchoolSize(), 0);
-        EXPECT_EQ(grid.GetCollegeSize(), 0);
-        EXPECT_EQ(grid.GetMaxLC(), 0);
-        EXPECT_EQ(grid.GetCommunitySize(), 0);
-        EXPECT_EQ(grid.GetWorkplaceSize(), 0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::SCHOOLED), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::YOUNG_WORKERS), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::OLD_WORKERS), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::TODDLERS), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::OLDIES), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::STUDENTS), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::COMMUTING_STUDENTS), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::ACTIVE), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::COMMUTING_WORKERS), 0.0);
+        EXPECT_EQ(grid.GetAvgSize(Sizes::AVERAGE_CP), 0);
+        EXPECT_EQ(grid.GetAvgSize(Sizes::SCHOOLS), 0);
+        EXPECT_EQ(grid.GetAvgSize(Sizes::COLLEGES), 0);
+        EXPECT_EQ(grid.GetAvgSize(Sizes::MAXLC), 0);
+        EXPECT_EQ(grid.GetAvgSize(Sizes::COMMUNITIES), 0);
+        EXPECT_EQ(grid.GetAvgSize(Sizes::WORKPLACES), 0);
 }
 
 TEST(GeoGridCtorTest, NonExistingFile)

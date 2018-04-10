@@ -35,6 +35,33 @@ using namespace std;
 
 namespace geogen {
 
+/// Enum that represent indexes of Fractals map. That map contains all fraction data of our
+/// population
+enum class Fractions{
+    SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
+    // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
+    ACTIVE,             // % of pop that is activly working.
+    YOUNG_WORKERS,      // % of pop in [18yrs, 26yrs) that is working.
+    OLD_WORKERS,        // % of pop in [26yrs, 65yrs) that is working.
+    TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
+    OLDIES,             // % of pop that is in [65yrs, oldest_person].
+    STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
+    COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit and commutes.
+    COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
+};
+
+/// Enum that represent indexes of sizes map. That map contains all size data
+/// of our communities
+enum class Sizes{
+    SCHOOLS,    // Average size of a school.
+    COLLEGES,   // Average size of a college.
+    COMMUNITIES, // Average size of a community
+    WORKPLACES, // Average size of a workplace
+    AVERAGE_CP, // Average size of a contactpool
+    MAXLC       // Amount of largest cities (cities with a college)
+};
+
+
 /**
  * Class representing our GeoGrid;
  * Geogrid contains information about the cities. placing of contactpools
@@ -102,69 +129,14 @@ public:
         unsigned int GetTotalPop() const { return m_total_pop; }
 
         /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our population that will go
-        ///                 to school [6yrs, 18yrs).
-        double       GetSchooledFrac() const { return m_fract_map.at(SCHOOLED); }
+        /// @param type an enum (Fractions) value representing the fraction to be returned
+        /// @retval <double> returns the fraction correspronding to the given type.
+        double       GetFraction(Fractions type) const { return m_fract_map.at(type); }
 
         /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our workerrs in [18yrs,26yrs)
-        double       GetYoungWorkersFrac() const { return m_fract_map.at(YOUNG_WORKERS); }
-
-        /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our workers in age range [26yrs, 65).
-        double       GetOldWorkersFrac() const { return m_fract_map.at(OLD_WORKERS); }
-
-        /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our population that is in
-        ///                 age range [0yrs, 6yrs)
-        double       GetToddlersFrac() const { return m_fract_map.at(TODDLERS); }
-
-        /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our population
-        ///                 in age range [65, Oldest person].
-        double       GetOldiesFrac() const { return m_fract_map.at(OLDIES); }
-
-        /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our population in
-        ///                 age range [18, 26) that studies.
-        double       GetStudentFrac() const { return m_fract_map.at(STUDENTS); }
-
-        /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of students that commute
-        ///                 to another city.
-        double       GetCommutingStudentsFrac() const { return m_fract_map.at(COMMUTING_STUDENTS); }
-
-        /// Getter
-        /// @retval <double> returns the fraction of our population that is working.
-        double       GetActiveFrac() const { return m_fract_map.at(ACTIVE); }
-
-        /// Getter
-        /// @retval <double> returns the fraction of our workers that commute to another city.
-        double       GetCommutingWorkersFrac() const { return m_fract_map.at(COMMUTING_WORKERS); }
-
-        /// Getter
-        /// @retval <unsigned int> returns the average size of a contactpool.
-        unsigned int GetAvgCpSize() const { return m_sizes_map.at(AVERAGE_CP); }
-
-        /// Getter
-        /// @retval <unsigned int> returns the average size of a School.
-        unsigned int GetSchoolSize() const { return m_sizes_map.at(SCHOOLS); }
-
-        /// Getter
-        /// @retval <unsigned int> returns the average size of a College.
-        unsigned int GetCollegeSize() const { return m_sizes_map.at(COLLEGES); }
-
-        /// Getter
-        /// @retval <unsigned int> returns the Max largest cities.
-        unsigned int GetMaxLC() const { return m_sizes_map.at(MAXLC); }
-
-        /// Getter
-        /// @retval <unsigned int> returns the average size of a community
-        unsigned int GetCommunitySize() const { return m_sizes_map.at(COMMUNITES); }
-
-        /// Getter
-        /// @retval <unsigned int> returns the average size of a workplace.
-        unsigned int GetWorkplaceSize() const { return m_sizes_map.at(WORKPLACES); }
+        /// @param type an enum (Sizes) value representing the average size to be returned
+        /// @retval <unsigned int> returns the average size correspronding to the given type.
+        unsigned int GetAvgSize(Sizes type) const { return m_sizes_map.at(type); }
 
         /// Getter
         /// @retval <unsigned int> returns the number of schools
@@ -208,33 +180,8 @@ private:
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
 
-        /// Enum that represent indexes of Fractals map. That map contains all fraction data of our
-        /// population
-        enum Fractals{
-            SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
-                                // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
-            ACTIVE,             // % of pop that is activly working.
-            YOUNG_WORKERS,      // % of pop in [18yrs, 26yrs) that is working.
-            OLD_WORKERS,        // % of pop in [26yrs, 65yrs) that is working.
-            TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
-            OLDIES,             // % of pop that is in [65yrs, oldest_person].
-            STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
-            COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit and commutes.
-            COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
-        };
-        /// Effective map of all our fractals. Read the Fractals Enum what it will contain.
-        map<Fractals, double> m_fract_map{};
-
-        /// Enum that represent indexes of sizes map. That map contains all size data
-        /// of our communities
-        enum Sizes{
-            SCHOOLS,    // Average size of a school.
-            COLLEGES,   // Average size of a college.
-            COMMUNITES, // Average size of a community
-            WORKPLACES, // Average size of a workplace
-            AVERAGE_CP, // Average size of a contactpool
-            MAXLC       // Amount of largest cities (cities with a college)
-        };
+        /// Effective map of all our fractals. Read the Fractions Enum what it will contain.
+        map<Fractions, double> m_fract_map{};
 
         /// Effective map of all our sizes. Read the Sizes Enum what it will contain.
         map<Sizes, unsigned int> m_sizes_map{};

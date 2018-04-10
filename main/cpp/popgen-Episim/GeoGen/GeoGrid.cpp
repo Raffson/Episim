@@ -35,40 +35,40 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
                 }
         }
         double total     = schooled + workers1 + workers2 + toddlers + oldies;
-        m_fract_map[SCHOOLED] = schooled / total;
-        m_fract_map[YOUNG_WORKERS] = workers1 / total;
-        m_fract_map[OLD_WORKERS] = workers2 / total;
-        m_fract_map[TODDLERS] = toddlers / total;
-        m_fract_map[OLDIES]   = oldies / total;
+        m_fract_map[Fractions::SCHOOLED] = schooled / total;
+        m_fract_map[Fractions::YOUNG_WORKERS] = workers1 / total;
+        m_fract_map[Fractions::OLD_WORKERS] = workers2 / total;
+        m_fract_map[Fractions::TODDLERS] = toddlers / total;
+        m_fract_map[Fractions::OLDIES]   = oldies / total;
 }
 
 void GeoGrid::GetAgeFractions(vector<double>& popfracs)
 {
-    popfracs.push_back(m_fract_map[SCHOOLED]);
-    popfracs.push_back(m_fract_map[YOUNG_WORKERS]);
-    popfracs.push_back(m_fract_map[OLD_WORKERS]);
-    popfracs.push_back(m_fract_map[TODDLERS]);
-    popfracs.push_back(m_fract_map[OLDIES]);
+    popfracs.push_back(m_fract_map[Fractions::SCHOOLED]);
+    popfracs.push_back(m_fract_map[Fractions::YOUNG_WORKERS]);
+    popfracs.push_back(m_fract_map[Fractions::OLD_WORKERS]);
+    popfracs.push_back(m_fract_map[Fractions::TODDLERS]);
+    popfracs.push_back(m_fract_map[Fractions::OLDIES]);
 }
 
 GeoGrid::GeoGrid()
 {
-        m_fract_map[SCHOOLED] = 0;
-        m_fract_map[ACTIVE] = 0;
-        m_fract_map[YOUNG_WORKERS] = 0;
-        m_fract_map[OLD_WORKERS] = 0;
-        m_fract_map[TODDLERS] = 0;
-        m_fract_map[OLDIES] = 0;
-        m_fract_map[STUDENTS] = 0;
-        m_fract_map[COMMUTING_STUDENTS] = 0;
-        m_fract_map[COMMUTING_WORKERS] = 0;
+        m_fract_map[Fractions::SCHOOLED] = 0;
+        m_fract_map[Fractions::ACTIVE] = 0;
+        m_fract_map[Fractions::YOUNG_WORKERS] = 0;
+        m_fract_map[Fractions::OLD_WORKERS] = 0;
+        m_fract_map[Fractions::TODDLERS] = 0;
+        m_fract_map[Fractions::OLDIES] = 0;
+        m_fract_map[Fractions::STUDENTS] = 0;
+        m_fract_map[Fractions::COMMUTING_STUDENTS] = 0;
+        m_fract_map[Fractions::COMMUTING_WORKERS] = 0;
 
-        m_sizes_map[SCHOOLS] = 0;
-        m_sizes_map[COLLEGES] = 0;
-        m_sizes_map[COMMUNITES] = 0;
-        m_sizes_map[WORKPLACES] = 0;
-        m_sizes_map[AVERAGE_CP] = 0;
-        m_sizes_map[MAXLC] = 0;
+        m_sizes_map[Sizes::SCHOOLS] = 0;
+        m_sizes_map[Sizes::COLLEGES] = 0;
+        m_sizes_map[Sizes::COMMUNITIES] = 0;
+        m_sizes_map[Sizes::WORKPLACES] = 0;
+        m_sizes_map[Sizes::AVERAGE_CP] = 0;
+        m_sizes_map[Sizes::MAXLC] = 0;
 }
 
 GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
@@ -108,17 +108,17 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 
         GetMainFractions(m_household_age_distr);
 
-        m_fract_map[STUDENTS]          = abs(p_tree.get<double>("popgen.pop_info.fraction_students"));
-        m_fract_map[COMMUTING_STUDENTS]= abs(p_tree.get<double>("popgen.pop_info.fraction_commuting_students"));
-        m_fract_map[ACTIVE]            = abs(p_tree.get<double>("popgen.pop_info.fraction_active_workers"));
-        m_fract_map[COMMUTING_WORKERS] = abs(p_tree.get<double>("popgen.pop_info.fraction_commuting_workers"));
+        m_fract_map[Fractions::STUDENTS]          = abs(p_tree.get<double>("popgen.pop_info.fraction_students"));
+        m_fract_map[Fractions::COMMUTING_STUDENTS]= abs(p_tree.get<double>("popgen.pop_info.fraction_commuting_students"));
+        m_fract_map[Fractions::ACTIVE]            = abs(p_tree.get<double>("popgen.pop_info.fraction_active_workers"));
+        m_fract_map[Fractions::COMMUTING_WORKERS] = abs(p_tree.get<double>("popgen.pop_info.fraction_commuting_workers"));
 
-        m_sizes_map[AVERAGE_CP]     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.average_size"));
-        m_sizes_map[SCHOOLS]     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.school.size"));
-        m_sizes_map[COLLEGES]    = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.size"));
-        m_sizes_map[MAXLC]           = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.cities"));
-        m_sizes_map[COMMUNITES]  = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.community.size"));
-        m_sizes_map[WORKPLACES] = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.workplace.size"));
+        m_sizes_map[Sizes::AVERAGE_CP]     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.average_size"));
+        m_sizes_map[Sizes::SCHOOLS]     = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.school.size"));
+        m_sizes_map[Sizes::COLLEGES]    = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.size"));
+        m_sizes_map[Sizes::MAXLC]           = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.cities"));
+        m_sizes_map[Sizes::COMMUNITIES]  = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.community.size"));
+        m_sizes_map[Sizes::WORKPLACES] = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.workplace.size"));
 
         // Setting up RNG
         unsigned long seed = (unsigned long) abs(p_tree.get("popgen.rng.seed", 0));
@@ -132,18 +132,21 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // so removed the correspronding death test until we find a better test...
         //TODO: Working with DesignByContract still relevant?
         // Raphael@Robbe, of course it is, everywhere where we have these REQUIRES and ENSURES, let them be...
-        double totalfrac = m_fract_map[YOUNG_WORKERS] + m_fract_map[OLD_WORKERS] + m_fract_map[TODDLERS] +
-                m_fract_map[OLDIES] + m_fract_map[SCHOOLED];
+        double totalfrac = m_fract_map[Fractions::YOUNG_WORKERS] + m_fract_map[Fractions::OLD_WORKERS]
+                           + m_fract_map[Fractions::TODDLERS] + m_fract_map[Fractions::OLDIES]
+                           + m_fract_map[Fractions::SCHOOLED];
         printf("%.16f", totalfrac);
         ENSURE(fabs(totalfrac - 1) < constants::EPSILON, "Pop frac should equal 1");
-        ENSURE(1 >= m_fract_map[STUDENTS] and m_fract_map[STUDENTS] >= 0, "Student fraction must be between 0 and 1");
-        ENSURE(1 >= m_fract_map[COMMUTING_STUDENTS] and m_fract_map[COMMUTING_STUDENTS] >= 0,
+        ENSURE(1 >= m_fract_map[Fractions::STUDENTS] and m_fract_map[Fractions::STUDENTS] >= 0,
+               "Student fraction must be between 0 and 1");
+        ENSURE(1 >= m_fract_map[Fractions::COMMUTING_STUDENTS] and m_fract_map[Fractions::COMMUTING_STUDENTS] >= 0,
                "Student Commuting fraction must be between 0 and 1");
-        ENSURE(1 >= m_fract_map[ACTIVE] and m_fract_map[ACTIVE] >= 0, "Active workers fraction must be between 0 and 1");
-        ENSURE(1 >= m_fract_map[COMMUTING_WORKERS] and m_fract_map[COMMUTING_WORKERS] >= 0,
+        ENSURE(1 >= m_fract_map[Fractions::ACTIVE] and m_fract_map[Fractions::ACTIVE] >= 0,
+               "Active workers fraction must be between 0 and 1");
+        ENSURE(1 >= m_fract_map[Fractions::COMMUTING_WORKERS] and m_fract_map[Fractions::COMMUTING_WORKERS] >= 0,
                "Commuting workers fraction must be between 0 and 1");
         //Capping pool size at 1000, gotta ask the professor what the actual cap should be...
-        ENSURE(m_sizes_map[AVERAGE_CP] > 0 and m_sizes_map[AVERAGE_CP] <= 1000,
+        ENSURE(m_sizes_map[Sizes::AVERAGE_CP] > 0 and m_sizes_map[Sizes::AVERAGE_CP] <= 1000,
                "Contactpool's size must be bigger than 0 and smaller than or equal to 1000");
 }
 
@@ -159,23 +162,23 @@ void GeoGrid::GenerateAll()
 void GeoGrid::GenerateSchools()
 {
 
-        REQUIRE(m_fract_map[SCHOOLED] <= 1, "Schooled Fract is bigger then 1, not possible!");
-        REQUIRE(m_fract_map[SCHOOLED] >= 0, "Schooled fract can't be negative");
-        REQUIRE(m_sizes_map[SCHOOLS] >= 0, "The initial school size can't be negative");
+        REQUIRE(m_fract_map[Fractions::SCHOOLED] <= 1, "Schooled Fract is bigger then 1, not possible!");
+        REQUIRE(m_fract_map[Fractions::SCHOOLED] >= 0, "Schooled fract can't be negative");
+        REQUIRE(m_sizes_map[Sizes::SCHOOLS] >= 0, "The initial school size can't be negative");
         // Calculating extra data
         // rounded because we don't have a fraction of a person
-        auto amount_schooled = (const unsigned int)round(m_total_pop * m_fract_map[SCHOOLED]);
+        auto amount_schooled = (const unsigned int)round(m_total_pop * m_fract_map[Fractions::SCHOOLED]);
         // round because we do not build half a school
-        auto amount_of_schools = (const unsigned int)round(amount_schooled / m_sizes_map[SCHOOLS]);
+        auto amount_of_schools = (const unsigned int)round(amount_schooled / m_sizes_map[Sizes::SCHOOLS]);
 
         // Determine number of contactpools
-        auto cps = round(m_sizes_map[SCHOOLS] / m_sizes_map[AVERAGE_CP]); /// We need enough pools to distribute all persons
+        auto cps = round(m_sizes_map[Sizes::SCHOOLS] / m_sizes_map[Sizes::AVERAGE_CP]);
 
         // Setting up to divide the schools to cities
         vector<double> p_vec;
         vector<City*> c_vec;
         for (auto& it : m_cities) {
-                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_fract_map[SCHOOLED]);
+                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED]);
                 c_vec.emplace_back(&it.second);
                 p_vec.emplace_back(c_schooled_pop);
         }
@@ -209,7 +212,7 @@ unsigned int GeoGrid::FindSmallest(const vector<City*>& lc)
 
 void GeoGrid::AdjustLargestCities(vector<City*>& lc, City& city)
 {
-        if (lc.size() < m_sizes_map[MAXLC])
+        if (lc.size() < m_sizes_map[Sizes::MAXLC])
                 lc.emplace_back(&city);
         else {
                 unsigned int citpop   = city.GetPopulation();
@@ -225,24 +228,24 @@ void GeoGrid::GenerateColleges()
         // After deducing fractions from households, these should never fail,
         // they also become difficult to test since we can no longer play with the fractions,
         // gotta come up with new tests for this...
-        REQUIRE(m_fract_map[STUDENTS] >= 0, "Student fractal can't be negative");
-        REQUIRE(m_fract_map[STUDENTS] <= 1, "Student fractal can't be more then 100%");
-        REQUIRE(m_fract_map[YOUNG_WORKERS] >= 0, "Worker fractal can't be negative");
-        REQUIRE(m_fract_map[YOUNG_WORKERS] <= 1, "Worker fractal can't be more then 100%");
+        REQUIRE(m_fract_map[Fractions::STUDENTS] >= 0, "Student fractal can't be negative");
+        REQUIRE(m_fract_map[Fractions::STUDENTS] <= 1, "Student fractal can't be more then 100%");
+        REQUIRE(m_fract_map[Fractions::YOUNG_WORKERS] >= 0, "Worker fractal can't be negative");
+        REQUIRE(m_fract_map[Fractions::YOUNG_WORKERS] <= 1, "Worker fractal can't be more then 100%");
         for (auto& it : m_cities) {
                 AdjustLargestCities(m_cities_with_college, it.second);
         }
 
         // Determine number of contactpools
-        auto cps = round(m_sizes_map[COLLEGES] / m_sizes_map[AVERAGE_CP]); /// We need enough pools to distribute all persons
+        auto cps = round(m_sizes_map[Sizes::COLLEGES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
         // generate colleges to the respective cities...
         for (auto& it : m_cities_with_college) {
                 //TODO why is this multiplied with WORKERS 1?
-                double students = it->GetPopulation() * m_fract_map[YOUNG_WORKERS] * m_fract_map[STUDENTS];
+                double students = it->GetPopulation() * m_fract_map[Fractions::YOUNG_WORKERS] * m_fract_map[Fractions::STUDENTS];
                 // doesn't matter if students is a double at this time
                 // since this is only an estimate for the number of colleges
-                auto nrcolleges = (unsigned int)round(students / m_sizes_map[COLLEGES]);
+                auto nrcolleges = (unsigned int)round(students / m_sizes_map[Sizes::COLLEGES]);
 
                 for (unsigned int i = 0; i < nrcolleges; i++) {
                         Community& college = it->AddCommunity(CommunityType::College);
@@ -266,15 +269,15 @@ void GeoGrid::GenerateWorkplaces(){
     for(auto& it: m_cities){
 
         // This also calculates people living and working in the same city
-        auto work_pop = (unsigned int) round(it.second.GetTotalInCommutersCount() * m_fract_map[COMMUTING_WORKERS]);
+        auto work_pop = (unsigned int) round(it.second.GetTotalInCommutersCount() * m_fract_map[Fractions::COMMUTING_WORKERS]);
         // Inserting the amount of id's of the city equal to the pop working in the city
         c_vec.emplace_back(&it.second);
         lottery_vec.emplace_back(work_pop);
     }
 
     // Now we calculate how many workplaces we have to create.
-    double working_commuters = m_fract_map[COMMUTING_WORKERS] * m_total_pop;
-    auto   number_of_workplaces = (unsigned int)round(working_commuters / m_sizes_map[WORKPLACES]);
+    double working_commuters = m_fract_map[Fractions::COMMUTING_WORKERS] * m_total_pop;
+    auto   number_of_workplaces = (unsigned int)round(working_commuters / m_sizes_map[Sizes::WORKPLACES]);
 
     auto rndm_vec = generate_random(lottery_vec, generator, number_of_workplaces);
 
@@ -316,15 +319,15 @@ void GeoGrid::GenerateCommunities()
 {
 
         // Determine number of contactpools
-        auto cps = round(m_sizes_map[COMMUNITES] / m_sizes_map[AVERAGE_CP]); /// We need enough pools to distribute all persons
+        auto cps = round(m_sizes_map[Sizes::COMMUNITIES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
         // First we need to determine the total number of communities to be used.
-        auto total_communities = (unsigned int)ceil(m_total_pop / m_sizes_map[COMMUNITES]);
+        auto total_communities = (unsigned int)ceil(m_total_pop / m_sizes_map[Sizes::COMMUNITIES]);
 
         vector<double> p_vec;
         vector<City*>c_vec;
         for (auto& it : m_cities) {
-                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_fract_map[SCHOOLED]);
+                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED]);
                 c_vec.emplace_back(&it.second);
                 p_vec.emplace_back(c_schooled_pop);
         }
