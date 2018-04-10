@@ -14,6 +14,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "pop/Population.h"
 #include "util/ConfigInfo.h"
 #include "util/RNManager.h"
 
@@ -166,6 +167,10 @@ public:
         /// Assigns the age fractions to the provided vector
         void GetAgeFractions(vector<double>& popfracs);
 
+        /// Getter
+        /// @retval <stride::Population> Returns a reference to population
+        stride::Population& GetPopulation() { return m_population; }
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
@@ -208,8 +213,14 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Total population of simulation area
         unsigned int m_total_pop{};
 
+        /// Total number of schools
         unsigned int m_school_count{};
+
+        /// Vector of pointer to all cities that have a college
         vector<City*> m_cities_with_college{};
+
+        /// The population of the GeoGrid
+        stride::Population m_population;
 };
 
 static stride::util::RNManager generator;

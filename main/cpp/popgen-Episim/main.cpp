@@ -21,7 +21,7 @@ using namespace std;
 
 #ifdef USING_QT
 
-int startMap(geogen::GeoGrid grid)
+int startMap(geogen::GeoGrid& grid)
 {
 #if QT_CONFIG(library)
         const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");

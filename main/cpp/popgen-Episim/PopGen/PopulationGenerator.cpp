@@ -8,6 +8,11 @@ using namespace std;
 
 namespace popgen {
 
+unsigned int& PopulationGenerator::IDgenerator() {
+        static unsigned int id = 0;
+        return id;
+}
+
 PopulationGenerator::PopulationGenerator(geogen::GeoGrid& geogrid, unsigned int rad)
     : m_geogrid(geogrid), m_initial_search_radius(rad)
 {

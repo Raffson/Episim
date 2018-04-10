@@ -59,6 +59,9 @@ private:
         std::vector<stride::Person*>      GetActives(geogen::City&);
         geogen::City&                     GetRandomCommutingCity(geogen::City&, const std::vector<int>&);
 
+        /// ID generator for Persons
+        static unsigned int&              IDgenerator();
+
 private:
         geogen::GeoGrid& m_geogrid;
 

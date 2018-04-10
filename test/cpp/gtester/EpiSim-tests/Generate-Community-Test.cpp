@@ -49,7 +49,7 @@ TEST_P(CommunityTest, Run)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        auto grid = GeoGrid("config/geogen_default.xml");
+        GeoGrid grid("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
