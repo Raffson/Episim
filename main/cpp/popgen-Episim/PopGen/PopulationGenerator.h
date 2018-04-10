@@ -59,10 +59,10 @@ private:
         std::vector<stride::Person*>      GetActives(geogen::City&);
         geogen::City&                     GetRandomCommutingCity(geogen::City&, const std::vector<int>&);
 
-        /// ID generator for Persons
-        static unsigned int&              IDgenerator();
-
 private:
+        ///ID generator for creating persons, starting from 0 which in this case doesn't matter...
+        static unsigned int m_id_generator;
+
         geogen::GeoGrid& m_geogrid;
 
         const unsigned int m_initial_search_radius;

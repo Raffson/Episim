@@ -40,7 +40,7 @@ public:
         City& GetCity() const { return *m_city; }
 
         /// Household Id.
-        size_t GetID() const { return m_id; }
+        unsigned int GetID() const { return m_id; }
 
         /// Return the members of this household.
         const vector<stride::Person*>& GetMembers() const { return m_pool.GetPool(); }
@@ -55,9 +55,9 @@ public:
 
         void GetPossibleWorkers(vector<stride::Person*>&) const;
 
-private: // Raphael@everyone replace size_t by unsigned int?
+private:
         /// Id generator.
-        static size_t m_id_generator;
+        static unsigned int m_id_generator;
 
         /// A unique ID of the household.
         size_t m_id;

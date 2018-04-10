@@ -22,6 +22,8 @@ namespace geogen {
 
 using namespace std;
 
+unsigned int Community::m_id_generator = 1;
+
 map<stride::ContactPoolType::Id, unsigned int> Community::m_pool_ids = {
         { stride::ContactPoolType::Id::Household, 1 },
         { stride::ContactPoolType::Id::School, 1 },
@@ -31,23 +33,12 @@ map<stride::ContactPoolType::Id, unsigned int> Community::m_pool_ids = {
 };
 
 Community::Community(CommunityType community_type, City* city)
-    : m_community_id(UIDgenerator()++), m_community_type(community_type), m_city(city)
+    : m_community_id(m_id_generator++), m_community_type(community_type), m_city(city)
 {
-}
-
-unsigned int& Community::UIDgenerator()
-{
-        static unsigned int id = 1; // First id is 1! Needs to be as 0 implies "absent from community".
-        return id;
-}
-
-unsigned int& Community::PIDgenerator(stride::ContactPoolType::Id type)
-{
-        return m_pool_ids.at(type);
 }
 
 stride::ContactPool& Community::AddContactPool(stride::ContactPoolType::Id type) {
-    unsigned int id = PIDgenerator(type)++;
+    unsigned int id = m_pool_ids.at(type)++;
     m_contact_pools.emplace_back(stride::ContactPool(id, type));
     return m_contact_pools.back();
 }

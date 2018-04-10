@@ -9,12 +9,11 @@ using namespace stride;
 
 namespace geogen {
 
-size_t Household::m_id_generator = 1;
+unsigned int Household::m_id_generator = 1;
 
-Household::Household(City* city) : m_id(m_id_generator), m_city(city),
+Household::Household(City* city) : m_id(m_id_generator++), m_city(city),
                                        m_pool(ContactPool(m_id, ContactPoolType::Id::Household))
 {
-        m_id_generator++;
 }
 
 void Household::AddMember(const Person* member) { m_pool.AddMember(member); }
