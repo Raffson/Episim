@@ -190,6 +190,9 @@ public:
         /// Assigns the age fractions to the provided vector
         void GetAgeFractions(vector<double>& popfracs);
 
+        /// Splits up the X% cities that have less then Y% of the total population.
+        void DefragmentSmallestCities(double X, double Y);
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
