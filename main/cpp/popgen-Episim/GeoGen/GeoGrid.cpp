@@ -429,28 +429,26 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double> 
     }
 
     // Step 3: replace X% of these cities
-    map<unsigned int, geogen::City> fragments;
     vector<unsigned int> amount_to_frag = generate_random(p_vec, rndm,(unsigned int) defrag_cty.size());
     unsigned int counter = 0;
     for (auto &it: defrag_cty){
-        auto city = *it;
 
         for (unsigned int i =0; i < amount_to_frag[counter]; i++){
             auto new_id = m_cities.end()->second.GetId() + i;
-            auto new_coordinates = city.GetCoordinates();
+            auto new_coordinates = it->GetCoordinates();
             new_coordinates.latitude += pow(-1, i)*(0.1*i);
             new_coordinates.longitude += pow(-1, i)*(0.1*i);
             new_coordinates.x += pow(-1, i)*(0.1*i);
             new_coordinates.y += pow(-1, i)*(0.1*i);
-            auto new_name = city.GetName();
+            auto new_name = it->GetName();
             stringstream ss;
             ss<<i;
             string s;
             ss>>s;
             new_name += s;
 
-            m_cities.insert(pair<unsigned int,City>(new_id,geogen::City(new_id, city.GetProvince(),
-                                                                        city.GetPopulation()/amount_to_frag[counter],
+            m_cities.insert(pair<unsigned int,City>(new_id,geogen::City(new_id, it->GetProvince(),
+                                                                        it->GetPopulation()/amount_to_frag[counter],
                                                                         new_coordinates, new_name)));
             counter++;
         }
