@@ -415,14 +415,14 @@ Coordinate GeoGrid::GetCenterOfGrid()
 void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double> &p_vec) {
     // Step 1: find all cities that have less then Y% of the population
     // pop_cap: if the population of a city are smaller or equal to this number we defragment them
-    auto pop_cap = (unsigned int) round((m_total_pop/100)*Y);
+    auto pop_cap = (unsigned int) round(m_total_pop *Y);
     vector<City*> defrag_cty;
     for (auto& it: m_cities){
         if (it.second.GetPopulation() <= pop_cap) defrag_cty.emplace_back(&it.second);
     }
 
     // Step2: Decide wich X% of cities to delete
-    auto to_defrag = (unsigned int)round((defrag_cty.size()/100)*X);
+    auto to_defrag = (unsigned int)round(defrag_cty.size() *X);
     while(defrag_cty.size() > to_defrag){
         trng::uniform_int_dist distr(0,(unsigned int)defrag_cty.size() - 1 );
         defrag_cty.erase(defrag_cty.begin() + generator.GetGenerator(distr)());
@@ -463,7 +463,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double> 
         return m_fract_map.at(fract);
     }
 
-    double GeoGrid::GetSize(GeoGrid::Sizes size) const {
+    unsigned int GeoGrid::GetSize(GeoGrid::Sizes size) const {
         return m_sizes_map.at(size);
     }
 

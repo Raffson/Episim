@@ -142,33 +142,39 @@ public:
         /// @retval <double> returns the fraction of our workers that commute to another city.
         double       GetCommutingWorkersFrac() const { return m_fract_map.at(COMMUTING_WORKERS); }
 
-    enum Fractals{
-        SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
-        // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
-        ACTIVE,             // % of pop that is activly working.
-        YOUNG_WORKERS,      // % of pop in [18yrs, 26yrs) that is working.
-        OLD_WORKERS,        // % of pop in [26yrs, 65yrs) that is working.
-        TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
-        OLDIES,             // % of pop that is in [65yrs, oldest_person].
-        STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
-        COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit and commutes.
-        COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
-    };
+        enum Fractals{
+            SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
+            // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
+            ACTIVE,             // % of pop that is activly working.
+            YOUNG_WORKERS,      // % of pop in [18yrs, 26yrs) that is working.
+            OLD_WORKERS,        // % of pop in [26yrs, 65yrs) that is working.
+            TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
+            OLDIES,             // % of pop that is in [65yrs, oldest_person].
+            STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
+            COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit and commutes.
+            COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
+        };
 
-        double GetFraction(Fractals) const;
-
-
-    enum Sizes{
-        SCHOOLS,    // Average size of a school.
-        COLLEGES,   // Average size of a college.
-        COMMUNITES, // Average size of a community
-        WORKPLACES, // Average size of a workplace
-        AVERAGE_CP, // Average size of a contactpool
-        MAXLC       // Amount of largest cities (cities with a college)
-    };
+            /// Getter of population fractals.
+            /// @Param fract Of Enum Fractals, The fractal float we want, see enumFractals
+            /// @retval The fractal value asked with enum.
+            double GetFraction(Fractals fract) const;
 
 
-        double GetSize(Sizes) const;
+        enum Sizes{
+            SCHOOLS,    // Average size of a school.
+            COLLEGES,   // Average size of a college.
+            COMMUNITES, // Average size of a community
+            WORKPLACES, // Average size of a workplace
+            AVERAGE_CP, // Average size of a contactpool
+            MAXLC       // Amount of largest cities (cities with a college)
+        };
+
+
+        /// Getter of sizes of our communities.
+        /// @Param size Of Enum Sizes, The size integer we want, see enum Sizes
+        /// @retval The size value asked with enum.
+        unsigned int GetSize(Sizes size) const;
 
         /// Getter
         /// @retval <unsigned int> returns the average size of a contactpool.
@@ -219,6 +225,11 @@ public:
         /// Assigns the age fractions to the provided vector
         void GetAgeFractions(vector<double>& popfracs);
 
+        /// Splits up the X fract cities that have less then Y fract of the total population in fragmented
+        /// Cities.
+        /// @param X: a %.
+        void DefragmentSmallestCities(double X, double Y, const vector<double> &p_vec);
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
@@ -235,11 +246,6 @@ private:
         /// Assigns the main fractions: schooled, worker1, worker2 & rest
         void GetMainFractions(const vector<vector<double>>& hhs);
 
-
-
-
-        /// Splits up the X% cities that have less then Y% of the total population.
-        void DefragmentSmallestCities(double X, double Y, const vector<double> &p_vec);
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
 
