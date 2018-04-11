@@ -412,42 +412,50 @@ Coordinate GeoGrid::GetCenterOfGrid()
                 (smallestLat + halfLat)};
 }
 
-void GeoGrid::DefragmentSmallestCities(double X, double Y){
+void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double> &p_vec, stride::util::RNManager &rndm) {
     // Step 1: find all cities that have less then Y% of the population
     // pop_cap: if the population of a city are smaller or equal to this number we defragment them
-    int pop_cap = (int)round((m_total_pop/100)*Y);
-    int count = 0;
-    for (auto it: m_cities){
-        if (it.second.GetPopulation() <= pop_cap) count ++;
+    auto pop_cap = (unsigned int) round((m_total_pop/100)*Y);
+    vector<City*> defrag_cty;
+    for (auto& it: m_cities){
+        if (it.second.GetPopulation() <= pop_cap) defrag_cty.emplace_back(&it.second);
     }
-    // Step 2: replace X% of these cities
-    int to_defrag = (int)round((count/100)*X);
+
+    // Step2: Decide wich X% of cities to delete
+    auto to_defrag = (unsigned int)round((defrag_cty.size()/100)*X);
+    while(defrag_cty.size() > to_defrag){
+        trng::uniform_int_dist distr(0,(unsigned int)defrag_cty.size() - 1 );
+        defrag_cty.erase(defrag_cty.begin() + rndm.GetGenerator(distr)());
+    }
+
+    // Step 3: replace X% of these cities
     map<unsigned int, geogen::City> fragments;
-    for (auto it: m_cities){
-        if (it.second.GetPopulation() <= pop_cap){
-            auto city = it.second;
-            // Draw from a distribution the number of fragments in which to defragment
-            vector<int> chances = {2,3,4,5};
-            trng::discrete_dist dist(chances.begin(), chances.end());
-            auto frags = generator.GetGenerator(dist)();
-            for (int i =0; i < frags; i++){
-                auto new_id = city.GetId()*(i+1);
-                auto new_coordinates = city.GetCoordinates();
-                new_coordinates.latitude += pow(-1, i)*(0.1*i);
-                new_coordinates.longitude += pow(-1, i)*(0.1*i);
-                new_coordinates.x += pow(-1, i)*(0.1*i);
-                new_coordinates.y += pow(-1, i)*(0.1*i);
-                auto new_name = city.GetName();
-                stringstream ss;
-                ss<<i;
-                string s;
-                ss>>s;
-                new_name += s;
-                auto new_city = geogen::City(new_id, city.GetProvince(), city.GetPopulation()/frags, new_coordinates, new_name);
-                m_cities.insert(m_cities.end(), make_pair<unsigned int, geogen::City>(new_id, new_city));
-            }
-            // Delete old city
+    vector<unsigned int> amount_to_frag = generate_random(p_vec, rndm,(unsigned int) defrag_cty.size());
+    unsigned int counter = 0;
+    for (auto &it: defrag_cty){
+        auto city = *it;
+
+        for (unsigned int i =0; i < amount_to_frag[counter]; i++){
+            auto new_id = m_cities.end()->second.GetId() + i;
+            auto new_coordinates = city.GetCoordinates();
+            new_coordinates.latitude += pow(-1, i)*(0.1*i);
+            new_coordinates.longitude += pow(-1, i)*(0.1*i);
+            new_coordinates.x += pow(-1, i)*(0.1*i);
+            new_coordinates.y += pow(-1, i)*(0.1*i);
+            auto new_name = city.GetName();
+            stringstream ss;
+            ss<<i;
+            string s;
+            ss>>s;
+            new_name += s;
+
+            m_cities.insert(pair<unsigned int,City>(new_id,geogen::City(new_id, city.GetProvince(),
+                                                                        city.GetPopulation()/amount_to_frag[counter],
+                                                                        new_coordinates, new_name)));
+            counter++;
         }
+        m_cities.erase(it->GetId());
+
     }
 
 }

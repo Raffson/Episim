@@ -2,6 +2,7 @@
 // Created by robbe on 6/03/18.
 //
 
+#include <util/RNManager.h>
 #include "Parser.h"
 
 using namespace std;
@@ -87,5 +88,21 @@ vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path)
         }
         return result;
 }
+
+vector<City> DefragmentCity(const City &city, vector<double> distr, stride::util::RNManager &rndm) {
+
+        trng::discrete_dist distribution(distr.begin(), distr.end());
+
+        auto fragment_amount = (unsigned int)rndm.GetGenerator(distribution)();
+
+        for(unsigned int i = 0; i < fragment_amount; i++){
+
+                unsigned int id = city.GetId() * 10 + i; // TODO: a better way to distribute id's
+                unsigned int province=  city.GetProvince(); //Stays the same
+                unsigned int population = city.GetPopulation() / fragment_amount;
+                //TODO UNFINISHED
+        }
+        return vector<City>();
+    }
 } // namespace parser
 } // namespace geogen
