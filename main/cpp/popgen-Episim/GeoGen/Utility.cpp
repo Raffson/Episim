@@ -32,4 +32,14 @@ generate_random(const vector<double> &p_vec, stride::util::RNManager &rndm, unsi
     return ret_vec;
 }
 
+    vector<unsigned int>
+    geogen::generate_random(unsigned int begin, unsigned int end, stride::util::RNManager& rndm, unsigned int amount) {
+        trng::uniform_int_dist dist(begin, end);
+        vector<unsigned int> ret_vec;
+        for(unsigned int i = 0; i < amount; i++){
+            ret_vec.emplace_back(rndm.GetGenerator(dist)());
+        }
+        return ret_vec;
+    }
+
 } // namespace geogen

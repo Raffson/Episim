@@ -10,6 +10,7 @@
 #include <cmath>
 #include <util/RNManager.h>
 #include "trng/discrete_dist.hpp"
+#include "trng/uniform_int_dist.hpp"
 
 using namespace std;
 
@@ -36,6 +37,7 @@ double convert_to_radians(double degrees);
 /// @example a vec with numbers [1,4,8,2] as relative probabillities, and amount = 3. Will generate
 ///          3 numbers out of the interval [0,3] with chance on p(0) = 1/15, p(1) = 4/15, p(2) = 8/15, p(3) = 2/15
 vector<unsigned int> generate_random(const vector<double>& p_vec, stride::util::RNManager& rndm, unsigned int amount = 1);
+vector<unsigned int> generate_random(unsigned int begin, unsigned  int end,stride::util::RNManager& rndm, unsigned int amount);
 
 
 
