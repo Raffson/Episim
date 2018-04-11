@@ -39,7 +39,7 @@ Community::Community(CommunityType community_type, City* city)
 
 stride::ContactPool& Community::AddContactPool(stride::ContactPoolType::Id type) {
     unsigned int id = m_pool_ids.at(type)++;
-    m_contact_pools.emplace_back(stride::ContactPool(id, type));
+    m_contact_pools.emplace_back(stride::ContactPool(id, type, this));
     return m_contact_pools.back();
 }
 

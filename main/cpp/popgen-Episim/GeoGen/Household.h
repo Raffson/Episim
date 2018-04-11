@@ -49,6 +49,8 @@ public:
         size_t GetSize() const { return m_pool.GetSize(); }
 
         //Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
+        // second thought, after fixing PopulationGenerator I wonder if we need these at all...
+        // if we do, they'll need to be slightly reworked...
         void GetSchoolAttendants(vector<stride::Person*>&) const;
 
         void GetPossibleStudents(vector<stride::Person*>&) const;
@@ -67,7 +69,6 @@ private:
 
         /// A ContactPool with the people belonging to this household.
         stride::ContactPool m_pool;
-
 
 };
 

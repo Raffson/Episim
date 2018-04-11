@@ -25,6 +25,10 @@
 #include <array>
 #include <vector>
 
+namespace geogen {
+    class Community;
+}
+
 namespace stride {
 
 class Person;
@@ -37,6 +41,15 @@ class ContactPool
 public:
         /// Initializing constructor.
         ContactPool(std::size_t pool_id, ContactPoolType::Id type);
+
+        /// Initializing constructor.
+        ContactPool(std::size_t pool_id, ContactPoolType::Id type, geogen::Community* community);
+
+        /// Get the ID of the pool
+        std::size_t GetID() const { return m_pool_id; }
+
+        /// Get the community to which this pool belongs
+        geogen::Community* GetCommunity() { return m_community; }
 
         /// Add the given Person.
         void AddMember(const Person* p);
@@ -64,6 +77,7 @@ private:
         ContactPoolType::Id  m_pool_type;    ///< The type of the ContactPool (for logging purposes).
         std::size_t          m_index_immune; ///< Index of the first immune member in the ContactPool.
         std::vector<Person*> m_members;      ///< Container with pointers to contactpool members.
+        geogen::Community*   m_community;    ///< Pointer to the community that holds this pool.
 };
 
 } // namespace stride

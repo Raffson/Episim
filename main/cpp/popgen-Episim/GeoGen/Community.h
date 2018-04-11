@@ -37,6 +37,11 @@ enum class CommunityType
         Null
 };
 
+/// To allow iteration over the community types, leaving out Null.
+constexpr std::array<CommunityType, 5> CommunityTypes{{CommunityType::School, CommunityType::College,
+                                                              CommunityType::Work, CommunityType::Primary,
+                                                              CommunityType::Secondary}};
+
 class Community
 {
 public:

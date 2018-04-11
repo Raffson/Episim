@@ -36,8 +36,7 @@ using namespace std;
 
 namespace geogen {
 
-/// Enum that represent indexes of Fractals map. That map contains all fraction data of our
-/// population
+/// Enum that represent indexes of Fractals map. That map contains all fraction data of our population
 enum class Fractions{
     SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
     // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
@@ -171,6 +170,10 @@ public:
         /// @retval <stride::Population> Returns a reference to population
         stride::Population& GetPopulation() { return m_population; }
 
+        /// Getter
+        /// @retval <boost::property_tree::ptree> Returns the property tree for Belief
+        const boost::property_tree::ptree& GetBelief() const { return m_belief; }
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
@@ -221,6 +224,9 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         /// The population of the GeoGrid
         stride::Population m_population;
+
+        /// Variable to store Belief used for creating people
+        boost::property_tree::ptree m_belief;
 };
 
 static stride::util::RNManager generator;

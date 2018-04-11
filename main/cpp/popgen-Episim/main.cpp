@@ -139,7 +139,7 @@ int main(int argc, char** argv)
         grid.GenerateAll();
 
         popgen::PopulationGenerator pop_generator(grid);
-        pop_generator.AssignAll();
+        pop_generator.GeneratePopulation();
 
 #ifdef USING_QT
         // startMap(argc, argv);

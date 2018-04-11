@@ -86,6 +86,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         string city_file      = p_tree.get("popgen.data_files.cities", "flanders_cities.csv");
         string commuting_file = p_tree.get("popgen.data_files.commuting", "flanders_commuting.csv");
         string household_file = p_tree.get("popgen.data_files.households", "households_flanders.xml");
+        m_belief              = p_tree.get_child("popgen.belief_policy");
 
         parser::ParseCities(base_path + city_file, base_path + commuting_file, m_cities, true);
 
@@ -337,10 +338,12 @@ void GeoGrid::GenerateCommunities()
         for (unsigned int i = 0; i < total_communities; i++) {
                 m_school_count++;
                 City&      chosen_city = *c_vec[rndm_vec[i]];
-                Community& nw_community = chosen_city.AddCommunity(CommunityType::Primary);
+                Community& nw_pcommunity = chosen_city.AddCommunity(CommunityType::Primary);
+                Community& nw_scommunity = chosen_city.AddCommunity(CommunityType::Secondary);
                 // Add contactpools
                 for (auto j = 0; j < cps; j++) {
-                        nw_community.AddContactPool(stride::ContactPoolType::Id::PrimaryCommunity);
+                        nw_pcommunity.AddContactPool(stride::ContactPoolType::Id::PrimaryCommunity);
+                        nw_scommunity.AddContactPool(stride::ContactPoolType::Id::SecondaryCommunity);
                 }
         }
         // Determine how many communities a city should get -> Depricated.
