@@ -210,7 +210,7 @@ private:
 
 
         /// Splits up the X% cities that have less then Y% of the total population.
-        void DefragmentSmallestCities(double X, double Y, const vector<double> &p_vec, stride::util::RNManager &rndm);
+        void DefragmentSmallestCities(double X, double Y, const vector<double> &p_vec);
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
 
