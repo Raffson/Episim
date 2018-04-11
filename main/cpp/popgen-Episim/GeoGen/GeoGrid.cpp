@@ -429,12 +429,13 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double> 
     }
 
     // Step 3: replace X% of these cities
-    vector<unsigned int> amount_to_frag = generate_random(p_vec, generator,(unsigned int) defrag_cty.size());
+    vector<unsigned int> amount_to_frag = generate_random(p_vec, generator,
+                                                          (unsigned int) defrag_cty.size());
     unsigned int counter = 0;
     for (auto &it: defrag_cty){
 
         for (unsigned int i =0; i < amount_to_frag[counter]; i++){
-            auto new_id = m_cities.end()->second.GetId() + i;
+            auto new_id = m_cities.end()->second.GetId() + 1;
             auto new_coordinates = it->GetCoordinates();
             new_coordinates.latitude += pow(-1, i)*(0.1*i);
             new_coordinates.longitude += pow(-1, i)*(0.1*i);
@@ -457,5 +458,13 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double> 
     }
 
 }
+
+    double GeoGrid::GetFraction(GeoGrid::Fractals fract) const {
+        return m_fract_map.at(fract);
+    }
+
+    double GeoGrid::GetSize(GeoGrid::Sizes size) const {
+        return m_sizes_map.at(size);
+    }
 
 } // namespace geogen
