@@ -93,12 +93,14 @@ TEST(GeoGridCtorTest, DefaultConstructor)
 
 TEST(GeoGridCtorTest, NonExistingFile)
 {
+        ::testing::FLAGS_gtest_death_test_style = "threadsafe";
         // Test with a non-existing file
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("bad input"), "");
 }
 
 TEST(GeoGridCtorTest, BadFractions)
 {
+        ::testing::FLAGS_gtest_death_test_style = "threadsafe";
         // Test with a non-existing file
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_student_frac_0.xml"), "");
         ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_stucom_frac_0.xml"), "");
