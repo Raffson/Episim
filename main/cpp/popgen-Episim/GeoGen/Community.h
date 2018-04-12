@@ -37,6 +37,11 @@ enum class CommunityType
         Null
 };
 
+/// To allow iteration over the community types, leaving out Null.
+constexpr std::array<CommunityType, 5> CommunityTypes{{CommunityType::School, CommunityType::College,
+                                                              CommunityType::Work, CommunityType::Primary,
+                                                              CommunityType::Secondary}};
+
 class Community
 {
 public:
@@ -64,10 +69,8 @@ public:
         unsigned int GetSize() const;
 
 private:
-        static unsigned int& UIDgenerator();
-        static unsigned int& PIDgenerator(stride::ContactPoolType::Id);
+        static unsigned int m_id_generator;
 
-private:
         const unsigned int m_community_id; ///< A unique ID for the community
 
         CommunityType m_community_type; ///< The type of community

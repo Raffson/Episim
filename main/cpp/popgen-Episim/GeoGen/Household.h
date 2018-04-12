@@ -40,7 +40,7 @@ public:
         City& GetCity() const { return *m_city; }
 
         /// Household Id.
-        size_t GetID() const { return m_id; }
+        unsigned int GetID() const { return m_id; }
 
         /// Return the members of this household.
         const vector<stride::Person*>& GetMembers() const { return m_pool.GetPool(); }
@@ -49,15 +49,17 @@ public:
         size_t GetSize() const { return m_pool.GetSize(); }
 
         //Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
+        // second thought, after fixing PopulationGenerator I wonder if we need these at all...
+        // if we do, they'll need to be slightly reworked...
         void GetSchoolAttendants(vector<stride::Person*>&) const;
 
         void GetPossibleStudents(vector<stride::Person*>&) const;
 
         void GetPossibleWorkers(vector<stride::Person*>&) const;
 
-private: // Raphael@everyone replace size_t by unsigned int?
+private:
         /// Id generator.
-        static size_t m_id_generator;
+        static unsigned int m_id_generator;
 
         /// A unique ID of the household.
         size_t m_id;
@@ -67,7 +69,6 @@ private: // Raphael@everyone replace size_t by unsigned int?
 
         /// A ContactPool with the people belonging to this household.
         stride::ContactPool m_pool;
-
 
 };
 

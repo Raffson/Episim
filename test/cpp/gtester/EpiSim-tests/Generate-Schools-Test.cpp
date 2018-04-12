@@ -50,7 +50,7 @@ TEST_P(SchoolTest, HappyDayScenario)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        auto grid = GeoGrid("config/geogen_default.xml");
+        GeoGrid grid("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ TEST_P(SchoolTest, HappyDayScenario)
         // Raphael@Robbe, after deducing fractions from the households, the expected number is incorrect,
         // so I changed this to what I believe needs to be done...
         // EXPECT_EQ(grid.GetSchoolCount(), 1736);
-        unsigned int target = round(round(grid.GetTotalPop() * grid.GetSchooledFrac()) / grid.GetSchoolSize());
+        unsigned int target = round(round(grid.GetTotalPop() * grid.GetFraction(Fractions::SCHOOLED)) / grid.GetAvgSize(Sizes::SCHOOLS));
         EXPECT_EQ(grid.GetSchoolCount(), target);
 }
 
@@ -95,7 +95,7 @@ TEST_P(SchoolTest, HighMoreLowLess)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        auto grid = GeoGrid("config/geogen_default.xml");
+        GeoGrid grid("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         auto mp = grid.GetCities();

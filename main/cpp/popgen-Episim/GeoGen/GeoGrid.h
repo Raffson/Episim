@@ -14,6 +14,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "pop/Population.h"
 #include "util/ConfigInfo.h"
 #include "util/RNManager.h"
 
@@ -34,6 +35,36 @@
 using namespace std;
 
 namespace geogen {
+
+/// Enum that represent indexes of Fractals map. That map contains all fraction data of our population
+enum class Fractions{
+    SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
+                        // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
+    ACTIVE,             // % of pop that is activly working.
+    YOUNG_WORKERS,      // % of pop in [18yrs, 26yrs) that is working.
+    OLD_WORKERS,        // % of pop in [26yrs, 65yrs) that is working.
+    TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
+    OLDIES,             // % of pop that is in [65yrs, oldest_person].
+    STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
+    COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit and commutes.
+    COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
+};
+
+/// To allow iteration over the age Fractions.
+constexpr std::array<Fractions, 5> AgeList{{Fractions::SCHOOLED, Fractions::YOUNG_WORKERS, Fractions::OLD_WORKERS,
+                                                   Fractions::TODDLERS, Fractions::OLDIES}};
+
+/// Enum that represent indexes of sizes map. That map contains all size data
+/// of our communities
+enum class Sizes{
+    SCHOOLS,    // Average size of a school.
+    COLLEGES,   // Average size of a college.
+    COMMUNITIES, // Average size of a community
+    WORKPLACES, // Average size of a workplace
+    AVERAGE_CP, // Average size of a contactpool
+    MAXLC       // Amount of largest cities (cities with a college)
+};
+
 
 /**
  * Class representing our GeoGrid;
@@ -102,34 +133,19 @@ public:
         unsigned int GetTotalPop() const { return m_total_pop; }
 
         /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our population that will go
-        ///                 to school [6yrs, 18yrs).
-        double       GetSchooledFrac() const { return m_fract_map.at(SCHOOLED); }
+        /// @param type an enum (Fractions) value representing the fraction to be returned
+        /// @retval <double> returns the fraction correspronding to the given type.
+        double       GetFraction(Fractions type) const { return m_fract_map.at(type); }
 
         /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our workerrs in [18yrs,26yrs)
-        double       GetYoungWorkersFrac() const { return m_fract_map.at(YOUNG_WORKERS); }
+        /// @param type an enum (Sizes) value representing the average size to be returned
+        /// @retval <unsigned int> returns the average size correspronding to the given type.
+        unsigned int GetAvgSize(Sizes type) const { return m_sizes_map.at(type); }
 
-        /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our workers in age range [26yrs, 65).
-        double       GetOldWorkersFrac() const { return m_fract_map.at(OLD_WORKERS); }
+    /* Raphael@Robbe, all these functions are no longer needed, I've reworked everything already...
+     *  but I'll leave them here just in case even though they will require a slight rework
+     *  due to my adjustements...
 
-        /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our population that is in
-        ///                 age range [0yrs, 6yrs)
-        double       GetToddlersFrac() const { return m_fract_map.at(TODDLERS); }
-
-        /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our population
-        ///                 in age range [65, Oldest person].
-        double       GetOldiesFrac() const { return m_fract_map.at(OLDIES); }
-
-        /// Getter
-        /// @retval <double> returns a fraction. This is the fraction of our population in
-        ///                 age range [18, 26) that studies.
-        double       GetStudentFrac() const { return m_fract_map.at(STUDENTS); }
-
-        /// Getter
         /// @retval <double> returns a fraction. This is the fraction of students that commute
         ///                 to another city.
         double       GetCommutingStudentsFrac() const { return m_fract_map.at(COMMUTING_STUDENTS); }
@@ -200,6 +216,8 @@ public:
         /// @retval <unsigned int> returns the average size of a workplace.
         unsigned int GetWorkplaceSize() const { return m_sizes_map.at(WORKPLACES); }
 
+        */
+
         /// Getter
         /// @retval <unsigned int> returns the number of schools
         unsigned int GetSchoolCount() const { return m_school_count; }
@@ -225,6 +243,14 @@ public:
         /// Assigns the age fractions to the provided vector
         void GetAgeFractions(vector<double>& popfracs);
 
+        /// Getter
+        /// @retval <stride::Population> Returns a reference to population
+        stride::Population& GetPopulation() { return m_population; }
+
+        /// Getter
+        /// @retval <boost::property_tree::ptree> Returns the property tree for Belief
+        const boost::property_tree::ptree& GetBelief() const { return m_belief; }
+
         /// Splits up the X fract cities that have less then Y fract of the total population in fragmented
         /// Cities.
         /// @param X: a %.
@@ -249,14 +275,8 @@ private:
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
 
-        /// Enum that represent indexes of Fractals map. That map contains all fraction data of our
-        /// population
-
-        /// Effective map of all our fractals. Read the Fractals Enum what it will contain.
-        map<Fractals, double> m_fract_map{};
-
-        /// Enum that represent indexes of sizes map. That map contains all size data
-        /// of our communities
+        /// Effective map of all our fractions. Read the Fractions Enum what it will contain.
+        map<Fractions, double> m_fract_map{};
 
         /// Effective map of all our sizes. Read the Sizes Enum what it will contain.
         map<Sizes, unsigned int> m_sizes_map{};
@@ -279,10 +299,17 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Total population of simulation area
         unsigned int m_total_pop{};
 
+        /// Total number of schools
         unsigned int m_school_count{};
-        vector<City*> m_cities_with_college{};
-};
 
-static stride::util::RNManager generator;
+        /// Vector of pointer to all cities that have a college
+        vector<City*> m_cities_with_college{};
+
+        /// The population of the GeoGrid
+        stride::Population m_population;
+
+        /// Variable to store Belief used for creating people
+        boost::property_tree::ptree m_belief;
+};
 
 } // namespace geogen

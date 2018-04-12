@@ -5,7 +5,6 @@
 
 #include "Utility.h"
 
-
 using namespace std;
 
 namespace geogen {
@@ -22,24 +21,24 @@ double convert_to_radians(double degrees) {
 }
 
 vector<unsigned int>
-generate_random(const vector<double> &p_vec, stride::util::RNManager &rndm, unsigned int amount) {
+generate_random(const vector<double> &p_vec, unsigned int amount) {
 
     trng::discrete_dist dist(p_vec.begin(), p_vec.end());
     vector<unsigned int> ret_vec;
     for(unsigned int i = 0; i < amount; i++){
-        ret_vec.emplace_back(rndm.GetGenerator(dist)());
+        ret_vec.emplace_back((unsigned int)generator.GetGenerator(dist)());
     }
     return ret_vec;
 }
 
-    vector<unsigned int>
-    geogen::generate_random(unsigned int begin, unsigned int end, stride::util::RNManager& rndm, unsigned int amount) {
-        trng::uniform_int_dist dist(begin, end);
-        vector<unsigned int> ret_vec;
-        for(unsigned int i = 0; i < amount; i++){
-            ret_vec.emplace_back(rndm.GetGenerator(dist)());
-        }
-        return ret_vec;
+vector<unsigned int>
+generate_random(unsigned int begin, unsigned int end, unsigned int amount) {
+    trng::uniform_int_dist dist(begin, end);
+    vector<unsigned int> ret_vec;
+    for(unsigned int i = 0; i < amount; i++){
+        ret_vec.emplace_back(generator.GetGenerator(dist)());
     }
+    return ret_vec;
+}
 
 } // namespace geogen

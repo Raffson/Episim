@@ -7,6 +7,10 @@
         <households>households_flanders.xml</households>
     </data_files>
 
+    <belief_policy>
+        <name>NoBelief</name>
+    </belief_policy>
+
     <rng>
         <seed>0</seed>
         <type>lcg64</type>

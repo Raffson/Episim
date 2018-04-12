@@ -28,7 +28,12 @@ namespace stride {
 using namespace std;
 
 ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type)
-    : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members()
+    : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members(), m_community(nullptr)
+{
+}
+
+ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, geogen::Community* community)
+    : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members(), m_community(community)
 {
 }
 

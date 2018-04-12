@@ -21,7 +21,7 @@ using namespace std;
 
 #ifdef USING_QT
 
-int startMap(geogen::GeoGrid grid)
+int startMap(geogen::GeoGrid& grid)
 {
 #if QT_CONFIG(library)
         const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
@@ -139,7 +139,7 @@ int main(int argc, char** argv)
         grid.GenerateAll();
 
         popgen::PopulationGenerator pop_generator(grid);
-        pop_generator.AssignAll();
+        pop_generator.GeneratePopulation();
 
 #ifdef USING_QT
         // startMap(argc, argv);
