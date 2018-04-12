@@ -18,6 +18,8 @@
 
 #include "popgen-Episim/GeoGen/City.h"
 
+#include "trng/discrete_dist.hpp"
+
 using namespace std;
 
 namespace geogen {
@@ -27,6 +29,8 @@ void ParseCities(const boost::filesystem::path&, const boost::filesystem::path&,
                  map<unsigned int, City>& cities, bool parse_commuting);
 
 void ParseCommuting(const boost::filesystem::path&, map<unsigned int, City>&);
+
+vector<City> DefragmentCity(const City &ct, vector<double> distr, stride::util::RNManager &rndm);
 
 vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path);
 
