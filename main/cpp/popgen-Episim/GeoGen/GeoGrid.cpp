@@ -440,8 +440,8 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double> 
     vector<unsigned int> amount_to_frag = generate_random(p_vec, (unsigned int) defrag_cty.size());
     unsigned int counter = 0;
     for (auto &it: defrag_cty){
-
-        for (unsigned int i =0; i < amount_to_frag[counter]; i++){
+        // We add 2 to the amount to defrag, bcs we want to defrag in atleast 2 parts
+        for (unsigned int i =0; i < amount_to_frag[counter] + 2; i++){
             auto new_id = m_cities.end()->second.GetId() + 1;
             auto new_coordinates = it->GetCoordinates();
             new_coordinates.latitude += pow(-1, i)*(0.1*i);
@@ -456,7 +456,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double> 
             new_name += s;
 
             m_cities.insert(pair<unsigned int,City>(new_id,geogen::City(new_id, it->GetProvince(),
-                                                                        it->GetPopulation()/amount_to_frag[counter],
+                                                                        it->GetPopulation()/(amount_to_frag[counter] + 2),
                                                                         new_coordinates, new_name)));
             counter++;
         }
