@@ -19,8 +19,6 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
                 for (auto& age : house) {
                         // Ordered these if-else if construction to fall as quickly as possible
                         // in the (statistically) most likely age-category...
-                        // it's agueable whether "rest" is more likely than workers1 since it covers
-                        // a bigger interval, i.e. [0,3) U [65, +inf)
                         if (age >= 26 and age < 65)
                                 workers2 += 1;
                         else if (age >= 3 and age < 18)
@@ -182,8 +180,6 @@ void GeoGrid::GenerateSchools()
                 p_vec.emplace_back(c_schooled_pop);
         }
 
-        // Note that this way cuz of rounding we lose a couple of schooled ppl.
-        // But this shouldn't affect our city divison.
         auto rndm_vec = generate_random(p_vec, amount_of_schools);
         // assign schools to cities according to our normal distribution
         for (unsigned int i = 0; i < amount_of_schools; i++) {
@@ -334,8 +330,6 @@ void GeoGrid::GenerateCommunities()
                 p_vec.emplace_back(c_pop);
         }
 
-        // Note that this way cuz of rounding we lose a couple of schooled ppl.
-        // But this shouldn't affect our city divison.
         auto rndm_vec = generate_random(p_vec, total_communities);
 
         for (unsigned int i = 0; i < total_communities; i++) {
