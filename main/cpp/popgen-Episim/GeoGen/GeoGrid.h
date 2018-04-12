@@ -39,7 +39,7 @@ namespace geogen {
 /// Enum that represent indexes of Fractals map. That map contains all fraction data of our population
 enum class Fractions{
     SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
-    // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
+                        // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
     ACTIVE,             // % of pop that is activly working.
     YOUNG_WORKERS,      // % of pop in [18yrs, 26yrs) that is working.
     OLD_WORKERS,        // % of pop in [26yrs, 65yrs) that is working.
@@ -228,7 +228,5 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Variable to store Belief used for creating people
         boost::property_tree::ptree m_belief;
 };
-
-static stride::util::RNManager generator;
 
 } // namespace geogen

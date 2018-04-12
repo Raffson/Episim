@@ -150,27 +150,32 @@ geogen::City& PopulationGenerator::GetRandomCity(const vector<unsigned int>& ids
 
 stride::ContactPool* PopulationGenerator::GetRandomCommunityContactPool(const geogen::CommunityType& type,
                                                                         geogen::City &city,
-                                                                        map<geogen::CommunityType, vector<stride::ContactPool*>>& allpools,
+                                                                        map<geogen::CommunityType, vector<geogen::Community*>>& comms,
                                                                         const bool commuting)
 {
         //once this function is complete, i believe everything is done...
         //not quite... there's still the issue with commuters, plus GeoGrid needs adjustments
-        vector<stride::ContactPool*>& pools = allpools[type];
+
+        if( comms[type].empty() ) return nullptr;
+
+        trng::uniform_int_dist distr(0, comms[type].size());
+        unsigned int index = (unsigned int) geogen::generator.GetGenerator(distr)();
+        vector<stride::ContactPool>& pools = comms[type][index]->GetContactPools();
         if( type == geogen::CommunityType::College and commuting )
         {
-                //commuting student, now what?
+                //TODO: commuting student, now what?
                 // well the pools will need te be adjusted...
         }
-        if( type == geogen::CommunityType::Work and commuting )
+        else if( type == geogen::CommunityType::Work and commuting )
         {
-                //commuting worker, now what?
+                //TODO: commuting worker, now what?
                 // well the pools will need te be adjusted...
         }
         if( !pools.empty() )
         {
-            trng::uniform_int_dist distr(0, pools.size());
-            unsigned int index = (unsigned int) geogen::generator.GetGenerator(distr)();
-            return pools[index];
+            trng::uniform_int_dist pdistr(0, pools.size());
+            unsigned int index = (unsigned int) geogen::generator.GetGenerator(pdistr)();
+            return &pools[index];
         }
         else return nullptr;
 }
@@ -195,7 +200,7 @@ const bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_geogrid.Get
 
 void PopulationGenerator::GeneratePerson(const double& age, const unsigned int hid,
                                          const unsigned int pcid, stride::Population& pop, geogen::City& city,
-                                         map<geogen::CommunityType, vector<stride::ContactPool*>>& pools)
+                                         map<geogen::CommunityType, vector<geogen::Community*>>& comms)
 {
         //need the following:
         // unsigned int id, double age, unsigned int household_id, unsigned int school_id,
@@ -207,20 +212,20 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
         geogen::Fractions category = GetCategory(age);
         stride::ContactPool* school = nullptr;
         stride::ContactPool* workplace = nullptr;
-        stride::ContactPool* seccomm = GetRandomCommunityContactPool(geogen::CommunityType::Secondary, city, pools);
+        stride::ContactPool* seccomm = GetRandomCommunityContactPool(geogen::CommunityType::Secondary, city, comms);
         if( category == geogen::Fractions::SCHOOLED ) { // [3, 18)
-            school = GetRandomCommunityContactPool(geogen::CommunityType::School, city, pools);
+            school = GetRandomCommunityContactPool(geogen::CommunityType::School, city, comms);
         }
         else if( category == geogen::Fractions::YOUNG_WORKERS ) { // [18, 26)
             //first check if we have a student or not...
             if( IsStudent() )
-                school = GetRandomCommunityContactPool(geogen::CommunityType::College, city, pools, IsStudentCommuter());
+                school = GetRandomCommunityContactPool(geogen::CommunityType::College, city, comms, IsStudentCommuter());
             else if( IsActive() )
-                workplace = GetRandomCommunityContactPool(geogen::CommunityType::Work, city, pools, IsWorkingCommuter());
+                workplace = GetRandomCommunityContactPool(geogen::CommunityType::Work, city, comms, IsWorkingCommuter());
         }
         else if( category == geogen::Fractions::OLD_WORKERS ) { // [26, 65)
             if( IsActive() )
-                workplace = GetRandomCommunityContactPool(geogen::CommunityType::Work, city, pools, IsWorkingCommuter());
+                workplace = GetRandomCommunityContactPool(geogen::CommunityType::Work, city, comms, IsWorkingCommuter());
         }
         else if( category == geogen::Fractions::TODDLERS ) { // [0, 3)
             //nothing?
@@ -255,18 +260,22 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, geogen::City& cit
         auto& the_household = city.AddHousehold(); //Returns a reference to the new household...
         unsigned int hid = the_household.GetID();
 
-        map<geogen::CommunityType, vector<stride::ContactPool*>> pools;
-        for( auto& type : geogen::CommunityTypes )
-            GetNearbyContactPools(city, type, pools[type]);
+        map<geogen::CommunityType, vector<geogen::Community*>> comms;
+        for( auto& type : geogen::CommunityTypes ) {
+            if( type == geogen::CommunityType::College ) {
+                GetNearestCollege(city, comms[type]);
+            }else
+                GetNearbyCommunities(city, type, comms[type]);
+        }
 
-        stride::ContactPool* primcomm = GetRandomCommunityContactPool(geogen::CommunityType::Primary, city, pools);
+        stride::ContactPool* primcomm = GetRandomCommunityContactPool(geogen::CommunityType::Primary, city, comms);
         //Meaning you always get assigned to a community?
         unsigned int pcid = (primcomm) ? primcomm->GetID() : 0;
 
         for (unsigned int i = 0; i < size; i++)
         {
                 double age = GetRandomAge(size);
-                GeneratePerson(age, hid, pcid, pop, city, pools);
+                GeneratePerson(age, hid, pcid, pop, city, comms);
                 the_household.AddMember(&pop.back());
                 if( primcomm ) primcomm->AddMember(&pop.back());
         }
@@ -274,7 +283,8 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, geogen::City& cit
 
 void PopulationGenerator::GeneratePopulation()
 {
-
+        cout << "Starting population generation..." << endl;
+        const clock_t begin_time = clock();
         const unsigned int max_population = m_geogrid.GetTotalPop();
         long long int remaining_population = max_population; //long long to make sure the unsigned int fits...
 
@@ -285,6 +295,7 @@ void PopulationGenerator::GeneratePopulation()
         boost::copy(m_city_pop_fracs | boost::adaptors::map_keys, std::back_inserter(city_ids));
         boost::copy(m_city_pop_fracs | boost::adaptors::map_values, std::back_inserter(city_fracs));
 
+        unsigned int counter = 0;
         while (remaining_population > 0) {
                 geogen::City& city = GetRandomCity(city_ids, city_fracs);
                 auto household_size = GetRandomHouseholdSize();
@@ -296,9 +307,13 @@ void PopulationGenerator::GeneratePopulation()
                         household_size = remaining_population;
                 GenerateHousehold(household_size, city);
                 remaining_population -= household_size;
-                if( remaining_population % 10000 == 0 ) cout << "Mark 10000" << endl;
+                counter += household_size;
+                if( counter >= 100000 ) {
+                    cout << "Mark 100000, " << remaining_population << " remaining..." << endl;
+                    counter -= 100000;
+                }
         }
-        cout << "Done generating population" << endl;
+        cout << "Done generating population, time needed = " << double(clock() - begin_time) /  CLOCKS_PER_SEC << endl;
 }
 
 void PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin, unsigned int radius, unsigned int last,
@@ -314,33 +329,42 @@ void PopulationGenerator::GetCitiesWithinRadius(const geogen::City& origin, unsi
         }
 }
 
-void PopulationGenerator::GetNearbyContactPools(const geogen::City&   city,
-                                                const geogen::CommunityType& community_type,
-                                                vector<stride::ContactPool*>& result)
+void PopulationGenerator::GetNearbyCommunities(const geogen::City& city, const geogen::CommunityType& community_type,
+                                               vector<geogen::Community*>& result)
 {
         unsigned int search_radius = m_initial_search_radius;
         unsigned int last_radius   = 0;
-        // this while(true) loop creaps me the fuck out, thinking about a better solution...
-        // still need a better solution....
-        while (true) {
+        while (result.empty()) {
                 vector<geogen::City*> near_cities;
                 GetCitiesWithinRadius(city, search_radius, last_radius, near_cities);
-                for (auto& a_city : near_cities) {
-                        //TODO : If Primary/Secondary community is full, this must be left out...
-                        // do this in City::GetCommunitiesOfType and filter them out...
-                        for (auto& a_community : a_city->GetCommunitiesOfType(community_type)) {
-                                for (auto& pool : a_community->GetContactPools() )
-                                        result.emplace_back(&pool);
+                for (auto a_city : near_cities) {
+                        for (auto a_community : a_city->GetCommunitiesOfType(community_type)) {
+                                if( (community_type == geogen::CommunityType::Primary
+                                    or community_type == geogen::CommunityType::Secondary)
+                                    and a_community->GetSize() > m_geogrid.GetAvgSize(geogen::Sizes::COMMUNITIES) )
+                                        continue;
+                                result.emplace_back(a_community);
                         }
                 }
-
-                if (result.empty()) {
-                        last_radius = search_radius;
-                        search_radius *= 2;
-                } else {
-                        return;
-                }
+                last_radius = search_radius;
+                search_radius *= 2;
         }
+}
+
+void PopulationGenerator::GetNearestCollege(const geogen::City &origin, std::vector<geogen::Community *> &result)
+{
+    const vector<geogen::City*>& cities(m_geogrid.GetCitiesWithCollege());
+    double nearest = numeric_limits<double>::max();
+    unsigned int nindex = 0;
+    for (unsigned int i=0; i < cities.size(); i++) {
+        double distance = cities[i]->GetCoordinates().GetDistance(origin.GetCoordinates());
+        if (distance < nearest) {
+            nearest = distance;
+            nindex = i;
+        }
+    }
+    for( auto college : cities[nindex]->GetCommunitiesOfType(geogen::CommunityType::College) )
+        result.emplace_back(college);
 }
 
 // Quick refractor, will need to adjust the return type to vector<Person*>

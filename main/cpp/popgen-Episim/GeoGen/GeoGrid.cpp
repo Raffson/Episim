@@ -177,13 +177,14 @@ void GeoGrid::GenerateSchools()
         vector<double> p_vec;
         vector<City*> c_vec;
         for (auto& it : m_cities) {
-                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED]);
+                double c_schooled_pop = it.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED];
                 c_vec.emplace_back(&it.second);
                 p_vec.emplace_back(c_schooled_pop);
         }
+
         // Note that this way cuz of rounding we lose a couple of schooled ppl.
         // But this shouldn't affect our city divison.
-        auto rndm_vec = generate_random(p_vec, generator, amount_of_schools);
+        auto rndm_vec = generate_random(p_vec, amount_of_schools);
         // assign schools to cities according to our normal distribution
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
@@ -240,7 +241,7 @@ void GeoGrid::GenerateColleges()
 
         // generate colleges to the respective cities...
         for (auto& it : m_cities_with_college) {
-                //TODO why is this multiplied with WORKERS 1?
+                //TODO why is this multiplied with YOUNG_WORKERS? -> beacuse only YOUNG_WORKERS can be students...
                 double students = it->GetPopulation() * m_fract_map[Fractions::YOUNG_WORKERS] * m_fract_map[Fractions::STUDENTS];
                 // doesn't matter if students is a double at this time
                 // since this is only an estimate for the number of colleges
@@ -268,21 +269,23 @@ void GeoGrid::GenerateWorkplaces(){
     for(auto& it: m_cities){
 
         // This also calculates people living and working in the same city
-        auto work_pop = (unsigned int) round(it.second.GetTotalInCommutersCount() * m_fract_map[Fractions::COMMUTING_WORKERS]);
+        auto work_pop = it.second.GetPopulation() + it.second.GetTotalInCommutersCount()
+                            - it.second.GetTotalOutCommutersCount();
         // Inserting the amount of id's of the city equal to the pop working in the city
         c_vec.emplace_back(&it.second);
         lottery_vec.emplace_back(work_pop);
     }
 
     // Now we calculate how many workplaces we have to create.
-    double working_commuters = m_fract_map[Fractions::COMMUTING_WORKERS] * m_total_pop;
-    auto   number_of_workplaces = (unsigned int)round(working_commuters / m_sizes_map[Sizes::WORKPLACES]);
+    double allworkers = (m_fract_map[Fractions::OLD_WORKERS]
+                         + m_fract_map[Fractions::YOUNG_WORKERS] * (1 - m_fract_map[Fractions::STUDENTS]))
+                         * m_total_pop * m_fract_map[Fractions::ACTIVE];
+    auto   number_of_workplaces = (unsigned int)round(allworkers / m_sizes_map[Sizes::WORKPLACES]);
 
-    auto rndm_vec = generate_random(lottery_vec, generator, number_of_workplaces);
+    auto rndm_vec = generate_random(lottery_vec, number_of_workplaces);
 
     //Now we will place each workplace randomly in our city, making use of our lottery vec.
     for(unsigned int i = 0;  i < number_of_workplaces; i++){
-
         City&      chosen_city = *c_vec[rndm_vec[i]];
         Community& nw_workplace = chosen_city.AddCommunity(CommunityType::Work);
 
@@ -291,6 +294,25 @@ void GeoGrid::GenerateWorkplaces(){
     }
 
 }
+
+    /*    for(auto& it: m_cities){
+
+        // This also calculates people living and working in the same city
+        auto work_pop = it.second.GetPopulation() + it.second.GetTotalInCommutersCount()
+                          - it.second.GetTotalOutCommutersCount();
+        // Inserting the amount of id's of the city equal to the pop working in the city
+        c_vec.emplace_back(&it.second);
+        lottery_vec.emplace_back(work_pop);
+    }
+
+    // Now we calculate how many workplaces we have to create.
+    double allworkers = (m_fract_map[Fractions::OLD_WORKERS]
+                      + m_fract_map[Fractions::YOUNG_WORKERS] * (1 - m_fract_map[Fractions::STUDENTS]))
+                      * m_total_pop * m_fract_map[Fractions::ACTIVE];
+    cout << (unsigned int)allworkers << endl;
+    cout << m_total_pop << endl;
+    auto   number_of_workplaces = (unsigned int)round(allworkers / m_sizes_map[Sizes::WORKPLACES]);
+    cout << number_of_workplaces << endl;*/
 
 /* Wrong code -> Depricated
 void GeoGrid::GenerateWorkplaces()
@@ -324,25 +346,32 @@ void GeoGrid::GenerateCommunities()
         auto total_communities = (unsigned int)ceil(m_total_pop / m_sizes_map[Sizes::COMMUNITIES]);
 
         vector<double> p_vec;
-        vector<City*>c_vec;
+        vector<City*> c_vec;
         for (auto& it : m_cities) {
-                auto c_schooled_pop = (unsigned int)round(it.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED]);
+                double c_pop = it.second.GetPopulation();
                 c_vec.emplace_back(&it.second);
-                p_vec.emplace_back(c_schooled_pop);
+                p_vec.emplace_back(c_pop);
         }
 
         // Note that this way cuz of rounding we lose a couple of schooled ppl.
         // But this shouldn't affect our city divison.
-        auto rndm_vec = generate_random(p_vec, generator, total_communities);
+        auto rndm_vec = generate_random(p_vec, total_communities);
 
         for (unsigned int i = 0; i < total_communities; i++) {
-                m_school_count++;
                 City&      chosen_city = *c_vec[rndm_vec[i]];
                 Community& nw_pcommunity = chosen_city.AddCommunity(CommunityType::Primary);
+
+                //Some very werid shit happens here when combining the Community::AddContactPool calls in 1 for-loop,
+                // splitting them up seems to fix the problem but I still have no clue why...
+                // what I do know is that the emplace_back call in Community::AddContactPool seems to be the culprit
+
+                // Add contactpools for primary community...
+                for( auto j = 0; j < cps; j++ ) {
+                    nw_pcommunity.AddContactPool(stride::ContactPoolType::Id::PrimaryCommunity);
+                }
                 Community& nw_scommunity = chosen_city.AddCommunity(CommunityType::Secondary);
-                // Add contactpools
+                // Add contactpools for secondary community...
                 for (auto j = 0; j < cps; j++) {
-                        nw_pcommunity.AddContactPool(stride::ContactPoolType::Id::PrimaryCommunity);
                         nw_scommunity.AddContactPool(stride::ContactPoolType::Id::SecondaryCommunity);
                 }
         }

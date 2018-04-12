@@ -35,7 +35,9 @@ double convert_to_radians(double degrees);
 ///                                [0 and p_vec.size() - 1 ]
 /// @example a vec with numbers [1,4,8,2] as relative probabillities, and amount = 3. Will generate
 ///          3 numbers out of the interval [0,3] with chance on p(0) = 1/15, p(1) = 4/15, p(2) = 8/15, p(3) = 2/15
-vector<unsigned int> generate_random(const vector<double>& p_vec, stride::util::RNManager& rndm, unsigned int amount = 1);
+vector<unsigned int> generate_random(const vector<double>& p_vec, unsigned int amount = 1);
+
+static stride::util::RNManager generator;
 
 namespace constants {
 

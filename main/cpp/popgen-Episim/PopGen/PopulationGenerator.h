@@ -17,6 +17,7 @@
 #include <cmath>
 #include <iterator>
 #include <vector>
+#include <ctime>
 
 namespace popgen {
 
@@ -40,7 +41,7 @@ public:
 private:
         void GeneratePerson(const double& age, const unsigned int hid,
                             const unsigned int pcid, stride::Population& pop, geogen::City& city,
-                            map<geogen::CommunityType, vector<stride::ContactPool*>>& pools);
+                            map<geogen::CommunityType, vector<geogen::Community*>>& comms);
 
         void AssignToSchools();
         void AssignToColleges();
@@ -48,9 +49,11 @@ private:
         void AssignToCommunity();
         void AssignAll();
 
-        void                              GetNearbyContactPools(const geogen::City& city,
-                                                                const geogen::CommunityType& community_type,
-                                                                std::vector<stride::ContactPool*>& result);
+        void                              GetNearbyCommunities(const geogen::City& city,
+                                                               const geogen::CommunityType& community_type,
+                                                               std::vector<geogen::Community*>& result);
+        void                              GetNearestCollege(const geogen::City& origin,
+                                                            std::vector<geogen::Community*>& result);
         std::vector<stride::Person*>      GetSchoolAttendants(geogen::City& city);
         void                              GenerateHousehold(unsigned int size, geogen::City& city);
         std::vector<stride::ContactPool*> GetContactPoolsOfColleges();
@@ -63,7 +66,7 @@ private:
                                                         const std::vector<double>& fracs);
         stride::ContactPool*              GetRandomCommunityContactPool(const geogen::CommunityType& type,
                                                                         geogen::City& city,
-                                                                        map<geogen::CommunityType, vector<stride::ContactPool*>>& allpools,
+                                                                        map<geogen::CommunityType, vector<geogen::Community*>>& comms,
                                                                         const bool commuting = false);
         const bool                        IsWorkingCommuter();
         const bool                        IsStudentCommuter();
