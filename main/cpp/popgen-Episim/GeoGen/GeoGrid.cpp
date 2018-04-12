@@ -295,25 +295,6 @@ void GeoGrid::GenerateWorkplaces(){
 
 }
 
-    /*    for(auto& it: m_cities){
-
-        // This also calculates people living and working in the same city
-        auto work_pop = it.second.GetPopulation() + it.second.GetTotalInCommutersCount()
-                          - it.second.GetTotalOutCommutersCount();
-        // Inserting the amount of id's of the city equal to the pop working in the city
-        c_vec.emplace_back(&it.second);
-        lottery_vec.emplace_back(work_pop);
-    }
-
-    // Now we calculate how many workplaces we have to create.
-    double allworkers = (m_fract_map[Fractions::OLD_WORKERS]
-                      + m_fract_map[Fractions::YOUNG_WORKERS] * (1 - m_fract_map[Fractions::STUDENTS]))
-                      * m_total_pop * m_fract_map[Fractions::ACTIVE];
-    cout << (unsigned int)allworkers << endl;
-    cout << m_total_pop << endl;
-    auto   number_of_workplaces = (unsigned int)round(allworkers / m_sizes_map[Sizes::WORKPLACES]);
-    cout << number_of_workplaces << endl;*/
-
 /* Wrong code -> Depricated
 void GeoGrid::GenerateWorkplaces()
 {
