@@ -101,11 +101,14 @@ TEST_P(SchoolTest, HighMoreLowLess)
         auto mp = grid.GetCities();
 
         //Raphael@everyone, is it just me, or are we counting communities instead of population?
+        // Robbe@raphael, the test checks if city with the lowest population has less communities
+        // then the city with the highes population. There shouldn't be an extreme case where
+        // this is not the case
         City*        highest_pop_c = &mp.begin()->second;
-        unsigned int highest_pop   = highest_pop_c->GetAllCommunities().size();
+        unsigned long highest_pop   = highest_pop_c->GetAllCommunities().size();
 
         City*        lowest_pop_c = &mp.begin()->second;
-        unsigned int lowest_pop   = lowest_pop_c->GetAllCommunities().size();
+        unsigned long lowest_pop   = lowest_pop_c->GetAllCommunities().size();
 
         for (auto& it : mp) {
                 City*        t_city = &it.second;
@@ -123,6 +126,7 @@ TEST_P(SchoolTest, HighMoreLowLess)
         }
 
         //Redo whatever it is that your doing here... meanwhile I'll simply compare sizes...
+        // Checks if the lowest pop has less communities then the highest pop
         EXPECT_LE(lowest_pop_c->GetAllCommunities().size(), highest_pop_c->GetAllCommunities().size());
 }
 
