@@ -261,6 +261,7 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, geogen::City& cit
         unsigned int hid = the_household.GetID();
 
         map<geogen::CommunityType, vector<geogen::Community*>> comms;
+        //Getting the nearby communities/colleges is what slows us down so much...
         for( auto& type : geogen::CommunityTypes ) {
             if( type == geogen::CommunityType::College ) {
                 GetNearestCollege(city, comms[type]);

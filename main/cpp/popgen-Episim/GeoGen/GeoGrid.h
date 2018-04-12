@@ -174,6 +174,9 @@ public:
         /// @retval <boost::property_tree::ptree> Returns the property tree for Belief
         const boost::property_tree::ptree& GetBelief() const { return m_belief; }
 
+        /// Splits up the X% cities that have less then Y% of the total population.
+        void DefragmentSmallestCities(double X, double Y);
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)

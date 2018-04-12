@@ -141,6 +141,10 @@ MenuBar {
             pop_info.text = total_count
         }
 
+        function showCommuting(map){
+
+        }
+
     }
 
 }
