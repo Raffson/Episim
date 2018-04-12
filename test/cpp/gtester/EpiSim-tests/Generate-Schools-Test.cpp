@@ -124,9 +124,7 @@ TEST_P(SchoolTest, HighMoreLowLess)
                         lowest_pop_c = t_city;
                 }
         }
-
-        //Redo whatever it is that your doing here... meanwhile I'll simply compare sizes...
-        // Checks if the lowest pop has less communities then the highest pop
+        
         EXPECT_LE(lowest_pop_c->GetAllCommunities().size(), highest_pop_c->GetAllCommunities().size());
 }
 
