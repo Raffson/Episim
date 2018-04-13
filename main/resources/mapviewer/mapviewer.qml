@@ -102,7 +102,6 @@ ApplicationWindow {
 
      Drawer {
         id: drawer
-
         y: overlayHeader.height
         width: appWindow.width / 5
         height: appWindow.height - overlayHeader.height
@@ -133,7 +132,11 @@ ApplicationWindow {
             ToolBar {
                 ColumnLayout {
                     anchors.fill: parent
-
+                    Label{
+                        text: "Population: " + Number(pop_info)
+                        font.pixelSize: 22
+                        font.italic: true
+                    }
                     ToolButton {
                         text: qsTr("update population")
                         onClicked: updateSelected()
@@ -147,7 +150,6 @@ ApplicationWindow {
     }
 
     function updateSelected(){
-        pop_info = Qt.createQmlObject(' import QtQuick 2.7; Text {}', map)
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
         var total_count = 0
         for (var i = 0; i < map.children.length; i++)
@@ -163,7 +165,7 @@ ApplicationWindow {
             }
         }
 
-        pop_info.text = total_count
+        pop_info = total_count
     }
 
     //defaults
