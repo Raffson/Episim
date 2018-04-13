@@ -372,55 +372,8 @@ void PopulationGenerator::GetNearestCollege(const geogen::City &origin, std::vec
         result.emplace_back(college);
 }
 
-// Quick refractor, will need to adjust the return type to vector<Person*>
-// while using stride's Person class instead of the current struct...
-vector<stride::Person*> PopulationGenerator::GetSchoolAttendants(geogen::City& city) //deprecated...
-{
-
-        vector<stride::Person*> school_attendants;
-        /*
-        for (auto& a_household : city->GetHouseholds()) {
-                vector<shared_ptr<stride::Person>> current_school_attendants;
-                a_household->GetSchoolAttendants(current_school_attendants); //GetSchoolAttendants may be a bad name, creating confusion...
-                //we could also leave the next loop if we'd simply append schoolkids to 'school_attendants'
-                // instead of working with 'current_school_attendants'
-                for (auto a_school_attendant : current_school_attendants) {
-                        school_attendants.push_back(a_school_attendant);
-                }
-        }
-        */
-        return school_attendants;
-}
-
-void PopulationGenerator::AssignToSchools() //deprecated...
-{
-    /*
-        // Collecting all the school attendants from the city
-        for (auto& a_city : m_geogrid.GetCities()) {
-                vector<shared_ptr<stride::Person>> school_attendants = GetSchoolAttendants(a_city.second);
-
-                // Search schools within 10km radius otherwise double the radius untill we find schools
-                auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::School);
-                //change name to 'GetNearbyContactPoolsOfType' ???
-
-                // Select a school randomly for every school attendants
-                for (auto& a_school_attendant : school_attendants) {
-                        // choose random households to be assigned to the city <- wait what?
-                        // how about we finish up this function?
-                        trng::uniform_int_dist distr(0, contact_pools.size());
-                        auto           index = (unsigned int) geogen::generator.GetGenerator(distr)();
-                        // TODO use stride::Person class
-                        // contact_pools.at(index)->AddMember(a_school_attendant);
-
-                        // this cout actually suppresses the warnings as well...
-                        //cout << a_school_attendant.age << " has been added to contact_pool " << index << endl;
-                }
-        }
-    */
-}
-
-//not sure if we need this...
-vector<stride::ContactPool*> PopulationGenerator::GetContactPoolsOfColleges()
+//not sure if we need this, leaving it in comments for now...
+/*vector<stride::ContactPool*> PopulationGenerator::GetContactPoolsOfColleges()
 {
         vector<stride::ContactPool*> result;
         for (auto& a_city : m_geogrid.GetCitiesWithCollege()) {
@@ -430,54 +383,7 @@ vector<stride::ContactPool*> PopulationGenerator::GetContactPoolsOfColleges()
                 }
         }
         return result;
-}
-
-void PopulationGenerator::AssignToColleges() //deprecated...
-{
-    /*
-        auto contact_pools = GetContactPoolsOfColleges();
-
-        vector<shared_ptr<stride::Person>> students;
-        for (auto& a_city : m_geogrid.GetCities()) {
-                for (auto& hh : a_city.second->GetHouseholds()) {
-                        hh->GetCollegeStudents(students);
-                }
-        }
-
-        for (auto& a_student : students) { //Gotta integrate commuting decently... I think everything must happen in the first for-loop, assigning on the fly...
-                // it is chosen randomly right now
-                // must look at other factors like possiblity to commute
-                // rate of studying from home and so
-                trng::uniform_int_dist distr(0, contact_pools.size());
-                unsigned int           index = (unsigned int)geogen::generator.GetGenerator(distr)();
-                cout << a_student.age << " is added to contact pool " << index << endl;
-        }
-    */
-}
-
-// This function may be forgetting about students, however irl we also have working students...
-// though they would be working part-time, we should ask ourselves (or the professor) how this needs to be handled...
-// Nishchal@everyone If I am not mistaken it was said during one of the classes that we don't have to take part-time
-// students into account
-// Raphael@Nishchal, roger that! but still, at this point I believe we're mixing students and workers,
-// i.e. if I understood the code correctly... I believe Household::GetPossibleWorkers needs to check work-id != 1
-vector<stride::Person*> PopulationGenerator::GetActives(geogen::City& city) //deprecated
-{
-
-        vector<stride::Person*> actives;
-/*
-        for (auto& a_household : city->GetHouseholds()) {
-                vector<shared_ptr<stride::Person>> possible_workers;
-                a_household->GetPossibleWorkers(possible_workers);
-                for (auto& a_possible_worker : possible_workers) {
-                        if (this->IsActive()) {
-                                actives.push_back(a_possible_worker);
-                        }
-                }
-        }
-*/
-        return actives;
-}
+}*/
 
 //this we still need... although it may need be reworked slightly...
 geogen::City& PopulationGenerator::GetRandomCommutingCity(geogen::City& origin,
@@ -490,92 +396,5 @@ geogen::City& PopulationGenerator::GetRandomCommutingCity(geogen::City& origin,
         return m_geogrid.GetCities().at(id);
 }
 
-void PopulationGenerator::AssignToWorkplaces() //deprecated...
-{
-    /*
-        vector<int> city_ids; // using boost::copy to copy all keys from cities into this vector...
-        boost::copy(m_geogrid.GetCities() | boost::adaptors::map_keys, std::back_inserter(city_ids));
-        for (auto& a_city : m_geogrid.GetCities()) {
-                for (auto an_active : GetActives(a_city.second)) {
-                        vector<shared_ptr<stride::ContactPool>> contact_pools;
-                        if (!IsWorkingCommuter()) {
-                                contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::Work);
-
-                        }
-
-                        // Commuting workers
-                        else {
-                                // Raphael@Nishchal, so GetRandomCommutingCity is being called for every active worker,
-                                // meaning that the distributions for all active workers from a particular city should
-                                // be the same... therefore I believe we should initialize this in the constructor using
-                                // a map<cityID, outCommutingDistributionOfCityWith-cityID> if my reasoning is
-                                // incorrect, we will revert, however I'm pretty sure we're doing too much work now...
-                                // i.e. less time-complexity, but more space-complexity
-
-                                // Nishchal@Raphael I agree with you. We can save time doing this (with some space-
-                                //complexity) -> Raphael@Nishchal, copy that! we'll leave it like this unless we
-                                // run into trouble (which I strongly doubt)
-
-                                //Nishchal@everyone I wonder, can't we do the same for distances between cities also.
-                                //Atm we are repeating calculation of distances between cities more than once
-                                //Raphael@Nishchal, affirmative! however this refractor will require a little bit more
-                                // work which I'd rather postpone atm, we should focus on verifying the correctness
-                                // of all our code right now, indicating all possible issues so we can discuss them...
-                                // second thought, this would require quite some space...
-                                auto workplace_city = GetRandomCommutingCity(*(a_city.second), city_ids);
-                                auto workplaces     = workplace_city->GetCommunitiesOfType(geogen::CommunityType::Work);
-
-                                // Adding possible contactpools to be randomly chosen
-                                for (auto& a_workplace : workplaces) {
-                                        auto current_cp = a_workplace->GetContactPools();
-                                        contact_pools.insert(contact_pools.end(), current_cp.begin(), current_cp.end());
-                                }
-                                cout << "commuting....";
-                        }
-
-                        trng::uniform_int_dist distr(0, contact_pools.size());
-                        auto                   index = (unsigned int) geogen::generator.GetGenerator(distr)();
-                        cout << an_active.age << " is added to workplace " << index << endl;
-                }
-        }
-     */
-}
-
-void PopulationGenerator::AssignToCommunity() //deprecated...
-{
-    /*
-        for (auto& a_city : m_geogrid.GetCities()) {
-                auto contact_pools = GetNearbyContactPools(*(a_city.second), geogen::CommunityType::Primary);
-                for (auto& a_household : a_city.second->GetHouseholds()) {
-                        for (auto& a_person : a_household->GetMembers()) {
-                                // assign the person to a random contactPool
-                                trng::uniform_int_dist distr(0, contact_pools.size());
-                                auto           index = (unsigned int) geogen::generator.GetGenerator(distr)();
-
-                                // TODO the member has to be a stride::Person to be added to stride::ContactPool
-
-                                // nearest_contact_pools.at(index)->AddMember(a_person);
-                                // cout <<"A person of age "<< a_person.age << " is added to contact pool at index " <<
-                                // index <<endl;
-
-                                // TODO check the community for that contactpool
-                                // TODO if the limit is crossed remove from the list of the possible
-                                // communities(contactpools)
-                                //}
-                                cout << a_person.age << " is added to contact pool at index " << index << endl;
-                        }
-                }
-        }
-    */
-}
-
-void PopulationGenerator::AssignAll() //deprecated...
-{
-        // TODO Must test/make sure that households are assigned before others
-        AssignToSchools();
-        AssignToColleges();
-        AssignToWorkplaces();
-        AssignToCommunity();
-}
 
 } // namespace popgen
