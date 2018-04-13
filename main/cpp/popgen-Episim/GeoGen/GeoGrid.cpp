@@ -48,6 +48,31 @@ void GeoGrid::GetAgeFractions(vector<double>& popfracs)
     popfracs.emplace_back(m_fract_map[Fractions::OLDIES]);
 }
 
+void GeoGrid::ClassifyNeighbours()
+{
+    for( auto& cityA : m_cities )
+    {
+        for( auto& cityB : m_cities )
+        {
+            //truncating distance on purpose to avoid using floor-function
+            unsigned int distance = cityB.second.GetCoordinates().GetDistance(cityA.second.GetCoordinates());
+            //mind that the categories go as follows [0, initial_radius), [initial_radius, 2*initial_radius), etc.
+            unsigned int category = m_initial_search_radius;
+            //i believe the following code is more efficient than the alternative code below...
+            while( (distance / category) > 0 )
+                category <<= 1; //equivalent to multiplying by 2
+/*
+            unsigned int category =  pow(2, ceil(log2(floor(distance / initrad)+1)))*initrad;
+            cout << "Distance: " << distance << endl;
+            cout << "(Distance / Initrad)+1: " << ((distance / initrad)+1) << endl;
+            cout << "pow(2, ceil(Log2((Distance / Initrad)+1))): " << pow(2, ceil(log2(floor(distance / initrad)+1))) << endl;
+            cout << "Category: " << category << endl;
+*/
+            m_neighbours_in_radius[cityA.first][category].emplace_back(&cityB.second);
+        }
+    }
+}
+
 GeoGrid::GeoGrid()
 {
         m_fract_map[Fractions::SCHOOLED] = 0;
@@ -87,6 +112,9 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         m_belief              = p_tree.get_child("popgen.belief_policy");
 
         parser::ParseCities(base_path + city_file, base_path + commuting_file, m_cities, true);
+
+        m_initial_search_radius = p_tree.get("popgen.neighbour_classification.initial_search_radius", 10);
+        ClassifyNeighbours();
 
         // Raphael@everyone, until the refractor occurs, I can't delete/rename this..
         // however i want to start making my functions with the correct signatures for after the refractor,
@@ -260,22 +288,25 @@ void GeoGrid::GenerateWorkplaces(){
     //of people working IN the city (not the active working pop in the city).
     //We have to account for the commuters in he city.
 
+    double possible_workers_frac = (m_fract_map[Fractions::OLD_WORKERS]
+                                    + m_fract_map[Fractions::YOUNG_WORKERS] * (1 - m_fract_map[Fractions::STUDENTS]));
+
+    double active_workers_frac = possible_workers_frac * m_fract_map[Fractions::ACTIVE];
+
     vector<double> lottery_vec; // vector of relative probabillitys
     vector<City*> c_vec;// we will use this to vec to map the city to a set of sequential numbers 0...n
     for(auto& it: m_cities){
 
-        // This also calculates people living and working in the same city
-        auto work_pop = it.second.GetPopulation() + it.second.GetTotalInCommutersCount()
-                            - it.second.GetTotalOutCommutersCount();
+        // This also calculates total population that works in this city
+        auto work_pop = ( it.second.GetPopulation() + it.second.GetTotalInCommutersCount()
+                            - it.second.GetTotalOutCommutersCount() ) * active_workers_frac;
         // Inserting the amount of id's of the city equal to the pop working in the city
         c_vec.emplace_back(&it.second);
         lottery_vec.emplace_back(work_pop);
     }
 
     // Now we calculate how many workplaces we have to create.
-    double allworkers = (m_fract_map[Fractions::OLD_WORKERS]
-                         + m_fract_map[Fractions::YOUNG_WORKERS] * (1 - m_fract_map[Fractions::STUDENTS]))
-                         * m_total_pop * m_fract_map[Fractions::ACTIVE];
+    double allworkers = active_workers_frac * m_total_pop;
     auto   number_of_workplaces = (unsigned int)round(allworkers / m_sizes_map[Sizes::WORKPLACES]);
 
     auto rndm_vec = generate_random(lottery_vec, number_of_workplaces);
@@ -462,6 +493,21 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double> 
 
     }
     //cout << m_cities.size() << endl;
+}
+
+const vector<City*>& GeoGrid::GetCitiesWithinRadius(const City& origin, unsigned int radius)
+{
+    if ( !m_neighbours_in_radius[origin.GetId()].count(radius) )
+    {
+        unsigned int next_smaller = m_initial_search_radius;
+        while( (radius / next_smaller) > 1 )
+            next_smaller <<= 1; //equivalent to multiplying by 2.
+        unsigned int next_bigger = next_smaller << 1;
+        if( (next_bigger - radius) >= (radius - next_smaller) ) radius = next_smaller;
+        else radius = next_bigger;
+    }
+    return m_neighbours_in_radius[origin.GetId()][radius];
+
 }
 
 } // namespace geogen

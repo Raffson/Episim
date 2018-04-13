@@ -89,12 +89,16 @@ vector<Community*> City::GetSecondaryCommunities()
 
 // this is  much better, taking away the need for all the above functions,
 // except the functions above make life easier sometimes, so leaving them for now...
-vector<Community*> City::GetCommunitiesOfType(CommunityType ct)
+vector<Community*> City::GetCommunitiesOfType(CommunityType ct, unsigned int poolsize, const bool filter)
 {
         vector<Community*> communities;
         for (auto& it : m_communities) {
-                if (it.GetCommunityType() == ct)
-                        communities.emplace_back(&it);
+                if (it.GetCommunityType() == ct) {
+                    if (filter and (ct == CommunityType::Primary or ct == CommunityType::Secondary)) {
+                        if (it.GetSize() < poolsize) communities.emplace_back(&it);
+                    }
+                    else communities.emplace_back(&it);
+                }
         }
         return communities;
 }

@@ -25,23 +25,14 @@ namespace popgen {
 class PopulationGenerator
 {
 public:
-        explicit PopulationGenerator(geogen::GeoGrid&, unsigned int rad = 10);
+        explicit PopulationGenerator(geogen::GeoGrid&);
 
-        ///
+        /// Generates a random population according to fractions found in m_geogrid.
         void GeneratePopulation();
-
-        /*
-         * @Returns the id of cities which lie in the radius of
-         * @param radius km from
-         * @param origin
-         */
-        void GetCitiesWithinRadius(const geogen::City& origin, unsigned int radius, unsigned int last,
-                                   vector<geogen::City*>& result);
 
 private:
         void GeneratePerson(const double& age, const unsigned int hid,
-                            const unsigned int pcid, stride::Population& pop, geogen::City& city,
-                            map<geogen::CommunityType, vector<geogen::Community*>>& comms);
+                            const unsigned int pcid, stride::Population& pop, geogen::City& city);
 
         void AssignToSchools();
         void AssignToColleges();
@@ -49,7 +40,7 @@ private:
         void AssignToCommunity();
         void AssignAll();
 
-        void                              GetNearbyCommunities(const geogen::City& city,
+        void                              GetCommunitiesOfRandomNearbyCity(const geogen::City& city,
                                                                const geogen::CommunityType& community_type,
                                                                std::vector<geogen::Community*>& result);
         void                              GetNearestCollege(const geogen::City& origin,
@@ -65,8 +56,7 @@ private:
         geogen::City&                     GetRandomCity(const std::vector<unsigned int>& ids,
                                                         const std::vector<double>& fracs);
         stride::ContactPool*              GetRandomCommunityContactPool(const geogen::CommunityType& type,
-                                                                        geogen::City& city,
-                                                                        map<geogen::CommunityType, vector<geogen::Community*>>& comms,
+                                                                        vector<geogen::Community*>& comms,
                                                                         const bool commuting = false);
         const bool                        IsWorkingCommuter();
         const bool                        IsStudentCommuter();
@@ -82,8 +72,6 @@ private:
         static unsigned int m_id_generator;
 
         geogen::GeoGrid& m_geogrid;
-
-        const unsigned int m_initial_search_radius;
 
         /// This member will represent the chances for households with 1, 2, 3, 4,... members
         /// The first element is the chance a household has 1 member,

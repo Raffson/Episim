@@ -63,7 +63,8 @@ public:
 
         vector<Community*> GetSecondaryCommunities();
 
-        vector<Community*> GetCommunitiesOfType(CommunityType ct);
+        vector<Community*> GetCommunitiesOfType(CommunityType ct, unsigned int poolsize = 2000,
+                                                const bool filter = false);
 
         /// Adds community to the city.
         Community& AddCommunity(CommunityType community_type);

@@ -256,6 +256,25 @@ public:
         /// @param X: a %.
         void DefragmentSmallestCities(double X, double Y, const vector<double> &p_vec);
 
+        //don't this we need this next getter, just use GetCitiesWithinRadius...
+        /// Getter
+        /// @retval <map<unsigned int, map<unsigned int, vector<City*>>>> Returns a const reference to the
+        /// map m_neighbours_in_radius which classifies all cities within a certain radius for each city.
+        //const map<unsigned int, map<unsigned int, vector<City*>>>& GetNeighbourMap() { return m_neighbours_in_radius; }
+
+        /// Getter
+        /// @retval <unsigned int> Returns the initial search radius.
+        unsigned int GetInitialSearchRadius() { return m_initial_search_radius; }
+
+        /// Getter
+        /// @retval <const vector<City*>&> const reference to a vector of pointers to cities within the given radius.
+        /// @param origin A constant reference to the city for which we want to get other cities in the given radius.
+        /// @param radius Radius around the origin in km. If the radius is not valid, the closest valid radius will
+        /// be chosen. Valid values are 2^x * (initial search radius) where x is a positive integer. If the radius
+        /// exceeds the maximum range between cities, the largest possible radius is chosen.
+        const vector<City*>& GetCitiesWithinRadius(const City& origin, unsigned int radius);
+
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
@@ -272,6 +291,9 @@ private:
         /// Assigns the main fractions: schooled, worker1, worker2 & rest
         void GetMainFractions(const vector<vector<double>>& hhs);
 
+        /// Computes for each city the distances to all other cities and classifies them
+        /// in exponential order, assigning this to m_neighbours_in_radius. The default initial search radius = 10km.
+        void ClassifyNeighbours();
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
 
@@ -286,6 +308,12 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         /// Contains all cities for the GeoGrid
         map<unsigned int, City> m_cities{};
+
+        /// Contains cityIDs that are mapped to a map which holds a vector with pointers to cities
+        /// for each of the radius distance-categories (10km, 20km, 40km, ...) in relation to the city with ID
+        map<unsigned int, map<unsigned int, vector<City*>>> m_neighbours_in_radius;
+
+        unsigned int m_initial_search_radius;
 
         /// Keep a map of all communities?
         /// -> will put everything in place in comments,
