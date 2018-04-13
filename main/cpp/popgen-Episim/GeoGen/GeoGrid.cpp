@@ -177,11 +177,12 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
 
 void GeoGrid::GenerateAll()
 {
-        GenerateSchools();
         GenerateColleges();
         GenerateWorkplaces();
+        GenerateSchools();
+        //Changed the order so I can call GetAllCommunites which is faster than calling GetColleges when looking
+        // for colleges during GenerateWorkplaces, because only colleges should be present at that time...
         GenerateCommunities();
-
 }
 
 void GeoGrid::GenerateSchools()
@@ -309,17 +310,24 @@ void GeoGrid::GenerateWorkplaces(){
 
     double active_workers_frac = possible_workers_frac * m_fract_map[Fractions::ACTIVE];
 
+
+
     vector<double> lottery_vec; // vector of relative probabillitys
     vector<City*> c_vec;// we will use this to vec to map the city to a set of sequential numbers 0...n
     for(auto& it: m_cities){
 
-        // This also calculates total population that works in this city
-        // here i'm still not sure if work_pop is determined correctly,
-        // i thought i needed the fraction of active workers but now i'm seriously doubting, so i put it in comments...
-        // as for the rest, i'm also starting to doubt cause there could be students in the commuters,
-        // which would mess up the distribution...
-        auto work_pop = ( it.second.GetPopulation() + it.second.GetTotalInCommutersCount()
-                            - it.second.GetTotalOutCommutersCount() );// * active_workers_frac;
+        // Colleges are the only communities that should be present at this time...
+        const bool no_colleges = it.second.GetAllCommunities().empty();
+        // I believe possible_workers_frac is all we need because in-commuters are definitely active...
+        double in_commuters_modifier = (no_colleges) ? 1 : possible_workers_frac;
+
+        auto work_pop = ( it.second.GetPopulation() * active_workers_frac
+                          + it.second.GetTotalInCommutersCount() * in_commuters_modifier
+                            - it.second.GetTotalOutCommutersCount() * possible_workers_frac );
+        // out-commuters should allways be modified because there can always be students present
+        // for in-commuters this is only true if this city contains colleges
+        // note that commuters should always be active workers or students
+
         // Inserting the amount of id's of the city equal to the pop working in the city
         c_vec.emplace_back(&it.second);
         lottery_vec.emplace_back(work_pop);

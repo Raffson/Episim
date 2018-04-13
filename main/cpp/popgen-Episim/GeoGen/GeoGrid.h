@@ -256,7 +256,7 @@ public:
         /// @param X: a %.
         void DefragmentSmallestCities(double X, double Y, const vector<double> &p_vec);
 
-        //don't this we need this next getter, just use GetCitiesWithinRadius...
+        //don't think we need this next getter, just use GetCitiesWithinRadius...
         /// Getter
         /// @retval <map<unsigned int, map<unsigned int, vector<City*>>>> Returns a const reference to the
         /// map m_neighbours_in_radius which classifies all cities within a certain radius for each city.
@@ -314,6 +314,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// for each of the radius distance-categories (10km, 20km, 40km, ...) in relation to the city with ID
         map<unsigned int, map<unsigned int, vector<City*>>> m_neighbours_in_radius;
 
+        /// The initial search-radius for getting nearby cities
         unsigned int m_initial_search_radius;
 
         /// Keep a map of all communities?
