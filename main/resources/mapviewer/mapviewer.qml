@@ -49,7 +49,7 @@
 ****************************************************************************/
 
 import QtQuick 2.6
-import QtQuick.Controls 2.3
+import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtLocation 5.6
 import QtQuick.Controls.Material 2.2
@@ -130,11 +130,16 @@ ApplicationWindow {
                 }
             }
 
-            model: 10
+            ToolBar {
+                ColumnLayout {
+                    anchors.fill: parent
 
-            delegate: ItemDelegate {
-                text: qsTr("Title %1").arg(index + 1)
-                width: parent.width
+                    ToolButton {
+                        text: qsTr("update population")
+                        onClicked: updateSelected()
+                    }
+
+                }
             }
 
             ScrollIndicator.vertical: ScrollIndicator { }
