@@ -71,53 +71,95 @@ ApplicationWindow {
     readonly property bool inPortrait: appWindow.width < appWindow.height
 
     header: ToolBar {
-            RowLayout {
-                anchors.fill: parent
-                Label {
-                    text: "Stride: simulator for transmission of infectious diseases"
-                    elide: Label.ElideRight
-                    horizontalAlignment: Qt.AlignHCenter
-                    verticalAlignment: Qt.AlignVCenter
-                    Layout.fillWidth: true
+        id: overlayHeader
+        RowLayout {
+            anchors.fill: parent
+            Label {
+                text: "Stride: simulator for transmission of infectious diseases"
+                elide: Label.ElideRight
+                horizontalAlignment: Qt.AlignHCenter
+                verticalAlignment: Qt.AlignVCenter
+                Layout.fillWidth: true
+            }
+            ToolButton {
+                text: qsTr("update population")
+                onClicked: updateSelected()
+            }
+            ToolButton {
+                text: qsTr("show commutings")
+                onClicked: menu.open()
+            }
+            ToolButton {
+                text: qsTr("future function")
+                onClicked: menu.open()
+            }
+            ToolButton {
+                text: qsTr("⋮")
+                onClicked: menu.open()
+            }
+        }
+    }
+
+     Drawer {
+        id: drawer
+
+        y: overlayHeader.height
+        width: appWindow.width / 5
+        height: appWindow.height - overlayHeader.height
+
+        modal: inPortrait
+        interactive: inPortrait
+        position: inPortrait ? 0 : 1
+        visible: !inPortrait
+
+        ListView {
+            id: listView
+            anchors.fill: parent
+
+            headerPositioning: ListView.OverlayHeader
+            header: Pane {
+                id: header
+                z: 2
+                width: parent.width
+
+                MenuSeparator {
+                    parent: header
+                    width: parent.width
+                    anchors.verticalCenter: parent.bottom
+                    visible: !listView.atYBeginning
                 }
-                ToolButton {
-                    text: qsTr("update population")
-                    onClicked: updateSelected()
-                }
-                ToolButton {
-                    text: qsTr("show commutings")
-                    onClicked: menu.open()
-                }
-                ToolButton {
-                    text: qsTr("future function")
-                    onClicked: menu.open()
-                }
-                ToolButton {
-                    text: qsTr("⋮")
-                    onClicked: menu.open()
-                }
+            }
+
+            model: 10
+
+            delegate: ItemDelegate {
+                text: qsTr("Title %1").arg(index + 1)
+                width: parent.width
+            }
+
+            ScrollIndicator.vertical: ScrollIndicator { }
+        }
+    }
+
+    function updateSelected(){
+        pop_info = Qt.createQmlObject(' import QtQuick 2.7; Text {}', map)
+        var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
+        var total_count = 0
+        for (var i = 0; i < map.children.length; i++)
+        {
+            if(map.children[i].objectName === "mqi"){
+                circle = map.children[i].sourceItem
+                var pop = circle.isSelected()
+                total_count += pop
+
+            }
+            if(map.children[i].objectName === "pop_info"){
+                pop_info = map.children[i]
             }
         }
 
-        function updateSelected(){
-            pop_info = Qt.createQmlObject(' import QtQuick 2.7; Text {}', map)
-            var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
-            var total_count = 0
-            for (var i = 0; i < map.children.length; i++)
-            {
-                if(map.children[i].objectName === "mqi"){
-                    circle = map.children[i].sourceItem
-                    var pop = circle.isSelected()
-                    total_count += pop
-
-                }
-                if(map.children[i].objectName === "pop_info"){
-                    pop_info = map.children[i]
-                }
-            }
-
-            pop_info.text = total_count
-        }
+        pop_info.text = total_count
+    }
 
     //defaults
     //! [routecoordinate]
