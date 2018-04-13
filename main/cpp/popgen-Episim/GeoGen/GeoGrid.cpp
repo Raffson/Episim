@@ -192,7 +192,12 @@ void GeoGrid::GenerateSchools()
         REQUIRE(m_sizes_map[Sizes::SCHOOLS] >= 0, "The initial school size can't be negative");
         // Calculating extra data
         // rounded because we don't have a fraction of a person
-        auto amount_schooled = (const unsigned int)round(m_total_pop * m_fract_map[Fractions::SCHOOLED]);
+        //  comment: this is an estimate to be used for determining the nr of school,
+        //      which is why it should be a double since we're rounding off the schools,
+        //      otherwise you'll get truncation which may not be desirable...
+        //      also, shouldn't this be ceil instead of round like beau did in GenerateCommunities?
+        //      (delete comments if agreed)
+        auto amount_schooled = (const double)round(m_total_pop * m_fract_map[Fractions::SCHOOLED]);
         // round because we do not build half a school
         auto amount_of_schools = (const unsigned int)round(amount_schooled / m_sizes_map[Sizes::SCHOOLS]);
 
@@ -203,9 +208,12 @@ void GeoGrid::GenerateSchools()
         vector<double> p_vec;
         vector<City*> c_vec;
         for (auto& it : m_cities) {
-                double c_schooled_pop = it.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED];
+                //shouldn't need to multiply with the schooled fraction since the distribution stays the same,
+                // so we can just push the population count straight in the probablity vector...
+                // (delete comments if agreed)
+                //double c_schooled_pop = it.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED];
                 c_vec.emplace_back(&it.second);
-                p_vec.emplace_back(c_schooled_pop);
+                p_vec.emplace_back(it.second.GetPopulation());
         }
 
         auto rndm_vec = generate_random(p_vec, amount_of_schools);
@@ -218,7 +226,8 @@ void GeoGrid::GenerateSchools()
                 // Add contactpools
                 for (auto j = 0; j < cps; j++)
                         nw_school.AddContactPool(stride::ContactPoolType::Id::School);
-                // m_communities[nw_school->getID()] = nw_school TODO: What is this??
+                // m_communities[nw_school->getID()] = nw_school
+                // TODO: What is this?? -> probably no need for this but keeping it there just in case...
         }
         // We should ENSURE schools are effectively placed in cities.
         // The OO nature makes this assertion rather complex -> found in tests
@@ -263,10 +272,17 @@ void GeoGrid::GenerateColleges()
         // Determine number of contactpools
         auto cps = round(m_sizes_map[Sizes::COLLEGES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
+        double pop_modifier = m_total_pop / CountTotalPop();
+
         // generate colleges to the respective cities...
         for (auto& it : m_cities_with_college) {
                 //TODO why is this multiplied with YOUNG_WORKERS? -> beacuse only YOUNG_WORKERS can be students...
-                double students = it->GetPopulation() * m_fract_map[Fractions::YOUNG_WORKERS] * m_fract_map[Fractions::STUDENTS];
+                // here we definitely need the pop modifier
+                // because otherwise we're not taking m_total_pop into account...
+                // originally i made this a member but changed my mind since i don't think we'll
+                // need this in another function... (delete comments if agreed)
+                double students = it->GetPopulation() * pop_modifier
+                                  * m_fract_map[Fractions::YOUNG_WORKERS] * m_fract_map[Fractions::STUDENTS];
                 // doesn't matter if students is a double at this time
                 // since this is only an estimate for the number of colleges
                 auto nrcolleges = (unsigned int)round(students / m_sizes_map[Sizes::COLLEGES]);
@@ -284,9 +300,9 @@ void GeoGrid::GenerateColleges()
 
 void GeoGrid::GenerateWorkplaces(){
     //We create the vec we will choose our city_id's out of.
-    //Meaning a citiy has a proballity to get assigned a workplace equal to the fraction
+    //Meaning a citiy has a probality to get assigned a workplace equal to the fraction
     //of people working IN the city (not the active working pop in the city).
-    //We have to account for the commuters in he city.
+    //We have to account for the commuters in the city.
 
     double possible_workers_frac = (m_fract_map[Fractions::OLD_WORKERS]
                                     + m_fract_map[Fractions::YOUNG_WORKERS] * (1 - m_fract_map[Fractions::STUDENTS]));
@@ -298,8 +314,12 @@ void GeoGrid::GenerateWorkplaces(){
     for(auto& it: m_cities){
 
         // This also calculates total population that works in this city
+        // here i'm still not sure if work_pop is determined correctly,
+        // i thought i needed the fraction of active workers but now i'm seriously doubting, so i put it in comments...
+        // as for the rest, i'm also starting to doubt cause there could be students in the commuters,
+        // which would mess up the distribution...
         auto work_pop = ( it.second.GetPopulation() + it.second.GetTotalInCommutersCount()
-                            - it.second.GetTotalOutCommutersCount() ) * active_workers_frac;
+                            - it.second.GetTotalOutCommutersCount() );// * active_workers_frac;
         // Inserting the amount of id's of the city equal to the pop working in the city
         c_vec.emplace_back(&it.second);
         lottery_vec.emplace_back(work_pop);
@@ -348,17 +368,18 @@ void GeoGrid::GenerateCommunities()
 {
 
         // Determine number of contactpools
-        auto cps = round(m_sizes_map[Sizes::COMMUNITIES] / m_sizes_map[Sizes::AVERAGE_CP]);
+        auto cps = round((double)m_sizes_map[Sizes::COMMUNITIES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
         // First we need to determine the total number of communities to be used.
-        auto total_communities = (unsigned int)ceil(m_total_pop / m_sizes_map[Sizes::COMMUNITIES]);
+        auto total_communities = (unsigned int)ceil((double)m_total_pop / m_sizes_map[Sizes::COMMUNITIES]);
 
         vector<double> p_vec;
         vector<City*> c_vec;
         for (auto& it : m_cities) {
-                double c_pop = it.second.GetPopulation();
+                // same story as in GenerateSchools, simply push straight into p_vec... (delete comments if agreed)
+                //double c_pop = it.second.GetPopulation();
                 c_vec.emplace_back(&it.second);
-                p_vec.emplace_back(c_pop);
+                p_vec.emplace_back(it.second.GetPopulation());
         }
 
         auto rndm_vec = generate_random(p_vec, total_communities);
@@ -399,15 +420,15 @@ void GeoGrid::GenerateCommunities()
         }*/
 }
 
-/*unsigned int GeoGrid::CountTotalPop() const
+double GeoGrid::CountTotalPop() const
 {
 
-        unsigned int counter = 0;
+        double counter = 0;
         for (auto& it : m_cities) {
-                counter += it.second->GetPopulation();
+                counter += it.second.GetPopulation();
         }
         return counter;
-}*/
+}
 
 Coordinate GeoGrid::GetCenterOfGrid()
 {

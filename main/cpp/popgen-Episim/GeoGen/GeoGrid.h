@@ -285,8 +285,9 @@ private:
         void AdjustLargestCities(vector<City*>& lc, City& city);
 
         /// Counts the total population in th GeoGrid based on the cities
-        /// in map cities.
-        //unsigned int CountTotalPop() const;
+        /// in map cities which represents the model.
+        // need this to determine a modifier in GenerateColleges
+        double CountTotalPop() const;
 
         /// Assigns the main fractions: schooled, worker1, worker2 & rest
         void GetMainFractions(const vector<vector<double>>& hhs);
