@@ -86,18 +86,15 @@ private:
 
         /// Returns a reference to a random city according to the
         /// distribution initialized in InitializeCityPopFractions.
-        /// @param ids A vector with the IDs for all cities.
-        /// @param fracs Represents fractions for each of the cities. The i-th element should correspond to the
-        /// fraction relating to the city with the i-th ID in ids.
         /// @retval <geogen::City&> Returns a reference to a random city.
-        geogen::City&                     GetRandomCity(const std::vector<unsigned int>& ids,
-                                                        const std::vector<double>& fracs);
+        geogen::City&                     GetRandomCity();
 
         /// Returns a pointer to a contact pool chosen at random. This is done by first choosing a random
         /// community from 'comms', followed by choosing a random contact pool from the chosen community.
-        /// @param type
-        /// @param comms
-        /// @param commuting
+        /// @param type The community type for which we want to find a random contact pool
+        /// @param comms The communities from which we will choose 1 at random to then choose a random contact pool.
+        /// @param commuting Indicates whether the person for which we're looking to find a random contact pool
+        /// is a commuter.
         /// @retval <stride::ContactPool*>
         stride::ContactPool*              GetRandomCommunityContactPool(const geogen::CommunityType& type,
                                                                         vector<geogen::Community*>& comms,
@@ -117,11 +114,8 @@ private:
 
         /// Returns a  reference to a random city for a commuter according to the commuting distribution.
         /// @param city The city from which we assume the commuter is coming from.
-        /// @param city_ids All the IDs of the cities from which we will choose a random index,
-        /// used to access the map with commuting fractions to get the required distribution.
         /// @retval <geogen::City&> The random city for the commuter.
-        geogen::City&                     GetRandomCommutingCity(geogen::City& city,
-                                                                 const std::vector<unsigned int>& city_ids);
+        geogen::City&                     GetRandomCommutingCity(geogen::City& city);
 
 private:
         ///ID generator for creating persons, starting from 0 which in this case doesn't matter...
@@ -143,10 +137,12 @@ private:
         /// thus, cityID -> commuting distribution for the city with cityID
         std::map<unsigned int, std::vector<double>> m_commuting_fracs;
 
-        /// This member will map a city's ID to the population fraction relative to the total population
-        // this could be made more efficient by splitting them up in 2 vectors,
-        // removing the need to use boost::copy in GeneratePopulation...
-        std::map<unsigned int, double> m_city_pop_fracs;
+        /// This member will keep the IDs for all cities to be used for getting a random city for a commuter.
+        std::vector<unsigned int> m_city_ids;
+
+        /// This member represents the population fraction relative to the total population. The i-th element
+        /// corresponds to the distribution for the city with the i-th ID in m_city_ids.
+        std::vector<double> m_city_pop_fracs;
 };
 
 } // namespace popgen

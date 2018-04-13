@@ -38,11 +38,11 @@ namespace geogen {
 
 /// Enum that represent indexes of Fractals map. That map contains all fraction data of our population
 enum class Fractions{
-    SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
-                        // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
+    SCHOOLED,           // % of pop that is in school [3yrs, 18yrs),
+                        // [3, 6) -> kindergarten, [6, 12) -> elementary school, [12, 18) -> middle+highschool.
     ACTIVE,             // % of pop that is activly working.
-    YOUNG_WORKERS,      // % of pop in [18yrs, 26yrs) that is working.
-    OLD_WORKERS,        // % of pop in [26yrs, 65yrs) that is working.
+    YOUNG_WORKERS,      // % of pop with age [18yrs, 26yrs).
+    OLD_WORKERS,        // % of pop with age [26yrs, 65yrs).
     TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
     OLDIES,             // % of pop that is in [65yrs, oldest_person].
     STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.

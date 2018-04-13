@@ -85,8 +85,10 @@ void PopulationGenerator::InitializeCommutingFractions()
 void PopulationGenerator::InitializeCityPopFractions()
 {
         double totalpop = m_geogrid.GetTotalPop();
-        for (auto& city : m_geogrid.GetCities())
-                m_city_pop_fracs[city.second.GetId()] = city.second.GetPopulation() / totalpop;
+        for (auto& city : m_geogrid.GetCities()) {
+            m_city_ids.emplace_back(city.first);
+            m_city_pop_fracs.emplace_back(city.second.GetPopulation() / totalpop);
+        }
 }
 
 unsigned int PopulationGenerator::GetRandomHouseholdSize()
@@ -142,10 +144,10 @@ double PopulationGenerator::GetRandomAge(unsigned int hhsize)
         }
 }
 
-geogen::City& PopulationGenerator::GetRandomCity(const vector<unsigned int>& ids, const vector<double>& fracs)
+geogen::City& PopulationGenerator::GetRandomCity()
 {
-    trng::discrete_dist distr(fracs.begin(), fracs.end());
-    return m_geogrid[ids[(unsigned int)geogen::generator.GetGenerator(distr)()]];
+    trng::discrete_dist distr(m_city_pop_fracs.begin(), m_city_pop_fracs.end());
+    return m_geogrid[m_city_ids[(unsigned int)geogen::generator.GetGenerator(distr)()]];
 }
 
 stride::ContactPool* PopulationGenerator::GetRandomCommunityContactPool(const geogen::CommunityType& type,
@@ -292,16 +294,9 @@ void PopulationGenerator::GeneratePopulation()
         const unsigned int max_population = m_geogrid.GetTotalPop();
         long long int remaining_population = max_population; //long long to make sure the unsigned int fits...
 
-        vector<unsigned int> city_ids; // using boost::copy to copy all keys from m_city_pop_fracs into this vector...
-        //city_ids can also be used for the commuting fractions since they are ordered the same,
-        // this means we can save space by replacing some maps with regular vectors...
-        vector<double> city_fracs; // using boost::copy to copy all values from m_city_pop_fracs into this vector...
-        boost::copy(m_city_pop_fracs | boost::adaptors::map_keys, std::back_inserter(city_ids));
-        boost::copy(m_city_pop_fracs | boost::adaptors::map_values, std::back_inserter(city_fracs));
-
         unsigned int counter = 0;
         while (remaining_population > 0) {
-                geogen::City& city = GetRandomCity(city_ids, city_fracs);
+                geogen::City& city = GetRandomCity();
                 auto household_size = GetRandomHouseholdSize();
 
                 // if the population has to be exact according to the one that we read on the file about cities
@@ -336,7 +331,7 @@ void PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const geogen::City& c
                 //update: in case we use the first approach, this function must be called for each person,
                 // not for each household which was the case...
                 // this first approach in combination with pre-classified distances is way faster,
-                // specifically about 12x faster...
+                // specifically about 12-14x faster...
                 if( !near_cities.empty() ) {
                         trng::uniform_int_dist distr(0, near_cities.size());
                         unsigned int index = (unsigned int) geogen::generator.GetGenerator(distr)();
@@ -386,13 +381,12 @@ void PopulationGenerator::GetNearestCollege(const geogen::City &origin, std::vec
 }*/
 
 //this we still need... although it may need be reworked slightly...
-geogen::City& PopulationGenerator::GetRandomCommutingCity(geogen::City& origin,
-                                                          const vector<unsigned int>&  city_ids)
+geogen::City& PopulationGenerator::GetRandomCommutingCity(geogen::City& origin)
 {
         const vector<double>& distribution = m_commuting_fracs[origin.GetId()];
         trng::discrete_dist   distr(distribution.begin(), distribution.end());
         auto  index = (const unsigned int)geogen::generator.GetGenerator(distr)();
-        auto  id    = (const unsigned int)city_ids.at(index);
+        auto  id    = (const unsigned int)m_city_ids.at(index);
         return m_geogrid.GetCities().at(id);
 }
 
