@@ -66,29 +66,53 @@ void PopulationGenerator::InitializeHouseholdFractions()
 
 void PopulationGenerator::InitializeCommutingFractions()
 {
+        const double commuting_students_frac =  m_geogrid.GetFraction(geogen::Fractions::COMMUTING_STUDENTS);
+        const double student_frac = m_geogrid.GetFraction(geogen::Fractions::STUDENTS);
+        const double young_workers_frac = m_geogrid.GetFraction(geogen::Fractions::YOUNG_WORKERS);
+        const double student_commuters = commuting_students_frac * student_frac * young_workers_frac;
         for (auto& cityA : m_geogrid.GetCities()) // for each cityA...
         {
-                vector<double> distribution;
-                double         commutersA = cityA.second.GetTotalOutCommutersCount(); // get total out-commuters from cityA
+                m_city_ids.emplace_back(cityA.first);
+                if( !cityA.second.GetColleges().empty() ) m_college_ids.emplace_back(cityA.first);
+                vector<double> worker_dist;
+                vector<double> student_dist;
                 for (auto& cityB : m_geogrid.GetCities()) // calculate the chance to commute from cityA to cityB
                 {
+                        const bool has_college = !cityB.second.GetColleges().empty();
                         // We don't want local commuting
                         if (cityA.first != cityB.first)
-                                distribution.push_back(cityA.second.GetOutCommuting().at(cityB.first) / commutersA);
+                        {
+                            if( has_college ) {
+                                //Calculate the nr of commuting students
+                                double students = cityA.second.GetPopulation() * student_commuters;
+                                //For workers that commute to a city with a college,
+                                // we must take the students into account and thus the distribution changes...
+                                worker_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first) - students);
+                                //For students that commute we don't need to account for workers
+                                // because the same constant factor is used to filter out the workers
+                                // and thus the distribution stays unchanged...
+                                student_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first));
+                            }
+                            else worker_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first));
+
+                        }
                         else // just push a 0, this will make sure this particular index can't be chosen...
-                                distribution.push_back(0);
+                        {
+                            worker_dist.emplace_back(0);
+                            if( has_college ) student_dist.emplace_back(0);
+                        }
                 }
-                m_commuting_fracs[cityA.first] = distribution; // add the commuting distribution for cityA
+                // add the commuting workers distribution for cityA
+                m_worker_commuting_fracs[cityA.first] = worker_dist;
+                m_student_commuting_fracs[cityA.first] = student_dist;
         }
 }
 
 void PopulationGenerator::InitializeCityPopFractions()
 {
         double totalpop = m_geogrid.GetTotalPop();
-        for (auto& city : m_geogrid.GetCities()) {
-            m_city_ids.emplace_back(city.first);
+        for (auto& city : m_geogrid.GetCities())
             m_city_pop_fracs.emplace_back(city.second.GetPopulation() / totalpop);
-        }
 }
 
 unsigned int PopulationGenerator::GetRandomHouseholdSize()
@@ -150,32 +174,18 @@ geogen::City& PopulationGenerator::GetRandomCity()
     return m_geogrid[m_city_ids[(unsigned int)geogen::generator.GetGenerator(distr)()]];
 }
 
-stride::ContactPool* PopulationGenerator::GetRandomCommunityContactPool(const geogen::CommunityType& type,
-                                                                        vector<geogen::Community*>& comms,
-                                                                        const bool commuting)
+stride::ContactPool* PopulationGenerator::GetRandomCommunityContactPool(vector<geogen::Community*>& comms)
 {
-        //TODO: do whatever we gotta do if it's a commuter
-
         if( comms.empty() ) return nullptr;
 
         trng::uniform_int_dist distr(0, comms.size());
         unsigned int index = (unsigned int) geogen::generator.GetGenerator(distr)();
-        vector<stride::ContactPool>* pools = &comms[index]->GetContactPools();
-        if( type == geogen::CommunityType::College and commuting )
+        vector<stride::ContactPool> pools = comms[index]->GetContactPools();
+        if( !pools.empty() )
         {
-                //TODO: commuting student, now what?
-                // well the pools will need te be adjusted...
-        }
-        else if( type == geogen::CommunityType::Work and commuting )
-        {
-                //TODO: commuting worker, now what?
-                // well the pools will need te be adjusted...
-        }
-        if( pools and !pools->empty() )
-        {
-            trng::uniform_int_dist pdistr(0, pools->size());
-            unsigned int index = (unsigned int) geogen::generator.GetGenerator(pdistr)();
-            return &((*pools)[index]);
+            trng::uniform_int_dist pdistr(0, pools.size());
+            unsigned int index2 = (unsigned int) geogen::generator.GetGenerator(pdistr)();
+            return &(pools[index2]);
         }
         else return nullptr;
 }
@@ -215,30 +225,42 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
         stride::ContactPool* workplace = nullptr;
         vector<geogen::Community*> seccomms;
         GetCommunitiesOfRandomNearbyCity(city, geogen::CommunityType::Secondary, seccomms);
-        stride::ContactPool* seccomm = GetRandomCommunityContactPool(geogen::CommunityType::Secondary, seccomms);
+        stride::ContactPool* seccomm = GetRandomCommunityContactPool(seccomms);
         if( category == geogen::Fractions::SCHOOLED ) { // [3, 18)
             vector<geogen::Community*> schools;
             GetCommunitiesOfRandomNearbyCity(city, geogen::CommunityType::School, schools);
-            school = GetRandomCommunityContactPool(geogen::CommunityType::School, schools);
+            school = GetRandomCommunityContactPool(schools);
         }
         else if( category == geogen::Fractions::YOUNG_WORKERS ) { // [18, 26)
             //first check if we have a student or not...
             if( IsStudent() ) {
                 vector<geogen::Community*> colleges;
-                GetNearestCollege(city, colleges);
-                school = GetRandomCommunityContactPool(geogen::CommunityType::College, colleges, IsStudentCommuter());
+                if( IsStudentCommuter() ){
+                    geogen::City& commuter_city = GetRandomCommutingCity(city, true);
+                    colleges = commuter_city.GetCommunitiesOfType(geogen::CommunityType::College);
+                }
+                else GetNearestColleges(city, colleges);
+                school = GetRandomCommunityContactPool(colleges);
             }
             else if( IsActive() ) {
                 vector<geogen::Community*> workplaces;
-                GetCommunitiesOfRandomNearbyCity(city, geogen::CommunityType::Work, workplaces);
-                workplace = GetRandomCommunityContactPool(geogen::CommunityType::Work, workplaces, IsWorkingCommuter());
+                if( IsWorkingCommuter() ){
+                    geogen::City& commuter_city = GetRandomCommutingCity(city);
+                    workplaces = commuter_city.GetCommunitiesOfType(geogen::CommunityType::Work);
+                }
+                else GetCommunitiesOfRandomNearbyCity(city, geogen::CommunityType::Work, workplaces);
+                workplace = GetRandomCommunityContactPool(workplaces);
             }
         }
         else if( category == geogen::Fractions::OLD_WORKERS ) { // [26, 65)
             if( IsActive() ) {
                 vector<geogen::Community*> workplaces;
-                GetCommunitiesOfRandomNearbyCity(city, geogen::CommunityType::Work, workplaces);
-                workplace = GetRandomCommunityContactPool(geogen::CommunityType::Work, workplaces, IsWorkingCommuter());
+                if( IsWorkingCommuter() ) {
+                    geogen::City& commuter_city = GetRandomCommutingCity(city);
+                    workplaces = commuter_city.GetCommunitiesOfType(geogen::CommunityType::Work);
+                }
+                else GetCommunitiesOfRandomNearbyCity(city, geogen::CommunityType::Work, workplaces);
+                workplace = GetRandomCommunityContactPool(workplaces);
             }
         }
         else if( category == geogen::Fractions::TODDLERS ) { // [0, 3)
@@ -271,7 +293,7 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, geogen::City& cit
 
         vector<geogen::Community*> primcomms;
         GetCommunitiesOfRandomNearbyCity(city, geogen::CommunityType::Primary, primcomms);
-        stride::ContactPool* primcomm = GetRandomCommunityContactPool(geogen::CommunityType::Primary, primcomms);
+        stride::ContactPool* primcomm = GetRandomCommunityContactPool(primcomms);
         //Meaning you always get assigned to a community?
         unsigned int pcid = (primcomm) ? primcomm->GetID() : 0;
 
@@ -351,7 +373,7 @@ void PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const geogen::City& c
         }
 }
 
-void PopulationGenerator::GetNearestCollege(const geogen::City &origin, std::vector<geogen::Community *> &result)
+void PopulationGenerator::GetNearestColleges(const geogen::City &origin, std::vector<geogen::Community *> &result)
 {
     const vector<geogen::City*>& cities(m_geogrid.GetCitiesWithCollege());
     double nearest = numeric_limits<double>::max();
@@ -367,26 +389,13 @@ void PopulationGenerator::GetNearestCollege(const geogen::City &origin, std::vec
         result.emplace_back(college);
 }
 
-//not sure if we need this, leaving it in comments for now...
-/*vector<stride::ContactPool*> PopulationGenerator::GetContactPoolsOfColleges()
+geogen::City& PopulationGenerator::GetRandomCommutingCity(geogen::City& origin, const bool student)
 {
-        vector<stride::ContactPool*> result;
-        for (auto& a_city : m_geogrid.GetCitiesWithCollege()) {
-                for (auto& a_comunity : a_city->GetCommunitiesOfType(geogen::CommunityType::College)) {
-                        for (auto& pool : a_comunity->GetContactPools())
-                                result.emplace_back(&pool);
-                }
-        }
-        return result;
-}*/
-
-//this we still need... although it may need be reworked slightly...
-geogen::City& PopulationGenerator::GetRandomCommutingCity(geogen::City& origin)
-{
-        const vector<double>& distribution = m_commuting_fracs[origin.GetId()];
+        const vector<double>& distribution = student ? m_student_commuting_fracs[origin.GetId()]
+                                                     : m_worker_commuting_fracs[origin.GetId()];
         trng::discrete_dist   distr(distribution.begin(), distribution.end());
         auto  index = (const unsigned int)geogen::generator.GetGenerator(distr)();
-        auto  id    = (const unsigned int)m_city_ids.at(index);
+        const unsigned int id = student ? m_college_ids.at(index) : m_city_ids.at(index);
         return m_geogrid.GetCities().at(id);
 }
 

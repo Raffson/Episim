@@ -54,16 +54,13 @@ private:
         /// Selects the nearest college relative to the position of 'origin'.
         /// @param origin The city for which we need to find the nearst college.
         /// @param result A reference the vector where we store the resulting colleges.
-        void                              GetNearestCollege(const geogen::City& origin,
+        void                              GetNearestColleges(const geogen::City& origin,
                                                             std::vector<geogen::Community*>& result);
 
         /// Generates a household of a given size for the given city.
         /// @param size The size of the household that will be generated, determined by GetRandomHouseholdSize.
         /// @param city A reference to the city in which the household will be added.
         void                              GenerateHousehold(unsigned int size, geogen::City& city);
-
-        // deprecated?
-        //std::vector<stride::ContactPool*> GetContactPoolsOfColleges();
 
         /// Initializes the distribution to be used for determining the random sizes for households, as well as
         /// determining the distribution used for determining the composition of the households.
@@ -96,9 +93,7 @@ private:
         /// @param commuting Indicates whether the person for which we're looking to find a random contact pool
         /// is a commuter.
         /// @retval <stride::ContactPool*>
-        stride::ContactPool*              GetRandomCommunityContactPool(const geogen::CommunityType& type,
-                                                                        vector<geogen::Community*>& comms,
-                                                                        const bool commuting = false);
+        stride::ContactPool*              GetRandomCommunityContactPool(vector<geogen::Community*>& comms);
 
         /// A random function which will flip a coin to determine if a person is a working commuter.
         const bool                        IsWorkingCommuter();
@@ -114,8 +109,9 @@ private:
 
         /// Returns a  reference to a random city for a commuter according to the commuting distribution.
         /// @param city The city from which we assume the commuter is coming from.
+        /// @param student Indicates if we're looking for a city with a college for a commuting student.
         /// @retval <geogen::City&> The random city for the commuter.
-        geogen::City&                     GetRandomCommutingCity(geogen::City& city);
+        geogen::City&                     GetRandomCommutingCity(geogen::City& city, const bool student = false);
 
 private:
         ///ID generator for creating persons, starting from 0 which in this case doesn't matter...
@@ -133,12 +129,21 @@ private:
         /// the fractions for the age-composition of that household
         std::map<unsigned int, std::vector<double>> m_household_comp_fracs;
 
-        /// This member will keep a commuting distribution for each city...
+        /// This member will keep a worker-commuting distribution for each city...
         /// thus, cityID -> commuting distribution for the city with cityID
-        std::map<unsigned int, std::vector<double>> m_commuting_fracs;
+        std::map<unsigned int, std::vector<double>> m_worker_commuting_fracs;
 
-        /// This member will keep the IDs for all cities to be used for getting a random city for a commuter.
+        /// This member will keep a student-commuting distribution for each city...
+        /// thus, cityID -> commuting distribution for the city with cityID
+        std::map<unsigned int, std::vector<double>> m_student_commuting_fracs;
+
+        /// This member will keep the IDs for all cities to be used for getting a random city for assinging
+        /// a household as well as for a working commuter.
         std::vector<unsigned int> m_city_ids;
+
+        /// This member will keep the IDs for all cities with a college to be used for getting a random city for
+        /// a commuting student.
+        std::vector<unsigned int> m_college_ids;
 
         /// This member represents the population fraction relative to the total population. The i-th element
         /// corresponds to the distribution for the city with the i-th ID in m_city_ids.
