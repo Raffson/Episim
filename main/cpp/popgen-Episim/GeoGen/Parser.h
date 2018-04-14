@@ -22,7 +22,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 namespace parser {
 
 void ParseCities(const boost::filesystem::path&, const boost::filesystem::path&,
@@ -30,9 +30,9 @@ void ParseCities(const boost::filesystem::path&, const boost::filesystem::path&,
 
 void ParseCommuting(const boost::filesystem::path&, map<unsigned int, City>&);
 
-vector<City> DefragmentCity(const City &ct, vector<double> distr, stride::util::RNManager &rndm);
+vector<City> DefragmentCity(const City &ct, vector<double> distr, util::RNManager &rndm);
 
 vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path);
 
 } // namespace parser
-} // namespace geogen
+} // namespace stride

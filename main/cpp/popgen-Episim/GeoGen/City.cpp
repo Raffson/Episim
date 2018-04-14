@@ -16,7 +16,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 
 City::City(const unsigned int city_id, const unsigned int province, unsigned int population,
            const Coordinate coordinates, const string name)
@@ -149,4 +149,4 @@ Household& City::AddHousehold() {
 }
 
 
-} // namespace geogen
+} // namespace stride

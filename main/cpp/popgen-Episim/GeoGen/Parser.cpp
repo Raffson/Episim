@@ -7,13 +7,13 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 namespace parser {
 
 void ParseCities(const boost::filesystem::path& city_file, const boost::filesystem::path& commuting_file,
                  map<unsigned int, City>& cities, bool parse_commuting)
 {
-        stride::util::CSV read_in(city_file);
+        util::CSV read_in(city_file);
         unsigned int      counter = 0;
         for (auto& it : read_in) {
                 counter++;
@@ -41,7 +41,7 @@ void ParseCities(const boost::filesystem::path& city_file, const boost::filesyst
 void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, City>& cities)
 {
 
-        stride::util::CSV read_in(filename);
+        util::CSV read_in(filename);
 
         std::vector<std::string> cityIds = read_in.getLabels();
 
@@ -89,7 +89,7 @@ vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path)
         return result;
 }
 
-vector<City> DefragmentCity(const City &city, vector<double> distr, stride::util::RNManager &rndm) {
+vector<City> DefragmentCity(const City &city, vector<double> distr, util::RNManager &rndm) {
 
         trng::discrete_dist distribution(distr.begin(), distr.end());
 
@@ -106,4 +106,4 @@ vector<City> DefragmentCity(const City &city, vector<double> distr, stride::util
         return vector<City>();
     }
 } // namespace parser
-} // namespace geogen
+} // namespace stride

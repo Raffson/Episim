@@ -26,7 +26,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 
 class City
 {
@@ -46,8 +46,8 @@ public:
         unsigned int GetCommunitySize() const { return m_communities.size(); };
 
         unsigned int GetTotalInCommutersCount();
-        unsigned int GetTotalOutCommutersCount();
 
+        unsigned int GetTotalOutCommutersCount();
 
         vector<Community>& GetAllCommunities(){ return m_communities; };
 
@@ -117,4 +117,4 @@ private:
 
 };
 
-} // namespace geogen
+} // namespace stride

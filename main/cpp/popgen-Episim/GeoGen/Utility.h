@@ -14,7 +14,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 
 /// Checks if a file exists.
 /// @param: path A path to a file.
@@ -40,7 +40,7 @@ vector<unsigned int> generate_random(const vector<double>& p_vec, unsigned int a
 
 vector<unsigned int> generate_random(unsigned int begin, unsigned  int end, unsigned int amount);
 
-static stride::util::RNManager generator;
+static util::RNManager generator;
 
 
 namespace constants {
@@ -52,4 +52,4 @@ namespace constants {
     const double EARTH_RADIUS = 6371.0; // in kilometer
 
 }//constants
-}//geogen
+}//stride

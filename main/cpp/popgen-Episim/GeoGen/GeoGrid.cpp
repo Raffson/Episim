@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 
 void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
 {
@@ -149,7 +149,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // Setting up RNG
         unsigned long seed = (unsigned long) abs(p_tree.get("popgen.rng.seed", 0));
         string type        = p_tree.get("popgen.rng.type", "mrg2");
-        generator.Initialize(stride::util::RNManager::Info(type, seed));
+        generator.Initialize(util::RNManager::Info(type, seed));
         //TODO: ^ somewhere else. Wait untill we integrate with stride
 
         // rounding errors cause the first ensure to fail in some conditions...
@@ -226,7 +226,7 @@ void GeoGrid::GenerateSchools()
 
                 // Add contactpools
                 for (auto j = 0; j < cps; j++)
-                        nw_school.AddContactPool(stride::ContactPoolType::Id::School);
+                        nw_school.AddContactPool(ContactPoolType::Id::School);
                 // m_communities[nw_school->getID()] = nw_school
                 // TODO: What is this?? -> probably no need for this but keeping it there just in case...
         }
@@ -292,7 +292,7 @@ void GeoGrid::GenerateColleges()
                         Community& college = it->AddCommunity(CommunityType::College);
                         // Add contactpools
                         for (auto j = 0; j < cps; j++)
-                                college.AddContactPool(stride::ContactPoolType::Id::School);
+                                college.AddContactPool(ContactPoolType::Id::School);
                         // m_communities[college->getID()] = college
                 }
         }
@@ -343,7 +343,7 @@ void GeoGrid::GenerateWorkplaces(){
         Community& nw_workplace = chosen_city.AddCommunity(CommunityType::Work);
 
         // A workplace has a contactpool.
-        nw_workplace.AddContactPool(stride::ContactPoolType::Id::Work);
+        nw_workplace.AddContactPool(ContactPoolType::Id::Work);
     }
 
 }
@@ -364,7 +364,7 @@ void GeoGrid::GenerateWorkplaces()
                 for (unsigned int i = 0; i < number_of_workplaces; i++) {
                         Community& community = city.AddCommunity(CommunityType::Work, &city);
                         /// Add contactpools
-                        community->AddContactPool(stride::ContactPoolType::Id::Work);
+                        community->AddContactPool(ContactPoolType::Id::Work);
                 }
         }
 }*/
@@ -400,12 +400,12 @@ void GeoGrid::GenerateCommunities()
 
                 // Add contactpools for primary community...
                 for( auto j = 0; j < cps; j++ ) {
-                    nw_pcommunity.AddContactPool(stride::ContactPoolType::Id::PrimaryCommunity);
+                    nw_pcommunity.AddContactPool(ContactPoolType::Id::PrimaryCommunity);
                 }
                 Community& nw_scommunity = chosen_city.AddCommunity(CommunityType::Secondary);
                 // Add contactpools for secondary community...
                 for (auto j = 0; j < cps; j++) {
-                        nw_scommunity.AddContactPool(stride::ContactPoolType::Id::SecondaryCommunity);
+                        nw_scommunity.AddContactPool(ContactPoolType::Id::SecondaryCommunity);
                 }
         }
         // Determine how many communities a city should get -> Depricated.
@@ -510,7 +510,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double> 
             new_coordinates.y += pow(-1, i)*(0.1*i);
             auto new_name = it->GetName();
             new_name += to_string(i);
-            m_cities.insert(pair<unsigned int,City>(new_id,geogen::City(new_id, it->GetProvince(),
+            m_cities.insert(pair<unsigned int,City>(new_id,City(new_id, it->GetProvince(),
                                                                         it->GetPopulation()/(amount_to_frag[counter] + 2),
                                                                         new_coordinates, new_name)));
 
@@ -537,4 +537,4 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadius(const City& origin, unsigned
 
 }
 
-} // namespace geogen
+} // namespace stride

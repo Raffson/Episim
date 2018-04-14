@@ -34,7 +34,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 
 /// Enum that represent indexes of Fractals map. That map contains all fraction data of our population
 enum class Fractions{
@@ -244,8 +244,8 @@ public:
         void GetAgeFractions(vector<double>& popfracs);
 
         /// Getter
-        /// @retval <stride::Population> Returns a reference to population
-        stride::Population& GetPopulation() { return m_population; }
+        /// @retval <Population> Returns a reference to population
+        Population& GetPopulation() { return m_population; }
 
         /// Getter
         /// @retval <boost::property_tree::ptree> Returns the property tree for Belief
@@ -336,10 +336,10 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         vector<City*> m_cities_with_college{};
 
         /// The population of the GeoGrid
-        stride::Population m_population;
+        Population m_population;
 
         /// Variable to store Belief used for creating people
         boost::property_tree::ptree m_belief;
 };
 
-} // namespace geogen
+} // namespace stride

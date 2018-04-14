@@ -7,7 +7,7 @@
 using namespace std;
 using namespace stride;
 
-namespace geogen {
+namespace stride {
 
 unsigned int Household::m_id_generator = 1;
 
