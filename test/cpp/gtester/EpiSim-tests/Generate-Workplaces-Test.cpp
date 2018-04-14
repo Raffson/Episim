@@ -58,9 +58,9 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         // -----------------------------------------------------------------------------------------
 
         // Testing 10 randomly chosen cities atm instead of testing all the 327 cities
-/* commenting this out until we verify that GenerateWorkplaces was implemented correctly
-        unsigned int antwerpen    = 3089;
-        unsigned int leuven       = 877;
+
+        /*
+        /*unsigned int leuven       = 877;
         unsigned int brugge       = 961;
         unsigned int roeselare    = 471;
         unsigned int aalst        = 663;
@@ -73,8 +73,16 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
         auto cities = grid.GetCities();
+
+
+        double possible_workers_count = cities.at(11002).GetPopulation() *
+                (grid.GetFraction(Fractions::YOUNG_WORKERS) + grid.GetFraction(Fractions::YOUNG_WORKERS));
+        double workers = grid.GetFraction(Fractions::ACTIVE) *
+        unsigned int antwerpen = ;
+        */
+
         EXPECT_EQ(cities.at(11002).GetWorkplaces().size(), antwerpen);
-        EXPECT_EQ(cities.at(24062).GetWorkplaces().size(), leuven);
+        /*EXPECT_EQ(cities.at(24062).GetWorkplaces().size(), leuven);
         EXPECT_EQ(cities.at(31005).GetWorkplaces().size(), brugge);
         EXPECT_EQ(cities.at(36015).GetWorkplaces().size(), roeselare);
         EXPECT_EQ(cities.at(41002).GetWorkplaces().size(), aalst);
@@ -83,7 +91,8 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         EXPECT_EQ(cities.at(71053).GetWorkplaces().size(), sinttruiden);
         EXPECT_EQ(cities.at(73083).GetWorkplaces().size(), tongeren);
         EXPECT_EQ(cities.at(73107).GetWorkplaces().size(), maasmechelen);
-*/
+         */
+
 }
 
 TEST_P(WorkplaceTest, CommuterVsLocal)
@@ -119,7 +128,7 @@ TEST_P(WorkplaceTest, CommuterVsLocal)
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
         // commenting this out until we verify that GenerateWorkplaces was implemented correctly
-        //EXPECT_EQ(cities.at(random_city1).GetWorkplaces().size(), cities.at(random_city2).GetWorkplaces().size());
+        EXPECT_EQ(cities.at(random_city1).GetWorkplaces().size(), cities.at(random_city2).GetWorkplaces().size());
 }
 
 TEST_P(WorkplaceTest, Extremeregion)

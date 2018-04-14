@@ -324,7 +324,7 @@ void GeoGrid::GenerateWorkplaces(){
         auto work_pop = ( it.second.GetPopulation() * active_workers_frac
                           + it.second.GetTotalInCommutersCount() * in_commuters_modifier
                             - it.second.GetTotalOutCommutersCount() * possible_workers_frac );
-        // out-commuters should allways be modified because there can always be students present
+        // out-commuters should always be modified because there can always be students present
         // for in-commuters this is only true if this city contains colleges
         // note that commuters should always be active workers or students
 
