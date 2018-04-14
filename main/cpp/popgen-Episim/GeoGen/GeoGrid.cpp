@@ -310,8 +310,6 @@ void GeoGrid::GenerateWorkplaces(){
 
     double active_workers_frac = possible_workers_frac * m_fract_map[Fractions::ACTIVE];
 
-
-
     vector<double> lottery_vec; // vector of relative probabillitys
     vector<City*> c_vec;// we will use this to vec to map the city to a set of sequential numbers 0...n
     for(auto& it: m_cities){
