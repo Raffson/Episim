@@ -14,7 +14,7 @@ namespace Tests {
 
 using namespace std;
 using namespace ::testing;
-using namespace geogen;
+using namespace stride;
 
 using boost::property_tree::ptree;
 
