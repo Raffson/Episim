@@ -137,7 +137,6 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // Setting up RNG
         unsigned long seed = (unsigned long) abs(p_tree.get("popgen.rng.seed", 0));
         string type        = p_tree.get("popgen.rng.type", "mrg2");
-        generator.Initialize(util::RNManager::Info(type, seed));
         //TODO: ^ somewhere else. Wait untill we integrate with stride
 
         // rounding errors cause the first ensure to fail in some conditions...
@@ -296,6 +295,7 @@ void GeoGrid::GenerateWorkplaces(){
     double possible_workers_frac = (m_fract_map[Fractions::OLD_WORKERS]
                                     + m_fract_map[Fractions::YOUNG_WORKERS] * (1 - m_fract_map[Fractions::STUDENTS]));
 
+
     double active_workers_frac = possible_workers_frac * m_fract_map[Fractions::ACTIVE];
 
     vector<double> lottery_vec; // vector of relative probabillitys
@@ -332,18 +332,17 @@ void GeoGrid::GenerateWorkplaces(){
     // Now we calculate how many workplaces we have to create.
     double allworkers = active_workers_frac * m_total_pop;
     auto   number_of_workplaces = (unsigned int)round(allworkers / m_sizes_map[Sizes::WORKPLACES]);
-
     auto rndm_vec = generate_random(lottery_vec, number_of_workplaces);
 
     //Now we will place each workplace randomly in our city, making use of our lottery vec.
     for(unsigned int i = 0;  i < number_of_workplaces; i++){
-        City&      chosen_city = *c_vec[rndm_vec[i]];
-        Community& nw_workplace = chosen_city.AddCommunity(CommunityType::Work);
+        City*      chosen_city = c_vec[rndm_vec[i]];
+        Community& nw_workplace = chosen_city->AddCommunity(CommunityType::Work);
 
         // A workplace has a contactpool.
         nw_workplace.AddContactPool(ContactPoolType::Id::Work);
     }
-
+    cout << m_cities.rend()->second.GetWorkplaces().size();
 }
 
 /* Wrong code -> Depricated

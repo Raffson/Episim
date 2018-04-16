@@ -4,10 +4,14 @@
 
 
 #include "Utility.h"
+#include <iostream>
 
 using namespace std;
 
 namespace stride {
+
+
+
 
 bool file_exists(const boost::filesystem::path& path)
 {
@@ -23,6 +27,7 @@ double convert_to_radians(double degrees) {
 vector<unsigned int>
 generate_random(const vector<double> &p_vec, unsigned int amount) {
 
+    generator.Initialize(util::RNManager::Info("lcg64", 0));
     trng::discrete_dist dist(p_vec.begin(), p_vec.end());
     vector<unsigned int> ret_vec;
     for(unsigned int i = 0; i < amount; i++){

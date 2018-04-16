@@ -33,7 +33,7 @@ public:
 
 protected:
         /// Destructor has to be virtual.
-        ~WorkplaceTest() override {}
+        ~WorkplaceTest() = default;
 
         /// Set up for the test fixture
         void SetUp() override {}
@@ -58,7 +58,7 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         // -----------------------------------------------------------------------------------------
 
         // Testing 10 randomly chosen cities atm instead of testing all the 327 cities
-/* commenting this out until we verify that GenerateWorkplaces was implemented correctly
+        float margin = 0.1; // What is a good margin here?
         unsigned int antwerpen    = 3089;
         unsigned int leuven       = 877;
         unsigned int brugge       = 961;
@@ -73,17 +73,17 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
         auto cities = grid.GetCities();
-        EXPECT_EQ(cities.at(11002).GetWorkplaces().size(), antwerpen);
-        EXPECT_EQ(cities.at(24062).GetWorkplaces().size(), leuven);
-        EXPECT_EQ(cities.at(31005).GetWorkplaces().size(), brugge);
-        EXPECT_EQ(cities.at(36015).GetWorkplaces().size(), roeselare);
-        EXPECT_EQ(cities.at(41002).GetWorkplaces().size(), aalst);
-        EXPECT_EQ(cities.at(42006).GetWorkplaces().size(), dendermonde);
-        EXPECT_EQ(cities.at(46025).GetWorkplaces().size(), temse);
-        EXPECT_EQ(cities.at(71053).GetWorkplaces().size(), sinttruiden);
-        EXPECT_EQ(cities.at(73083).GetWorkplaces().size(), tongeren);
-        EXPECT_EQ(cities.at(73107).GetWorkplaces().size(), maasmechelen);
-*/
+        EXPECT_NEAR(cities.at(11002).GetWorkplaces().size(), antwerpen, margin);
+        EXPECT_NEAR(cities.at(24062).GetWorkplaces().size(), leuven, margin);
+        EXPECT_NEAR(cities.at(31005).GetWorkplaces().size(), brugge, margin);
+        EXPECT_NEAR(cities.at(36015).GetWorkplaces().size(), roeselare, margin);
+        EXPECT_NEAR(cities.at(41002).GetWorkplaces().size(), aalst, margin);
+        EXPECT_NEAR(cities.at(42006).GetWorkplaces().size(), dendermonde, margin);
+        EXPECT_NEAR(cities.at(46025).GetWorkplaces().size(), temse, margin);
+        EXPECT_NEAR(cities.at(71053).GetWorkplaces().size(), sinttruiden, margin);
+        EXPECT_NEAR(cities.at(73083).GetWorkplaces().size(), tongeren, margin);
+        EXPECT_NEAR(cities.at(73107).GetWorkplaces().size(), maasmechelen, margin);
+
 }
 
 TEST_P(WorkplaceTest, CommuterVsLocal)
