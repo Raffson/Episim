@@ -55,6 +55,8 @@ bool file_exists(const boost::filesystem::path& path);
 /// @retval <double> a number in radians.
 double convert_to_radians(double degrees);
 
+void init_generator(unsigned int seed,const string& generator);
+
 /// Takes a distribution -> a vec of numbers and generates N random numbers given the distribution vector.
 /// @param p_vec a vector representing our distribution, each entry contains a relative probabillity.
 ///              The probabillity to generate the number on that index (first entry is probabillity to

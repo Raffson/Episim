@@ -137,7 +137,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // Setting up RNG
         unsigned long seed = (unsigned long) abs(p_tree.get("popgen.rng.seed", 0));
         string type        = p_tree.get("popgen.rng.type", "mrg2");
-        //TODO: ^ somewhere else. Wait untill we integrate with stride
+        init_generator(seed, type);
 
         // rounding errors cause the first ensure to fail in some conditions...
         // however, is this first ENSURE necessary?

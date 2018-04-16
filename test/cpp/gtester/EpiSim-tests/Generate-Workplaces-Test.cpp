@@ -58,7 +58,7 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         // -----------------------------------------------------------------------------------------
 
         // Testing 10 randomly chosen cities atm instead of testing all the 327 cities
-        float margin = 0.3; // What is a good margin here?
+        float margin              = 0.3; // What is a good margin here?
         unsigned int antwerpen    = 2146;
         unsigned int leuven       = 798;
         unsigned int brugge       = 845;

@@ -27,7 +27,6 @@ double convert_to_radians(double degrees) {
 vector<unsigned int>
 generate_random(const vector<double> &p_vec, unsigned int amount) {
 
-    generator.Initialize(util::RNManager::Info("lcg64", 0));
     trng::discrete_dist dist(p_vec.begin(), p_vec.end());
     vector<unsigned int> ret_vec;
     for(unsigned int i = 0; i < amount; i++){
@@ -45,5 +44,9 @@ generate_random(unsigned int begin, unsigned int end, unsigned int amount) {
     }
     return ret_vec;
 }
+
+    void init_generator(const unsigned int seed, const string& generator_name) {
+        generator.Initialize(util::RNManager::Info(generator_name, seed));
+    }
 
 } // namespace stride
