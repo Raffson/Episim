@@ -91,9 +91,7 @@ void PopulationGenerator::InitializeCommutingFractions()
                                 //For students that commute we don't need to account for workers
                                 // because the same constant factor is used to filter out the workers
                                 // and thus the distribution stays unchanged...
-                                // using +1 (again doesn't change the distribution...) to make sure we're not getting
-                                // a vector full of zeroes because the RNG flips out in such a case...
-                                student_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first)+1);
+                                student_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first));
                             }
                             else worker_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first));
 
@@ -104,6 +102,8 @@ void PopulationGenerator::InitializeCommutingFractions()
                             if( has_college ) student_dist.emplace_back(0);
                         }
                 }
+                check_distribution(worker_dist);
+                check_distribution(student_dist);
                 // add the commuting workers distribution for cityA
                 m_worker_commuting_fracs[cityA.first] = worker_dist;
                 m_student_commuting_fracs[cityA.first] = student_dist;

@@ -71,6 +71,15 @@ vector<unsigned int> generate_random(const vector<double>& p_vec, unsigned int a
 
 vector<unsigned int> generate_random(unsigned int begin, unsigned  int end, unsigned int amount);
 
+/// Checks the given distribution if all elements are zero. If this is the case,
+/// we transform to a uniform distribution. This is needed to take students into account from cities
+/// that have no commuters to the largest cities that have a college. Obviously these students need to be
+/// commuting to one of these largest cities, therefore we transform to a uniform distribution since
+/// a distribution full of zeros will make the generator go bananas. The same can be said for workers, however
+/// it is unlikely this case will present itself.
+/// @param p_vec A reference to the vector which represents the distribution.
+void check_distribution(vector<double>& p_vec);
+
 static util::RNManager generator;
 
 

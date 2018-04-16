@@ -45,8 +45,20 @@ generate_random(unsigned int begin, unsigned int end, unsigned int amount) {
     return ret_vec;
 }
 
-    void init_generator(const unsigned int seed, const string& generator_name) {
-        generator.Initialize(util::RNManager::Info(generator_name, seed));
+void init_generator(const unsigned int seed, const string& generator_name) {
+    generator.Initialize(util::RNManager::Info(generator_name, seed));
+}
+
+void check_distribution(vector<double>& p_vec) {
+    bool allzero = true;
+    for( auto& elem : p_vec ) {
+        if( elem != 0 ) {
+            allzero = false;
+            break;
+        }
     }
+    if( allzero )
+        for( auto& elem : p_vec ) elem += 1;
+}
 
 } // namespace stride
