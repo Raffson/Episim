@@ -91,7 +91,9 @@ void PopulationGenerator::InitializeCommutingFractions()
                                 //For students that commute we don't need to account for workers
                                 // because the same constant factor is used to filter out the workers
                                 // and thus the distribution stays unchanged...
-                                student_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first));
+                                // using +1 (again doesn't change the distribution...) to make sure we're not getting
+                                // a vector full of zeroes because the RNG flips out in such a case...
+                                student_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first)+1);
                             }
                             else worker_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first));
 
@@ -180,7 +182,7 @@ ContactPool* PopulationGenerator::GetRandomCommunityContactPool(vector<Community
 
         trng::uniform_int_dist distr(0, comms.size());
         unsigned int index = (unsigned int) generator.GetGenerator(distr)();
-        vector<ContactPool> pools = comms[index]->GetContactPools();
+        vector<ContactPool>& pools = comms[index]->GetContactPools();
         if( !pools.empty() )
         {
             trng::uniform_int_dist pdistr(0, pools.size());

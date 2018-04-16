@@ -36,35 +36,6 @@ using namespace std;
 
 namespace stride {
 
-/// Enum that represent indexes of Fractals map. That map contains all fraction data of our population
-enum class Fractions{
-    SCHOOLED,           // % of pop that is in school [3yrs, 18yrs),
-                        // [3, 6) -> kindergarten, [6, 12) -> elementary school, [12, 18) -> middle+highschool.
-    ACTIVE,             // % of pop that is activly working.
-    YOUNG_WORKERS,      // % of pop with age [18yrs, 26yrs).
-    OLD_WORKERS,        // % of pop with age [26yrs, 65yrs).
-    TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
-    OLDIES,             // % of pop that is in [65yrs, oldest_person].
-    STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
-    COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit and commutes.
-    COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
-};
-
-/// To allow iteration over the age Fractions.
-constexpr std::array<Fractions, 5> AgeList{{Fractions::SCHOOLED, Fractions::YOUNG_WORKERS, Fractions::OLD_WORKERS,
-                                                   Fractions::TODDLERS, Fractions::OLDIES}};
-
-/// Enum that represent indexes of sizes map. That map contains all size data
-/// of our communities
-enum class Sizes{
-    SCHOOLS,    // Average size of a school.
-    COLLEGES,   // Average size of a college.
-    COMMUNITIES, // Average size of a community
-    WORKPLACES, // Average size of a workplace
-    AVERAGE_CP, // Average size of a contactpool
-    MAXLC       // Amount of largest cities (cities with a college)
-};
-
 
 /**
  * Class representing our GeoGrid;
@@ -284,11 +255,6 @@ private:
         /// used by generate_colleges()
         void AdjustLargestCities(vector<City*>& lc, City& city);
 
-        /// Counts the total population in th GeoGrid based on the cities
-        /// in map cities which represents the model.
-        // need this to determine a modifier in GenerateColleges
-        double CountTotalPop() const;
-
         /// Assigns the main fractions: schooled, worker1, worker2 & rest
         void GetMainFractions(const vector<vector<double>>& hhs);
 
@@ -328,6 +294,8 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         /// Total population of simulation area
         unsigned int m_total_pop{};
+
+        unsigned int m_model_pop;
 
         /// Total number of schools
         unsigned int m_school_count{};

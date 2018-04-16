@@ -111,28 +111,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         string household_file = p_tree.get("popgen.data_files.households", "households_flanders.xml");
         m_belief              = p_tree.get_child("popgen.belief_policy");
 
-        parser::ParseCities(base_path + city_file, base_path + commuting_file, m_cities, true);
-
-        m_initial_search_radius = p_tree.get("popgen.neighbour_classification.initial_search_radius", 10);
-        ClassifyNeighbours();
-
-        // Raphael@everyone, until the refractor occurs, I can't delete/rename this..
-        // however i want to start making my functions with the correct signatures for after the refractor,
-        // therefore I will rename this member to a more appropriate name for after the refractor,
-        // as a result, we'll just need to delete some stuff out of the header file and that'll be it...
-        m_household_age_distr = parser::ParseHouseholds(base_path + household_file);
-
-        // Generating schools
-        // auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
-        // specs ask this to be read out of config, but could be calculated directly
-        // out of the city file?
-        // -> you're right... so let's do it like this:
-        // m_total_pop = CountTotalPop();
-        // After specifically asking about this, turns out we still need to read it from file...
-        // perhaps find a way to verify this number somehow, if the possibility exists of course...
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
-
-        GetMainFractions(m_household_age_distr);
 
         m_fract_map[Fractions::STUDENTS]          = abs(p_tree.get<double>("popgen.pop_info.fraction_students"));
         m_fract_map[Fractions::COMMUTING_STUDENTS]= abs(p_tree.get<double>("popgen.pop_info.fraction_commuting_students"));
@@ -145,6 +124,15 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         m_sizes_map[Sizes::MAXLC]           = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.college.cities"));
         m_sizes_map[Sizes::COMMUNITIES]  = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.community.size"));
         m_sizes_map[Sizes::WORKPLACES] = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.workplace.size"));
+
+        m_household_age_distr = parser::ParseHouseholds(base_path + household_file);
+        GetMainFractions(m_household_age_distr);
+
+        parser::ParseCities(base_path + city_file, m_cities, m_model_pop);
+        parser::ParseCommuting(base_path + commuting_file, m_cities, m_fract_map);
+
+        m_initial_search_radius = p_tree.get("popgen.neighbour_classification.initial_search_radius", 10);
+        ClassifyNeighbours();
 
         // Setting up RNG
         unsigned long seed = (unsigned long) abs(p_tree.get("popgen.rng.seed", 0));
@@ -273,7 +261,7 @@ void GeoGrid::GenerateColleges()
         // Determine number of contactpools
         auto cps = round(m_sizes_map[Sizes::COLLEGES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
-        double pop_modifier = m_total_pop / CountTotalPop();
+        double pop_modifier = m_total_pop / m_model_pop;
 
         // generate colleges to the respective cities...
         for (auto& it : m_cities_with_college) {
@@ -325,6 +313,16 @@ void GeoGrid::GenerateWorkplaces(){
         // out-commuters should allways be modified because there can always be students present
         // for in-commuters this is only true if this city contains colleges
         // note that commuters should always be active workers or students
+        if( work_pop < 0 ){
+            cout << it.second.GetName() << " has fubar work_pop = " << work_pop << endl;
+            cout << it.second.GetPopulation() << " * " << active_workers_frac << " = "
+                 << it.second.GetPopulation() * active_workers_frac << endl;
+            cout << it.second.GetTotalInCommutersCount() << " * " << in_commuters_modifier << " = "
+                 << it.second.GetTotalInCommutersCount() * in_commuters_modifier << endl;
+            cout << it.second.GetTotalOutCommutersCount() << " * " << possible_workers_frac << " = "
+                 << it.second.GetTotalOutCommutersCount() * possible_workers_frac << endl;
+
+        }
 
         // Inserting the amount of id's of the city equal to the pop working in the city
         c_vec.emplace_back(&it.second);
@@ -424,16 +422,6 @@ void GeoGrid::GenerateCommunities()
                 //m_communities[community.getID()] = community
             }
         }*/
-}
-
-double GeoGrid::CountTotalPop() const
-{
-
-        double counter = 0;
-        for (auto& it : m_cities) {
-                counter += it.second.GetPopulation();
-        }
-        return counter;
 }
 
 Coordinate GeoGrid::GetCenterOfGrid()

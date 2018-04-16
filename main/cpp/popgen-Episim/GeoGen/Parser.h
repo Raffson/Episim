@@ -11,12 +11,14 @@
 
 #include "util/CSV.h"
 #include "util/CSVRow.h"
+#include "util/RNManager.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "popgen-Episim/GeoGen/City.h"
+#include "popgen-Episim/GeoGen/Utility.h"
 
 #include "trng/discrete_dist.hpp"
 
@@ -25,10 +27,9 @@ using namespace std;
 namespace stride {
 namespace parser {
 
-void ParseCities(const boost::filesystem::path&, const boost::filesystem::path&,
-                 map<unsigned int, City>& cities, bool parse_commuting);
+void ParseCities(const boost::filesystem::path&, map<unsigned int, City>& cities, unsigned int& total_pop);
 
-void ParseCommuting(const boost::filesystem::path&, map<unsigned int, City>&);
+void ParseCommuting(const boost::filesystem::path&, map<unsigned int, City>&, const map<Fractions, double>& fracs);
 
 vector<City> DefragmentCity(const City &ct, vector<double> distr, util::RNManager &rndm);
 

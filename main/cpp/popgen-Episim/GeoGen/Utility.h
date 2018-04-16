@@ -8,13 +8,42 @@
 #include <vector>
 #include "util/RNManager.h"
 #include <cmath>
-#include <util/RNManager.h>
 #include "trng/discrete_dist.hpp"
 #include "trng/uniform_int_dist.hpp"
+#include <array>
 
 using namespace std;
 
 namespace stride {
+
+/// Enum that represent indexes of Fractals map. That map contains all fraction data of our population
+enum class Fractions{
+    SCHOOLED,           // % of pop that is in school [3yrs, 18yrs),
+                        // [3, 6) -> kindergarten, [6, 12) -> elementary school, [12, 18) -> middle+highschool.
+    ACTIVE,             // % of pop that is activly working.
+    YOUNG_WORKERS,      // % of pop with age [18yrs, 26yrs).
+    OLD_WORKERS,        // % of pop with age [26yrs, 65yrs).
+    TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
+    OLDIES,             // % of pop that is in [65yrs, oldest_person].
+    STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
+    COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit and commutes.
+    COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
+};
+
+/// To allow iteration over the age Fractions.
+    constexpr std::array<Fractions, 5> AgeList{{Fractions::SCHOOLED, Fractions::YOUNG_WORKERS, Fractions::OLD_WORKERS,
+                                                       Fractions::TODDLERS, Fractions::OLDIES}};
+
+/// Enum that represent indexes of sizes map. That map contains all size data
+/// of our communities
+enum class Sizes{
+    SCHOOLS,    // Average size of a school.
+    COLLEGES,   // Average size of a college.
+    COMMUNITIES, // Average size of a community
+    WORKPLACES, // Average size of a workplace
+    AVERAGE_CP, // Average size of a contactpool
+    MAXLC       // Amount of largest cities (cities with a college)
+};
 
 /// Checks if a file exists.
 /// @param: path A path to a file.
