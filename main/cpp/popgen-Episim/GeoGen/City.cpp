@@ -16,7 +16,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 
 City::City(const unsigned int city_id, const unsigned int province, unsigned int population,
            const Coordinate coordinates, const string name)
@@ -108,30 +108,29 @@ Community& City::AddCommunity(CommunityType community_type) {
     return m_communities.back();
 }
 
-void City::SetInCommuters(unsigned int id, unsigned int number_of_commuters)
+void City::SetInCommuters(unsigned int id, double number_of_commuters)
 {
         m_in_commuting_changed = true;
         m_in_commuting[id] = number_of_commuters;
 }
 
-void City::SetOutCommuters(unsigned int id, unsigned int number_of_commuters)
+void City::SetOutCommuters(unsigned int id, double number_of_commuters)
 {
         m_out_commuting_changed = true;
         m_out_commuting[id] = number_of_commuters;
 }
 
-unsigned int City::GetTotalInCommutersCount()
+double City::GetTotalInCommutersCount()
 {
     if( m_in_commuting_changed ) {
         m_in_commuting_changed = false;
-        m_in_commuter_count = 0;
         for (auto &it : m_in_commuting)
             m_in_commuter_count += it.second;
     }
     return m_in_commuter_count;
 }
 
-unsigned int City::GetTotalOutCommutersCount()
+double City::GetTotalOutCommutersCount()
 {
     if( m_out_commuting_changed ) {
         m_out_commuting_changed = false;
@@ -148,5 +147,4 @@ Household& City::AddHousehold() {
     return m_households.back();
 }
 
-
-} // namespace geogen
+} // namespace stride

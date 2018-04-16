@@ -24,7 +24,7 @@ using namespace std;
 //I have a backup where I converted everything related to Person
 // so that it uses shared pointers, just in case...
 
-namespace geogen { //temproralily put this in namespace geogen cause I say we gotta put everything in stride
+namespace stride { //temproralily put this in namespace stride cause I say we gotta put everything in stride
 
 class City;
 
@@ -34,7 +34,7 @@ public:
         Household(City* city);
 
         /// Add a member to the household.
-        void AddMember(const stride::Person* member);
+        void AddMember(const Person* member);
 
         /// City where housholds is located.
         City& GetCity() const { return *m_city; }
@@ -43,7 +43,7 @@ public:
         unsigned int GetID() const { return m_id; }
 
         /// Return the members of this household.
-        const vector<stride::Person*>& GetMembers() const { return m_pool.GetPool(); }
+        const vector<Person*>& GetMembers() const { return m_pool.GetPool(); }
 
         /// Number of members of the household.
         size_t GetSize() const { return m_pool.GetSize(); }
@@ -51,11 +51,11 @@ public:
         //Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
         // second thought, after fixing PopulationGenerator I wonder if we need these at all...
         // if we do, they'll need to be slightly reworked...
-        void GetSchoolAttendants(vector<stride::Person*>&) const;
+        void GetSchoolAttendants(vector<Person*>&) const;
 
-        void GetPossibleStudents(vector<stride::Person*>&) const;
+        void GetPossibleStudents(vector<Person*>&) const;
 
-        void GetPossibleWorkers(vector<stride::Person*>&) const;
+        void GetPossibleWorkers(vector<Person*>&) const;
 
 private:
         /// Id generator.
@@ -68,8 +68,8 @@ private:
         City* m_city;
 
         /// A ContactPool with the people belonging to this household.
-        stride::ContactPool m_pool;
+        ContactPool m_pool;
 
 };
 
-} // namespace geogen
+} // namespace stride

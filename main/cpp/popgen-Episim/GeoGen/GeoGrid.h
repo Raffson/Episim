@@ -34,36 +34,7 @@
 
 using namespace std;
 
-namespace geogen {
-
-/// Enum that represent indexes of Fractals map. That map contains all fraction data of our population
-enum class Fractions{
-    SCHOOLED,           // % of pop that is in school [3yrs, 18yrs),
-                        // [3, 6) -> kindergarten, [6, 12) -> elementary school, [12, 18) -> middle+highschool.
-    ACTIVE,             // % of pop that is activly working.
-    YOUNG_WORKERS,      // % of pop with age [18yrs, 26yrs).
-    OLD_WORKERS,        // % of pop with age [26yrs, 65yrs).
-    TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
-    OLDIES,             // % of pop that is in [65yrs, oldest_person].
-    STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
-    COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit and commutes.
-    COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
-};
-
-/// To allow iteration over the age Fractions.
-constexpr std::array<Fractions, 5> AgeList{{Fractions::SCHOOLED, Fractions::YOUNG_WORKERS, Fractions::OLD_WORKERS,
-                                                   Fractions::TODDLERS, Fractions::OLDIES}};
-
-/// Enum that represent indexes of sizes map. That map contains all size data
-/// of our communities
-enum class Sizes{
-    SCHOOLS,    // Average size of a school.
-    COLLEGES,   // Average size of a college.
-    COMMUNITIES, // Average size of a community
-    WORKPLACES, // Average size of a workplace
-    AVERAGE_CP, // Average size of a contactpool
-    MAXLC       // Amount of largest cities (cities with a college)
-};
+namespace stride {
 
 
 /**
@@ -244,8 +215,8 @@ public:
         void GetAgeFractions(vector<double>& popfracs);
 
         /// Getter
-        /// @retval <stride::Population> Returns a reference to population
-        stride::Population& GetPopulation() { return m_population; }
+        /// @retval <Population> Returns a reference to population
+        Population& GetPopulation() { return m_population; }
 
         /// Getter
         /// @retval <boost::property_tree::ptree> Returns the property tree for Belief
@@ -283,11 +254,6 @@ private:
         /// Adjusts 'lc' iff 'city' has more people than the city with the smallest population in 'lc'
         /// used by generate_colleges()
         void AdjustLargestCities(vector<City*>& lc, City& city);
-
-        /// Counts the total population in th GeoGrid based on the cities
-        /// in map cities which represents the model.
-        // need this to determine a modifier in GenerateColleges
-        double CountTotalPop() const;
 
         /// Assigns the main fractions: schooled, worker1, worker2 & rest
         void GetMainFractions(const vector<vector<double>>& hhs);
@@ -329,6 +295,8 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Total population of simulation area
         unsigned int m_total_pop{};
 
+        unsigned int m_model_pop;
+
         /// Total number of schools
         unsigned int m_school_count{};
 
@@ -336,10 +304,10 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         vector<City*> m_cities_with_college{};
 
         /// The population of the GeoGrid
-        stride::Population m_population;
+        Population m_population;
 
         /// Variable to store Belief used for creating people
         boost::property_tree::ptree m_belief;
 };
 
-} // namespace geogen
+} // namespace stride

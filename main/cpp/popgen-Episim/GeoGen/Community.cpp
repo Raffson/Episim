@@ -18,18 +18,18 @@
 
 #include "Community.h"
 
-namespace geogen {
+namespace stride {
 
 using namespace std;
 
 unsigned int Community::m_id_generator = 1;
 
-map<stride::ContactPoolType::Id, unsigned int> Community::m_pool_ids = {
-        { stride::ContactPoolType::Id::Household, 1 },
-        { stride::ContactPoolType::Id::School, 1 },
-        { stride::ContactPoolType::Id::Work, 1 },
-        { stride::ContactPoolType::Id::PrimaryCommunity, 1 },
-        { stride::ContactPoolType::Id::SecondaryCommunity, 1 }
+map<ContactPoolType::Id, unsigned int> Community::m_pool_ids = {
+        { ContactPoolType::Id::Household, 1 },
+        { ContactPoolType::Id::School, 1 },
+        { ContactPoolType::Id::Work, 1 },
+        { ContactPoolType::Id::PrimaryCommunity, 1 },
+        { ContactPoolType::Id::SecondaryCommunity, 1 }
 };
 
 Community::Community(CommunityType community_type, City* city)
@@ -37,9 +37,9 @@ Community::Community(CommunityType community_type, City* city)
 {
 }
 
-stride::ContactPool& Community::AddContactPool(stride::ContactPoolType::Id type) {
+stride::ContactPool& Community::AddContactPool(ContactPoolType::Id type) {
     unsigned int id = m_pool_ids.at(type)++;
-    m_contact_pools.emplace_back(stride::ContactPool(id, type, this));
+    m_contact_pools.emplace_back(ContactPool(id, type, this));
     return m_contact_pools.back();
 }
 
@@ -52,4 +52,4 @@ unsigned int Community::GetSize() const
 
         return result;
 }
-} // namespace geogen
+} // namespace stride

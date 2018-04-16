@@ -22,7 +22,7 @@
 #include <memory>
 #include <map>
 
-namespace geogen {
+namespace stride {
 
 /// Forward declaration to avoid problems with includes...
 class City;
@@ -61,9 +61,9 @@ public:
         City& GetCity() { return *m_city; }
 
         /// Adds a contact pool to the community
-        stride::ContactPool& AddContactPool(stride::ContactPoolType::Id type);
+        stride::ContactPool& AddContactPool(ContactPoolType::Id type);
 
-        std::vector<stride::ContactPool>& GetContactPools() { return m_contact_pools; }
+        std::vector<ContactPool>& GetContactPools() { return m_contact_pools; }
 
         /// Get the total number members of all contactpools for this community
         unsigned int GetSize() const;
@@ -77,9 +77,9 @@ private:
 
         City* m_city; ///< Shared pointer to City
 
-        static std::map<stride::ContactPoolType::Id, unsigned int> m_pool_ids;
+        static std::map<ContactPoolType::Id, unsigned int> m_pool_ids;
 
-        std::vector<stride::ContactPool> m_contact_pools;
+        std::vector<ContactPool> m_contact_pools;
 };
 
-} // namespace geogen
+} // namespace stride

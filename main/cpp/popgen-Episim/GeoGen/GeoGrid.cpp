@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 
 void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
 {
@@ -111,28 +111,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         string household_file = p_tree.get("popgen.data_files.households", "households_flanders.xml");
         m_belief              = p_tree.get_child("popgen.belief_policy");
 
-        parser::ParseCities(base_path + city_file, base_path + commuting_file, m_cities, true);
-
-        m_initial_search_radius = p_tree.get("popgen.neighbour_classification.initial_search_radius", 10);
-        ClassifyNeighbours();
-
-        // Raphael@everyone, until the refractor occurs, I can't delete/rename this..
-        // however i want to start making my functions with the correct signatures for after the refractor,
-        // therefore I will rename this member to a more appropriate name for after the refractor,
-        // as a result, we'll just need to delete some stuff out of the header file and that'll be it...
-        m_household_age_distr = parser::ParseHouseholds(base_path + household_file);
-
-        // Generating schools
-        // auto total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
-        // specs ask this to be read out of config, but could be calculated directly
-        // out of the city file?
-        // -> you're right... so let's do it like this:
-        // m_total_pop = CountTotalPop();
-        // After specifically asking about this, turns out we still need to read it from file...
-        // perhaps find a way to verify this number somehow, if the possibility exists of course...
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
-
-        GetMainFractions(m_household_age_distr);
 
         m_fract_map[Fractions::STUDENTS]          = abs(p_tree.get<double>("popgen.pop_info.fraction_students"));
         m_fract_map[Fractions::COMMUTING_STUDENTS]= abs(p_tree.get<double>("popgen.pop_info.fraction_commuting_students"));
@@ -146,10 +125,19 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         m_sizes_map[Sizes::COMMUNITIES]  = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.community.size"));
         m_sizes_map[Sizes::WORKPLACES] = (unsigned int) abs(p_tree.get<long>("popgen.contactpool_info.workplace.size"));
 
+        m_household_age_distr = parser::ParseHouseholds(base_path + household_file);
+        GetMainFractions(m_household_age_distr);
+
+        parser::ParseCities(base_path + city_file, m_cities, m_model_pop);
+        parser::ParseCommuting(base_path + commuting_file, m_cities, m_fract_map);
+
+        m_initial_search_radius = p_tree.get("popgen.neighbour_classification.initial_search_radius", 10);
+        ClassifyNeighbours();
+
         // Setting up RNG
         unsigned long seed = (unsigned long) abs(p_tree.get("popgen.rng.seed", 0));
         string type        = p_tree.get("popgen.rng.type", "mrg2");
-        generator.Initialize(stride::util::RNManager::Info(type, seed));
+        generator.Initialize(util::RNManager::Info(type, seed));
         //TODO: ^ somewhere else. Wait untill we integrate with stride
 
         // rounding errors cause the first ensure to fail in some conditions...
@@ -226,7 +214,7 @@ void GeoGrid::GenerateSchools()
 
                 // Add contactpools
                 for (auto j = 0; j < cps; j++)
-                        nw_school.AddContactPool(stride::ContactPoolType::Id::School);
+                        nw_school.AddContactPool(ContactPoolType::Id::School);
                 // m_communities[nw_school->getID()] = nw_school
                 // TODO: What is this?? -> probably no need for this but keeping it there just in case...
         }
@@ -273,7 +261,7 @@ void GeoGrid::GenerateColleges()
         // Determine number of contactpools
         auto cps = round(m_sizes_map[Sizes::COLLEGES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
-        double pop_modifier = m_total_pop / CountTotalPop();
+        double pop_modifier = m_total_pop / m_model_pop;
 
         // generate colleges to the respective cities...
         for (auto& it : m_cities_with_college) {
@@ -292,7 +280,7 @@ void GeoGrid::GenerateColleges()
                         Community& college = it->AddCommunity(CommunityType::College);
                         // Add contactpools
                         for (auto j = 0; j < cps; j++)
-                                college.AddContactPool(stride::ContactPoolType::Id::School);
+                                college.AddContactPool(ContactPoolType::Id::School);
                         // m_communities[college->getID()] = college
                 }
         }
@@ -325,6 +313,16 @@ void GeoGrid::GenerateWorkplaces(){
         // out-commuters should always be modified because there can always be students present
         // for in-commuters this is only true if this city contains colleges
         // note that commuters should always be active workers or students
+        if( work_pop < 0 ){
+            cout << it.second.GetName() << " has fubar work_pop = " << work_pop << endl;
+            cout << it.second.GetPopulation() << " * " << active_workers_frac << " = "
+                 << it.second.GetPopulation() * active_workers_frac << endl;
+            cout << it.second.GetTotalInCommutersCount() << " * " << in_commuters_modifier << " = "
+                 << it.second.GetTotalInCommutersCount() * in_commuters_modifier << endl;
+            cout << it.second.GetTotalOutCommutersCount() << " * " << possible_workers_frac << " = "
+                 << it.second.GetTotalOutCommutersCount() * possible_workers_frac << endl;
+
+        }
 
         // Inserting the amount of id's of the city equal to the pop working in the city
         c_vec.emplace_back(&it.second);
@@ -343,7 +341,7 @@ void GeoGrid::GenerateWorkplaces(){
         Community& nw_workplace = chosen_city.AddCommunity(CommunityType::Work);
 
         // A workplace has a contactpool.
-        nw_workplace.AddContactPool(stride::ContactPoolType::Id::Work);
+        nw_workplace.AddContactPool(ContactPoolType::Id::Work);
     }
 
 }
@@ -364,7 +362,7 @@ void GeoGrid::GenerateWorkplaces()
                 for (unsigned int i = 0; i < number_of_workplaces; i++) {
                         Community& community = city.AddCommunity(CommunityType::Work, &city);
                         /// Add contactpools
-                        community->AddContactPool(stride::ContactPoolType::Id::Work);
+                        community->AddContactPool(ContactPoolType::Id::Work);
                 }
         }
 }*/
@@ -400,12 +398,12 @@ void GeoGrid::GenerateCommunities()
 
                 // Add contactpools for primary community...
                 for( auto j = 0; j < cps; j++ ) {
-                    nw_pcommunity.AddContactPool(stride::ContactPoolType::Id::PrimaryCommunity);
+                    nw_pcommunity.AddContactPool(ContactPoolType::Id::PrimaryCommunity);
                 }
                 Community& nw_scommunity = chosen_city.AddCommunity(CommunityType::Secondary);
                 // Add contactpools for secondary community...
                 for (auto j = 0; j < cps; j++) {
-                        nw_scommunity.AddContactPool(stride::ContactPoolType::Id::SecondaryCommunity);
+                        nw_scommunity.AddContactPool(ContactPoolType::Id::SecondaryCommunity);
                 }
         }
         // Determine how many communities a city should get -> Depricated.
@@ -424,16 +422,6 @@ void GeoGrid::GenerateCommunities()
                 //m_communities[community.getID()] = community
             }
         }*/
-}
-
-double GeoGrid::CountTotalPop() const
-{
-
-        double counter = 0;
-        for (auto& it : m_cities) {
-                counter += it.second.GetPopulation();
-        }
-        return counter;
 }
 
 Coordinate GeoGrid::GetCenterOfGrid()
@@ -510,7 +498,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double> 
             new_coordinates.y += pow(-1, i)*(0.1*i);
             auto new_name = it->GetName();
             new_name += to_string(i);
-            m_cities.insert(pair<unsigned int,City>(new_id,geogen::City(new_id, it->GetProvince(),
+            m_cities.insert(pair<unsigned int,City>(new_id,City(new_id, it->GetProvince(),
                                                                         it->GetPopulation()/(amount_to_frag[counter] + 2),
                                                                         new_coordinates, new_name)));
 
@@ -537,4 +525,4 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadius(const City& origin, unsigned
 
 }
 
-} // namespace geogen
+} // namespace stride

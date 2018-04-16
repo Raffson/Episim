@@ -21,7 +21,7 @@ using namespace std;
 
 #ifdef USING_QT
 
-int startMap(geogen::GeoGrid& grid)
+int startMap(stride::GeoGrid& grid)
 {
 #if QT_CONFIG(library)
         const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
@@ -67,19 +67,19 @@ int startMap(geogen::GeoGrid& grid)
 
         /// To center the map on a specific location: use following code.
         QVariantList       coords;
-        geogen::Coordinate c = grid.GetCenterOfGrid();
+        stride::Coordinate c = grid.GetCenterOfGrid();
         coords.push_back(c.latitude);
         coords.push_back(c.longitude);
         QMetaObject::invokeMethod(item, "setCentre", Q_ARG(QVariant, QVariant::fromValue(coords)));
 
         /// To add cities on the map: use following.
         auto cities = grid.GetCities();
-        for (map<unsigned int, geogen::City>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {
+        for (map<unsigned int, stride::City>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {
                 std::stringstream ss;
                 string            s;
                 string            temp;
                 /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
-                geogen::City& city = (*c_it).second;
+                stride::City& city = (*c_it).second;
                 QVariantMap              vals;
                 QList<QPair<int, int>> in_commuting;
                 QList<QPair<int, int>> out_commuting;
@@ -135,10 +135,10 @@ int startMap(geogen::GeoGrid& grid)
 
 int main(int argc, char** argv)
 {
-        geogen::GeoGrid grid("config/geogen_default.xml");
+        stride::GeoGrid grid("config/geogen_default.xml");
         grid.GenerateAll();
 
-        popgen::PopulationGenerator pop_generator(grid);
+        stride::PopulationGenerator pop_generator(grid);
         pop_generator.GeneratePopulation();
 
 #ifdef USING_QT
