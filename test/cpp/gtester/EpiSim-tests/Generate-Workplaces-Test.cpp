@@ -58,7 +58,7 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         // -----------------------------------------------------------------------------------------
 
         // Testing 10 randomly chosen cities atm instead of testing all the 327 cities
-       /* float margin = 0.1; // What is a good margin here?
+        /*float margin = 0.1; // What is a good margin here?
         unsigned int antwerpen    = 3089;
         unsigned int leuven       = 877;
         unsigned int brugge       = 961;
@@ -82,7 +82,7 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         EXPECT_NEAR(cities.at(46025).GetWorkplaces().size(), temse, margin);
         EXPECT_NEAR(cities.at(71053).GetWorkplaces().size(), sinttruiden, margin);
         EXPECT_NEAR(cities.at(73083).GetWorkplaces().size(), tongeren, margin);
-        EXPECT_NEAR(cities.at(73107).GetWorkplaces().size(), maasmechelen, margin); */
+        EXPECT_NEAR(cities.at(73107).GetWorkplaces().size(), maasmechelen, margin);*/
 
 }
 

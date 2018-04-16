@@ -133,8 +133,8 @@ public:
             SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
             // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
             ACTIVE,             // % of pop that is activly working.
-            YOUNG_WORKERS,      // % of pop in [18yrs, 26yrs) that is working.
-            OLD_WORKERS,        // % of pop in [26yrs, 65yrs) that is working.
+            YOUNG,      // % of pop in [18yrs, 26yrs) that is working.
+            MIDDLE_AGED,        // % of pop in [26yrs, 65yrs) that is working.
             TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
             OLDIES,             // % of pop that is in [65yrs, oldest_person].
             STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.

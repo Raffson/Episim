@@ -33,8 +33,8 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
         }
         double total     = schooled + workers1 + workers2 + toddlers + oldies;
         m_fract_map[Fractions::SCHOOLED] = schooled / total;
-        m_fract_map[Fractions::YOUNG_WORKERS] = workers1 / total;
-        m_fract_map[Fractions::OLD_WORKERS] = workers2 / total;
+        m_fract_map[Fractions::YOUNG] = workers1 / total;
+        m_fract_map[Fractions::MIDDLE_AGED] = workers2 / total;
         m_fract_map[Fractions::TODDLERS] = toddlers / total;
         m_fract_map[Fractions::OLDIES]   = oldies / total;
 }
@@ -42,8 +42,8 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
 void GeoGrid::GetAgeFractions(vector<double>& popfracs)
 {
     popfracs.emplace_back(m_fract_map[Fractions::SCHOOLED]);
-    popfracs.emplace_back(m_fract_map[Fractions::YOUNG_WORKERS]);
-    popfracs.emplace_back(m_fract_map[Fractions::OLD_WORKERS]);
+    popfracs.emplace_back(m_fract_map[Fractions::YOUNG]);
+    popfracs.emplace_back(m_fract_map[Fractions::MIDDLE_AGED]);
     popfracs.emplace_back(m_fract_map[Fractions::TODDLERS]);
     popfracs.emplace_back(m_fract_map[Fractions::OLDIES]);
 }
@@ -77,8 +77,8 @@ GeoGrid::GeoGrid()
 {
         m_fract_map[Fractions::SCHOOLED] = 0;
         m_fract_map[Fractions::ACTIVE] = 0;
-        m_fract_map[Fractions::YOUNG_WORKERS] = 0;
-        m_fract_map[Fractions::OLD_WORKERS] = 0;
+        m_fract_map[Fractions::YOUNG] = 0;
+        m_fract_map[Fractions::MIDDLE_AGED] = 0;
         m_fract_map[Fractions::TODDLERS] = 0;
         m_fract_map[Fractions::OLDIES] = 0;
         m_fract_map[Fractions::STUDENTS] = 0;
@@ -145,7 +145,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // so removed the correspronding death test until we find a better test...
         //TODO: Working with DesignByContract still relevant?
         // Raphael@Robbe, of course it is, everywhere where we have these REQUIRES and ENSURES, let them be...
-        double totalfrac = m_fract_map[Fractions::YOUNG_WORKERS] + m_fract_map[Fractions::OLD_WORKERS]
+        double totalfrac = m_fract_map[Fractions::YOUNG] + m_fract_map[Fractions::MIDDLE_AGED]
                            + m_fract_map[Fractions::TODDLERS] + m_fract_map[Fractions::OLDIES]
                            + m_fract_map[Fractions::SCHOOLED];
         ENSURE(fabs(totalfrac - 1) < constants::EPSILON, "Pop frac should equal 1");
@@ -251,8 +251,8 @@ void GeoGrid::GenerateColleges()
         // gotta come up with new tests for this...
         REQUIRE(m_fract_map[Fractions::STUDENTS] >= 0, "Student fractal can't be negative");
         REQUIRE(m_fract_map[Fractions::STUDENTS] <= 1, "Student fractal can't be more then 100%");
-        REQUIRE(m_fract_map[Fractions::YOUNG_WORKERS] >= 0, "Worker fractal can't be negative");
-        REQUIRE(m_fract_map[Fractions::YOUNG_WORKERS] <= 1, "Worker fractal can't be more then 100%");
+        REQUIRE(m_fract_map[Fractions::YOUNG] >= 0, "Worker fractal can't be negative");
+        REQUIRE(m_fract_map[Fractions::YOUNG] <= 1, "Worker fractal can't be more then 100%");
         for (auto& it : m_cities) {
                 AdjustLargestCities(m_cities_with_college, it.second);
         }
@@ -264,13 +264,13 @@ void GeoGrid::GenerateColleges()
 
         // generate colleges to the respective cities...
         for (auto& it : m_cities_with_college) {
-                //TODO why is this multiplied with YOUNG_WORKERS? -> beacuse only YOUNG_WORKERS can be students...
+                //TODO why is this multiplied with YOUNG? -> beacuse only YOUNG can be students...
                 // here we definitely need the pop modifier
                 // because otherwise we're not taking m_total_pop into account...
                 // originally i made this a member but changed my mind since i don't think we'll
                 // need this in another function... (delete comments if agreed)
                 double students = it->GetPopulation() * pop_modifier
-                                  * m_fract_map[Fractions::YOUNG_WORKERS] * m_fract_map[Fractions::STUDENTS];
+                                  * m_fract_map[Fractions::YOUNG] * m_fract_map[Fractions::STUDENTS];
                 // doesn't matter if students is a double at this time
                 // since this is only an estimate for the number of colleges
                 auto nrcolleges = (unsigned int)round(students / m_sizes_map[Sizes::COLLEGES]);
@@ -292,8 +292,8 @@ void GeoGrid::GenerateWorkplaces(){
     //of people working IN the city (not the active working pop in the city).
     //We have to account for the commuters in the city.
 
-    double possible_workers_frac = (m_fract_map[Fractions::OLD_WORKERS]
-                                    + m_fract_map[Fractions::YOUNG_WORKERS] * (1 - m_fract_map[Fractions::STUDENTS]));
+    double possible_workers_frac = (m_fract_map[Fractions::MIDDLE_AGED]
+                                    + m_fract_map[Fractions::YOUNG] * (1 - m_fract_map[Fractions::STUDENTS]));
 
 
     double active_workers_frac = possible_workers_frac * m_fract_map[Fractions::ACTIVE];

@@ -55,11 +55,11 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
             index++;
         }
 
-        double commfrac = fracs.at(Fractions::OLD_WORKERS) * fracs.at(Fractions::COMMUTING_WORKERS)
-                          + fracs.at(Fractions::YOUNG_WORKERS)
+        double commfrac = fracs.at(Fractions::MIDDLE_AGED) * fracs.at(Fractions::COMMUTING_WORKERS)
+                          + fracs.at(Fractions::YOUNG)
                             * (1 - fracs.at(Fractions::STUDENTS))
                             * fracs.at(Fractions::COMMUTING_WORKERS)
-                          + fracs.at(Fractions::YOUNG_WORKERS)
+                          + fracs.at(Fractions::YOUNG)
                             * fracs.at(Fractions::STUDENTS)
                             * fracs.at(Fractions::COMMUTING_STUDENTS);
 

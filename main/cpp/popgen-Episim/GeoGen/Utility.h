@@ -21,8 +21,8 @@ enum class Fractions{
     SCHOOLED,           // % of pop that is in school [3yrs, 18yrs),
                         // [3, 6) -> kindergarten, [6, 12) -> elementary school, [12, 18) -> middle+highschool.
     ACTIVE,             // % of pop that is activly working.
-    YOUNG_WORKERS,      // % of pop with age [18yrs, 26yrs) that is working.
-    OLD_WORKERS,        // % of pop with age [26yrs, 65yrs).
+    YOUNG,              // % of pop with age [18yrs, 26yrs) that is working.
+    MIDDLE_AGED,        // % of pop with age [26yrs, 65yrs).
     TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
     OLDIES,             // % of pop that is in [65yrs, oldest_person].
     STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
@@ -31,7 +31,7 @@ enum class Fractions{
 };
 
 /// To allow iteration over the age Fractions.
-    constexpr std::array<Fractions, 5> AgeList{{Fractions::SCHOOLED, Fractions::YOUNG_WORKERS, Fractions::OLD_WORKERS,
+    constexpr std::array<Fractions, 5> AgeList{{Fractions::SCHOOLED, Fractions::YOUNG, Fractions::MIDDLE_AGED,
                                                        Fractions::TODDLERS, Fractions::OLDIES}};
 
 /// Enum that represent indexes of sizes map. That map contains all size data

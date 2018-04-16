@@ -74,8 +74,8 @@ TEST(GeoGridCtorTest, DefaultConstructor)
         EXPECT_EQ(grid.GetCities().size(), 0);
         EXPECT_EQ(grid.GetTotalPop(), 0);
         EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::SCHOOLED), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::YOUNG_WORKERS), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::OLD_WORKERS), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::YOUNG), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::MIDDLE_AGED), 0.0);
         EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::TODDLERS), 0.0);
         EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::OLDIES), 0.0);
         EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::STUDENTS), 0.0);

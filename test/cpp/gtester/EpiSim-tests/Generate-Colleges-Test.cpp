@@ -72,7 +72,7 @@ TEST_P(CollegeTest, HappyDayScenario)
 
         // Expected nr of colleges
         double stufrac = grid.GetFraction(Fractions::STUDENTS);
-        double ywfrac = grid.GetFraction(Fractions::YOUNG_WORKERS);
+        double ywfrac = grid.GetFraction(Fractions::YOUNG);
         unsigned int colsize = grid.GetAvgSize(Sizes::COLLEGES);
         unsigned int expMechelen =
             round(45736 * ywfrac * stufrac / colsize);

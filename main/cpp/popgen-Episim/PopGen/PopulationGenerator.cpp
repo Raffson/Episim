@@ -22,11 +22,11 @@ Fractions GetCategory(const double& age)
 {
         //Same ordering of if-else if as in GeoGrid::GetMainFractions, for the same reasons...
         if (age >= 26 and age < 65)
-            return Fractions::OLD_WORKERS;
+            return Fractions::MIDDLE_AGED;
         else if (age >= 3 and age < 18)
             return Fractions::SCHOOLED;
         else if (age >= 18 and age < 26)
-            return Fractions::YOUNG_WORKERS;
+            return Fractions::YOUNG;
         else if (age >= 65)
             return Fractions::OLDIES;
         else
@@ -39,7 +39,7 @@ void PopulationGenerator::InitializeHouseholdFractions()
         map<unsigned int, unsigned int> sizes;
         //The next map 'ages' will map a household's size to a 2nd map cotaining a Fraction type
         // which maps to the number people that belong to an age-category...
-        // Thus we'll only be using SCHOOLED, YOUNG_WORKERS, OLD_WORKERS, TODDLERS & OLDIES from the Fractions enum...
+        // Thus we'll only be using SCHOOLED, YOUNG, MIDDLE_AGED, TODDLERS & OLDIES from the Fractions enum...
         map<unsigned int, map<Fractions, double>> ages;
         //The next map 'total_ages' will simply map a household's 'size'
         // to the total amount of people that belong to a household with 'size'
@@ -68,7 +68,7 @@ void PopulationGenerator::InitializeCommutingFractions()
 {
         const double commuting_students_frac =  m_geogrid.GetFraction(Fractions::COMMUTING_STUDENTS);
         const double student_frac = m_geogrid.GetFraction(Fractions::STUDENTS);
-        const double young_workers_frac = m_geogrid.GetFraction(Fractions::YOUNG_WORKERS);
+        const double young_workers_frac = m_geogrid.GetFraction(Fractions::YOUNG);
         const double student_commuters = commuting_students_frac * student_frac * young_workers_frac;
         for (auto& cityA : m_geogrid.GetCities()) // for each cityA...
         {
@@ -233,7 +233,7 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
             GetCommunitiesOfRandomNearbyCity(city, CommunityType::School, schools);
             school = GetRandomCommunityContactPool(schools);
         }
-        else if( category == Fractions::YOUNG_WORKERS ) { // [18, 26)
+        else if( category == Fractions::YOUNG ) { // [18, 26)
             //first check if we have a student or not...
             if( IsStudent() ) {
                 vector<Community*> colleges;
@@ -254,7 +254,7 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
                 workplace = GetRandomCommunityContactPool(workplaces);
             }
         }
-        else if( category == Fractions::OLD_WORKERS ) { // [26, 65)
+        else if( category == Fractions::MIDDLE_AGED ) { // [26, 65)
             if( IsActive() ) {
                 vector<Community*> workplaces;
                 if( IsWorkingCommuter() ) {
