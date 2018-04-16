@@ -51,7 +51,7 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
         std::vector<double> total_commuters(read_in.getColumnCount(), 0);
         for (auto it : read_in) {
             for (unsigned int i = 0; i < read_in.getColumnCount(); i++)
-                if( index != i ) total_commuters[i] += it.getValue<unsigned int>(i);
+                total_commuters[i] += it.getValue<unsigned int>(i);
             index++;
         }
 

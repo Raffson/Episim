@@ -80,6 +80,11 @@ vector<unsigned int> generate_random(unsigned int begin, unsigned  int end, unsi
 /// @param p_vec A reference to the vector which represents the distribution.
 void check_distribution(vector<double>& p_vec);
 
+/// Returns the fraction-category in which 'age' falls.
+/// @param age The age for which we want to know the category
+/// @retval <Fractions> The corresponsing enum value which represents the category for the given age.
+Fractions get_category(const double& age);
+
 static util::RNManager generator;
 
 

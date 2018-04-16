@@ -61,4 +61,19 @@ void check_distribution(vector<double>& p_vec) {
         for( auto& elem : p_vec ) elem += 1;
 }
 
+Fractions get_category(const double& age)
+{
+    //Same ordering of if-else if as in GeoGrid::GetMainFractions, for the same reasons...
+    if (age >= 26 and age < 65)
+        return Fractions::MIDDLE_AGED;
+    else if (age >= 3 and age < 18)
+        return Fractions::SCHOOLED;
+    else if (age >= 18 and age < 26)
+        return Fractions::YOUNG;
+    else if (age >= 65)
+        return Fractions::OLDIES;
+    else
+        return Fractions::TODDLERS;
+}
+
 } // namespace stride

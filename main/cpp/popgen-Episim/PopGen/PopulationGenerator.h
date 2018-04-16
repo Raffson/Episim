@@ -113,6 +113,12 @@ private:
         /// @retval <geogen::City&> The random city for the commuter.
         City&                     GetRandomCommutingCity(City& city, const bool student = false);
 
+        /// Assigns a worker to a random contact pool.
+        /// @param origin A reference to the city from which the worker is coming from.
+        /// @retval <ContactPool*> A pointer to the contact pool to which the worker will be assigned.
+        /// The assignment itself happens in GeneratePerson.
+        ContactPool* AssignWorkerAtRandom(City& origin);
+
 private:
         ///ID generator for creating persons, starting from 0 which in this case doesn't matter...
         static unsigned int m_id_generator;

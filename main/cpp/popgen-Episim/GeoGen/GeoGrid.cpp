@@ -41,11 +41,8 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
 
 void GeoGrid::GetAgeFractions(vector<double>& popfracs)
 {
-    popfracs.emplace_back(m_fract_map[Fractions::SCHOOLED]);
-    popfracs.emplace_back(m_fract_map[Fractions::YOUNG]);
-    popfracs.emplace_back(m_fract_map[Fractions::MIDDLE_AGED]);
-    popfracs.emplace_back(m_fract_map[Fractions::TODDLERS]);
-    popfracs.emplace_back(m_fract_map[Fractions::OLDIES]);
+    for(auto& category : AgeList)
+        popfracs.emplace_back(m_fract_map[category]);
 }
 
 void GeoGrid::ClassifyNeighbours()

@@ -18,21 +18,6 @@ PopulationGenerator::PopulationGenerator(GeoGrid& geogrid)
         InitializeCityPopFractions();
 }
 
-Fractions GetCategory(const double& age)
-{
-        //Same ordering of if-else if as in GeoGrid::GetMainFractions, for the same reasons...
-        if (age >= 26 and age < 65)
-            return Fractions::MIDDLE_AGED;
-        else if (age >= 3 and age < 18)
-            return Fractions::SCHOOLED;
-        else if (age >= 18 and age < 26)
-            return Fractions::YOUNG;
-        else if (age >= 65)
-            return Fractions::OLDIES;
-        else
-            return Fractions::TODDLERS;
-}
-
 void PopulationGenerator::InitializeHouseholdFractions()
 {
         auto                            households = m_geogrid.GetModelHouseholds(); // get the model, model should be const...
@@ -49,7 +34,7 @@ void PopulationGenerator::InitializeHouseholdFractions()
                 sizes[household.size()] += 1;
                 total_ages[household.size()] += household.size();
                 for (auto& age : household)
-                    ages[household.size()][GetCategory(age)] += 1;
+                    ages[household.size()][get_category(age)] += 1;
         }
 
         double totalhhs = households.size();
@@ -69,13 +54,14 @@ void PopulationGenerator::InitializeCommutingFractions()
         const double commuting_students_frac =  m_geogrid.GetFraction(Fractions::COMMUTING_STUDENTS);
         const double student_frac = m_geogrid.GetFraction(Fractions::STUDENTS);
         const double young_workers_frac = m_geogrid.GetFraction(Fractions::YOUNG);
-        const double student_commuters = commuting_students_frac * student_frac * young_workers_frac;
+        const double student_commuters_frac = commuting_students_frac * student_frac * young_workers_frac;
         for (auto& cityA : m_geogrid.GetCities()) // for each cityA...
         {
                 m_city_ids.emplace_back(cityA.first);
                 if( !cityA.second.GetColleges().empty() ) m_college_ids.emplace_back(cityA.first);
                 vector<double> worker_dist;
                 vector<double> student_dist;
+                double commutersA = cityA.second.GetTotalOutCommutersCount();
                 for (auto& cityB : m_geogrid.GetCities()) // calculate the chance to commute from cityA to cityB
                 {
                         const bool has_college = !cityB.second.GetColleges().empty();
@@ -84,14 +70,10 @@ void PopulationGenerator::InitializeCommutingFractions()
                         {
                             if( has_college ) {
                                 //Calculate the nr of commuting students
-                                double students = cityA.second.GetPopulation() * student_commuters;
-                                //For workers that commute to a city with a college,
-                                // we must take the students into account and thus the distribution changes...
+                                double students = cityA.second.GetPopulation() * student_commuters_frac;
+                                students *= (cityA.second.GetOutCommuting().at(cityB.first) / commutersA);
                                 worker_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first) - students);
-                                //For students that commute we don't need to account for workers
-                                // because the same constant factor is used to filter out the workers
-                                // and thus the distribution stays unchanged...
-                                student_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first));
+                                student_dist.emplace_back(students);
                             }
                             else worker_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first));
 
@@ -105,6 +87,11 @@ void PopulationGenerator::InitializeCommutingFractions()
                 check_distribution(worker_dist);
                 check_distribution(student_dist);
                 // add the commuting workers distribution for cityA
+                //cout << cityA.second.GetName() << " has distributions: " << endl;
+                //for( auto elem : worker_dist ) cout << elem << ", ";
+                //cout << endl;
+                //for( auto elem : student_dist ) cout << elem << ", ";
+                //cout << endl;
                 m_worker_commuting_fracs[cityA.first] = worker_dist;
                 m_student_commuting_fracs[cityA.first] = student_dist;
         }
@@ -196,8 +183,8 @@ ContactPool* PopulationGenerator::GetRandomCommunityContactPool(vector<Community
 const bool FlipUnfairCoin(const double& frac)
 {
         vector<double> fracs;
-        fracs.push_back(1 - frac);
-        fracs.push_back(frac);
+        fracs.emplace_back(1 - frac);
+        fracs.emplace_back(frac);
         trng::discrete_dist distr(fracs.begin(), fracs.end());
         return (const bool)generator.GetGenerator(distr)();
 }
@@ -209,6 +196,17 @@ const bool PopulationGenerator::IsStudentCommuter() { return FlipUnfairCoin(m_ge
 const bool PopulationGenerator::IsStudent() { return FlipUnfairCoin(m_geogrid.GetFraction(Fractions::STUDENTS)); }
 
 const bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_geogrid.GetFraction(Fractions::ACTIVE)); }
+
+ContactPool* PopulationGenerator::AssignWorkerAtRandom(City &origin)
+{
+    vector<Community*> workplaces;
+    if( IsWorkingCommuter() ){
+        City& commuter_city = GetRandomCommutingCity(origin);
+        workplaces = commuter_city.GetCommunitiesOfType(CommunityType::Work);
+    }
+    else GetCommunitiesOfRandomNearbyCity(origin, CommunityType::Work, workplaces);
+    return GetRandomCommunityContactPool(workplaces);
+}
 
 void PopulationGenerator::GeneratePerson(const double& age, const unsigned int hid,
                                          const unsigned int pcid, Population& pop, City& city)
@@ -222,7 +220,7 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
 
         //TODO: gotta refactor because this is becoming too big & ugly...
 
-        Fractions category = GetCategory(age);
+        Fractions category = get_category(age);
         ContactPool* school = nullptr;
         ContactPool* workplace = nullptr;
         vector<Community*> seccomms;
@@ -244,32 +242,10 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
                 else GetNearestColleges(city, colleges);
                 school = GetRandomCommunityContactPool(colleges);
             }
-            else if( IsActive() ) {
-                vector<Community*> workplaces;
-                if( IsWorkingCommuter() ){
-                    City& commuter_city = GetRandomCommutingCity(city);
-                    workplaces = commuter_city.GetCommunitiesOfType(CommunityType::Work);
-                }
-                else GetCommunitiesOfRandomNearbyCity(city, CommunityType::Work, workplaces);
-                workplace = GetRandomCommunityContactPool(workplaces);
-            }
+            else if( IsActive() ) workplace = AssignWorkerAtRandom(city);
         }
         else if( category == Fractions::MIDDLE_AGED ) { // [26, 65)
-            if( IsActive() ) {
-                vector<Community*> workplaces;
-                if( IsWorkingCommuter() ) {
-                    City& commuter_city = GetRandomCommutingCity(city);
-                    workplaces = commuter_city.GetCommunitiesOfType(CommunityType::Work);
-                }
-                else GetCommunitiesOfRandomNearbyCity(city, CommunityType::Work, workplaces);
-                workplace = GetRandomCommunityContactPool(workplaces);
-            }
-        }
-        else if( category == Fractions::TODDLERS ) { // [0, 3)
-            //nothing?
-        }
-        else if( category == Fractions::OLDIES ) { // [65, 80], cause maximum age according to Age.h is 80...
-            //nothing?
+            if( IsActive() ) workplace = AssignWorkerAtRandom(city);
         }
         unsigned int schoolid = (school) ? school->GetID() : 0;
         unsigned int workid = (workplace) ? workplace->GetID() : 0;
@@ -395,6 +371,8 @@ City& PopulationGenerator::GetRandomCommutingCity(City& origin, const bool stude
 {
         const vector<double>& distribution = student ? m_student_commuting_fracs[origin.GetId()]
                                                      : m_worker_commuting_fracs[origin.GetId()];
+        //for( auto& elem : distribution ) cout << elem << ", ";
+        //cout << endl;
         trng::discrete_dist   distr(distribution.begin(), distribution.end());
         auto  index = (const unsigned int)generator.GetGenerator(distr)();
         const unsigned int id = student ? m_college_ids.at(index) : m_city_ids.at(index);
