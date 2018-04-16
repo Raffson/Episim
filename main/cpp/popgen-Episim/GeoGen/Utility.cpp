@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 
 bool file_exists(const boost::filesystem::path& path)
 {
@@ -41,4 +41,4 @@ generate_random(unsigned int begin, unsigned int end, unsigned int amount) {
     return ret_vec;
 }
 
-} // namespace geogen
+} // namespace stride

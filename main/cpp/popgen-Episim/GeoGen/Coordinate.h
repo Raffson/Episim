@@ -13,7 +13,7 @@
  *
  *
  */
-namespace geogen {
+namespace stride {
 
 /*
  * Basic Coördinate class. container for x & y value's to represent a
@@ -42,4 +42,4 @@ public:
         double latitude;
 };
 
-} // namespace geogen
+} // namespace stride

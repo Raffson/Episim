@@ -26,7 +26,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 
 class City
 {
@@ -45,9 +45,9 @@ public:
 
         unsigned int GetCommunitySize() const { return m_communities.size(); };
 
-        unsigned int GetTotalInCommutersCount();
-        unsigned int GetTotalOutCommutersCount();
+        double GetTotalInCommutersCount();
 
+        double GetTotalOutCommutersCount();
 
         vector<Community>& GetAllCommunities(){ return m_communities; };
 
@@ -63,19 +63,20 @@ public:
 
         vector<Community*> GetSecondaryCommunities();
 
-        vector<Community*> GetCommunitiesOfType(CommunityType ct);
+        vector<Community*> GetCommunitiesOfType(CommunityType ct, unsigned int poolsize = 2000,
+                                                const bool filter = false);
 
         /// Adds community to the city.
         Community& AddCommunity(CommunityType community_type);
 
+        void SetInCommuters(unsigned int id, double number_of_commuters);
+
+        void SetOutCommuters(unsigned int id, double number_of_commuters);
+
         ///
-        const map<unsigned int, unsigned int>& GetInCommuting() const { return m_in_commuting; };
+        const map<unsigned int, double>& GetInCommuting() const { return m_in_commuting; };
 
-        const map<unsigned int, unsigned int>& GetOutCommuting() const { return m_out_commuting; };
-
-        void SetInCommuters(unsigned int id, unsigned int number_of_commuters);
-
-        void SetOutCommuters(unsigned int id, unsigned int number_of_commuters);
+        const map<unsigned int, double>& GetOutCommuting() const { return m_out_commuting; };
 
         Household& AddHousehold();
 
@@ -101,14 +102,14 @@ private:
         vector<Community> m_communities;
 
         /// Contains number of commuters from this city to other cities
-        map<unsigned int, unsigned int> m_in_commuting;
+        map<unsigned int, double> m_in_commuting;
 
-        map<unsigned int, unsigned int> m_out_commuting;
+        map<unsigned int, double> m_out_commuting;
 
         vector<Household> m_households;
 
-        unsigned int m_in_commuter_count;
-        unsigned int m_out_commuter_count;
+        double m_in_commuter_count;
+        double m_out_commuter_count;
 
         //These booleans will improve efficiency...
         bool m_in_commuting_changed;
@@ -116,4 +117,4 @@ private:
 
 };
 
-} // namespace geogen
+} // namespace stride

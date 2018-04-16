@@ -16,7 +16,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 
 City::City(const unsigned int city_id, const unsigned int province, unsigned int population,
            const Coordinate coordinates, const string name)
@@ -89,12 +89,16 @@ vector<Community*> City::GetSecondaryCommunities()
 
 // this is  much better, taking away the need for all the above functions,
 // except the functions above make life easier sometimes, so leaving them for now...
-vector<Community*> City::GetCommunitiesOfType(CommunityType ct)
+vector<Community*> City::GetCommunitiesOfType(CommunityType ct, unsigned int poolsize, const bool filter)
 {
         vector<Community*> communities;
         for (auto& it : m_communities) {
-                if (it.GetCommunityType() == ct)
-                        communities.emplace_back(&it);
+                if (it.GetCommunityType() == ct) {
+                    if (filter and (ct == CommunityType::Primary or ct == CommunityType::Secondary)) {
+                        if (it.GetSize() < poolsize) communities.emplace_back(&it);
+                    }
+                    else communities.emplace_back(&it);
+                }
         }
         return communities;
 }
@@ -104,30 +108,29 @@ Community& City::AddCommunity(CommunityType community_type) {
     return m_communities.back();
 }
 
-void City::SetInCommuters(unsigned int id, unsigned int number_of_commuters)
+void City::SetInCommuters(unsigned int id, double number_of_commuters)
 {
         m_in_commuting_changed = true;
         m_in_commuting[id] = number_of_commuters;
 }
 
-void City::SetOutCommuters(unsigned int id, unsigned int number_of_commuters)
+void City::SetOutCommuters(unsigned int id, double number_of_commuters)
 {
         m_out_commuting_changed = true;
         m_out_commuting[id] = number_of_commuters;
 }
 
-unsigned int City::GetTotalInCommutersCount()
+double City::GetTotalInCommutersCount()
 {
     if( m_in_commuting_changed ) {
         m_in_commuting_changed = false;
-        m_in_commuter_count = 0;
         for (auto &it : m_in_commuting)
             m_in_commuter_count += it.second;
     }
     return m_in_commuter_count;
 }
 
-unsigned int City::GetTotalOutCommutersCount()
+double City::GetTotalOutCommutersCount()
 {
     if( m_out_commuting_changed ) {
         m_out_commuting_changed = false;
@@ -144,5 +147,4 @@ Household& City::AddHousehold() {
     return m_households.back();
 }
 
-
-} // namespace geogen
+} // namespace stride

@@ -48,9 +48,11 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtQuick.Controls 1.4
+import QtQuick 2.6
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.3
 import QtLocation 5.6
+import QtQuick.Controls.Material 2.2
 import QtPositioning 5.5
 import QtQml.Models 2.2
 import "map"
@@ -65,6 +67,106 @@ ApplicationWindow {
     property variant minimap
     property variant parameters
     property variant pop_info
+
+    readonly property bool inPortrait: appWindow.width < appWindow.height
+
+    header: ToolBar {
+        id: overlayHeader
+        RowLayout {
+            anchors.fill: parent
+            Label {
+                text: "Stride: simulator for transmission of infectious diseases"
+                elide: Label.ElideRight
+                horizontalAlignment: Qt.AlignHCenter
+                verticalAlignment: Qt.AlignVCenter
+                Layout.fillWidth: true
+            }
+            ToolButton {
+                text: qsTr("update population")
+                onClicked: updateSelected()
+            }
+            ToolButton {
+                text: qsTr("show commutings")
+                onClicked: menu.open()
+            }
+            ToolButton {
+                text: qsTr("future function")
+                onClicked: menu.open()
+            }
+            ToolButton {
+                text: qsTr("⋮")
+                onClicked: menu.open()
+            }
+        }
+    }
+
+     Drawer {
+        id: drawer
+        y: overlayHeader.height
+        width: appWindow.width / 5
+        height: appWindow.height - overlayHeader.height
+
+        modal: inPortrait
+        interactive: inPortrait
+        position: inPortrait ? 0 : 1
+        visible: !inPortrait
+
+        ListView {
+            id: listView
+            anchors.fill: parent
+
+            headerPositioning: ListView.OverlayHeader
+            header: Pane {
+                id: header
+                z: 2
+                width: parent.width
+
+                MenuSeparator {
+                    parent: header
+                    width: parent.width
+                    anchors.verticalCenter: parent.bottom
+                    visible: !listView.atYBeginning
+                }
+            }
+
+            ToolBar {
+                ColumnLayout {
+                    anchors.fill: parent
+                    Label{
+                        text: "Population: " + Number(pop_info)
+                        font.pixelSize: 22
+                        font.italic: true
+                    }
+                    ToolButton {
+                        text: qsTr("update population")
+                        onClicked: updateSelected()
+                    }
+
+                }
+            }
+
+            ScrollIndicator.vertical: ScrollIndicator { }
+        }
+    }
+
+    function updateSelected(){
+        var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
+        var total_count = 0
+        for (var i = 0; i < map.children.length; i++)
+        {
+            if(map.children[i].objectName === "mqi"){
+                circle = map.children[i].sourceItem
+                var pop = circle.isSelected()
+                total_count += pop
+
+            }
+            if(map.children[i].objectName === "pop_info"){
+                pop_info = map.children[i]
+            }
+        }
+
+        pop_info = total_count
+    }
 
     //defaults
     //! [routecoordinate]

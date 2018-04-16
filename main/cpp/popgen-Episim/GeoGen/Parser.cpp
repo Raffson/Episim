@@ -2,19 +2,18 @@
 // Created by robbe on 6/03/18.
 //
 
-#include <util/RNManager.h>
 #include "Parser.h"
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 namespace parser {
 
-void ParseCities(const boost::filesystem::path& city_file, const boost::filesystem::path& commuting_file,
-                 map<unsigned int, City>& cities, bool parse_commuting)
+void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, City>& cities, unsigned int& total_pop)
 {
-        stride::util::CSV read_in(city_file);
-        unsigned int      counter = 0;
+        util::CSV read_in(city_file);
+        unsigned int counter = 0;
+        total_pop = 0;
         for (auto& it : read_in) {
                 counter++;
                 try {
@@ -26,6 +25,7 @@ void ParseCities(const boost::filesystem::path& city_file, const boost::filesyst
                         double       longitude  = stod(it.getValue("longitude"));
                         double       latitude   = stod(it.getValue("latitude"));
                         string       name       = it.getValue("name");
+                        total_pop += population;
 
                         Coordinate   coord(x_coord, y_coord, longitude, latitude);
                         cities.emplace(id, City(id, province, population, coord, name));
@@ -33,37 +33,62 @@ void ParseCities(const boost::filesystem::path& city_file, const boost::filesyst
                         cout << e.what() << endl << "at row: " << counter << endl;
                 }
         }
-
-        if (parse_commuting)
-                ParseCommuting(commuting_file, cities);
 }
 
-void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, City>& cities)
+void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, City>& cities,
+                    const map<Fractions, double>& fracs)
 {
 
-        stride::util::CSV read_in(filename);
+        util::CSV read_in(filename);
 
         std::vector<std::string> cityIds = read_in.getLabels();
 
+        // removing id_ from the label
+        for( auto& id : cityIds ) id.erase(0, 3);
+
         unsigned int index = 0;
+        //First calculate the total number of commuters so we can normalize on the fly...
+        std::vector<double> total_commuters(read_in.getColumnCount(), 0);
         for (auto it : read_in) {
-                unsigned int origin_id;
+            for (unsigned int i = 0; i < read_in.getColumnCount(); i++)
+                if( index != i ) total_commuters[i] += it.getValue<unsigned int>(i);
+            index++;
+        }
 
-                for (unsigned int i = 0; i < cityIds.size(); i++) {
-                        unsigned int commuters   = (unsigned int)(stoi(it.getValue(cityIds.at(i))));
-                        string       origin      = cityIds.at(i);
-                        string       destination = cityIds.at(index);
+        double commfrac = fracs.at(Fractions::OLD_WORKERS) * fracs.at(Fractions::COMMUTING_WORKERS)
+                          + fracs.at(Fractions::YOUNG_WORKERS)
+                            * (1 - fracs.at(Fractions::STUDENTS))
+                            * fracs.at(Fractions::COMMUTING_WORKERS)
+                          + fracs.at(Fractions::YOUNG_WORKERS)
+                            * fracs.at(Fractions::STUDENTS)
+                            * fracs.at(Fractions::COMMUTING_STUDENTS);
 
-                        origin_id = (unsigned int)(stoi(origin.erase(0, 3))); // removing id_ from the label
-                        unsigned int destination_id = (unsigned int)(stoi(destination.erase(0, 3)));
+        index = 0;
+        for (auto it : read_in) {
+                // for each row should represent destinations with commuting numbers...
+                // the rows are ordered the same way as the columns, which represent the origin...
+                unsigned int destination_id = stoi(cityIds.at(index));
+
+                // so when looping over a row's columns, we're looking the origins...
+                for (unsigned int i = 0; i < read_in.getColumnCount(); i++) {
+                        double commuters = it.getValue<unsigned int>(i);
+
+                        unsigned int origin_id = stoi(cityIds.at(i));
+
+                        // don't count local commuters...
+                        if( origin_id == destination_id ) continue;
+
+                        //normalize
+                        double commuting_pop = cities.at(origin_id).GetPopulation() * commfrac;
+                        double normalized = commuting_pop * (commuters / total_commuters[i]);
 
                         // we need a safety net here in case cities aren't read correctly..
                         // if city is present, we call SetInCommuters...
                         // else we should generate a warning, or maybe even throw an exception
                         // because this should NOT happen, litterly never...
                         if (cities.count(destination_id)) {
-                                cities.at(destination_id).SetInCommuters(origin_id, commuters);
-                                cities.at(origin_id).SetOutCommuters(destination_id, commuters);
+                                cities.at(destination_id).SetInCommuters(origin_id, normalized);
+                                cities.at(origin_id).SetOutCommuters(destination_id, normalized);
                         }
                 }
                 index++;
@@ -89,7 +114,7 @@ vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path)
         return result;
 }
 
-vector<City> DefragmentCity(const City &city, vector<double> distr, stride::util::RNManager &rndm) {
+vector<City> DefragmentCity(const City &city, vector<double> distr, util::RNManager &rndm) {
 
         trng::discrete_dist distribution(distr.begin(), distr.end());
 
@@ -106,4 +131,4 @@ vector<City> DefragmentCity(const City &city, vector<double> distr, stride::util
         return vector<City>();
     }
 } // namespace parser
-} // namespace geogen
+} // namespace stride

@@ -16,6 +16,10 @@
         <type>lcg64</type>
     </rng>
 
+    <neighbour_classification>
+	<initial_search_radius>10</initial_search_radius>
+    </neighbour_classification>
+
     <pop_info>
         <pop_total>4341923</pop_total>
 

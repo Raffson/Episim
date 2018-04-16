@@ -19,7 +19,7 @@
 
 using namespace std;
 
-namespace geogen {
+namespace stride {
 
 Coordinate::Coordinate() : x(0), y(0), longitude(0), latitude(0) {}
 
@@ -47,4 +47,4 @@ double Coordinate::GetDistance(const Coordinate& c1) const
     return  constants::EARTH_RADIUS * c;
 }
 
-} // namespace geogen
+} // namespace stride
