@@ -150,7 +150,7 @@ TEST_P(WorkplaceTest, Extremeregion)
 namespace {
 // OpenMP should have no effect atm...
 #ifdef _OPENMP
-unsigned int threads[]{1U, 4U};
+unsigned int threads[]{1U};
 #else
 unsigned int threads[]{1U};
 #endif

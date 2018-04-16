@@ -213,8 +213,10 @@ TEST_P(CollegeTest, adjustLargestCitiesUnit)
 namespace {
 // OpenMP should have no effect atm...
 // Should we simply leave this out?
+// Robbe: Keep the ifdef if we ever want to test on multiple threads. Changed the array
+//        to only one value bcz it just duplicates tests at the moment.
 #ifdef _OPENMP
-unsigned int threads[]{1U, 4U};
+unsigned int threads[]{1U};
 #else
 unsigned int threads[]{1U};
 #endif
