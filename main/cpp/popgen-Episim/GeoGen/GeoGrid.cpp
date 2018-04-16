@@ -342,7 +342,7 @@ void GeoGrid::GenerateWorkplaces(){
         // A workplace has a contactpool.
         nw_workplace.AddContactPool(ContactPoolType::Id::Work);
     }
-    cout << m_cities.rend()->second.GetWorkplaces().size();
+
 }
 
 /* Wrong code -> Depricated

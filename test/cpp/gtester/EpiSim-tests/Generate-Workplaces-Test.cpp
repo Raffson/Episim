@@ -58,17 +58,17 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         // -----------------------------------------------------------------------------------------
 
         // Testing 10 randomly chosen cities atm instead of testing all the 327 cities
-        /*float margin = 0.1; // What is a good margin here?
-        unsigned int antwerpen    = 3089;
-        unsigned int leuven       = 877;
-        unsigned int brugge       = 961;
-        unsigned int roeselare    = 471;
-        unsigned int aalst        = 663;
-        unsigned int dendermonde  = 371;
-        unsigned int temse        = 213;
+        float margin = 0.3; // What is a good margin here?
+        unsigned int antwerpen    = 2146;
+        unsigned int leuven       = 798;
+        unsigned int brugge       = 845;
+        unsigned int roeselare    = 398;
+        unsigned int aalst        = 763;
+        unsigned int dendermonde  = 464;
+        unsigned int temse        = 313;
         unsigned int sinttruiden  = 294;
-        unsigned int tongeren     = 210;
-        unsigned int maasmechelen = 216;
+        unsigned int tongeren     = 263;
+        unsigned int maasmechelen = 311;
 
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
@@ -82,7 +82,7 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         EXPECT_NEAR(cities.at(46025).GetWorkplaces().size(), temse, margin);
         EXPECT_NEAR(cities.at(71053).GetWorkplaces().size(), sinttruiden, margin);
         EXPECT_NEAR(cities.at(73083).GetWorkplaces().size(), tongeren, margin);
-        EXPECT_NEAR(cities.at(73107).GetWorkplaces().size(), maasmechelen, margin);*/
+        EXPECT_NEAR(cities.at(73107).GetWorkplaces().size(), maasmechelen, margin);
 
 }
 
