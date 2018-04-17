@@ -312,7 +312,6 @@ void GeoGrid::GenerateWorkplaces()
 
         double possible_workers_frac = (m_fract_map[Fractions::MIDDLE_AGED] +
                                         m_fract_map[Fractions::YOUNG] * (1 - m_fract_map[Fractions::STUDENTS]));
-
         double active_workers_frac = possible_workers_frac * m_fract_map[Fractions::ACTIVE];
 
         vector<double> lottery_vec; // vector of relative probabillitys

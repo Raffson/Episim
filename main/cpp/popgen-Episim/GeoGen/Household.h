@@ -57,17 +57,11 @@ public:
         void GetPossibleWorkers(vector<Person*>&) const;
 
 private:
-        /// Id generator.
-        static unsigned int m_id_generator;
+        static unsigned int m_id_generator; ///< Id generator.
+        size_t m_id;            ///< A unique ID of the household.
+        City* m_city;           ///< The City in which the household is located
+        ContactPool m_pool;     ///< A ContactPool with the people belonging to this household.
 
-        /// A unique ID of the household.
-        size_t m_id;
-
-        ///< The City in which the household is located
-        City* m_city;
-
-        /// A ContactPool with the people belonging to this household.
-        ContactPool m_pool;
 };
 
 } // namespace stride
