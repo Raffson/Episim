@@ -164,7 +164,7 @@ void GeoGrid::GenerateAll()
         GenerateCommunities();
 
 
-    double possible_workers_frac = (m_fract_map[Fractions::MIDDLE_AGED] +
+    /*double possible_workers_frac = (m_fract_map[Fractions::MIDDLE_AGED] +
                                     m_fract_map[Fractions::YOUNG] * (1 - m_fract_map[Fractions::STUDENTS]));
 
     double active_workers_frac = possible_workers_frac * m_fract_map[Fractions::ACTIVE];
@@ -187,7 +187,7 @@ void GeoGrid::GenerateAll()
              << city.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED] << endl;
         cout << "Primary Communities = " << city.second.GetPrimaryCommunities().size() << endl;
         cout << "Secondary Communities = " << city.second.GetSecondaryCommunities().size() << endl;
-    }
+    }*/
 }
 
 void GeoGrid::GenerateSchools()
