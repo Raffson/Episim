@@ -94,57 +94,59 @@ vector<Community*> City::GetCommunitiesOfType(CommunityType ct, unsigned int poo
         vector<Community*> communities;
         for (auto& it : m_communities) {
                 if (it.GetCommunityType() == ct) {
-                    if (filter and (ct == CommunityType::Primary or ct == CommunityType::Secondary)) {
-                        if (it.GetSize() < poolsize) communities.emplace_back(&it);
-                    }
-                    else communities.emplace_back(&it);
+                        if (filter and (ct == CommunityType::Primary or ct == CommunityType::Secondary)) {
+                                if (it.GetSize() < poolsize)
+                                        communities.emplace_back(&it);
+                        } else
+                                communities.emplace_back(&it);
                 }
         }
         return communities;
 }
 
-Community& City::AddCommunity(CommunityType community_type) {
-    m_communities.emplace_back(Community(community_type, this));
-    return m_communities.back();
+Community& City::AddCommunity(CommunityType community_type)
+{
+        m_communities.emplace_back(Community(community_type, this));
+        return m_communities.back();
 }
 
 void City::SetInCommuters(unsigned int id, double number_of_commuters)
 {
         m_in_commuting_changed = true;
-        m_in_commuting[id] = number_of_commuters;
+        m_in_commuting[id]     = number_of_commuters;
 }
 
 void City::SetOutCommuters(unsigned int id, double number_of_commuters)
 {
         m_out_commuting_changed = true;
-        m_out_commuting[id] = number_of_commuters;
+        m_out_commuting[id]     = number_of_commuters;
 }
 
 double City::GetTotalInCommutersCount()
 {
-    if( m_in_commuting_changed ) {
-        m_in_commuting_changed = false;
-        for (auto &it : m_in_commuting)
-            m_in_commuter_count += it.second;
-    }
-    return m_in_commuter_count;
+        if (m_in_commuting_changed) {
+                m_in_commuting_changed = false;
+                for (auto& it : m_in_commuting)
+                        m_in_commuter_count += it.second;
+        }
+        return m_in_commuter_count;
 }
 
 double City::GetTotalOutCommutersCount()
 {
-    if( m_out_commuting_changed ) {
-        m_out_commuting_changed = false;
-        m_out_commuter_count = 0;
-        for (auto &it : m_out_commuting)
-            m_out_commuter_count += it.second;
-    }
-    return m_out_commuter_count;
+        if (m_out_commuting_changed) {
+                m_out_commuting_changed = false;
+                m_out_commuter_count    = 0;
+                for (auto& it : m_out_commuting)
+                        m_out_commuter_count += it.second;
+        }
+        return m_out_commuter_count;
 }
 
-
-Household& City::AddHousehold() {
-    m_households.emplace_back(Household(this));
-    return m_households.back();
+Household& City::AddHousehold()
+{
+        m_households.emplace_back(Household(this));
+        return m_households.back();
 }
 
 } // namespace stride

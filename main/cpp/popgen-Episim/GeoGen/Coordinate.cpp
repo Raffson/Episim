@@ -31,20 +31,20 @@ Coordinate::Coordinate(double x, double y, double longitude, double latitude)
 double Coordinate::GetDistance(const Coordinate& c1) const
 {
 
-    double phi1    = convert_to_radians(c1.latitude); // latitude of the first coordinate converted to radian
-    double phi2    = convert_to_radians(latitude);  // latitude of this coordinate converted to radian
-    double lambda1 = convert_to_radians(c1.longitude); // longitude of the first coordinate converted to radian
-    double lambda2 = convert_to_radians(longitude); // longitude of this coordinate converted to radian
+        double phi1    = convert_to_radians(c1.latitude);  // latitude of the first coordinate converted to radian
+        double phi2    = convert_to_radians(latitude);     // latitude of this coordinate converted to radian
+        double lambda1 = convert_to_radians(c1.longitude); // longitude of the first coordinate converted to radian
+        double lambda2 = convert_to_radians(longitude);    // longitude of this coordinate converted to radian
 
-    double delta_phi    = phi2 - phi1;
-    double delta_lambda = lambda2 - lambda1;
+        double delta_phi    = phi2 - phi1;
+        double delta_lambda = lambda2 - lambda1;
 
-    double a = sin(delta_phi / 2.0) * sin(delta_phi / 2.0) +
-               cos(phi1) * cos(phi2) * cos(phi1) * cos(phi2) * sin(delta_lambda / 2.0) * sin(delta_lambda / 2.0);
+        double a = sin(delta_phi / 2.0) * sin(delta_phi / 2.0) +
+                   cos(phi1) * cos(phi2) * cos(phi1) * cos(phi2) * sin(delta_lambda / 2.0) * sin(delta_lambda / 2.0);
 
-    double c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
+        double c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
 
-    return  constants::EARTH_RADIUS * c;
+        return constants::EARTH_RADIUS * c;
 }
 
 } // namespace stride

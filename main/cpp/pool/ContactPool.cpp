@@ -32,7 +32,7 @@ ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type)
 {
 }
 
-ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, stride::Community* community)
+ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, Community* community)
     : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members(), m_community(community)
 {
 }

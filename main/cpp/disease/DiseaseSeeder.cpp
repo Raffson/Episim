@@ -69,8 +69,8 @@ void DiseaseSeeder::Seed(std::shared_ptr<Simulator> sim)
                     (p.GetAge() <= seeding_age_max)) {
                         p.GetHealth().StartInfection();
                         num_infected--;
-			if( sim->GetLoggerMode() != ContactLogMode::Id::None )
-                        	sim->GetContactLogger()->info("[PRIM] {} {} {} {}", -1, p.GetId(), -1, 0);
+                        if (sim->GetLoggerMode() != ContactLogMode::Id::None)
+                                sim->GetContactLogger()->info("[PRIM] {} {} {} {}", -1, p.GetId(), -1, 0);
                 }
         }
 }

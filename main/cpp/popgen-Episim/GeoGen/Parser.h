@@ -3,11 +3,11 @@
 // Created by robbe on 6/03/18.
 //
 
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <memory>
 #include <vector>
-#include <algorithm>
 
 #include "util/CSV.h"
 #include "util/CSVRow.h"
@@ -33,7 +33,7 @@ void ParseCities(const boost::filesystem::path&, map<unsigned int, City>& cities
 /// Parse the commuting information
 void ParseCommuting(const boost::filesystem::path&, map<unsigned int, City>&, const map<Fractions, double>& fracs);
 
-vector<City> DefragmentCity(const City &ct, vector<double> distr, util::RNManager &rndm);
+vector<City> DefragmentCity(const City& ct, vector<double> distr, util::RNManager& rndm);
 
 /// Parse the household information
 vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path);

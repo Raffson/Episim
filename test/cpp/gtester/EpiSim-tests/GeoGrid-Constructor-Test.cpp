@@ -74,8 +74,8 @@ TEST(GeoGridCtorTest, DefaultConstructor)
         EXPECT_EQ(grid.GetCities().size(), 0);
         EXPECT_EQ(grid.GetTotalPop(), 0);
         EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::SCHOOLED), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::YOUNG_WORKERS), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::OLD_WORKERS), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::YOUNG), 0.0);
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::MIDDLE_AGED), 0.0);
         EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::TODDLERS), 0.0);
         EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::OLDIES), 0.0);
         EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::STUDENTS), 0.0);
@@ -123,7 +123,7 @@ TEST(GeoGridCtorTest, FaultyCityRow)
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
         map<unsigned int, City> cty_map;
-        unsigned int totpop = 0;
+        unsigned int            totpop = 0;
         parser::ParseCities("data/flanders_cities_faulty_row.csv", cty_map, totpop);
         cout << "Done parsing cities." << endl;
 
@@ -142,7 +142,7 @@ TEST(GeoGridCtorTest, FaultyCityColumn)
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
         map<unsigned int, City> cty_map;
-        unsigned int totpop = 0;
+        unsigned int            totpop = 0;
         parser::ParseCities("data/flanders_cities_faulty_col.csv", cty_map, totpop);
         cout << "Done parsing cities." << endl;
 
@@ -185,7 +185,7 @@ TEST(GeoGridCtorTest, CityRowCounter)
 namespace {
 // OpenMP should have no effect atm...
 #ifdef _OPENMP
-unsigned int threads[]{1U, 4U};
+unsigned int threads[]{1U};
 #else
 unsigned int threads[]{1U};
 #endif

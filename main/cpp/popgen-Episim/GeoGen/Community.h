@@ -19,8 +19,8 @@
 
 #include "pool/ContactPool.h"
 #include <cstddef>
-#include <memory>
 #include <map>
+#include <memory>
 
 namespace stride {
 
@@ -39,8 +39,8 @@ enum class CommunityType
 
 /// To allow iteration over the community types, leaving out Null.
 constexpr std::array<CommunityType, 5> CommunityTypes{{CommunityType::School, CommunityType::College,
-                                                              CommunityType::Work, CommunityType::Primary,
-                                                              CommunityType::Secondary}};
+                                                       CommunityType::Work, CommunityType::Primary,
+                                                       CommunityType::Secondary}};
 
 class Community
 {

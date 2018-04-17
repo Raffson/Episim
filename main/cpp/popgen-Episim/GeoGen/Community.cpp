@@ -24,23 +24,22 @@ using namespace std;
 
 unsigned int Community::m_id_generator = 1;
 
-map<ContactPoolType::Id, unsigned int> Community::m_pool_ids = {
-        { ContactPoolType::Id::Household, 1 },
-        { ContactPoolType::Id::School, 1 },
-        { ContactPoolType::Id::Work, 1 },
-        { ContactPoolType::Id::PrimaryCommunity, 1 },
-        { ContactPoolType::Id::SecondaryCommunity, 1 }
-};
+map<ContactPoolType::Id, unsigned int> Community::m_pool_ids = {{ContactPoolType::Id::Household, 1},
+                                                                {ContactPoolType::Id::School, 1},
+                                                                {ContactPoolType::Id::Work, 1},
+                                                                {ContactPoolType::Id::PrimaryCommunity, 1},
+                                                                {ContactPoolType::Id::SecondaryCommunity, 1}};
 
 Community::Community(CommunityType community_type, City* city)
     : m_community_id(m_id_generator++), m_community_type(community_type), m_city(city)
 {
 }
 
-stride::ContactPool& Community::AddContactPool(ContactPoolType::Id type) {
-    unsigned int id = m_pool_ids.at(type)++;
-    m_contact_pools.emplace_back(ContactPool(id, type, this));
-    return m_contact_pools.back();
+stride::ContactPool& Community::AddContactPool(ContactPoolType::Id type)
+{
+        unsigned int id = m_pool_ids.at(type)++;
+        m_contact_pools.emplace_back(ContactPool(id, type, this));
+        return m_contact_pools.back();
 }
 
 unsigned int Community::GetSize() const

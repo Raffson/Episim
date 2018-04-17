@@ -11,9 +11,9 @@ namespace parser {
 
 void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, City>& cities, unsigned int& total_pop)
 {
-        util::CSV read_in(city_file);
+        util::CSV    read_in(city_file);
         unsigned int counter = 0;
-        total_pop = 0;
+        total_pop            = 0;
         for (auto& it : read_in) {
                 counter++;
                 try {
@@ -27,7 +27,7 @@ void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, Cit
                         string       name       = it.getValue("name");
                         total_pop += population;
 
-                        Coordinate   coord(x_coord, y_coord, longitude, latitude);
+                        Coordinate coord(x_coord, y_coord, longitude, latitude);
                         cities.emplace(id, City(id, province, population, coord, name));
                 } catch (exception& e) {
                         cout << e.what() << endl << "at row: " << counter << endl;
@@ -44,24 +44,24 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
         std::vector<std::string> cityIds = read_in.getLabels();
 
         // removing id_ from the label
-        for( auto& id : cityIds ) id.erase(0, 3);
+        for (auto& id : cityIds)
+                id.erase(0, 3);
 
         unsigned int index = 0;
-        //First calculate the total number of commuters so we can normalize on the fly...
+        // First calculate the total number of commuters so we can normalize on the fly...
         std::vector<double> total_commuters(read_in.getColumnCount(), 0);
         for (auto it : read_in) {
-            for (unsigned int i = 0; i < read_in.getColumnCount(); i++)
-                if( index != i ) total_commuters[i] += it.getValue<unsigned int>(i);
-            index++;
+                for (unsigned int i = 0; i < read_in.getColumnCount(); i++)
+                        total_commuters[i] += it.getValue<unsigned int>(i);
+                index++;
         }
 
-        double commfrac = fracs.at(Fractions::OLD_WORKERS) * fracs.at(Fractions::COMMUTING_WORKERS)
-                          + fracs.at(Fractions::YOUNG_WORKERS)
-                            * (1 - fracs.at(Fractions::STUDENTS))
-                            * fracs.at(Fractions::COMMUTING_WORKERS)
-                          + fracs.at(Fractions::YOUNG_WORKERS)
-                            * fracs.at(Fractions::STUDENTS)
-                            * fracs.at(Fractions::COMMUTING_STUDENTS);
+        double commfrac =
+            (fracs.at(Fractions::MIDDLE_AGED) * fracs.at(Fractions::COMMUTING_WORKERS) +
+             fracs.at(Fractions::YOUNG) * (1 - fracs.at(Fractions::STUDENTS)) *
+                 fracs.at(Fractions::COMMUTING_WORKERS)) *
+                fracs.at(Fractions::ACTIVE) +
+            fracs.at(Fractions::YOUNG) * fracs.at(Fractions::STUDENTS) * fracs.at(Fractions::COMMUTING_STUDENTS);
 
         index = 0;
         for (auto it : read_in) {
@@ -76,11 +76,12 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
                         unsigned int origin_id = stoi(cityIds.at(i));
 
                         // don't count local commuters...
-                        if( origin_id == destination_id ) continue;
+                        if (origin_id == destination_id)
+                                continue;
 
-                        //normalize
+                        // normalize
                         double commuting_pop = cities.at(origin_id).GetPopulation() * commfrac;
-                        double normalized = commuting_pop * (commuters / total_commuters[i]);
+                        double normalized    = commuting_pop * (commuters / total_commuters[i]);
 
                         // we need a safety net here in case cities aren't read correctly..
                         // if city is present, we call SetInCommuters...
@@ -103,10 +104,10 @@ vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path)
 
         for (auto& node : p_tree.get_child("HouseholdProfile")) {
                 vector<double> ages;
-                auto                 subtree = node.second;
+                auto           subtree = node.second;
                 for (auto& v : subtree.get_child("")) {
                         double age = stod(v.second.data());
-                        age = min(age, 80.0); //cause max age is 80 according to pop/Age.h
+                        age = min(age, 80.0); // cause max age is 80 according to pop/Age.h
                         ages.push_back(age);
                 }
                 result.push_back(ages);
@@ -114,13 +115,14 @@ vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path)
         return result;
 }
 
-vector<City> DefragmentCity(const City &city, vector<double> distr, util::RNManager &rndm) {
+vector<City> DefragmentCity(const City& city, vector<double> distr, util::RNManager& rndm)
+{
 
         trng::discrete_dist distribution(distr.begin(), distr.end());
 
         auto fragment_amount = (unsigned int)rndm.GetGenerator(distribution)();
 
-        for(unsigned int i = 0; i < fragment_amount; i++){
+        for (unsigned int i = 0; i < fragment_amount; i++) {
 
                 /* Putting stuff in comments to eliminate warnings...
                 unsigned int id = city.GetId() * 10 + i; // TODO: a better way to distribute id's
@@ -129,6 +131,6 @@ vector<City> DefragmentCity(const City &city, vector<double> distr, util::RNMana
                 *///TODO UNFINISHED
         }
         return vector<City>();
-    }
+}
 } // namespace parser
 } // namespace stride

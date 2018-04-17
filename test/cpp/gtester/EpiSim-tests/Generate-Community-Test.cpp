@@ -56,7 +56,7 @@ TEST_P(CommunityTest, Run)
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        auto                                       cities = grid.GetCities();
+        auto                              cities = grid.GetCities();
         map<unsigned int, City>::iterator c_it2  = cities.begin();
         /// Check if the communities are ditributed correctly.
         for (map<unsigned int, City>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {
@@ -87,7 +87,7 @@ TEST_P(CommunityTest, Run)
 namespace {
 // OpenMP should have no effect atm...
 #ifdef _OPENMP
-unsigned int threads[]{1U, 4U};
+unsigned int threads[]{1U};
 #else
 unsigned int threads[]{1U};
 #endif

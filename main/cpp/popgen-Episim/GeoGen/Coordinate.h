@@ -27,11 +27,11 @@ public:
         Coordinate();
         Coordinate(double x, double y, double longitude, double latitude);
 
-        ///
         /// Based on haversine formula
         /// credit: https://www.movable-type.co.uk/scripts/latlong.html
         /// @return distance between two coordinates by using longitude and latitude
         ///
+
         double GetDistance(const Coordinate& c1) const;
 
         double x;       ///< x-coordinate

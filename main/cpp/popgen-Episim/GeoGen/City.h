@@ -110,10 +110,29 @@ private:
         double m_in_commuter_count;     ///< Number of incomming commuters to the city
         double m_out_commuter_count;    ///< Number of outgoing commuters from the city
 
-        ///< These booleans will improve efficiency...
+
+        // Coordinate, smart coordinate container
+        Coordinate m_coordinates;
+
+        /// Name of the city.
+        const string m_name;
+
+        /// Vector of Communities
+        vector<Community> m_communities;
+
+        /// Contains number of commuters from this city to other cities
+        map<unsigned int, double> m_in_commuting;
+
+        map<unsigned int, double> m_out_commuting;
+
+        vector<Household> m_households;
+
+        double m_in_commuter_count;
+        double m_out_commuter_count;
+
+        // These booleans will improve efficiency...
         bool m_in_commuting_changed;
         bool m_out_commuting_changed;
-
 };
 
 } // namespace stride
