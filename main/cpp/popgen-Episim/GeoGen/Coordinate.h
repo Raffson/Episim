@@ -23,20 +23,19 @@ class Coordinate
 {
 
 public:
-        // Basic constructor
+        /// Basic constructor
         Coordinate();
         Coordinate(double x, double y, double longitude, double latitude);
 
-        // TODO move this to an appropriate place
-        /*
-        * Based on haversine formula
-        * credit: https://www.movable-type.co.uk/scripts/latlong.html
-        * @return distance between two coordinates
-        */
+        ///
+        /// Based on haversine formula
+        /// credit: https://www.movable-type.co.uk/scripts/latlong.html
+        /// @return distance between two coordinates by using longitude and latitude
+        ///
         double GetDistance(const Coordinate& c1) const;
 
-        double x;
-        double y;
+        double x;       ///< x-coordinate
+        double y;       ///< y-coordinate
 
         double longitude;
         double latitude;

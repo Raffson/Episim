@@ -63,13 +63,14 @@ public:
         /// Adds a contact pool to the community
         stride::ContactPool& AddContactPool(ContactPoolType::Id type);
 
+        /// Get all the contactpools
         std::vector<ContactPool>& GetContactPools() { return m_contact_pools; }
 
         /// Get the total number members of all contactpools for this community
         unsigned int GetSize() const;
 
 private:
-        static unsigned int m_id_generator;
+        static unsigned int m_id_generator; ///< Used to generate unique id automatically
 
         const unsigned int m_community_id; ///< A unique ID for the community
 
@@ -79,7 +80,7 @@ private:
 
         static std::map<ContactPoolType::Id, unsigned int> m_pool_ids;
 
-        std::vector<ContactPool> m_contact_pools;
+        std::vector<ContactPool> m_contact_pools; ///< Contains contactpools
 };
 
 } // namespace stride
