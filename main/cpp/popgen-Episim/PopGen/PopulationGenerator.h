@@ -21,7 +21,6 @@
 
 namespace stride {
 
-// Raphael@everyone perhaps shorten the name of this class to PopGenerator?
 class PopulationGenerator
 {
 public:

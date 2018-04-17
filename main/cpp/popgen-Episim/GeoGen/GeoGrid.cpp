@@ -58,13 +58,6 @@ void GeoGrid::ClassifyNeighbours()
             //i believe the following code is more efficient than the alternative code below...
             while( (distance / category) > 0 )
                 category <<= 1; //equivalent to multiplying by 2
-/*
-            unsigned int category =  pow(2, ceil(log2(floor(distance / initrad)+1)))*initrad;
-            cout << "Distance: " << distance << endl;
-            cout << "(Distance / Initrad)+1: " << ((distance / initrad)+1) << endl;
-            cout << "pow(2, ceil(Log2((Distance / Initrad)+1))): " << pow(2, ceil(log2(floor(distance / initrad)+1))) << endl;
-            cout << "Category: " << category << endl;
-*/
             m_neighbours_in_radius[cityA.first][category].emplace_back(&cityB.second);
         }
     }
@@ -246,10 +239,10 @@ void GeoGrid::GenerateColleges()
         // After deducing fractions from households, these should never fail,
         // they also become difficult to test since we can no longer play with the fractions,
         // gotta come up with new tests for this...
-        REQUIRE(m_fract_map[Fractions::STUDENTS] >= 0, "Student fractal can't be negative");
-        REQUIRE(m_fract_map[Fractions::STUDENTS] <= 1, "Student fractal can't be more then 100%");
-        REQUIRE(m_fract_map[Fractions::YOUNG] >= 0, "Worker fractal can't be negative");
-        REQUIRE(m_fract_map[Fractions::YOUNG] <= 1, "Worker fractal can't be more then 100%");
+        REQUIRE(m_fract_map[Fractions::STUDENTS] >= 0, "Student fraction can't be negative");
+        REQUIRE(m_fract_map[Fractions::STUDENTS] <= 1, "Student fraction can't be more then 100%");
+        REQUIRE(m_fract_map[Fractions::YOUNG] >= 0, "Worker fraction can't be negative");
+        REQUIRE(m_fract_map[Fractions::YOUNG] <= 1, "Worker fraction can't be more then 100%");
         for (auto& it : m_cities) {
                 AdjustLargestCities(m_cities_with_college, it.second);
         }
@@ -310,16 +303,6 @@ void GeoGrid::GenerateWorkplaces(){
         // out-commuters should allways be modified because there can always be students present
         // for in-commuters this is only true if this city contains colleges
         // note that commuters should always be active workers or students
-        if( work_pop < 0 ){
-            cout << it.second.GetName() << " has fubar work_pop = " << work_pop << endl;
-            cout << it.second.GetPopulation() << " * " << active_workers_frac << " = "
-                 << it.second.GetPopulation() * active_workers_frac << endl;
-            cout << it.second.GetTotalInCommutersCount() << " * " << in_commuters_modifier << " = "
-                 << it.second.GetTotalInCommutersCount() * in_commuters_modifier << endl;
-            cout << it.second.GetTotalOutCommutersCount() << " * " << possible_workers_frac << " = "
-                 << it.second.GetTotalOutCommutersCount() * possible_workers_frac << endl;
-
-        }
 
         // Inserting the amount of id's of the city equal to the pop working in the city
         c_vec.emplace_back(&it.second);
@@ -341,27 +324,6 @@ void GeoGrid::GenerateWorkplaces(){
     }
 
 }
-
-/* Wrong code -> Depricated
-void GeoGrid::GenerateWorkplaces()
-{
-        // is this being done by now?
-
-        for (auto it : m_cities) {
-                City&            city         = it.second;
-                unsigned int     in_commuters = city.GetTotalInCommutersCount();
-
-                // some percentages of the commuters are students
-                double working_commuters    = m_commuting_workers_frac * (in_commuters);
-                auto   number_of_workplaces = (unsigned int)round(working_commuters / m_worksplace_size);
-
-                for (unsigned int i = 0; i < number_of_workplaces; i++) {
-                        Community& community = city.AddCommunity(CommunityType::Work, &city);
-                        /// Add contactpools
-                        community->AddContactPool(ContactPoolType::Id::Work);
-                }
-        }
-}*/
 
 // Communities need to be distributed according to the relative population size.
 void GeoGrid::GenerateCommunities()
@@ -387,37 +349,13 @@ void GeoGrid::GenerateCommunities()
         for (unsigned int i = 0; i < total_communities; i++) {
                 City&      chosen_city = *c_vec[rndm_vec[i]];
                 Community& nw_pcommunity = chosen_city.AddCommunity(CommunityType::Primary);
-
-                //Some very werid shit happens here when combining the Community::AddContactPool calls in 1 for-loop,
-                // splitting them up seems to fix the problem but I still have no clue why...
-                // what I do know is that the emplace_back call in Community::AddContactPool seems to be the culprit
-
-                // Add contactpools for primary community...
-                for( auto j = 0; j < cps; j++ ) {
-                    nw_pcommunity.AddContactPool(ContactPoolType::Id::PrimaryCommunity);
-                }
                 Community& nw_scommunity = chosen_city.AddCommunity(CommunityType::Secondary);
                 // Add contactpools for secondary community...
                 for (auto j = 0; j < cps; j++) {
+                        nw_pcommunity.AddContactPool(ContactPoolType::Id::PrimaryCommunity);
                         nw_scommunity.AddContactPool(ContactPoolType::Id::SecondaryCommunity);
                 }
         }
-        // Determine how many communities a city should get -> Depricated.
-        /*for (auto it : m_cities){
-            City& city = it.second;
-            // ratio: the city contains ratio % of the total population.
-            double ratio = (city->GetPopulation()/(double)m_total_pop);
-            assert(0<ratio<1);
-            // Now we have the ratio, we know that the city has ratio % of all communities.
-            auto city_communities = (total_communities*ratio);
-            assert(city_communities<total_communities);
-
-            for (int i = 0; i < city_communities; i++){
-                /// Since there currently is no real difference between primary and secundary communities we make them
-        all primary. Community& community = city.AddCommunity(CommunityType::Primary, &city);
-                //m_communities[community.getID()] = community
-            }
-        }*/
 }
 
 Coordinate GeoGrid::GetCenterOfGrid()

@@ -86,12 +86,6 @@ void PopulationGenerator::InitializeCommutingFractions()
                 }
                 check_distribution(worker_dist);
                 check_distribution(student_dist);
-                // add the commuting workers distribution for cityA
-                //cout << cityA.second.GetName() << " has distributions: " << endl;
-                //for( auto elem : worker_dist ) cout << elem << ", ";
-                //cout << endl;
-                //for( auto elem : student_dist ) cout << elem << ", ";
-                //cout << endl;
                 m_worker_commuting_fracs[cityA.first] = worker_dist;
                 m_student_commuting_fracs[cityA.first] = student_dist;
         }
@@ -114,12 +108,6 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
 
 double PopulationGenerator::GetRandomAge(unsigned int hhsize)
 {
-        //perhaps refractor and keep popfracs as a member?
-        //->well after computing household composition fractions, we don't really need this anymore...
-        //   depending on the size of the household we have a different age-distribution...
-        //vector<double> popfracs;
-        //m_geogrid.GetAgeFractions(popfracs);
-
         trng::discrete_dist distr(m_household_comp_fracs[hhsize].begin(), m_household_comp_fracs[hhsize].end());
         unsigned int        category = (unsigned int) generator.GetGenerator(distr)();
 
@@ -371,8 +359,6 @@ City& PopulationGenerator::GetRandomCommutingCity(City& origin, const bool stude
 {
         const vector<double>& distribution = student ? m_student_commuting_fracs[origin.GetId()]
                                                      : m_worker_commuting_fracs[origin.GetId()];
-        //for( auto& elem : distribution ) cout << elem << ", ";
-        //cout << endl;
         trng::discrete_dist   distr(distribution.begin(), distribution.end());
         auto  index = (const unsigned int)generator.GetGenerator(distr)();
         const unsigned int id = student ? m_college_ids.at(index) : m_city_ids.at(index);
