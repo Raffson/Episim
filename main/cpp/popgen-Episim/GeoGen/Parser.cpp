@@ -17,14 +17,14 @@ void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, Cit
         for (auto& it : read_in) {
                 counter++;
                 try {
-                        unsigned int id         = (unsigned int)(stoi(it.getValue("id")));
-                        unsigned int province   = (unsigned int)(stoi(it.getValue("province")));
-                        unsigned int population = (unsigned int)(stoi(it.getValue("population")));
-                        double       x_coord    = stod(it.getValue("x_coord"));
-                        double       y_coord    = stod(it.getValue("y_coord"));
-                        double       longitude  = stod(it.getValue("longitude"));
-                        double       latitude   = stod(it.getValue("latitude"));
-                        string       name       = it.getValue("name");
+                        unsigned int id         = (unsigned int)(stoi(it.GetValue("id")));
+                        unsigned int province   = (unsigned int)(stoi(it.GetValue("province")));
+                        unsigned int population = (unsigned int)(stoi(it.GetValue("population")));
+                        double       x_coord    = stod(it.GetValue("x_coord"));
+                        double       y_coord    = stod(it.GetValue("y_coord"));
+                        double       longitude  = stod(it.GetValue("longitude"));
+                        double       latitude   = stod(it.GetValue("latitude"));
+                        string       name       = it.GetValue("name");
                         total_pop += population;
 
                         Coordinate coord(x_coord, y_coord, longitude, latitude);
@@ -49,10 +49,10 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
 
         unsigned int index = 0;
         // First calculate the total number of commuters so we can normalize on the fly...
-        std::vector<double> total_commuters(read_in.getColumnCount(), 0);
+        std::vector<double> total_commuters(read_in.GetColumnCount(), 0);
         for (auto it : read_in) {
-                for (unsigned int i = 0; i < read_in.getColumnCount(); i++)
-                        total_commuters[i] += it.getValue<unsigned int>(i);
+                for (unsigned int i = 0; i < read_in.GetColumnCount(); i++)
+                        total_commuters[i] += it.GetValue<unsigned int>(i);
                 index++;
         }
 
@@ -70,8 +70,8 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
                 unsigned int destination_id = stoi(cityIds.at(index));
 
                 // so when looping over a row's columns, we're looking the origins...
-                for (unsigned int i = 0; i < read_in.getColumnCount(); i++) {
-                        double commuters = it.getValue<unsigned int>(i);
+                for (unsigned int i = 0; i < read_in.GetColumnCount(); i++) {
+                        double commuters = it.GetValue<unsigned int>(i);
 
                         unsigned int origin_id = stoi(cityIds.at(i));
 
