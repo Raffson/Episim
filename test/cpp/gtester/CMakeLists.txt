@@ -14,6 +14,12 @@
 #  Copyright 2017, Willem L, Kuylen E, Stijven S & Broeckhove J
 #############################################################################
 
+#============================================================================
+# Config related to using Google test (src in resources/lib/gtest) for cpp
+#============================================================================
+set(GTEST_RESOURCE_DIR	   ${CMAKE_SOURCE_DIR}/test/resources/lib/gtest/)
+include_directories(SYSTEM ${GTEST_RESOURCE_DIR})
+add_definitions(-DGTEST_LANG_CXX11)
 
 #============================================================================
 # Build & install the (OpenMP enabled if OpenMP available) executable.
@@ -33,6 +39,26 @@ add_executable(${EXEC}   ${SRC} )
 target_link_libraries( ${EXEC}    ${LIBS} gtest pthread libstride)
 install(TARGETS ${EXEC}  DESTINATION   ${BIN_INSTALL_LOCATION})
 
+
+#output isn't written, gotta figure this out...
+#also, need to figure out a way to copy only the files that have been changed...
+add_custom_target( episim-test
+	COMMAND ${CMAKE_COMMAND} -E remove_directory
+		${CMAKE_BINARY_DIR}/test/cpp/gtester/config
+	COMMAND ${CMAKE_COMMAND} -E remove_directory
+		${CMAKE_BINARY_DIR}/test/cpp/gtester/data
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/main/resources/EpiSim-test-files/config/
+		${CMAKE_BINARY_DIR}/test/cpp/gtester/config
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/main/resources/EpiSim-test-files/data/
+		${CMAKE_BINARY_DIR}/test/cpp/gtester/data
+	COMMAND gtester-episim 
+	${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/EpiSim/etests.txt
+	WORKING_DIR ${TESTS_DIR}
+	COMMENT "Running EpiSim's tests..."
+)
+
 set( EXEC2       gtester-episim     )
 set( SRC2
 		EpiSim-tests/main.cpp
@@ -50,7 +76,7 @@ install(TARGETS ${EXEC2}  DESTINATION   ${BIN_INSTALL_LOCATION})
 #============================================================================
 # Define tests.
 #============================================================================
-add_test(NAME  ${EXEC}_all
+add_test(NAME  ${EXEC}
     WORKING_DIRECTORY  ${TESTS_DIR}
     COMMAND   ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_LOCATION}/${EXEC}
         --gtest_output=xml:gtester_all.xml

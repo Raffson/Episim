@@ -162,6 +162,32 @@ void GeoGrid::GenerateAll()
         // Changed the order so I can call GetAllCommunites which is faster than calling GetColleges when looking
         // for colleges during GenerateWorkplaces, because only colleges should be present at that time...
         GenerateCommunities();
+
+
+    double possible_workers_frac = (m_fract_map[Fractions::MIDDLE_AGED] +
+                                    m_fract_map[Fractions::YOUNG] * (1 - m_fract_map[Fractions::STUDENTS]));
+
+    double active_workers_frac = possible_workers_frac * m_fract_map[Fractions::ACTIVE];
+
+    for( auto& city : m_cities )
+    {
+        // Colleges are the only communities that should be present at this time...
+        const bool no_colleges = city.second.GetAllCommunities().empty();
+        // I believe possible_workers_frac is all we need because in-commuters are definitely active...
+        double in_commuters_modifier = (no_colleges) ? 1 : possible_workers_frac;
+
+        auto work_pop = (city.second.GetPopulation() * active_workers_frac +
+                         city.second.GetTotalInCommutersCount() * in_commuters_modifier -
+                         city.second.GetTotalOutCommutersCount() * possible_workers_frac);
+
+        cout << city.second.GetName() << " has " << city.second.GetCommunitySize() << " communities:" << endl;
+        cout << "Colleges = " << city.second.GetColleges().size() << " with pop-size = " << city.second.GetPopulation() << endl;
+        cout << "Workplaces = " << city.second.GetWorkplaces().size() << " with working pop = " << work_pop << endl;
+        cout << "Schools = " << city.second.GetSchools().size() << " with #schoolkids = "
+             << city.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED] << endl;
+        cout << "Primary Communities = " << city.second.GetPrimaryCommunities().size() << endl;
+        cout << "Secondary Communities = " << city.second.GetSecondaryCommunities().size() << endl;
+    }
 }
 
 void GeoGrid::GenerateSchools()
@@ -344,12 +370,13 @@ void GeoGrid::GenerateCommunities()
                 p_vec.emplace_back(it.second.GetPopulation());
         }
 
-        auto rndm_vec = generate_random(p_vec, total_communities);
+        auto rndm_vec = generate_random(p_vec, 2*total_communities);
 
-        for (unsigned int i = 0; i < total_communities; i++) {
-                City&      chosen_city   = *c_vec[rndm_vec[i]];
-                Community& nw_pcommunity = chosen_city.AddCommunity(CommunityType::Primary);
-                Community& nw_scommunity = chosen_city.AddCommunity(CommunityType::Secondary);
+        for (unsigned int i = 0; i < 2*total_communities; i++) {
+                City&      chosen_city1  = *c_vec[rndm_vec[i++]];
+                City&      chosen_city2  = *c_vec[rndm_vec[i]];
+                Community& nw_pcommunity = chosen_city1.AddCommunity(CommunityType::Primary);
+                Community& nw_scommunity = chosen_city2.AddCommunity(CommunityType::Secondary);
                 // Add contactpools for secondary community...
                 for (auto j = 0; j < cps; j++) {
                         nw_pcommunity.AddContactPool(ContactPoolType::Id::PrimaryCommunity);

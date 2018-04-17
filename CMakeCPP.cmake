@@ -32,7 +32,14 @@ endif()
 #----------------------------------------------------------------------------
 # Compile flags
 #----------------------------------------------------------------------------
-set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Wno-unknown-pragmas ")
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#
+include(ProcessorCount)
+ProcessorCount(PROCCOUNT)
+set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -DPROCCOUNT=${PROCCOUNT}")
+#
+set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas")
 set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wno-array-bounds")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast" )
 set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -O0"   )
@@ -61,6 +68,17 @@ set(LIBS   ${LIBS}   m)
 # Spdlog Library (logging)
 #----------------------------------------------------------------------------
 include_directories(SYSTEM ${CMAKE_HOME_DIRECTORY}/main/resources/lib/spdlog/include)
+
+#----------------------------------------------------------------------------
+# TCLAP
+#----------------------------------------------------------------------------
+include_directories(SYSTEM ${CMAKE_HOME_DIRECTORY}/main/resources/lib/tclap/include)
+
+#----------------------------------------------------------------------------
+# SHA1 hash code.
+#----------------------------------------------------------------------------
+include_directories(SYSTEM ${CMAKE_HOME_DIRECTORY}/main/resources/lib/sha1/include)
+set(LIBS ${LIBS} sha1)
 
 #----------------------------------------------------------------------------
 # Tina's Random Number Generator (TRNG) library and paths
