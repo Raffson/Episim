@@ -15,9 +15,9 @@
 #include "trng/uniform_dist.hpp"
 
 #include <cmath>
+#include <ctime>
 #include <iterator>
 #include <vector>
-#include <ctime>
 
 namespace stride {
 
@@ -36,8 +36,8 @@ private:
         /// @param pcid Represents the ID of the primary community to which this person will belong
         /// @param pop The population to which this person will be added
         /// @param city The city in which this person will live
-        void GeneratePerson(const double& age, const unsigned int hid,
-                            const unsigned int pcid, Population& pop, City& city);
+        void GeneratePerson(const double& age, const unsigned int hid, const unsigned int pcid, Population& pop,
+                            City& city);
 
         /// Selects a random nearby city and puts the communities into 'result', this may be refactored so that
         /// the result is returned instead of given by reference. This is done by selecting a random city
@@ -46,44 +46,42 @@ private:
         /// @param city The city for which we need to look for nearby communities.
         /// @param community_type The type of the communities we're looking for
         /// @param result A reference to the vector where we store the resulting communities.
-        void                              GetCommunitiesOfRandomNearbyCity(const City& city,
-                                                               const CommunityType& community_type,
-                                                               std::vector<Community*>& result);
+        void GetCommunitiesOfRandomNearbyCity(const City& city, const CommunityType& community_type,
+                                              std::vector<Community*>& result);
 
         /// Selects the nearest college relative to the position of 'origin'.
         /// @param origin The city for which we need to find the nearst college.
         /// @param result A reference the vector where we store the resulting colleges.
-        void                              GetNearestColleges(const City& origin,
-                                                            std::vector<Community*>& result);
+        void GetNearestColleges(const City& origin, std::vector<Community*>& result);
 
         /// Generates a household of a given size for the given city.
         /// @param size The size of the household that will be generated, determined by GetRandomHouseholdSize.
         /// @param city A reference to the city in which the household will be added.
-        void                              GenerateHousehold(unsigned int size, City& city);
+        void GenerateHousehold(unsigned int size, City& city);
 
         /// Initializes the distribution to be used for determining the random sizes for households, as well as
         /// determining the distribution used for determining the composition of the households.
-        void                              InitializeHouseholdFractions();
+        void InitializeHouseholdFractions();
 
         /// Initializes the distribution to be used for determining a random city for commuters.
-        void                              InitializeCommutingFractions();
+        void InitializeCommutingFractions();
 
         /// Initializes the distribution to be used for determing a random city for each of the households.
-        void                              InitializeCityPopFractions();
+        void InitializeCityPopFractions();
 
         /// Returns a random household size according to the distribution intialized in InitializeHouseholdFractions.
         /// @retval <unsigned int> A random size for a household.
-        unsigned int                      GetRandomHouseholdSize();
+        unsigned int GetRandomHouseholdSize();
 
         /// Returns a random age according to the household-composition.
         /// @param hhsize The size of the household which determines an age-distribution.
         /// @retval <double> A random age for a person.
-        double                            GetRandomAge(unsigned int hhsize);
+        double GetRandomAge(unsigned int hhsize);
 
         /// Returns a reference to a random city according to the
         /// distribution initialized in InitializeCityPopFractions.
         /// @retval <geogen::City&> Returns a reference to a random city.
-        City&                     GetRandomCity();
+        City& GetRandomCity();
 
         /// Returns a pointer to a contact pool chosen at random. This is done by first choosing a random
         /// community from 'comms', followed by choosing a random contact pool from the chosen community.
@@ -92,25 +90,25 @@ private:
         /// @param commuting Indicates whether the person for which we're looking to find a random contact pool
         /// is a commuter.
         /// @retval <ContactPool*>
-        ContactPool*              GetRandomCommunityContactPool(vector<Community*>& comms);
+        ContactPool* GetRandomCommunityContactPool(vector<Community*>& comms);
 
         /// A random function which will flip a coin to determine if a person is a working commuter.
-        const bool                        IsWorkingCommuter();
+        const bool IsWorkingCommuter();
 
         /// A random function which will flip a coin to determine if a person is a commuting student.
-        const bool                        IsStudentCommuter();
+        const bool IsStudentCommuter();
 
         /// A random function which will flip a coin to determine if we're dealing with a student.
-        const bool                        IsStudent();
+        const bool IsStudent();
 
         /// A random function which will flip a coin to determine if we're dealing with an active worker.
-        const bool                        IsActive();
+        const bool IsActive();
 
         /// Returns a  reference to a random city for a commuter according to the commuting distribution.
         /// @param city The city from which we assume the commuter is coming from.
         /// @param student Indicates if we're looking for a city with a college for a commuting student.
         /// @retval <geogen::City&> The random city for the commuter.
-        City&                     GetRandomCommutingCity(City& city, const bool student = false);
+        City& GetRandomCommutingCity(City& city, const bool student = false);
 
         /// Assigns a worker to a random contact pool.
         /// @param origin A reference to the city from which the worker is coming from.
@@ -119,7 +117,7 @@ private:
         ContactPool* AssignWorkerAtRandom(City& origin);
 
 private:
-        ///ID generator for creating persons, starting from 0 which in this case doesn't matter...
+        /// ID generator for creating persons, starting from 0 which in this case doesn't matter...
         static unsigned int m_id_generator;
 
         /// Reference to the GeoGrid so we can access relevant information.
@@ -155,4 +153,4 @@ private:
         std::vector<double> m_city_pop_fracs;
 };
 
-} // namespace popgen
+} // namespace stride

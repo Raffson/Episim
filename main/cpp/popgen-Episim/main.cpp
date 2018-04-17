@@ -6,8 +6,8 @@
 #include <sstream>
 
 #ifdef USING_QT
-#include <QString>
 #include <QPair>
+#include <QString>
 #include <QtCore/QTextStream>
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
@@ -79,8 +79,8 @@ int startMap(stride::GeoGrid& grid)
                 string            s;
                 string            temp;
                 /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
-                stride::City& city = (*c_it).second;
-                QVariantMap              vals;
+                stride::City&          city = (*c_it).second;
+                QVariantMap            vals;
                 QList<QPair<int, int>> in_commuting;
                 QList<QPair<int, int>> out_commuting;
                 /// ID of the city, used for the commuting details
@@ -110,22 +110,21 @@ int startMap(stride::GeoGrid& grid)
                 vals["info"] = qs;
                 /// Commuting information
                 auto com_in = city.GetInCommuting();
-                for (auto it : com_in){
-                    // it.first: id of other city
-                    // it.second: number of commuters
-                    in_commuting.push_back(qMakePair(it.first, it.second));
+                for (auto it : com_in) {
+                        // it.first: id of other city
+                        // it.second: number of commuters
+                        in_commuting.push_back(qMakePair(it.first, it.second));
                 }
                 auto com_out = city.GetOutCommuting();
-                for (auto it : com_out){
-                    // it.first: id of other city
-                    // it.second: number of commuters
-                    out_commuting.push_back(qMakePair(it.first, it.second));
+                for (auto it : com_out) {
+                        // it.first: id of other city
+                        // it.second: number of commuters
+                        out_commuting.push_back(qMakePair(it.first, it.second));
                 }
-
 
                 QMetaObject::invokeMethod(item, "placeCity", Q_ARG(QVariant, QVariant::fromValue(vals)),
                                           Q_ARG(QVariant, QVariant::fromValue(in_commuting)),
-                                          Q_ARG(QVariant, QVariant::fromValue(out_commuting)) );
+                                          Q_ARG(QVariant, QVariant::fromValue(out_commuting)));
         }
 
         return application.exec();

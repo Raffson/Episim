@@ -123,7 +123,7 @@ TEST(GeoGridCtorTest, FaultyCityRow)
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
         map<unsigned int, City> cty_map;
-        unsigned int totpop = 0;
+        unsigned int            totpop = 0;
         parser::ParseCities("data/flanders_cities_faulty_row.csv", cty_map, totpop);
         cout << "Done parsing cities." << endl;
 
@@ -142,7 +142,7 @@ TEST(GeoGridCtorTest, FaultyCityColumn)
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
         map<unsigned int, City> cty_map;
-        unsigned int totpop = 0;
+        unsigned int            totpop = 0;
         parser::ParseCities("data/flanders_cities_faulty_col.csv", cty_map, totpop);
         cout << "Done parsing cities." << endl;
 

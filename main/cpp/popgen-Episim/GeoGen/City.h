@@ -49,7 +49,7 @@ public:
 
         double GetTotalOutCommutersCount();
 
-        vector<Community>& GetAllCommunities(){ return m_communities; };
+        vector<Community>& GetAllCommunities() { return m_communities; };
 
         vector<Community*> GetColleges();
 
@@ -111,10 +111,9 @@ private:
         double m_in_commuter_count;
         double m_out_commuter_count;
 
-        //These booleans will improve efficiency...
+        // These booleans will improve efficiency...
         bool m_in_commuting_changed;
         bool m_out_commuting_changed;
-
 };
 
 } // namespace stride

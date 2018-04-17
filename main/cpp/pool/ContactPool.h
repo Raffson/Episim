@@ -26,7 +26,7 @@
 #include <vector>
 
 namespace stride {
-    class Community;
+class Community;
 }
 
 namespace stride {
@@ -49,7 +49,7 @@ public:
         std::size_t GetID() const { return m_pool_id; }
 
         /// Get the community to which this pool belongs
-        stride::Community* GetCommunity() { return m_community; }
+        Community* GetCommunity() { return m_community; }
 
         /// Add the given Person.
         void AddMember(const Person* p);
@@ -77,7 +77,7 @@ private:
         ContactPoolType::Id  m_pool_type;    ///< The type of the ContactPool (for logging purposes).
         std::size_t          m_index_immune; ///< Index of the first immune member in the ContactPool.
         std::vector<Person*> m_members;      ///< Container with pointers to contactpool members.
-        stride::Community*   m_community;    ///< Pointer to the community that holds this pool.
+        Community*           m_community;    ///< Pointer to the community that holds this pool.
 };
 
 } // namespace stride

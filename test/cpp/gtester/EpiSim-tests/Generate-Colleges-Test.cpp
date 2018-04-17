@@ -71,23 +71,19 @@ TEST_P(CollegeTest, HappyDayScenario)
          */
 
         // Expected nr of colleges
-        double stufrac = grid.GetFraction(Fractions::STUDENTS);
-        double ywfrac = grid.GetFraction(Fractions::YOUNG);
-        unsigned int colsize = grid.GetAvgSize(Sizes::COLLEGES);
-        unsigned int expMechelen =
-            round(45736 * ywfrac * stufrac / colsize);
-        unsigned int expAalst  = round(48564 * ywfrac * stufrac / colsize);
-        unsigned int expElsene = round(52404 * ywfrac * stufrac / colsize);
-        unsigned int expAnderlecht =
-            round(53489 * ywfrac * stufrac / colsize);
-        unsigned int expLeuven = round(57258 * ywfrac * stufrac / colsize);
-        unsigned int expSchaarbeek =
-            round(67992 * ywfrac * stufrac / colsize);
-        unsigned int expBrugge  = round(72487 * ywfrac * stufrac / colsize);
-        unsigned int expBrussel = round(86458 * ywfrac * stufrac / colsize);
-        unsigned int expGent = round(141210 * ywfrac * stufrac / colsize);
-        unsigned int expAntwerpen =
-            round(269954 * ywfrac * stufrac / colsize);
+        double       stufrac       = grid.GetFraction(Fractions::STUDENTS);
+        double       ywfrac        = grid.GetFraction(Fractions::YOUNG);
+        unsigned int colsize       = grid.GetAvgSize(Sizes::COLLEGES);
+        unsigned int expMechelen   = round(45736 * ywfrac * stufrac / colsize);
+        unsigned int expAalst      = round(48564 * ywfrac * stufrac / colsize);
+        unsigned int expElsene     = round(52404 * ywfrac * stufrac / colsize);
+        unsigned int expAnderlecht = round(53489 * ywfrac * stufrac / colsize);
+        unsigned int expLeuven     = round(57258 * ywfrac * stufrac / colsize);
+        unsigned int expSchaarbeek = round(67992 * ywfrac * stufrac / colsize);
+        unsigned int expBrugge     = round(72487 * ywfrac * stufrac / colsize);
+        unsigned int expBrussel    = round(86458 * ywfrac * stufrac / colsize);
+        unsigned int expGent       = round(141210 * ywfrac * stufrac / colsize);
+        unsigned int expAntwerpen  = round(269954 * ywfrac * stufrac / colsize);
 
         grid.GenerateColleges();
 
@@ -192,7 +188,7 @@ TEST_P(CollegeTest, adjustLargestCitiesUnit)
         City c4(4, 1, 5, Coordinate(), "TestCity4");
         adjustLargestCities(lc, c4, 3);
         ASSERT_EQ(lc.size(), 3);
-        ASSERT_EQ(lc[0], &c1); //comparing addresses, if they're the same => same object...
+        ASSERT_EQ(lc[0], &c1); // comparing addresses, if they're the same => same object...
         ASSERT_EQ(lc[1], &c2);
         ASSERT_EQ(lc[2], &c3);
 

@@ -4,27 +4,26 @@
 //
 
 #include <cstddef>
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "pop/Person.h"
 
 using namespace std;
 
-
-//No namespace?
+// No namespace?
 // also wondering if we should just put everything in namespace stride
 // instead of working with our own namespaces...
 
-//Regarding the choice to use raw pointers,
+// Regarding the choice to use raw pointers,
 // this should be better for performance,
 // and looking at the way this is handled in the Population class,
 // there shouldn't be any real dangers...
 
-//I have a backup where I converted everything related to Person
+// I have a backup where I converted everything related to Person
 // so that it uses shared pointers, just in case...
 
-namespace stride { //temproralily put this in namespace stride cause I say we gotta put everything in stride
+namespace stride { // temproralily put this in namespace stride cause I say we gotta put everything in stride
 
 class City;
 
@@ -48,7 +47,7 @@ public:
         /// Number of members of the household.
         size_t GetSize() const { return m_pool.GetSize(); }
 
-        //Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
+        // Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
         // second thought, after fixing PopulationGenerator I wonder if we need these at all...
         // if we do, they'll need to be slightly reworked...
         void GetSchoolAttendants(vector<Person*>&) const;
@@ -69,7 +68,6 @@ private:
 
         /// A ContactPool with the people belonging to this household.
         ContactPool m_pool;
-
 };
 
 } // namespace stride

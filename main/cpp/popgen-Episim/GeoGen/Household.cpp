@@ -11,8 +11,8 @@ namespace stride {
 
 unsigned int Household::m_id_generator = 1;
 
-Household::Household(City* city) : m_id(m_id_generator++), m_city(city),
-                                       m_pool(ContactPool(m_id, ContactPoolType::Id::Household))
+Household::Household(City* city)
+    : m_id(m_id_generator++), m_city(city), m_pool(ContactPool(m_id, ContactPoolType::Id::Household))
 {
 }
 
@@ -45,4 +45,4 @@ void Household::GetPossibleWorkers(vector<Person*>& vec) const
         }
 }
 
-}
+} // namespace stride
