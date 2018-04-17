@@ -52,8 +52,10 @@ public:
         /// Get the size of all the communities
         unsigned int GetCommunitySize() const { return m_communities.size(); };
 
+        /// Get the number of total commuters to the city
         double GetTotalInCommutersCount();
 
+        /// Get the number of total commuters leaving the city
         double GetTotalOutCommutersCount();
 
         bool HasCollege(){ return m_has_college;}
@@ -71,31 +73,47 @@ public:
         /// Returns all the workplaces in the city
         vector<Community*> GetWorkplaces();
 
+        /// Returns all the communities
         vector<Community*> GetCommunities();
 
+        /// Returns the primary communities
         vector<Community*> GetPrimaryCommunities();
 
+        /// Returns the secondary communities
         vector<Community*> GetSecondaryCommunities();
 
+        /// Returns the communities of the given type
+        /// @param: ct type of the community
+        /// @param: poolsize the maximum allowed size of contactpool
+        /// @param: filter
         vector<Community*> GetCommunitiesOfType(CommunityType ct, unsigned int poolsize = 2000,
                                                 const bool filter = false);
 
-        /// Adds community to the city.
+        /// Adds a new community of the given type to the city.
+        /// @param: community_type the type of community that is to be added
+        /// @retval: <Community> the recently added community
         Community& AddCommunity(CommunityType community_type);
 
         /// Set the number of in-coming commuters from the city with the given id
+        /// @param: id the id of the city that the commuters come from
+        /// @param: number_of_commuters the number of commuters entering to this city
         void SetInCommuters(unsigned int id, double number_of_commuters);
 
         /// Set the number of out-going commuters from the city with the given id
+        /// @param: id the id of the city that the commuters from this city goes to
+        /// @param: number_of_commuters the number of commuters leaving this city
         void SetOutCommuters(unsigned int id, double number_of_commuters);
 
-        ///
+        /// Get all the in-coming commuters
         const map<unsigned int, double>& GetInCommuting() const { return m_in_commuting; };
 
+        /// Get all the outgoing commuters
         const map<unsigned int, double>& GetOutCommuting() const { return m_out_commuting; };
 
+        /// Adds a new household to the city
         Household& AddHousehold();
 
+        /// Gets the households of the city
         vector<Household>& GetHouseholds() { return m_households; }
 
 private:

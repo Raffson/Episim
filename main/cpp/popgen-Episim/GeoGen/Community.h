@@ -60,8 +60,10 @@ public:
         /// Return reference of the city,
         City& GetCity() { return *m_city; }
 
-        /// Adds a contact pool to the community
-        stride::ContactPool& AddContactPool(ContactPoolType::Id type);
+        /// Adds a new contact pool to the community
+        /// @param: type the type of the contact pool
+        /// @retval: <ContactPool> the recently added contactpool
+        ContactPool& AddContactPool(ContactPoolType::Id type);
 
         /// Get all the contactpools
         std::vector<ContactPool>& GetContactPools() { return m_contact_pools; }
@@ -78,7 +80,7 @@ private:
 
         City* m_city; ///< Shared pointer to City
 
-        static std::map<ContactPoolType::Id, unsigned int> m_pool_ids;
+        static std::map<ContactPoolType::Id, unsigned int> m_pool_ids; ///< Helps to create an unique id for contactpools
 
         std::vector<ContactPool> m_contact_pools; ///< Contains contactpools
 };

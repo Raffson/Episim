@@ -27,17 +27,19 @@ public:
         Coordinate();
         Coordinate(double x, double y, double longitude, double latitude);
 
-        /// Based on haversine formula
+        /// Calculates the distance based on haversine formula
         /// credit: https://www.movable-type.co.uk/scripts/latlong.html
-        /// @return distance between two coordinates by using longitude and latitude
-        ///
-
+        /// @param: c1 the coordinate whose distance has to be calculated from this coordinate
+        /// @retval: <double> distance between two coordinates by using longitude and latitude
         double GetDistance(const Coordinate& c1) const;
 
         double x;       ///< x-coordinate
         double y;       ///< y-coordinate
 
+        ///< a geographic coordinate that specifies the east-west position of a point on the Earth's surface.
         double longitude;
+
+        ///< a geographic coordinate that specifies the north–south position of a point on the Earth's surface.
         double latitude;
 };
 

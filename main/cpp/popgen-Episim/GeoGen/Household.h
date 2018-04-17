@@ -11,9 +11,6 @@
 
 using namespace std;
 
-// No namespace?
-// also wondering if we should just put everything in namespace stride
-// instead of working with our own namespaces...
 
 // Regarding the choice to use raw pointers,
 // this should be better for performance,
@@ -23,7 +20,7 @@ using namespace std;
 // I have a backup where I converted everything related to Person
 // so that it uses shared pointers, just in case...
 
-namespace stride { // temproralily put this in namespace stride cause I say we gotta put everything in stride
+namespace stride {
 
 class City;
 
@@ -33,6 +30,7 @@ public:
         Household(City* city);
 
         /// Add a member to the household.
+        /// @param: member the person to be added to the household
         void AddMember(const Person* member);
 
         /// City where housholds is located.

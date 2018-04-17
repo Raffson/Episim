@@ -113,7 +113,7 @@ TEST_P(WorkplaceTest, CommuterVsLocal)
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
         // commenting this out until we verify that GenerateWorkplaces was implemented correctly
-        // EXPECT_EQ(cities.at(random_city1).GetWorkplaces().size(), cities.at(random_city2).GetWorkplaces().size());
+         EXPECT_EQ(cities.at(random_city1).GetWorkplaces().size(), cities.at(random_city2).GetWorkplaces().size());
 }
 
 TEST_P(WorkplaceTest, Extremeregion)
