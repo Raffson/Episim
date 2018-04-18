@@ -63,27 +63,16 @@ void GeoGrid::ClassifyNeighbours()
         }
 }
 
-GeoGrid::GeoGrid()
+GeoGrid::GeoGrid() : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0)
 {
-        m_fract_map[Fractions::SCHOOLED]           = 0;
-        m_fract_map[Fractions::ACTIVE]             = 0;
-        m_fract_map[Fractions::YOUNG]              = 0;
-        m_fract_map[Fractions::MIDDLE_AGED]        = 0;
-        m_fract_map[Fractions::TODDLERS]           = 0;
-        m_fract_map[Fractions::OLDIES]             = 0;
-        m_fract_map[Fractions::STUDENTS]           = 0;
-        m_fract_map[Fractions::COMMUTING_STUDENTS] = 0;
-        m_fract_map[Fractions::COMMUTING_WORKERS]  = 0;
+        for( auto frac : FractionList )
+            m_fract_map[frac] = 0;
 
-        m_sizes_map[Sizes::SCHOOLS]     = 0;
-        m_sizes_map[Sizes::COLLEGES]    = 0;
-        m_sizes_map[Sizes::COMMUNITIES] = 0;
-        m_sizes_map[Sizes::WORKPLACES]  = 0;
-        m_sizes_map[Sizes::AVERAGE_CP]  = 0;
-        m_sizes_map[Sizes::MAXLC]       = 0;
+        for( auto size : SizeList )
+            m_sizes_map[size] = 0;
 }
 
-GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
+void GeoGrid::Initialize(const boost::filesystem::path& config_file)
 {
 
         REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
@@ -123,7 +112,7 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         parser::ParseCities(base_path + city_file, m_cities, m_model_pop);
         parser::ParseCommuting(base_path + commuting_file, m_cities, m_fract_map);
 
-        m_initial_search_radius = p_tree.get("popgen.neighbour_classification.initial_search_radius", 10);
+        m_initial_search_radius = p_tree.get<unsigned int>("popgen.neighbour_classification.initial_search_radius", 10U);
         ClassifyNeighbours();
 
         // Setting up RNG
@@ -152,6 +141,24 @@ GeoGrid::GeoGrid(const boost::filesystem::path& config_file)
         // Capping pool size at 1000, gotta ask the professor what the actual cap should be...
         ENSURE(m_sizes_map[Sizes::AVERAGE_CP] > 0 and m_sizes_map[Sizes::AVERAGE_CP] <= 1000,
                "Contactpool's size must be bigger than 0 and smaller than or equal to 1000");
+}
+
+void GeoGrid::Reset()
+{
+        for( auto frac : FractionList )
+            m_fract_map[frac] = 0;
+        for( auto size : SizeList )
+            m_sizes_map[size] = 0;
+        m_household_age_distr.clear();
+        m_cities.clear();
+        m_neighbours_in_radius.clear();
+        m_initial_search_radius = 0;
+        m_total_pop = 0;
+        m_model_pop = 0;
+        m_school_count = 0;
+        m_cities_with_college.clear();
+        m_population.clear();
+        m_belief.clear();
 }
 
 void GeoGrid::GenerateAll()
@@ -203,7 +210,7 @@ void GeoGrid::GenerateSchools()
         //      otherwise you'll get truncation which may not be desirable...
         //      also, shouldn't this be ceil instead of round like beau did in GenerateCommunities?
         //      (delete comments if agreed)
-        auto amount_schooled = (const double)round(m_total_pop * m_fract_map[Fractions::SCHOOLED]);
+        const double amount_schooled = round(m_total_pop * m_fract_map[Fractions::SCHOOLED]);
         // round because we do not build half a school
         auto amount_of_schools = (const unsigned int)round(amount_schooled / m_sizes_map[Sizes::SCHOOLS]);
 

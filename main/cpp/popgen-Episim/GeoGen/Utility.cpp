@@ -40,7 +40,7 @@ vector<unsigned int> generate_random(unsigned int begin, unsigned int end, unsig
         return ret_vec;
 }
 
-void init_generator(const unsigned int seed, const string& generator_name)
+void init_generator(const unsigned long seed, const string& generator_name)
 {
         generator.Initialize(util::RNManager::Info(generator_name, seed));
 }

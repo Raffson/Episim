@@ -49,7 +49,8 @@ TEST_P(CollegeTest, HappyDayScenario)
         // Initialise the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------

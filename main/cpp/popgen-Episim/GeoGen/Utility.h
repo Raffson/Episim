@@ -35,7 +35,13 @@ enum class Fractions
 constexpr std::array<Fractions, 5> AgeList{
     {Fractions::SCHOOLED, Fractions::YOUNG, Fractions::MIDDLE_AGED, Fractions::TODDLERS, Fractions::OLDIES}};
 
-/// Enum that represent indexes of sizes map. That map contains all size data
+/// To allow iteration over all Fractions.
+constexpr std::array<Fractions, 9> FractionList{
+        {Fractions::SCHOOLED, Fractions::ACTIVE, Fractions::YOUNG, Fractions::MIDDLE_AGED,
+                Fractions::TODDLERS, Fractions::OLDIES, Fractions::STUDENTS,
+                Fractions::COMMUTING_STUDENTS, Fractions::COMMUTING_WORKERS}};
+
+    /// Enum that represent indexes of sizes map. That map contains all size data
 /// of our communities
 enum class Sizes
 {
@@ -47,7 +53,12 @@ enum class Sizes
         MAXLC        // Amount of largest cities (cities with a college)
 };
 
-/// Checks if a file exists.
+/// To allow iteration over the Sizes.
+constexpr std::array<Sizes, 6> SizeList{
+        {Sizes::SCHOOLS, Sizes::COLLEGES, Sizes::COMMUNITIES, Sizes::WORKPLACES, Sizes::AVERAGE_CP, Sizes::MAXLC}};
+
+
+    /// Checks if a file exists.
 /// @param: path A path to a file.
 /// @retval: <bool> True if the file exists, False else.
 bool file_exists(const boost::filesystem::path& path);
@@ -57,7 +68,7 @@ bool file_exists(const boost::filesystem::path& path);
 /// @retval <double> a number in radians.
 double convert_to_radians(double degrees);
 
-void init_generator(unsigned int seed, const string& generator);
+void init_generator(const unsigned long seed, const string& generator);
 
 /// Takes a distribution -> a vec of numbers and generates N random numbers given the distribution vector.
 /// @param p_vec a vector representing our distribution, each entry contains a relative probabillity.

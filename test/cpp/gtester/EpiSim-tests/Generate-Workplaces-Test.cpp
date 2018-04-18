@@ -50,7 +50,8 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -86,7 +87,8 @@ TEST_P(WorkplaceTest, CommuterVsLocal)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -122,7 +124,8 @@ TEST_P(WorkplaceTest, Extremeregion)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------

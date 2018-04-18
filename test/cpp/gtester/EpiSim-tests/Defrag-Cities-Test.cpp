@@ -26,7 +26,11 @@ protected:
         ~DefragCityTest() override = default;
 
         /// Set up for the test fixture
-        void SetUp() override { geo = new GeoGrid("config/geogen_default.xml"); }
+        void SetUp() override
+        {
+                geo = new GeoGrid();
+                geo->Initialize("config/geogen_default.xml");
+        }
 
         /// Tearing down the test fixture
         void TearDown() override { delete geo; }

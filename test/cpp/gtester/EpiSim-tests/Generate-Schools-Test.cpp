@@ -50,7 +50,8 @@ TEST_P(SchoolTest, HappyDayScenario)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -96,7 +97,8 @@ TEST_P(SchoolTest, HighMoreLowLess)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         auto mp = grid.GetCities();

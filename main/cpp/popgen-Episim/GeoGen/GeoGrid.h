@@ -46,20 +46,17 @@ class GeoGrid
 {
 
 public:
-        /// Default constructor which does nothing.
-        // TODO: Do we need this??
-        // Raphael@everyone, well now we do...
-        // to initialize the fractals/sizes maps so that people don't try to access those maps,
-        // expecting to get a value of 0 out of it...
-        // either that, or the GeoGrid-Constructor-Test must expect throws...
-        // for now I will implement the default constructor real quick, we can still throw it away afterwards...
+        /// Default constructor which initializes some members to 0.
         GeoGrid();
 
-        /// Takes a filepath to city_config file.
+        /// Takes a filepath to city_config file and initializes the GeoGrid.
         /// @param config: a path to a gegogen config file. This file contains
         ///             things like name of the city data file, information about
         ///             the population...
-        explicit GeoGrid(const boost::filesystem::path& config);
+        void Initialize(const boost::filesystem::path& config);
+
+        /// Resets the entire GeoGrid.
+        void Reset();
 
         /// Generates the schools, places them into the cities
         /// using a discrete distribution.
@@ -216,6 +213,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Total population of simulation area
         unsigned int m_total_pop{};
 
+        /// Keeps count of the total population the model.
         unsigned int m_model_pop;
 
         /// Total number of schools
