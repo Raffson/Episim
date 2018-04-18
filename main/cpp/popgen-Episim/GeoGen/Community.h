@@ -18,6 +18,7 @@
  */
 
 #include "pool/ContactPool.h"
+#include "pool/ContactPoolSys.h"
 #include <cstddef>
 #include <map>
 #include <memory>
@@ -61,12 +62,12 @@ public:
         City& GetCity() { return *m_city; }
 
         /// Adds a new contact pool to the community
-        /// @param: type the type of the contact pool
-        /// @retval: <ContactPool> the recently added contactpool
-        ContactPool& AddContactPool(ContactPoolType::Id type);
+        /// @param: pool_sys A reference to the ContactPoolSys needed for stride, passed from GeoGrid.
+        /// @retval: <ContactPool> The recently added contactpool
+        ContactPool& AddContactPool(ContactPoolSys& pool_sys);
 
         /// Get all the contactpools
-        std::vector<ContactPool>& GetContactPools() { return m_contact_pools; }
+        std::vector<ContactPool*>& GetContactPools() { return m_contact_pools; }
 
         /// Get the total number members of all contactpools for this community
         unsigned int GetSize() const;
@@ -82,7 +83,10 @@ private:
 
         static std::map<ContactPoolType::Id, unsigned int> m_pool_ids; ///< Helps to create an unique id for contactpools
 
-        std::vector<ContactPool> m_contact_pools; ///< Contains contactpools
+        ///< Helps to figure out the ContactPoolType depending on the community's type.
+        static std::map<CommunityType, ContactPoolType::Id> m_type_mapper;
+
+        std::vector<ContactPool*> m_contact_pools; ///< Contains contactpools
 };
 
 } // namespace stride

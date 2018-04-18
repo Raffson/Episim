@@ -63,7 +63,8 @@ void GeoGrid::ClassifyNeighbours()
         }
 }
 
-GeoGrid::GeoGrid() : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0)
+GeoGrid::GeoGrid(ContactPoolSys& pool_sys)
+        : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0), m_pool_sys(pool_sys)
 {
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
@@ -221,10 +222,6 @@ void GeoGrid::GenerateSchools()
         vector<double> p_vec;
         vector<City*>  c_vec;
         for (auto& it : m_cities) {
-                // shouldn't need to multiply with the schooled fraction since the distribution stays the same,
-                // so we can just push the population count straight in the probablity vector...
-                // (delete comments if agreed)
-                // double c_schooled_pop = it.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED];
                 c_vec.emplace_back(&it.second);
                 p_vec.emplace_back(it.second.GetPopulation());
         }
@@ -238,7 +235,7 @@ void GeoGrid::GenerateSchools()
 
                 // Add contactpools
                 for (auto j = 0; j < cps; j++)
-                        nw_school.AddContactPool(ContactPoolType::Id::School);
+                        nw_school.AddContactPool(m_pool_sys);
                 // m_communities[nw_school->getID()] = nw_school
                 // TODO: What is this?? -> probably no need for this but keeping it there just in case...
         }
@@ -304,7 +301,7 @@ void GeoGrid::GenerateColleges()
                         Community& college = it->AddCommunity(CommunityType::College);
                         // Add contactpools
                         for (auto j = 0; j < cps; j++)
-                                college.AddContactPool(ContactPoolType::Id::School);
+                                college.AddContactPool(m_pool_sys);
                         // m_communities[college->getID()] = college
                 }
         }
@@ -353,7 +350,7 @@ void GeoGrid::GenerateWorkplaces()
                 Community& nw_workplace = chosen_city->AddCommunity(CommunityType::Work);
 
                 // A workplace has a contactpool.
-                nw_workplace.AddContactPool(ContactPoolType::Id::Work);
+                nw_workplace.AddContactPool(m_pool_sys);
         }
 }
 
@@ -385,8 +382,8 @@ void GeoGrid::GenerateCommunities()
                 Community& nw_scommunity = chosen_city2.AddCommunity(CommunityType::Secondary);
                 // Add contactpools for secondary community...
                 for (auto j = 0; j < cps; j++) {
-                        nw_pcommunity.AddContactPool(ContactPoolType::Id::PrimaryCommunity);
-                        nw_scommunity.AddContactPool(ContactPoolType::Id::SecondaryCommunity);
+                        nw_pcommunity.AddContactPool(m_pool_sys);
+                        nw_scommunity.AddContactPool(m_pool_sys);
                 }
         }
 }

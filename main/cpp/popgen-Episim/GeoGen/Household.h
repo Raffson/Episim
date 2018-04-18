@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 
+#include "pool/ContactPoolSys.h"
 #include "pop/Person.h"
 
 using namespace std;
@@ -27,7 +28,10 @@ class City;
 class Household
 {
 public:
-        Household(City* city);
+        /// Household's contructor.
+        /// @param city A pointer to the city to which this household's assigned.
+        /// @param pool A reference to the ContactPoolSys used by stride to create the contact pool
+        Household(City* city, ContactPoolSys& pool_sys);
 
         /// Add a member to the household.
         /// @param: member the person to be added to the household
@@ -40,10 +44,10 @@ public:
         unsigned int GetID() const { return m_id; }
 
         /// Return the members of this household.
-        const vector<Person*>& GetMembers() const { return m_pool.GetPool(); }
+        const vector<Person*>& GetMembers() const { return m_pool->GetPool(); }
 
         /// Number of members of the household.
-        size_t GetSize() const { return m_pool.GetSize(); }
+        size_t GetSize() const { return m_pool->GetSize(); }
 
         // Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
         // second thought, after fixing PopulationGenerator I wonder if we need these at all...
@@ -58,7 +62,7 @@ private:
         static unsigned int m_id_generator; ///< Id generator.
         size_t m_id;            ///< A unique ID of the household.
         City* m_city;           ///< The City in which the household is located
-        ContactPool m_pool;     ///< A ContactPool with the people belonging to this household.
+        ContactPool* m_pool;     ///< A ContactPool with the people belonging to this household.
 
 };
 

@@ -111,7 +111,7 @@ public:
         const map<unsigned int, double>& GetOutCommuting() const { return m_out_commuting; };
 
         /// Adds a new household to the city
-        Household& AddHousehold();
+        Household& AddHousehold(ContactPoolSys& pool_sys);
 
         /// Gets the households of the city
         vector<Household>& GetHouseholds() { return m_households; }

@@ -109,9 +109,18 @@ std::shared_ptr<Simulator> SimulatorBuilder::Build(const ptree& disease_pt, cons
         }
 
         // --------------------------------------------------------------
+        // Read configuration to determine the Build-profile,
+        // i.e. read population from file or random generation
+        // --------------------------------------------------------------
+        const bool random = m_config_pt.get<bool>("run.random_geopop", false);
+
+        // --------------------------------------------------------------
         // Build population.
         // --------------------------------------------------------------
-        sim->m_population = PopulationBuilder::Build(m_config_pt, sim->m_rn_manager);
+        if( random ) {
+                //do our thing...
+        }
+        else sim->m_population = PopulationBuilder::Build(m_config_pt, sim->m_rn_manager);
 
         // --------------------------------------------------------------
         // Seed the population with social contact survey participants.
@@ -133,7 +142,11 @@ std::shared_ptr<Simulator> SimulatorBuilder::Build(const ptree& disease_pt, cons
         // --------------------------------------------------------------
         // Build the ContactPoolSystem of the simulator.
         // --------------------------------------------------------------
-        PopPoolBuilder(m_stride_logger).Build(sim->m_pool_sys, *sim->m_population);
+        if( random )
+        {
+                //do our thing...
+        }
+        else PopPoolBuilder(m_stride_logger).Build(sim->m_pool_sys, *sim->m_population);
 
         // --------------------------------------------------------------
         // Initialize the transmission profile (fixes rates).

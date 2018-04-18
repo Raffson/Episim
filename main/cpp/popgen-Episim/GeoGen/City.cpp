@@ -146,9 +146,9 @@ double City::GetTotalOutCommutersCount()
         return m_out_commuter_count;
 }
 
-Household& City::AddHousehold()
+Household& City::AddHousehold(ContactPoolSys& pool_sys)
 {
-        m_households.emplace_back(Household(this));
+        m_households.emplace_back(Household(this, pool_sys));
         return m_households.back();
 }
 

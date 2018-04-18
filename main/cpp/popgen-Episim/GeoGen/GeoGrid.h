@@ -36,18 +36,20 @@ using namespace std;
 
 namespace stride {
 
+static ContactPoolSys default_pool_sys;
+
 /**
  * Class representing our GeoGrid;
  * Geogrid contains information about the cities. placing of contactpools
- * (shools, workplaces...) within those cities. Will be used by popgen and
- * the gui.
+ * (shools, workplaces...) within those cities.
+ * Will be used by stride, popgen and the gui.
  */
 class GeoGrid
 {
 
 public:
         /// Default constructor which initializes some members to 0.
-        GeoGrid();
+        GeoGrid(ContactPoolSys& pool_sys = default_pool_sys);
 
         /// Takes a filepath to city_config file and initializes the GeoGrid.
         /// @param config: a path to a gegogen config file. This file contains
@@ -165,6 +167,10 @@ public:
         /// exceeds the maximum range between cities, the largest possible radius is chosen.
         const vector<City*>& GetCitiesWithinRadius(const City& origin, unsigned int radius);
 
+        /// Getter
+        /// @retval <ContactPoolSys&> Returns a reference to the ContactPoolSys.
+        ContactPoolSys& GetContactPoolSys() { return m_pool_sys; }
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
@@ -185,20 +191,20 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Effective map of all our fractions. Read the Fractions Enum what it will contain.
         map<Fractions, double> m_fract_map{};
 
-        /// Effective map of all our sizes. Read the Sizes Enum what it will contain.
+        ///< Effective map of all our sizes. Read the Sizes Enum what it will contain.
         map<Sizes, unsigned int> m_sizes_map{};
 
-        /// Contains the model for the age distribition for households
+        ///< Contains the model for the age distribition for households
         vector<vector<double>> m_household_age_distr{};
 
-        /// Contains all cities for the GeoGrid
+        ///< Contains all cities for the GeoGrid
         map<unsigned int, City> m_cities{};
 
-        /// Contains cityIDs that are mapped to a map which holds a vector with pointers to cities
-        /// for each of the radius distance-categories (10km, 20km, 40km, ...) in relation to the city with ID
+        ///< Contains cityIDs that are mapped to a map which holds a vector with pointers to cities
+        ///< for each of the radius distance-categories (10km, 20km, 40km, ...) in relation to the city with ID
         map<unsigned int, map<unsigned int, vector<City*>>> m_neighbours_in_radius;
 
-        /// The initial search-radius for getting nearby cities
+        ///< The initial search-radius for getting nearby cities
         unsigned int m_initial_search_radius;
 
         /// Keep a map of all communities?
@@ -210,23 +216,26 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Contains information about number of commuters from a city to a city
         /// map<unsigned int, <map<unsigned int, unsigned int> > > m_commuting;
 
-        /// Total population of simulation area
+        ///< Total population of simulation area
         unsigned int m_total_pop{};
 
-        /// Keeps count of the total population the model.
+        ///< Keeps count of the total population the model.
         unsigned int m_model_pop;
 
-        /// Total number of schools
+        ///< Total number of schools
         unsigned int m_school_count{};
 
-        /// Vector of pointer to all cities that have a college
+        ///< Vector of pointer to all cities that have a college
         vector<City*> m_cities_with_college{};
 
-        /// The population of the GeoGrid
+        ///< The population of the GeoGrid
         Population m_population;
 
-        /// Variable to store Belief used for creating people
+        ///< Variable to store Belief used for creating people
         boost::property_tree::ptree m_belief;
+
+        ///< The ContactPoolSys needed for stide itself.
+        ContactPoolSys& m_pool_sys;
 };
 
 } // namespace stride
