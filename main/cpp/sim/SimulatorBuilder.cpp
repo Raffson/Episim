@@ -23,6 +23,7 @@
 #include "calendar/Calendar.h"
 #include "disease/DiseaseSeeder.h"
 #include "disease/HealthSeeder.h"
+#include "pool/ContactPoolSys.h"
 #include "pool/ContactPoolType.h"
 #include "pop/PopPoolBuilder.h"
 #include "pop/PopulationBuilder.h"
@@ -54,7 +55,7 @@ SimulatorBuilder::SimulatorBuilder(const ptree& config_pt, std::shared_ptr<spdlo
         }
 }
 
-std::shared_ptr<Simulator> SimulatorBuilder::Build()
+std::shared_ptr<Simulator> SimulatorBuilder::Build(std::shared_ptr<GeoGrid> grid)
 {
         m_stride_logger->trace("Starting SimulatorBuilder::Build.");
         const auto contact_pt = ReadContactPtree();
@@ -63,13 +64,14 @@ std::shared_ptr<Simulator> SimulatorBuilder::Build()
         assert(!contact_pt.empty() && "SimulatorBuilder::Build> Empty contact ptree not acceptable!");
         assert(!disease_pt.empty() && "SimulatorBuilder::Build> Empty disease ptree not acceptable!");
 
-        auto sim = Build(disease_pt, contact_pt);
+        auto sim = Build(disease_pt, contact_pt, grid);
 
         m_stride_logger->trace("Finished SimulatorBuilder::Build.");
         return sim;
 }
 
-std::shared_ptr<Simulator> SimulatorBuilder::Build(const ptree& disease_pt, const ptree& contact_pt)
+std::shared_ptr<Simulator> SimulatorBuilder::Build(const ptree& disease_pt, const ptree& contact_pt,
+                                                   std::shared_ptr<GeoGrid> grid)
 {
         // --------------------------------------------------------------
         // Uninitialized simulator object.
@@ -118,7 +120,13 @@ std::shared_ptr<Simulator> SimulatorBuilder::Build(const ptree& disease_pt, cons
         // Build population.
         // --------------------------------------------------------------
         if( random ) {
-                //do our thing...
+                grid = make_shared<GeoGrid>();
+                string path = m_config_pt.get<string>("run.random_geopop_file", "geogen_default.xml");
+                path = "config/" + path;
+                std::shared_ptr<ContactPoolSys> pool_sys(&sim->m_pool_sys);
+                grid->Initialize(path, pool_sys, sim->m_population);
+                grid->GenerateAll();
+                PopulationGenerator(*grid).GeneratePopulation();
         }
         else sim->m_population = PopulationBuilder::Build(m_config_pt, sim->m_rn_manager);
 
@@ -142,11 +150,7 @@ std::shared_ptr<Simulator> SimulatorBuilder::Build(const ptree& disease_pt, cons
         // --------------------------------------------------------------
         // Build the ContactPoolSystem of the simulator.
         // --------------------------------------------------------------
-        if( random )
-        {
-                //do our thing...
-        }
-        else PopPoolBuilder(m_stride_logger).Build(sim->m_pool_sys, *sim->m_population);
+        if( !random ) PopPoolBuilder(m_stride_logger).Build(sim->m_pool_sys, *sim->m_population);
 
         // --------------------------------------------------------------
         // Initialize the transmission profile (fixes rates).

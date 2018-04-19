@@ -36,8 +36,6 @@ using namespace std;
 
 namespace stride {
 
-static ContactPoolSys default_pool_sys;
-
 /**
  * Class representing our GeoGrid;
  * Geogrid contains information about the cities. placing of contactpools
@@ -49,13 +47,14 @@ class GeoGrid
 
 public:
         /// Default constructor which initializes some members to 0.
-        GeoGrid(ContactPoolSys& pool_sys = default_pool_sys);
+        GeoGrid();
 
         /// Takes a filepath to city_config file and initializes the GeoGrid.
         /// @param config: a path to a gegogen config file. This file contains
         ///             things like name of the city data file, information about
         ///             the population...
-        void Initialize(const boost::filesystem::path& config);
+        void Initialize(const boost::filesystem::path& config,
+                        shared_ptr<ContactPoolSys> pool_sys = nullptr, shared_ptr<Population> pop = nullptr);
 
         /// Resets the entire GeoGrid.
         void Reset();
@@ -137,7 +136,7 @@ public:
 
         /// Getter
         /// @retval <Population> Returns a reference to population
-        Population& GetPopulation() { return m_population; }
+        Population& GetPopulation() { return *m_population; }
 
         /// Getter
         /// @retval <boost::property_tree::ptree> Returns the property tree for Belief
@@ -169,7 +168,11 @@ public:
 
         /// Getter
         /// @retval <ContactPoolSys&> Returns a reference to the ContactPoolSys.
-        ContactPoolSys& GetContactPoolSys() { return m_pool_sys; }
+        ContactPoolSys& GetContactPoolSys() { return *m_pool_sys; }
+
+        /// Getter
+        /// @retval <const bool> Returns whether or not the GeoGrid is initialized.
+        const bool IsInitialized() { return m_initialized; }
 
 private:
         /// Returns index of city with smallest population from 'lc'
@@ -229,13 +232,16 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         vector<City*> m_cities_with_college{};
 
         ///< The population of the GeoGrid
-        Population m_population;
+        shared_ptr<Population> m_population;
 
         ///< Variable to store Belief used for creating people
         boost::property_tree::ptree m_belief;
 
         ///< The ContactPoolSys needed for stide itself.
-        ContactPoolSys& m_pool_sys;
+        shared_ptr<ContactPoolSys> m_pool_sys;
+
+        ///< A variable indicating if the GeoGrid was initialized.
+        bool m_initialized;
 };
 
 } // namespace stride

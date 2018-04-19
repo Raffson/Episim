@@ -24,6 +24,8 @@
 #include "sim/python/SimulatorObserver.h"
 #include "util/Stopwatch.h"
 
+#include "popgen-Episim/GeoGen/GeoGrid.h"
+
 #include <boost/property_tree/ptree.hpp>
 #include <memory>
 #include <string>
@@ -99,6 +101,7 @@ private:
         std::string                     m_output_prefix; ///< Prefix for output data files.
         boost::property_tree::ptree     m_config_pt;     ///< Ptree with configuration.
         std::shared_ptr<Simulator>      m_sim;           ///< Simulator object.
+        std::shared_ptr<GeoGrid>        m_geogrid;       ///< The GeoGrid
 };
 
 } // namespace stride

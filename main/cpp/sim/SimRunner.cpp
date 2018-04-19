@@ -81,7 +81,7 @@ bool SimRunner::Setup(const ptree& config_pt)
         //------------------------------------------------------------------------------
         m_stride_logger->trace("Building the simulator.");
         SimulatorBuilder builder(m_config_pt, m_stride_logger);
-        m_sim = builder.Build();
+        m_sim = builder.Build(m_geogrid);
         m_stride_logger->trace("Done building the simulator.");
 
         // -----------------------------------------------------------------------------------------
@@ -113,6 +113,11 @@ void SimRunner::Run()
 
         m_clock.Stop();
         m_stride_logger->info("SimRunner done after: {}", m_clock.ToString());
+
+        if( m_geogrid and m_geogrid->IsInitialized() )
+        {
+                //Start Qt map here?
+        }
 }
 
 } // namespace stride

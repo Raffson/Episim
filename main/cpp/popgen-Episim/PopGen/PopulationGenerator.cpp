@@ -157,7 +157,7 @@ ContactPool* PopulationGenerator::GetRandomCommunityContactPool(vector<Community
 
         trng::uniform_int_dist distr(0, comms.size());
         unsigned int           index = (unsigned int)generator.GetGenerator(distr)();
-        vector<ContactPool*>&   pools = comms[index]->GetContactPools();
+        vector<ContactPool*>&  pools = comms[index]->GetContactPools();
         if (!pools.empty()) {
                 trng::uniform_int_dist pdistr(0, pools.size());
                 unsigned int           index2 = (unsigned int)generator.GetGenerator(pdistr)();
