@@ -150,8 +150,8 @@ std::shared_ptr<Simulator> SimulatorBuilder::Build(const ptree& disease_pt, cons
         // --------------------------------------------------------------
         // Build the ContactPoolSystem of the simulator.
         // --------------------------------------------------------------
-        if( !random ) PopPoolBuilder(m_stride_logger).Build(sim->m_pool_sys, *sim->m_population);
-        //PopPoolBuilder(m_stride_logger).Build(sim->m_pool_sys, *sim->m_population);
+        //if( !random ) PopPoolBuilder(m_stride_logger).Build(sim->m_pool_sys, *sim->m_population);
+        PopPoolBuilder(m_stride_logger).Build(sim->m_pool_sys, *sim->m_population);
 
         // --------------------------------------------------------------
         // Initialize the transmission profile (fixes rates).

@@ -87,9 +87,7 @@ void DiseaseSeeder::Vaccinate(const std::string& immunity_type, const std::strin
                 for (unsigned int index_age = 0; index_age < 100; index_age++) {
                         immunity_distribution.push_back(immunity_rate);
                 }
-                cout << "SegFault? 1" << endl;
                 immunizer.Random(immunity_pools, immunity_distribution, immunity_link_probability);
-                cout << "SegFault? 2" << endl;
         } else if (immunization_profile == "Cocoon") {
                 immunizer.Cocoon(immunity_pools, immunity_distribution, immunity_link_probability);
         }

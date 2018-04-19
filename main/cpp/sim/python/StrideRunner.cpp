@@ -47,7 +47,8 @@ using namespace std;
 using namespace std::chrono;
 
 StrideRunner::StrideRunner()
-    : m_is_running(false), m_output_prefix(""), m_pt_config(), m_clock("total_clock"), m_sim(make_shared<Simulator>())
+    : m_is_running(false), m_output_prefix(""), m_pt_config(), m_clock("total_clock"), m_sim(make_shared<Simulator>()),
+      m_geogrid(nullptr)
 {
 }
 
