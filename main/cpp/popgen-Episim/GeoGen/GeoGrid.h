@@ -36,6 +36,8 @@ using namespace std;
 
 namespace stride {
 
+static ContactPoolSys default_pool_sys;
+
 /**
  * Class representing our GeoGrid;
  * Geogrid contains information about the cities. placing of contactpools
@@ -53,8 +55,8 @@ public:
         /// @param config: a path to a gegogen config file. This file contains
         ///             things like name of the city data file, information about
         ///             the population...
-        void Initialize(const boost::filesystem::path& config,
-                        shared_ptr<ContactPoolSys> pool_sys = nullptr, shared_ptr<Population> pop = nullptr);
+        /// @param pool_sys: A reference to the ContactPoolSys to be used.
+        void Initialize(const boost::filesystem::path& config, ContactPoolSys& pool_sys = default_pool_sys);
 
         /// Resets the entire GeoGrid.
         void Reset();
@@ -136,7 +138,7 @@ public:
 
         /// Getter
         /// @retval <Population> Returns a reference to population
-        Population& GetPopulation() { return *m_population; }
+        shared_ptr<Population> GetPopulation() { return m_population; }
 
         /// Getter
         /// @retval <boost::property_tree::ptree> Returns the property tree for Belief
@@ -238,7 +240,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         boost::property_tree::ptree m_belief;
 
         ///< The ContactPoolSys needed for stide itself.
-        shared_ptr<ContactPoolSys> m_pool_sys;
+        ContactPoolSys* m_pool_sys;
 
         ///< A variable indicating if the GeoGrid was initialized.
         bool m_initialized;

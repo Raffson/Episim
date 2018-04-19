@@ -157,11 +157,11 @@ ContactPool* PopulationGenerator::GetRandomCommunityContactPool(vector<Community
 
         trng::uniform_int_dist distr(0, comms.size());
         unsigned int           index = (unsigned int)generator.GetGenerator(distr)();
-        vector<ContactPool*>&  pools = comms[index]->GetContactPools();
+        vector<ContactPool>&  pools = comms[index]->GetContactPools();
         if (!pools.empty()) {
                 trng::uniform_int_dist pdistr(0, pools.size());
                 unsigned int           index2 = (unsigned int)generator.GetGenerator(pdistr)();
-                return pools[index2];
+                return &pools[index2];
         } else
                 return nullptr;
 }
@@ -260,7 +260,7 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         // update: turns out the household file has a very slim chance that a person between 3y en 18y old
         //    can be living alone... we're gonna have to notify the professor next time we get feedback...
 
-        auto&        pop           = m_geogrid.GetPopulation();
+        auto&        pop           = *m_geogrid.GetPopulation();
         auto&        pool_sys      = m_geogrid.GetContactPoolSys();
         auto&        the_household = city.AddHousehold(pool_sys); // Returns a reference to the new household...
         unsigned int hid           = the_household.GetID();

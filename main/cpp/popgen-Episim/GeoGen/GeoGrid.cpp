@@ -65,7 +65,7 @@ void GeoGrid::ClassifyNeighbours()
 
 GeoGrid::GeoGrid()
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
-          m_population(make_shared<Population>()), m_pool_sys(make_shared<ContactPoolSys>()), m_initialized(false)
+          m_population(make_shared<Population>()), m_pool_sys(&default_pool_sys), m_initialized(false)
 {
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
@@ -74,8 +74,7 @@ GeoGrid::GeoGrid()
             m_sizes_map[size] = 0;
 }
 
-void GeoGrid::Initialize(const boost::filesystem::path& config_file,
-                         shared_ptr<ContactPoolSys> pool_sys, shared_ptr<Population> pop)
+void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPoolSys& pool_sys)
 {
 
         REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
@@ -145,16 +144,15 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file,
         ENSURE(m_sizes_map[Sizes::AVERAGE_CP] > 0 and m_sizes_map[Sizes::AVERAGE_CP] <= 1000,
                "Contactpool's size must be bigger than 0 and smaller than or equal to 1000");
 
-        m_pool_sys = (pool_sys) ? pool_sys : m_pool_sys;
-        m_population = (pop) ? pop : m_population;
+        m_pool_sys = &pool_sys;
         m_initialized = true;
 }
 
 void GeoGrid::Reset()
 {
         m_initialized = false;
-        m_pool_sys = nullptr;
-        m_population = nullptr;
+        m_pool_sys = &default_pool_sys;
+        m_population = make_shared<Population>();
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
         for( auto size : SizeList )

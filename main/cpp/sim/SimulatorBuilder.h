@@ -47,13 +47,13 @@ public:
         SimulatorBuilder(const boost::property_tree::ptree& config_pt, std::shared_ptr<spdlog::logger> logger);
 
         /// Build the simulator.
-        std::shared_ptr<Simulator> Build(std::shared_ptr<GeoGrid> grid = nullptr);
+        std::shared_ptr<Simulator> Build(std::shared_ptr<GeoGrid>& grid);
 
 private:
         /// Build the simulator.
         std::shared_ptr<Simulator> Build(const boost::property_tree::ptree& disease_pt,
                                          const boost::property_tree::ptree& contact_pt,
-                                         std::shared_ptr<GeoGrid> grid);
+                                         std::shared_ptr<GeoGrid>& grid);
 
         /// Get the contact configuration data.
         boost::property_tree::ptree ReadContactPtree();

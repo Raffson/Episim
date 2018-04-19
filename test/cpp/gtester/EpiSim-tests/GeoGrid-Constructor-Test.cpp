@@ -76,7 +76,7 @@ TEST(GeoGridCtorTest, DefaultConstructor)
                 EXPECT_FLOAT_EQ(grid.GetFraction(frac), 0.0);
         for( auto size : SizeList )
                 EXPECT_EQ(grid.GetAvgSize(size), 0);
-        EXPECT_EQ(grid.GetPopulation().size(), 0);
+        EXPECT_EQ(grid.GetPopulation()->size(), 0);
 }
 
 TEST(GeoGridCtorTest, NonExistingFile)
