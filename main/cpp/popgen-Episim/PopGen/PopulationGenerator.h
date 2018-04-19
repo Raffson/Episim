@@ -92,6 +92,11 @@ private:
         /// @retval <ContactPool*>
         ContactPool* GetRandomCommunityContactPool(vector<Community*>& comms);
 
+        /// A random functions which flips an unfair coin, unless you pass 'frac' = 0.5
+        /// @param frac The fraction of chance that you will get 'true' as a result.
+        /// @retval <const bool> A contact boolean value indicating the result.
+        const bool FlipUnfairCoin(const double& frac);
+
         /// A random function which will flip a coin to determine if a person is a working commuter.
         const bool IsWorkingCommuter();
 
@@ -151,6 +156,9 @@ private:
         /// This member represents the population fraction relative to the total population. The i-th element
         /// corresponds to the distribution for the city with the i-th ID in m_city_ids.
         std::vector<double> m_city_pop_fracs;
+
+        ///< The random number generator.
+        util::RNManager* m_rng;
 };
 
 } // namespace stride

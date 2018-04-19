@@ -56,7 +56,8 @@ public:
         ///             things like name of the city data file, information about
         ///             the population...
         /// @param pool_sys: A reference to the ContactPoolSys to be used.
-        void Initialize(const boost::filesystem::path& config, ContactPoolSys& pool_sys = default_pool_sys);
+        void Initialize(const boost::filesystem::path& config, ContactPoolSys& pool_sys = default_pool_sys,
+                        util::RNManager* rng = &generator);
 
         /// Resets the entire GeoGrid.
         void Reset();
@@ -176,6 +177,10 @@ public:
         /// @retval <const bool> Returns whether or not the GeoGrid is initialized.
         const bool IsInitialized() { return m_initialized; }
 
+        /// Getter
+        /// @retval <util::RNManager*> A pointer to the random number generator being used by GeoGrid.
+        util::RNManager* GetRNG() { return m_rng; }
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
@@ -244,6 +249,9 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         ///< A variable indicating if the GeoGrid was initialized.
         bool m_initialized;
+
+        ///< The random number generator.
+        util::RNManager* m_rng;
 };
 
 } // namespace stride

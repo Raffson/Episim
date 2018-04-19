@@ -123,7 +123,7 @@ std::shared_ptr<Simulator> SimulatorBuilder::Build(const ptree& disease_pt, cons
                 grid = make_shared<GeoGrid>();
                 string path = m_config_pt.get<string>("run.random_geopop_file", "geogen_default.xml");
                 path = "config/" + path;
-                grid->Initialize(path, sim->m_pool_sys);
+                grid->Initialize(path, sim->m_pool_sys, &sim->m_rn_manager);
                 grid->GenerateAll();
                 PopulationGenerator(*grid).GeneratePopulation();
                 sim->m_population = grid->GetPopulation();

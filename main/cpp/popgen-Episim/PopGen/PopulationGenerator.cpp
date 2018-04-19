@@ -15,6 +15,7 @@ PopulationGenerator::PopulationGenerator(GeoGrid& geogrid) : m_geogrid(geogrid)
         InitializeHouseholdFractions();
         InitializeCommutingFractions();
         InitializeCityPopFractions();
+        m_rng = m_geogrid.GetRNG();
 }
 
 void PopulationGenerator::InitializeHouseholdFractions()
@@ -102,36 +103,36 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
         trng::discrete_dist distr(m_household_size_fracs.begin(), m_household_size_fracs.end());
         // plus 1 because discrete_dist returns numbers between 0 and (m_household_size_fracs.size() - 1)
         // we need numbers between 1 and m_household_size_fracs.size()
-        return (unsigned int)(generator.GetGenerator(distr)() + 1);
+        return (unsigned int)(m_rng->GetGenerator(distr)() + 1);
 }
 
 double PopulationGenerator::GetRandomAge(unsigned int hhsize)
 {
         trng::discrete_dist distr(m_household_comp_fracs[hhsize].begin(), m_household_comp_fracs[hhsize].end());
-        unsigned int        category = (unsigned int)generator.GetGenerator(distr)();
+        unsigned int        category = (unsigned int)m_rng->GetGenerator(distr)();
 
         switch (category) {
         case 0: {                                             // [3, 17]
                 trng::uniform_dist<double> distr2(3.0, 18.0); // generates number between [a, b)
-                return (double)generator.GetGenerator(distr2)();
+                return (double)m_rng->GetGenerator(distr2)();
         }
         case 1: { // [18, 25]
                 trng::uniform_dist<double> distr2(18.0, 26.0);
-                return (double)generator.GetGenerator(distr2)();
+                return (double)m_rng->GetGenerator(distr2)();
         }
         case 2: { // [26, 64]
                 trng::uniform_dist<double> distr2(26.0, 65.0);
-                return (double)generator.GetGenerator(distr2)();
+                return (double)m_rng->GetGenerator(distr2)();
         }
         case 3: { // [0, 2]
                 trng::uniform_dist<double> distr2(0.0, 3.0);
-                return (double)generator.GetGenerator(distr2)();
+                return (double)m_rng->GetGenerator(distr2)();
         }
         case 4: { // [65, 80], cause maximum age according to Age.h is 80...
                 // gotta improve this since we would need [65, 80] but not with a uniform distribution...
                 // because the chances you become older get smaller and smaller right?
                 trng::uniform_dist<double> distr2(65.0, 81.0);
-                return (double)generator.GetGenerator(distr2)();
+                return (double)m_rng->GetGenerator(distr2)();
         }
         default: {
                 // cerr << "Bad random number was generated..." << endl;
@@ -139,7 +140,7 @@ double PopulationGenerator::GetRandomAge(unsigned int hhsize)
                 // doing this cause otherwise compiler will generate warning: control may reach end of non-void function
                 // but in fact we should throw an exception here...
                 trng::uniform_dist<double> distr2(0.0, 81.0);
-                return (double)generator.GetGenerator(distr2)();
+                return (double)m_rng->GetGenerator(distr2)();
         }
         }
 }
@@ -147,7 +148,7 @@ double PopulationGenerator::GetRandomAge(unsigned int hhsize)
 City& PopulationGenerator::GetRandomCity()
 {
         trng::discrete_dist distr(m_city_pop_fracs.begin(), m_city_pop_fracs.end());
-        return m_geogrid[m_city_ids[(unsigned int)generator.GetGenerator(distr)()]];
+        return m_geogrid[m_city_ids[(unsigned int)m_rng->GetGenerator(distr)()]];
 }
 
 ContactPool* PopulationGenerator::GetRandomCommunityContactPool(vector<Community*>& comms)
@@ -156,24 +157,24 @@ ContactPool* PopulationGenerator::GetRandomCommunityContactPool(vector<Community
                 return nullptr;
 
         trng::uniform_int_dist distr(0, comms.size());
-        unsigned int           index = (unsigned int)generator.GetGenerator(distr)();
+        unsigned int           index = (unsigned int)m_rng->GetGenerator(distr)();
         vector<ContactPool>&  pools = comms[index]->GetContactPools();
         if (!pools.empty()) {
                 trng::uniform_int_dist pdistr(0, pools.size());
-                unsigned int           index2 = (unsigned int)generator.GetGenerator(pdistr)();
+                unsigned int           index2 = (unsigned int)m_rng->GetGenerator(pdistr)();
                 return &pools[index2];
         } else
                 return nullptr;
 }
 
 // Unfair, unless you pass frac=0.5
-const bool FlipUnfairCoin(const double& frac)
+const bool PopulationGenerator::FlipUnfairCoin(const double& frac)
 {
         vector<double> fracs;
         fracs.emplace_back(1 - frac);
         fracs.emplace_back(frac);
         trng::discrete_dist distr(fracs.begin(), fracs.end());
-        return (const bool)generator.GetGenerator(distr)();
+        return (const bool)m_rng->GetGenerator(distr)();
 }
 
 const bool PopulationGenerator::IsWorkingCommuter()
@@ -328,7 +329,7 @@ void PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const City& city, con
                 // specifically about 12-14x faster...
                 if (!near_cities.empty()) {
                         trng::uniform_int_dist distr(0, near_cities.size());
-                        unsigned int           index = (unsigned int)generator.GetGenerator(distr)();
+                        unsigned int           index = (unsigned int)m_rng->GetGenerator(distr)();
                         result = near_cities[index]->GetCommunitiesOfType(community_type, avgcommsize, filter);
                         return;
                 }
@@ -366,7 +367,7 @@ City& PopulationGenerator::GetRandomCommutingCity(City& origin, const bool stude
         const vector<double>& distribution =
             student ? m_student_commuting_fracs[origin.GetId()] : m_worker_commuting_fracs[origin.GetId()];
         trng::discrete_dist distr(distribution.begin(), distribution.end());
-        auto                index = (const unsigned int)generator.GetGenerator(distr)();
+        auto                index = (const unsigned int)m_rng->GetGenerator(distr)();
         const unsigned int  id    = student ? m_college_ids.at(index) : m_city_ids.at(index);
         return m_geogrid.GetCities().at(id);
 }

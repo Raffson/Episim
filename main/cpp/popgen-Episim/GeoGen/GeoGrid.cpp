@@ -65,7 +65,8 @@ void GeoGrid::ClassifyNeighbours()
 
 GeoGrid::GeoGrid()
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
-          m_population(make_shared<Population>()), m_pool_sys(default_pool_sys), m_initialized(false)
+          m_population(make_shared<Population>()), m_pool_sys(default_pool_sys),
+          m_initialized(false), m_rng(&generator)
 {
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
@@ -74,7 +75,7 @@ GeoGrid::GeoGrid()
             m_sizes_map[size] = 0;
 }
 
-void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPoolSys& pool_sys)
+void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPoolSys& pool_sys, util::RNManager* rng)
 {
 
         REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
@@ -120,7 +121,7 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPool
         // Setting up RNG
         unsigned long seed = (unsigned long)abs(p_tree.get("popgen.rng.seed", 0));
         string        type = p_tree.get("popgen.rng.type", "mrg2");
-        init_generator(seed, type);
+        if( rng == &generator ) init_generator(seed, type); //else we're assuming the RNG was initialized already...
 
         // rounding errors cause the first ensure to fail in some conditions...
         // however, is this first ENSURE necessary?
@@ -146,6 +147,7 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPool
 
         m_pool_sys = pool_sys;
         m_initialized = true;
+        m_rng = rng;
 }
 
 void GeoGrid::Reset()
@@ -232,7 +234,7 @@ void GeoGrid::GenerateSchools()
                 p_vec.emplace_back(it.second.GetPopulation());
         }
 
-        auto rndm_vec = generate_random(p_vec, amount_of_schools);
+        auto rndm_vec = generate_random(p_vec, m_rng, amount_of_schools);
         // assign schools to cities according to our normal distribution
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
@@ -348,7 +350,7 @@ void GeoGrid::GenerateWorkplaces()
         // Now we calculate how many workplaces we have to create.
         double allworkers           = active_workers_frac * m_total_pop;
         auto   number_of_workplaces = (unsigned int)round(allworkers / m_sizes_map[Sizes::WORKPLACES]);
-        auto   rndm_vec             = generate_random(lottery_vec, number_of_workplaces);
+        auto   rndm_vec             = generate_random(lottery_vec, m_rng, number_of_workplaces);
 
         // Now we will place each workplace randomly in our city, making use of our lottery vec.
         for (unsigned int i = 0; i < number_of_workplaces; i++) {
@@ -379,7 +381,7 @@ void GeoGrid::GenerateCommunities()
                 p_vec.emplace_back(it.second.GetPopulation());
         }
 
-        auto rndm_vec = generate_random(p_vec, 2*total_communities);
+        auto rndm_vec = generate_random(p_vec, m_rng, 2*total_communities);
 
         for (unsigned int i = 0; i < 2*total_communities; i++) {
                 City&      chosen_city1  = *c_vec[rndm_vec[i++]];
@@ -450,11 +452,11 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         auto to_defrag = (unsigned int)round(defrag_cty.size() * X);
         while (defrag_cty.size() > to_defrag) {
                 trng::uniform_int_dist distr(0, (unsigned int)defrag_cty.size() - 1);
-                defrag_cty.erase(defrag_cty.begin() + generator.GetGenerator(distr)());
+                defrag_cty.erase(defrag_cty.begin() + m_rng->GetGenerator(distr)());
         }
 
         // Step 3: replace X% of these cities
-        vector<unsigned int> amount_to_frag = generate_random(p_vec, (unsigned int)defrag_cty.size());
+        vector<unsigned int> amount_to_frag = generate_random(p_vec, m_rng, (unsigned int)defrag_cty.size());
         defrag_cty.shrink_to_fit();
         unsigned int counter = 0;
         for (auto& it : defrag_cty) {
