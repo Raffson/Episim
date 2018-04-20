@@ -261,15 +261,20 @@ void GeoGrid::GenerateColleges()
         auto cps = round(m_sizes_map[Sizes::COLLEGES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
         double pop_modifier = m_total_pop / m_model_pop;
+        double students = m_total_pop * m_fract_map[Fractions::YOUNG] * map[Fractions::STUDENTS];
+        auto nrcolleges = (unsigned int)round(students / m_sizes_map[Sizes::COLLEGES]);
+
+        vector<unsigned int> pop;
+        for(auto& it : m_cities_with_college)
 
         // generate colleges to the respective cities...
-        for (auto& it : m_cities_with_college) {
+        /*for (auto& it : m_cities_with_college) {
                 //TODO why is this multiplied with YOUNG? -> beacuse only YOUNG can be students...
                 // here we definitely need the pop modifier
                 // because otherwise we're not taking m_total_pop into account...
                 // originally i made this a member but changed my mind since i don't think we'll
                 // need this in another function... (delete comments if agreed)
-                double students = it->GetPopulation() * pop_modifier
+                double students (unsigned int)round(students / m_sizes_map[Sizes::COLLEGES]);= it->GetPopulation() * pop_modifier
                                   * m_fract_map[Fractions::YOUNG] * m_fract_map[Fractions::STUDENTS];
                 // doesn't matter if students is a double at this time
                 // since this is only an estimate for the number of colleges
@@ -282,7 +287,7 @@ void GeoGrid::GenerateColleges()
                                 college.AddContactPool(ContactPoolType::Id::School);
                         // m_communities[college->getID()] = college
                 }
-        }
+        }*/
 }
 
 
