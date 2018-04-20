@@ -64,7 +64,7 @@ TEST_P(SchoolTest, HappyDayScenario)
         // so I changed this to what I believe needs to be done...
         // EXPECT_EQ(grid.GetSchoolCount(), 1736);
         unsigned int target =
-            round(round(grid.GetTotalPop() * grid.GetFraction(Fractions::SCHOOLED)) / grid.GetAvgSize(Sizes::SCHOOLS));
+            ceil(grid.GetTotalPop() * grid.GetFraction(Fractions::SCHOOLED) / grid.GetAvgSize(Sizes::SCHOOLS));
         EXPECT_EQ(grid.GetSchoolCount(), target);
 }
 

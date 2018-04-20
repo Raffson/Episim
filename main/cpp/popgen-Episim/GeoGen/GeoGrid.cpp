@@ -213,18 +213,12 @@ void GeoGrid::GenerateSchools()
         REQUIRE(m_fract_map[Fractions::SCHOOLED] >= 0, "Schooled fract can't be negative");
         REQUIRE(m_sizes_map[Sizes::SCHOOLS] >= 0, "The initial school size can't be negative");
         // Calculating extra data
-        // rounded because we don't have a fraction of a person
-        //  comment: this is an estimate to be used for determining the nr of school,
-        //      which is why it should be a double since we're rounding off the schools,
-        //      otherwise you'll get truncation which may not be desirable...
-        //      also, shouldn't this be ceil instead of round like beau did in GenerateCommunities?
-        //      (delete comments if agreed)
-        const double amount_schooled = round(m_total_pop * m_fract_map[Fractions::SCHOOLED]);
-        // round because we do not build half a school
-        auto amount_of_schools = (const unsigned int)round(amount_schooled / m_sizes_map[Sizes::SCHOOLS]);
+        const double amount_schooled = m_total_pop * m_fract_map[Fractions::SCHOOLED];
+        // ceil because we want to at least build 1 school if amount_school > 0
+        auto amount_of_schools = (const unsigned int)ceil(amount_schooled / m_sizes_map[Sizes::SCHOOLS]);
 
         // Determine number of contactpools
-        auto cps = round(m_sizes_map[Sizes::SCHOOLS] / m_sizes_map[Sizes::AVERAGE_CP]);
+        auto cps = ceil(m_sizes_map[Sizes::SCHOOLS] / m_sizes_map[Sizes::AVERAGE_CP]);
 
         // Setting up to divide the schools to cities
         vector<double> p_vec;
@@ -288,10 +282,10 @@ void GeoGrid::GenerateColleges()
         }
 
         // Determine number of contactpools
-        auto cps = round(m_sizes_map[Sizes::COLLEGES] / m_sizes_map[Sizes::AVERAGE_CP]);
+        auto cps = ceil(m_sizes_map[Sizes::COLLEGES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
         double students = m_total_pop * m_fract_map[Fractions::YOUNG] * m_fract_map[Fractions::STUDENTS];
-        auto nrcolleges = (unsigned int)round(students / m_sizes_map[Sizes::COLLEGES]);
+        auto nrcolleges = (unsigned int)ceil(students / m_sizes_map[Sizes::COLLEGES]);
 
         vector <double> p_vec;
         for (auto& it : m_cities_with_college) {
@@ -344,7 +338,7 @@ void GeoGrid::GenerateWorkplaces()
 
         // Now we calculate how many workplaces we have to create.
         double allworkers           = active_workers_frac * m_total_pop;
-        auto   number_of_workplaces = (unsigned int)round(allworkers / m_sizes_map[Sizes::WORKPLACES]);
+        auto   number_of_workplaces = (unsigned int)ceil(allworkers / m_sizes_map[Sizes::WORKPLACES]);
         auto   rndm_vec             = generate_random(lottery_vec, m_rng, number_of_workplaces);
 
         // Now we will place each workplace randomly in our city, making use of our lottery vec.
@@ -362,7 +356,7 @@ void GeoGrid::GenerateCommunities()
 {
 
         // Determine number of contactpools
-        auto cps = round((double)m_sizes_map[Sizes::COMMUNITIES] / m_sizes_map[Sizes::AVERAGE_CP]);
+        auto cps = ceil((double)m_sizes_map[Sizes::COMMUNITIES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
         // First we need to determine the total number of communities to be used.
         auto total_communities = (unsigned int)ceil((double)m_total_pop / m_sizes_map[Sizes::COMMUNITIES]);
