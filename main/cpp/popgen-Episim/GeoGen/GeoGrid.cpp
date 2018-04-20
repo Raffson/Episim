@@ -290,28 +290,23 @@ void GeoGrid::GenerateColleges()
         // Determine number of contactpools
         auto cps = round(m_sizes_map[Sizes::COLLEGES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
-        double pop_modifier = m_total_pop / m_model_pop;
+        double students = m_total_pop * m_fract_map[Fractions::YOUNG] * m_fract_map[Fractions::STUDENTS];
+        auto nrcolleges = (unsigned int)round(students / m_sizes_map[Sizes::COLLEGES]);
 
-        // generate colleges to the respective cities...
+        vector <double> p_vec;
         for (auto& it : m_cities_with_college) {
-                // TODO why is this multiplied with YOUNG? -> beacuse only YOUNG can be students...
-                // here we definitely need the pop modifier
-                // because otherwise we're not taking m_total_pop into account...
-                // originally i made this a member but changed my mind since i don't think we'll
-                // need this in another function... (delete comments if agreed)
-                double students = it->GetPopulation() * pop_modifier * m_fract_map[Fractions::YOUNG] *
-                                  m_fract_map[Fractions::STUDENTS];
-                // doesn't matter if students is a double at this time
-                // since this is only an estimate for the number of colleges
-                auto nrcolleges = (unsigned int)round(students / m_sizes_map[Sizes::COLLEGES]);
+            p_vec.emplace_back(it->GetPopulation());
+        }
 
-                for (unsigned int i = 0; i < nrcolleges; i++) {
-                        Community& college = it->AddCommunity(CommunityType::College);
-                        // Add contactpools
-                        for (auto j = 0; j < cps; j++)
-                            college.AddContactPool(m_pool_sys);
-                        // m_communities[college->getID()] = college
-                }
+        vector <unsigned int> lottery_vec = generate_random(p_vec, m_rng, nrcolleges);
+
+        for (unsigned int i = 0; i < nrcolleges; i++){
+            auto cty = m_cities_with_college[lottery_vec[i]];
+
+            Community& college = cty->AddCommunity(CommunityType::College);
+            for (auto j = 0; j < cps; j++)
+                college.AddContactPool(m_pool_sys);
+            // m_communities[college->getID()] = college
         }
 }
 
