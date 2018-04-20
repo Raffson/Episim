@@ -24,6 +24,8 @@
 #include "sim/python/SimulatorObserver.h"
 #include "util/Stopwatch.h"
 
+#include "popgen-Episim/GeoGen/GeoGrid.h"
+
 #include <boost/property_tree/ptree.hpp>
 #include <memory>
 #include <string>
@@ -80,10 +82,10 @@ public:
         std::shared_ptr<Simulator> GetSim() const { return m_sim; }
 
         /// Setup the context for the simulation run.
-        /// \param run_config_pt        config info for run and for config of simulator
+        /// \param config_pt        config info for run and for config of simulator
         /// \param logger               general logger
         /// \return                     status value
-        bool Setup(const boost::property_tree::ptree& run_config_pt);
+        bool Setup(const boost::property_tree::ptree& config_pt);
 
         /// Run the simulator with config information provided.
         void Run();
@@ -99,6 +101,7 @@ private:
         std::string                     m_output_prefix; ///< Prefix for output data files.
         boost::property_tree::ptree     m_config_pt;     ///< Ptree with configuration.
         std::shared_ptr<Simulator>      m_sim;           ///< Simulator object.
+        std::shared_ptr<GeoGrid>        m_geogrid;       ///< The GeoGrid
 };
 
 } // namespace stride

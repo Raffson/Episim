@@ -40,14 +40,13 @@ protected:
 
 TEST(GeoGridCtorTest, HappyDayScenario)
 {
-
-        ASSERT_NO_THROW(GeoGrid("config/geogen_default.xml"));
+        GeoGrid grid;
 
         // -----------------------------------------------------------------------------------------
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        ASSERT_NO_THROW(grid.Initialize("config/geogen_default.xml"));
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -73,46 +72,37 @@ TEST(GeoGridCtorTest, DefaultConstructor)
         GeoGrid grid;
         EXPECT_EQ(grid.GetCities().size(), 0);
         EXPECT_EQ(grid.GetTotalPop(), 0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::SCHOOLED), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::YOUNG), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::MIDDLE_AGED), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::TODDLERS), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::OLDIES), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::STUDENTS), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::COMMUTING_STUDENTS), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::ACTIVE), 0.0);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::COMMUTING_WORKERS), 0.0);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::AVERAGE_CP), 0);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::SCHOOLS), 0);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::COLLEGES), 0);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::MAXLC), 0);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::COMMUNITIES), 0);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::WORKPLACES), 0);
-        EXPECT_EQ(grid.GetPopulation().size(), 0);
+        for( auto frac : FractionList )
+                EXPECT_FLOAT_EQ(grid.GetFraction(frac), 0.0);
+        for( auto size : SizeList )
+                EXPECT_EQ(grid.GetAvgSize(size), 0);
+        EXPECT_EQ(grid.GetPopulation()->size(), 0);
 }
 
 TEST(GeoGridCtorTest, NonExistingFile)
 {
         ::testing::FLAGS_gtest_death_test_style = "threadsafe";
         // Test with a non-existing file
-        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("bad input"), "");
+        GeoGrid grid;
+        ASSERT_DEATH_IF_SUPPORTED(grid.Initialize("bad input"), "");
 }
 
 TEST(GeoGridCtorTest, BadFractions)
 {
         ::testing::FLAGS_gtest_death_test_style = "threadsafe";
         // Test with a non-existing file
-        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_student_frac_0.xml"), "");
-        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_stucom_frac_0.xml"), "");
-        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_active_frac_0.xml"), "");
-        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_workcom_frac_0.xml"), "");
-        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_student_frac_1.xml"), "");
-        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_stucom_frac_1.xml"), "");
-        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_active_frac_1.xml"), "");
-        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_workcom_frac_1.xml"), "");
+        GeoGrid grid;
+        ASSERT_DEATH_IF_SUPPORTED(grid.Initialize("config/bad_student_frac_0.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(grid.Initialize("config/bad_stucom_frac_0.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(grid.Initialize("config/bad_active_frac_0.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(grid.Initialize("config/bad_workcom_frac_0.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(grid.Initialize("config/bad_student_frac_1.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(grid.Initialize("config/bad_stucom_frac_1.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(grid.Initialize("config/bad_active_frac_1.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(grid.Initialize("config/bad_workcom_frac_1.xml"), "");
 
         // This last test will check a contactpool's size that exceeds the cap op 1000...
-        ASSERT_DEATH_IF_SUPPORTED(GeoGrid("config/bad_contactpool_size.xml"), "");
+        ASSERT_DEATH_IF_SUPPORTED(grid.Initialize("config/bad_contactpool_size.xml"), "");
 }
 
 TEST(GeoGridCtorTest, FaultyCityRow)
@@ -123,7 +113,7 @@ TEST(GeoGridCtorTest, FaultyCityRow)
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
         map<unsigned int, City> cty_map;
-        unsigned int totpop = 0;
+        unsigned int            totpop = 0;
         parser::ParseCities("data/flanders_cities_faulty_row.csv", cty_map, totpop);
         cout << "Done parsing cities." << endl;
 
@@ -142,7 +132,7 @@ TEST(GeoGridCtorTest, FaultyCityColumn)
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
         map<unsigned int, City> cty_map;
-        unsigned int totpop = 0;
+        unsigned int            totpop = 0;
         parser::ParseCities("data/flanders_cities_faulty_col.csv", cty_map, totpop);
         cout << "Done parsing cities." << endl;
 
@@ -172,7 +162,8 @@ TEST(GeoGridCtorTest, CityRowCounter)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------

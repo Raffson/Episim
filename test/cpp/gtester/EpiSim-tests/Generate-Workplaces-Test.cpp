@@ -50,40 +50,35 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        // Testing 10 randomly chosen cities atm instead of testing all the 327 cities
-        float margin              = 0.3; // What is a good margin here?
-        unsigned int antwerpen    = 2146;
-        unsigned int leuven       = 798;
-        unsigned int brugge       = 845;
-        unsigned int roeselare    = 398;
-        unsigned int aalst        = 763;
-        unsigned int dendermonde  = 464;
-        unsigned int temse        = 313;
-        unsigned int sinttruiden  = 294;
-        unsigned int tongeren     = 263;
-        unsigned int maasmechelen = 311;
-
+        ASSERT_NO_FATAL_FAILURE(grid.GenerateColleges()); //Must generate colleges to keep track of commuters
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
-        auto cities = grid.GetCities();
-        EXPECT_NEAR(cities.at(11002).GetWorkplaces().size(), antwerpen, margin);
-        EXPECT_NEAR(cities.at(24062).GetWorkplaces().size(), leuven, margin);
-        EXPECT_NEAR(cities.at(31005).GetWorkplaces().size(), brugge, margin);
-        EXPECT_NEAR(cities.at(36015).GetWorkplaces().size(), roeselare, margin);
-        EXPECT_NEAR(cities.at(41002).GetWorkplaces().size(), aalst, margin);
-        EXPECT_NEAR(cities.at(42006).GetWorkplaces().size(), dendermonde, margin);
-        EXPECT_NEAR(cities.at(46025).GetWorkplaces().size(), temse, margin);
-        EXPECT_NEAR(cities.at(71053).GetWorkplaces().size(), sinttruiden, margin);
-        EXPECT_NEAR(cities.at(73083).GetWorkplaces().size(), tongeren, margin);
-        EXPECT_NEAR(cities.at(73107).GetWorkplaces().size(), maasmechelen, margin);
+        float        margin       = 0.2; // What is a good margin here?
 
+        double possible_workers =  grid.GetFraction(Fractions::YOUNG) * (1 - grid.GetFraction(Fractions::STUDENTS))
+                               + grid.GetFraction(Fractions::MIDDLE_AGED);
+        double active_pop = possible_workers * grid.GetFraction(Fractions::ACTIVE);
+
+        // Testing 10 randomly chosen cities atm instead of testing all the 327 cities
+        vector<unsigned int> random_cities_id = {11002, 24062, 31005, 36015, 41002, 42006, 46025, 71053, 73083, 73107};
+        auto cities = grid.GetCities();
+        for(auto& index: random_cities_id){
+            City* a_city = &cities.at(index);
+            double in_commuters_modifier = (a_city->HasCollege()) ? possible_workers : 1.0;
+            double workers = a_city->GetPopulation() * active_pop +
+                    a_city->GetTotalInCommutersCount() * in_commuters_modifier -
+                    a_city->GetTotalOutCommutersCount() * possible_workers;
+            auto workplaces = workers / grid.GetAvgSize(Sizes::WORKPLACES);
+            EXPECT_NEAR(a_city->GetWorkplaces().size(), workplaces, workplaces*margin);
+        }
 }
 
 TEST_P(WorkplaceTest, CommuterVsLocal)
@@ -92,7 +87,8 @@ TEST_P(WorkplaceTest, CommuterVsLocal)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -119,7 +115,7 @@ TEST_P(WorkplaceTest, CommuterVsLocal)
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
         // commenting this out until we verify that GenerateWorkplaces was implemented correctly
-        //EXPECT_EQ(cities.at(random_city1).GetWorkplaces().size(), cities.at(random_city2).GetWorkplaces().size());
+         EXPECT_EQ(cities.at(random_city1).GetWorkplaces().size(), cities.at(random_city2).GetWorkplaces().size());
 }
 
 TEST_P(WorkplaceTest, Extremeregion)
@@ -128,7 +124,8 @@ TEST_P(WorkplaceTest, Extremeregion)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------

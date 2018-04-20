@@ -4,36 +4,37 @@
 //
 
 #include <cstddef>
-#include <vector>
 #include <memory>
+#include <vector>
 
+#include "pool/ContactPoolSys.h"
 #include "pop/Person.h"
 
 using namespace std;
 
 
-//No namespace?
-// also wondering if we should just put everything in namespace stride
-// instead of working with our own namespaces...
-
-//Regarding the choice to use raw pointers,
+// Regarding the choice to use raw pointers,
 // this should be better for performance,
 // and looking at the way this is handled in the Population class,
 // there shouldn't be any real dangers...
 
-//I have a backup where I converted everything related to Person
+// I have a backup where I converted everything related to Person
 // so that it uses shared pointers, just in case...
 
-namespace stride { //temproralily put this in namespace stride cause I say we gotta put everything in stride
+namespace stride {
 
 class City;
 
 class Household
 {
 public:
-        Household(City* city);
+        /// Household's contructor.
+        /// @param city A pointer to the city to which this household's assigned.
+        /// @param pool A reference to the ContactPoolSys used by stride to create the contact pool
+        Household(City* city, ContactPoolSys& pool_sys);
 
         /// Add a member to the household.
+        /// @param: member the person to be added to the household
         void AddMember(const Person* member);
 
         /// City where housholds is located.
@@ -48,7 +49,7 @@ public:
         /// Number of members of the household.
         size_t GetSize() const { return m_pool.GetSize(); }
 
-        //Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
+        // Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
         // second thought, after fixing PopulationGenerator I wonder if we need these at all...
         // if we do, they'll need to be slightly reworked...
         void GetSchoolAttendants(vector<Person*>&) const;
@@ -58,17 +59,10 @@ public:
         void GetPossibleWorkers(vector<Person*>&) const;
 
 private:
-        /// Id generator.
-        static unsigned int m_id_generator;
-
-        /// A unique ID of the household.
-        size_t m_id;
-
-        ///< The City in which the household is located
-        City* m_city;
-
-        /// A ContactPool with the people belonging to this household.
-        ContactPool m_pool;
+        static unsigned int m_id_generator; ///< Id generator.
+        size_t m_id;            ///< A unique ID of the household.
+        City* m_city;           ///< The City in which the household is located
+        ContactPool m_pool;     ///< A ContactPool with the people belonging to this household.
 
 };
 

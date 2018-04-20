@@ -28,12 +28,20 @@ namespace stride {
 using namespace std;
 
 ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type)
-    : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members(), m_community(nullptr)
+    : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members(),
+      m_community(nullptr), m_household(nullptr)
 {
 }
 
-ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, stride::Community* community)
-    : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members(), m_community(community)
+ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, Community* community)
+    : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members(),
+      m_community(community), m_household(nullptr)
+{
+}
+
+ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, Household* house)
+        : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members(),
+          m_community(nullptr), m_household(house)
 {
 }
 

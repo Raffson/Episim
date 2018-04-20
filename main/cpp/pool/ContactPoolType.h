@@ -22,10 +22,10 @@
 #include <cstddef>
 #include <string>
 
+#include <array>
 #include <iostream>
 #include <iterator>
 #include <vector>
-#include <array>
 
 namespace stride {
 namespace ContactPoolType {
@@ -47,7 +47,7 @@ inline constexpr unsigned int NumOfTypes() { return 5U; }
 bool IsType(const std::string& s);
 
 /// Cast to size_t for indexing.
-inline std::size_t ToSizeT(Id id) { return static_cast<std::size_t>(id); }
+inline constexpr std::size_t ToSizeT(Id id) { return static_cast<std::size_t>(id); }
 
 /// Converts a ContactPoolType::Id value to corresponding name.
 std::string ToString(Id w);
@@ -56,8 +56,7 @@ std::string ToString(Id w);
 Id ToType(const std::string& s);
 
 /// To allow iteration over the type ids.
-constexpr std::array<Id, 5> IdList{{Id::Household, Id::School, Id::Work, Id::PrimaryCommunity,
-                                           Id::SecondaryCommunity}};
+constexpr std::array<Id, 5> IdList{{Id::Household, Id::School, Id::Work, Id::PrimaryCommunity, Id::SecondaryCommunity}};
 
 } // namespace ContactPoolType
 } // namespace stride

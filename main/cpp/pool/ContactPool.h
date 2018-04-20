@@ -26,12 +26,10 @@
 #include <vector>
 
 namespace stride {
-    class Community;
-}
-
-namespace stride {
 
 class Person;
+class Community;
+class Household;
 
 /**
  * Represents a group of Persons that potentially have contacts.
@@ -42,16 +40,22 @@ public:
         /// Initializing constructor.
         ContactPool(std::size_t pool_id, ContactPoolType::Id type);
 
-        /// Initializing constructor.
-        ContactPool(std::size_t pool_id, ContactPoolType::Id type, stride::Community* community);
+        /// Initializing constructor for a contact pool that belongs to a community.
+        ContactPool(std::size_t pool_id, ContactPoolType::Id type, Community* community);
 
-        /// Get the ID of the pool
+        /// Initializing constructor for a contact pool that belongs to a household.
+        ContactPool(std::size_t pool_id, ContactPoolType::Id type, Household* house);
+
+            /// Get the ID of the pool
         std::size_t GetID() const { return m_pool_id; }
 
         /// Get the community to which this pool belongs
-        stride::Community* GetCommunity() { return m_community; }
+        Community* GetCommunity() { return m_community; }
 
-        /// Add the given Person.
+        /// Get the household to which this pool belongs
+        Household* GetHousehold() { return m_household; }
+
+            /// Add the given Person.
         void AddMember(const Person* p);
 
         /// Get member at index.
@@ -77,7 +81,8 @@ private:
         ContactPoolType::Id  m_pool_type;    ///< The type of the ContactPool (for logging purposes).
         std::size_t          m_index_immune; ///< Index of the first immune member in the ContactPool.
         std::vector<Person*> m_members;      ///< Container with pointers to contactpool members.
-        stride::Community*   m_community;    ///< Pointer to the community that holds this pool.
+        Community*           m_community;    ///< Pointer to the community that holds this pool.
+        Household*           m_household;    ///< Pointer to the household that holds this pool.
 };
 
 } // namespace stride

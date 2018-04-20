@@ -19,6 +19,7 @@
  * Header for the StrideRunner class.
  */
 
+#include "popgen-Episim/GeoGen/GeoGrid.h"
 #include "sim/python/SimulatorObserver.h"
 #include "util/Stopwatch.h"
 
@@ -71,11 +72,11 @@ private:
 
 private:
         bool                        m_is_running;    ///< Sim is running.
-        bool                        m_operational;   ///< Input config is OK to be run
         std::string                 m_output_prefix; ///< Prefix for outpu data files.
         boost::property_tree::ptree m_pt_config;     ///< Ptree with configuration.
         util::Stopwatch<>           m_clock;         ///< Stopwatch for timing the computation.
         std::shared_ptr<Simulator>  m_sim;           ///< Simulator object.
+        std::shared_ptr<GeoGrid>    m_geogrid;       ///< The GeoGrid.
 };
 
 } // namespace python

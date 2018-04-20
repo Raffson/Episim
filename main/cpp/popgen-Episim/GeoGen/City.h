@@ -31,90 +31,111 @@ namespace stride {
 class City
 {
 public:
+        /// Constructor: set the city data.
         City(unsigned int city_id, unsigned int province, unsigned int population, Coordinate coordinates, string name);
 
+        /// Get the id of the city.
         const unsigned int GetId() const { return m_city_id; };
 
+        /// Get the province.
         const unsigned int GetProvince() const { return m_province; };
 
+        /// Get the population of this city
         unsigned int GetPopulation() const { return m_population; };
 
+        /// Get the coordinates of the city
         const Coordinate GetCoordinates() const { return m_coordinates; };
 
+        /// Get the name of the city
         const string GetName() const { return m_name; };
 
+        /// Get the size of all the communities
         unsigned int GetCommunitySize() const { return m_communities.size(); };
 
+        /// Get the number of total commuters to the city
         double GetTotalInCommutersCount();
 
+        /// Get the number of total commuters leaving the city
         double GetTotalOutCommutersCount();
 
+        bool HasCollege(){ return m_has_college;}
+
+        /// Returns all the communities
         vector<Community>& GetAllCommunities(){ return m_communities; };
 
+
+        /// Returns all the colleges in the city
         vector<Community*> GetColleges();
 
+        /// Returns all the schools in the city
         vector<Community*> GetSchools();
 
+        /// Returns all the workplaces in the city
         vector<Community*> GetWorkplaces();
 
+        /// Returns all the communities
         vector<Community*> GetCommunities();
 
+        /// Returns the primary communities
         vector<Community*> GetPrimaryCommunities();
 
+        /// Returns the secondary communities
         vector<Community*> GetSecondaryCommunities();
 
+        /// Returns the communities of the given type
+        /// @param: ct type of the community
+        /// @param: poolsize the maximum allowed size of contactpool
+        /// @param: filter
         vector<Community*> GetCommunitiesOfType(CommunityType ct, unsigned int poolsize = 2000,
                                                 const bool filter = false);
 
-        /// Adds community to the city.
+        /// Adds a new community of the given type to the city.
+        /// @param: community_type the type of community that is to be added
+        /// @retval: <Community> the recently added community
         Community& AddCommunity(CommunityType community_type);
 
+        /// Set the number of in-coming commuters from the city with the given id
+        /// @param: id the id of the city that the commuters come from
+        /// @param: number_of_commuters the number of commuters entering to this city
         void SetInCommuters(unsigned int id, double number_of_commuters);
 
+        /// Set the number of out-going commuters from the city with the given id
+        /// @param: id the id of the city that the commuters from this city goes to
+        /// @param: number_of_commuters the number of commuters leaving this city
         void SetOutCommuters(unsigned int id, double number_of_commuters);
 
-        ///
+        /// Get all the in-coming commuters
         const map<unsigned int, double>& GetInCommuting() const { return m_in_commuting; };
 
+        /// Get all the outgoing commuters
         const map<unsigned int, double>& GetOutCommuting() const { return m_out_commuting; };
 
-        Household& AddHousehold();
+        /// Adds a new household to the city
+        Household& AddHousehold(ContactPoolSys& pool_sys);
 
+        /// Gets the households of the city
         vector<Household>& GetHouseholds() { return m_households; }
 
 private:
-        /// A unique ID of the city.
-        const unsigned int m_city_id;
+        const unsigned int m_city_id;   ///< A unique ID of the city.
+        const unsigned int m_province;  ///< Province
+        unsigned int m_population;      ///< Population of the city.
+        Coordinate m_coordinates;       ///< Coordinate, smart coordinate container
+        const string m_name;            ///< Name of the city.
 
-        // province
-        const unsigned int m_province;
+        vector<Community> m_communities;           ///< Vector of Communities in the city
+        map<unsigned int, double> m_in_commuting;  ///< Contains number of commuters from other cities to this city
+        map<unsigned int, double> m_out_commuting; ///< Contains number of commuters from this city to other cities
+        vector<Household> m_households;             ///< contains households of the city
 
-        /// Population of the city.
-        unsigned int m_population;
+        double m_in_commuter_count;     ///< Number of incomming commuters to the city
+        double m_out_commuter_count;    ///< Number of outgoing commuters from the city
 
-        // Coordinate, smart coordinate container
-        Coordinate m_coordinates;
-
-        /// Name of the city.
-        const string m_name;
-
-        /// Vector of Communities
-        vector<Community> m_communities;
-
-        /// Contains number of commuters from this city to other cities
-        map<unsigned int, double> m_in_commuting;
-
-        map<unsigned int, double> m_out_commuting;
-
-        vector<Household> m_households;
-
-        double m_in_commuter_count;
-        double m_out_commuter_count;
-
-        //These booleans will improve efficiency...
+        ///< These booleans will improve efficiency...
         bool m_in_commuting_changed;
         bool m_out_commuting_changed;
 
+        bool m_has_college;
 };
 
 } // namespace stride

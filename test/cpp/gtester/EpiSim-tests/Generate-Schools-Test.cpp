@@ -50,7 +50,8 @@ TEST_P(SchoolTest, HappyDayScenario)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -62,7 +63,8 @@ TEST_P(SchoolTest, HappyDayScenario)
         // Raphael@Robbe, after deducing fractions from the households, the expected number is incorrect,
         // so I changed this to what I believe needs to be done...
         // EXPECT_EQ(grid.GetSchoolCount(), 1736);
-        unsigned int target = round(round(grid.GetTotalPop() * grid.GetFraction(Fractions::SCHOOLED)) / grid.GetAvgSize(Sizes::SCHOOLS));
+        unsigned int target =
+            round(round(grid.GetTotalPop() * grid.GetFraction(Fractions::SCHOOLED)) / grid.GetAvgSize(Sizes::SCHOOLS));
         EXPECT_EQ(grid.GetSchoolCount(), target);
 }
 
@@ -95,19 +97,20 @@ TEST_P(SchoolTest, HighMoreLowLess)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         auto mp = grid.GetCities();
 
-        //Raphael@everyone, is it just me, or are we counting communities instead of population?
+        // Raphael@everyone, is it just me, or are we counting communities instead of population?
         // Robbe@raphael, the test checks if city with the lowest population has less communities
         // then the city with the highes population. There shouldn't be an extreme case where
         // this is not the case
-        City*        highest_pop_c = &mp.begin()->second;
+        City*         highest_pop_c = &mp.begin()->second;
         unsigned long highest_pop   = highest_pop_c->GetAllCommunities().size();
 
-        City*        lowest_pop_c = &mp.begin()->second;
+        City*         lowest_pop_c = &mp.begin()->second;
         unsigned long lowest_pop   = lowest_pop_c->GetAllCommunities().size();
 
         for (auto& it : mp) {
@@ -124,7 +127,7 @@ TEST_P(SchoolTest, HighMoreLowLess)
                         lowest_pop_c = t_city;
                 }
         }
-        
+
         EXPECT_LE(lowest_pop_c->GetAllCommunities().size(), highest_pop_c->GetAllCommunities().size());
 }
 

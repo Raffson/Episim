@@ -49,14 +49,15 @@ TEST_P(CommunityTest, Run)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid("config/geogen_default.xml");
+        GeoGrid grid;
+        grid.Initialize("config/geogen_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        auto                                       cities = grid.GetCities();
+        auto                              cities = grid.GetCities();
         map<unsigned int, City>::iterator c_it2  = cities.begin();
         /// Check if the communities are ditributed correctly.
         for (map<unsigned int, City>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {

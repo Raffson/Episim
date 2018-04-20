@@ -18,9 +18,10 @@
  */
 
 #include "pool/ContactPool.h"
+#include "pool/ContactPoolSys.h"
 #include <cstddef>
-#include <memory>
 #include <map>
+#include <memory>
 
 namespace stride {
 
@@ -39,8 +40,8 @@ enum class CommunityType
 
 /// To allow iteration over the community types, leaving out Null.
 constexpr std::array<CommunityType, 5> CommunityTypes{{CommunityType::School, CommunityType::College,
-                                                              CommunityType::Work, CommunityType::Primary,
-                                                              CommunityType::Secondary}};
+                                                       CommunityType::Work, CommunityType::Primary,
+                                                       CommunityType::Secondary}};
 
 class Community
 {
@@ -60,16 +61,19 @@ public:
         /// Return reference of the city,
         City& GetCity() { return *m_city; }
 
-        /// Adds a contact pool to the community
-        stride::ContactPool& AddContactPool(ContactPoolType::Id type);
+        /// Adds a new contact pool to the community
+        /// @param: pool_sys A reference to the ContactPoolSys needed for stride, passed from GeoGrid.
+        /// @retval: <ContactPool> The recently added contactpool
+        ContactPool& AddContactPool(ContactPoolSys& pool_sys);
 
+        /// Get all the contactpools
         std::vector<ContactPool>& GetContactPools() { return m_contact_pools; }
 
         /// Get the total number members of all contactpools for this community
         unsigned int GetSize() const;
 
 private:
-        static unsigned int m_id_generator;
+        static unsigned int m_id_generator; ///< Used to generate unique id automatically
 
         const unsigned int m_community_id; ///< A unique ID for the community
 
@@ -77,9 +81,12 @@ private:
 
         City* m_city; ///< Shared pointer to City
 
-        static std::map<ContactPoolType::Id, unsigned int> m_pool_ids;
+        static std::map<ContactPoolType::Id, unsigned int> m_pool_ids; ///< Helps to create an unique id for contactpools
 
-        std::vector<ContactPool> m_contact_pools;
+        ///< Helps to figure out the ContactPoolType depending on the community's type.
+        static std::map<CommunityType, ContactPoolType::Id> m_type_mapper;
+
+        std::vector<ContactPool> m_contact_pools; ///< Contains contactpools
 };
 
 } // namespace stride

@@ -26,9 +26,9 @@
 
 #include "DesignByContract.h"
 
+#include "trng/discrete_dist.hpp"
 #include "trng/lcg64.hpp"
 #include "trng/uniform_int_dist.hpp"
-#include "trng/discrete_dist.hpp"
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/algorithm/copy.hpp>
 
@@ -36,31 +36,31 @@ using namespace std;
 
 namespace stride {
 
+static ContactPoolSys default_pool_sys;
 
 /**
  * Class representing our GeoGrid;
  * Geogrid contains information about the cities. placing of contactpools
- * (shools, workplaces...) within those cities. Will be used by popgen and
- * the gui.
+ * (shools, workplaces...) within those cities.
+ * Will be used by stride, popgen and the gui.
  */
 class GeoGrid
 {
 
 public:
-        /// Default constructor which does nothing.
-        // TODO: Do we need this??
-        // Raphael@everyone, well now we do...
-        // to initialize the fractals/sizes maps so that people don't try to access those maps,
-        // expecting to get a value of 0 out of it...
-        // either that, or the GeoGrid-Constructor-Test must expect throws...
-        // for now I will implement the default constructor real quick, we can still throw it away afterwards...
+        /// Default constructor which initializes some members to 0.
         GeoGrid();
 
-        /// Takes a filepath to city_config file.
+        /// Takes a filepath to city_config file and initializes the GeoGrid.
         /// @param config: a path to a gegogen config file. This file contains
         ///             things like name of the city data file, information about
         ///             the population...
-        explicit GeoGrid(const boost::filesystem::path& config);
+        /// @param pool_sys: A reference to the ContactPoolSys to be used.
+        void Initialize(const boost::filesystem::path& config, ContactPoolSys& pool_sys = default_pool_sys,
+                        util::RNManager* rng = &generator);
+
+        /// Resets the entire GeoGrid.
+        void Reset();
 
         /// Generates the schools, places them into the cities
         /// using a discrete distribution.
@@ -106,93 +106,16 @@ public:
         /// Getter
         /// @param type an enum (Fractions) value representing the fraction to be returned
         /// @retval <double> returns the fraction correspronding to the given type.
-        double       GetFraction(Fractions type) const { return m_fract_map.at(type); }
+        double GetFraction(Fractions type) const { return m_fract_map.at(type); }
 
         /// Getter
         /// @param type an enum (Sizes) value representing the average size to be returned
         /// @retval <unsigned int> returns the average size correspronding to the given type.
         unsigned int GetAvgSize(Sizes type) const { return m_sizes_map.at(type); }
 
-    /* Raphael@Robbe, all these functions are no longer needed, I've reworked everything already...
-     *  but I'll leave them here just in case even though they will require a slight rework
-     *  due to my adjustements...
-
-        /// @retval <double> returns a fraction. This is the fraction of students that commute
-        ///                 to another city.
-        double       GetCommutingStudentsFrac() const { return m_fract_map.at(COMMUTING_STUDENTS); }
-
-        /// Getter
-        /// @retval <double> returns the fraction of our population that is working.
-        double       GetActiveFrac() const { return m_fract_map.at(ACTIVE); }
-
-        /// Getter
-        /// @retval <double> returns the fraction of our workers that commute to another city.
-        double       GetCommutingWorkersFrac() const { return m_fract_map.at(COMMUTING_WORKERS); }
-
-        enum Fractals{
-            SCHOOLED,           // % of pop that is in school [6yrs, 18yrs),
-            // [3, 12) -> elementary school, [12, 18) -> middle+highschool.
-            ACTIVE,             // % of pop that is activly working.
-            YOUNG,      // % of pop in [18yrs, 26yrs) that is working.
-            MIDDLE_AGED,        // % of pop in [26yrs, 65yrs) that is working.
-            TODDLERS,           // % of pop that is in  [0yrs, 3yrs).
-            OLDIES,             // % of pop that is in [65yrs, oldest_person].
-            STUDENTS,           // % of pop in [18, 26) that is enrolled at a college/university.
-            COMMUTING_STUDENTS, // % of pop in [18,26) that is enrolled at a college/universit and commutes.
-            COMMUTING_WORKERS   // % of pop in [18,65) that works and commutes.
-        };
-
-            /// Getter of population fractals.
-            /// @Param fract Of Enum Fractals, The fractal float we want, see enumFractals
-            /// @retval The fractal value asked with enum.
-            double GetFraction(Fractals fract) const;
-
-
-        enum Sizes{
-            SCHOOLS,    // Average size of a school.
-            COLLEGES,   // Average size of a college.
-            COMMUNITES, // Average size of a community
-            WORKPLACES, // Average size of a workplace
-            AVERAGE_CP, // Average size of a contactpool
-            MAXLC       // Amount of largest cities (cities with a college)
-        };
-
-
-        /// Getter of sizes of our communities.
-        /// @Param size Of Enum Sizes, The size integer we want, see enum Sizes
-        /// @retval The size value asked with enum.
-        unsigned int GetSize(Sizes size) const;
-
-        /// Getter
-        /// @retval <unsigned int> returns the average size of a contactpool.
-        unsigned int GetAvgCpSize() const { return m_sizes_map.at(AVERAGE_CP); }
-
-        /// Getter
-        /// @retval <unsigned int> returns the average size of a School.
-        unsigned int GetSchoolSize() const { return m_sizes_map.at(SCHOOLS); }
-
-        /// Getter
-        /// @retval <unsigned int> returns the average size of a College.
-        unsigned int GetCollegeSize() const { return m_sizes_map.at(COLLEGES); }
-
-        /// Getter
-        /// @retval <unsigned int> returns the Max largest cities.
-        unsigned int GetMaxLC() const { return m_sizes_map.at(MAXLC); }
-
-        /// Getter
-        /// @retval <unsigned int> returns the average size of a community
-        unsigned int GetCommunitySize() const { return m_sizes_map.at(COMMUNITES); }
-
-        /// Getter
-        /// @retval <unsigned int> returns the average size of a workplace.
-        unsigned int GetWorkplaceSize() const { return m_sizes_map.at(WORKPLACES); }
-
-        */
-
         /// Getter
         /// @retval <unsigned int> returns the number of schools
         unsigned int GetSchoolCount() const { return m_school_count; }
-
 
         /// Retrieve a city by entering the id of the city in [].
         City& operator[](unsigned int i) { return m_cities.at(i); }
@@ -216,7 +139,7 @@ public:
 
         /// Getter
         /// @retval <Population> Returns a reference to population
-        Population& GetPopulation() { return m_population; }
+        shared_ptr<Population> GetPopulation() { return m_population; }
 
         /// Getter
         /// @retval <boost::property_tree::ptree> Returns the property tree for Belief
@@ -225,13 +148,14 @@ public:
         /// Splits up the X fract cities that have less then Y fract of the total population in fragmented
         /// Cities.
         /// @param X: a %.
-        void DefragmentSmallestCities(double X, double Y, const vector<double> &p_vec);
+        void DefragmentSmallestCities(double X, double Y, const vector<double>& p_vec);
 
-        //don't think we need this next getter, just use GetCitiesWithinRadius...
+        // don't think we need this next getter, just use GetCitiesWithinRadius...
         /// Getter
         /// @retval <map<unsigned int, map<unsigned int, vector<City*>>>> Returns a const reference to the
         /// map m_neighbours_in_radius which classifies all cities within a certain radius for each city.
-        //const map<unsigned int, map<unsigned int, vector<City*>>>& GetNeighbourMap() { return m_neighbours_in_radius; }
+        // const map<unsigned int, map<unsigned int, vector<City*>>>& GetNeighbourMap() { return m_neighbours_in_radius;
+        // }
 
         /// Getter
         /// @retval <unsigned int> Returns the initial search radius.
@@ -245,6 +169,17 @@ public:
         /// exceeds the maximum range between cities, the largest possible radius is chosen.
         const vector<City*>& GetCitiesWithinRadius(const City& origin, unsigned int radius);
 
+        /// Getter
+        /// @retval <ContactPoolSys&> Returns a reference to the ContactPoolSys.
+        ContactPoolSys& GetContactPoolSys() { return m_pool_sys; }
+
+        /// Getter
+        /// @retval <const bool> Returns whether or not the GeoGrid is initialized.
+        const bool IsInitialized() { return m_initialized; }
+
+        /// Getter
+        /// @retval <util::RNManager*> A pointer to the random number generator being used by GeoGrid.
+        util::RNManager* GetRNG() { return m_rng; }
 
 private:
         /// Returns index of city with smallest population from 'lc'
@@ -263,24 +198,23 @@ private:
         void ClassifyNeighbours();
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
-
         /// Effective map of all our fractions. Read the Fractions Enum what it will contain.
         map<Fractions, double> m_fract_map{};
 
-        /// Effective map of all our sizes. Read the Sizes Enum what it will contain.
+        ///< Effective map of all our sizes. Read the Sizes Enum what it will contain.
         map<Sizes, unsigned int> m_sizes_map{};
 
-        /// Contains the model for the age distribition for households
+        ///< Contains the model for the age distribition for households
         vector<vector<double>> m_household_age_distr{};
 
-        /// Contains all cities for the GeoGrid
+        ///< Contains all cities for the GeoGrid
         map<unsigned int, City> m_cities{};
 
-        /// Contains cityIDs that are mapped to a map which holds a vector with pointers to cities
-        /// for each of the radius distance-categories (10km, 20km, 40km, ...) in relation to the city with ID
+        ///< Contains cityIDs that are mapped to a map which holds a vector with pointers to cities
+        ///< for each of the radius distance-categories (10km, 20km, 40km, ...) in relation to the city with ID
         map<unsigned int, map<unsigned int, vector<City*>>> m_neighbours_in_radius;
 
-        /// The initial search-radius for getting nearby cities
+        ///< The initial search-radius for getting nearby cities
         unsigned int m_initial_search_radius;
 
         /// Keep a map of all communities?
@@ -292,22 +226,32 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         /// Contains information about number of commuters from a city to a city
         /// map<unsigned int, <map<unsigned int, unsigned int> > > m_commuting;
 
-        /// Total population of simulation area
+        ///< Total population of simulation area
         unsigned int m_total_pop{};
 
+        ///< Keeps count of the total population the model.
         unsigned int m_model_pop;
 
-        /// Total number of schools
+        ///< Total number of schools
         unsigned int m_school_count{};
 
-        /// Vector of pointer to all cities that have a college
+        ///< Vector of pointer to all cities that have a college
         vector<City*> m_cities_with_college{};
 
-        /// The population of the GeoGrid
-        Population m_population;
+        ///< The population of the GeoGrid
+        shared_ptr<Population> m_population;
 
-        /// Variable to store Belief used for creating people
+        ///< Variable to store Belief used for creating people
         boost::property_tree::ptree m_belief;
+
+        ///< The ContactPoolSys needed for stide itself.
+        ContactPoolSys& m_pool_sys;
+
+        ///< A variable indicating if the GeoGrid was initialized.
+        bool m_initialized;
+
+        ///< The random number generator.
+        util::RNManager* m_rng;
 };
 
 } // namespace stride
