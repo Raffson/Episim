@@ -66,7 +66,7 @@ void GeoGrid::ClassifyNeighbours()
 GeoGrid::GeoGrid()
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
           m_population(make_shared<Population>()), m_pool_sys(default_pool_sys),
-          m_initialized(false), m_rng(&generator)
+          m_initialized(false), m_rng(nullptr)
 {
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
