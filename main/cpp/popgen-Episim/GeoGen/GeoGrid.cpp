@@ -287,7 +287,6 @@ void GeoGrid::GenerateColleges()
 
         double students = m_total_pop * m_fract_map[Fractions::YOUNG] * m_fract_map[Fractions::STUDENTS];
         auto nrcolleges = (unsigned int)ceil(students / m_sizes_map[Sizes::COLLEGES]);
-
         vector <double> p_vec;
         for (auto& it : m_cities_with_college) {
             p_vec.emplace_back(it->GetPopulation());
@@ -299,8 +298,10 @@ void GeoGrid::GenerateColleges()
             auto cty = m_cities_with_college[lottery_vec[i]];
 
             Community& college = cty->AddCommunity(CommunityType::College);
-            for (auto j = 0; j < cps; j++)
+            for (auto j = 0; j < cps; j++){
                 college.AddContactPool(m_pool_sys);
+            }
+
             // m_communities[college->getID()] = college
         }
 }
