@@ -68,7 +68,8 @@ bool file_exists(const boost::filesystem::path& path);
 /// @retval <double> a number in radians.
 double convert_to_radians(double degrees);
 
-void init_generator(const unsigned long seed, const string& generator);
+// deprecated?
+//void init_generator(const unsigned long seed, const string& generator);
 
 /// Takes a distribution -> a vec of numbers and generates N random numbers given the distribution vector.
 /// @param p_vec a vector representing our distribution, each entry contains a relative probabillity.
@@ -104,8 +105,6 @@ void check_distribution(vector<double>& p_vec);
 /// @param age The age for which we want to know the category
 /// @retval <Fractions> The corresponsing enum value which represents the category for the given age.
 Fractions get_category(const double& age);
-
-static util::RNManager generator; //only here now for stand-alone run...
 
 namespace constants {
 

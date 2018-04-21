@@ -36,7 +36,9 @@ using namespace std;
 
 namespace stride {
 
+//the next 2 statics are only here for stand-alone run/tests...
 static ContactPoolSys default_pool_sys;
+static util::RNManager default_generator;
 
 /**
  * Class representing our GeoGrid;
@@ -57,7 +59,7 @@ public:
         ///             the population...
         /// @param pool_sys: A reference to the ContactPoolSys to be used.
         void Initialize(const boost::filesystem::path& config, ContactPoolSys& pool_sys = default_pool_sys,
-                        util::RNManager* rng = &generator);
+                        util::RNManager* rng = nullptr);
 
         /// Resets the entire GeoGrid.
         void Reset();

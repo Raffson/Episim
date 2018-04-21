@@ -40,10 +40,11 @@ vector<unsigned int> generate_random(unsigned int begin, unsigned int end, util:
         return ret_vec;
 }
 
-void init_generator(const unsigned long seed, const string& generator_name)
+//deprecated?
+/*void init_generator(const unsigned long seed, const string& generator_name)
 {
         generator.Initialize(util::RNManager::Info(generator_name, seed));
-}
+}*/
 
 void check_distribution(vector<double>& p_vec)
 {

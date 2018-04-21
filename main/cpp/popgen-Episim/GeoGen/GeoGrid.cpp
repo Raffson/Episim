@@ -121,7 +121,8 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPool
         // Setting up RNG
         unsigned long seed = (unsigned long)abs(p_tree.get("popgen.rng.seed", 0));
         string        type = p_tree.get("popgen.rng.type", "mrg2");
-        if( rng == &generator ) init_generator(seed, type); //else we're assuming the RNG was initialized already...
+        if( rng == nullptr ) default_generator.Initialize(util::RNManager::Info(type, seed));
+        //else we're assuming the RNG was initialized already...
 
         // rounding errors cause the first ensure to fail in some conditions...
         // however, is this first ENSURE necessary?
@@ -147,7 +148,7 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPool
 
         m_pool_sys = pool_sys;
         m_initialized = true;
-        m_rng = rng;
+        m_rng = (rng) ? rng : &default_generator;
 }
 
 void GeoGrid::Reset()
