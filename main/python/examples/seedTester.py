@@ -5,7 +5,34 @@ import sys
 import os
 from datetime import datetime
 
-
+def set_influenza(simulator):
+    simulator.runConfig.setParameter("run.age_contact_matrix_file", "contact_matrix_flanders_subpop.xml")
+    simulator.runConfig.setParameter("run.behaviour_policy", "NoBehaviour")
+    simulator.runConfig.setParameter("run.belief_policy.name", "NoBelief")
+    simulator.runConfig.setParameter("run.contact_log_level", "None")
+    simulator.runConfig.setParameter("run.contact_output_file", "false")
+    simulator.runConfig.setParameter("run.disease_config_file", "disease_influenza.xml")
+    simulator.runConfig.setParameter("run.global_information_policy", "NoGlobalInformation")
+    simulator.runConfig.setParameter("run.holidays_file", "holidays_none.json")
+    simulator.runConfig.setParameter("run.immunity_link_probability", 0)
+    simulator.runConfig.setParameter("run.immunity_profile", "Random")
+    simulator.runConfig.setParameter("run.immunity_rate", 0.0)
+    simulator.runConfig.setParameter("run.local_information_policy", "NoLocalInformation")
+    simulator.runConfig.setParameter("run.num_days", 30)
+    simulator.runConfig.setParameter("run.num_participants_survey", 10)
+    simulator.runConfig.setParameter("run.num_threads", 1)
+    simulator.runConfig.setParameter("run.output_prefix", "BatchRuns")
+    simulator.runConfig.setParameter("run.population_file", "pop_flanders600.csv")
+    simulator.runConfig.setParameter("run.rng_seed", 2015)
+    simulator.runConfig.setParameter("run.r0", 3.0)
+    simulator.runConfig.setParameter("run.seeding_rate", 0.0009)
+    simulator.runConfig.setParameter("run.seeding_age_min", 1)
+    simulator.runConfig.setParameter("run.seeding_age_max", 99)
+    simulator.runConfig.setParameter("run.start_date", "2017-01-01")
+    simulator.runConfig.setParameter("run.stride_log_level", "info")
+    simulator.runConfig.setParameter("run.track_index_case", False)
+    simulator.runConfig.setParameter("run.use_install_dirs", True)
+    simulator.runConfig.setParameter("run.vaccine_profile", "None")
 
 def run_simulator(seed, num_days):
     """
@@ -18,10 +45,8 @@ def run_simulator(seed, num_days):
 
     simulator = Simulation()
     simulator.loadRunConfig("../config/run_default_nolog.xml")
-    simulator.runConfig.setParameter("num_days", num_days)
-
+    set_influenza(simulator)
     simulator.runConfig.setParameter("rng_seed", seed)
-
     simulator.run(genFiles=False)
 
 
@@ -76,14 +101,14 @@ if __name__ == '__main__':
         run_simulator(int(sys.argv[2]), int(sys.argv[3]))
 
     elif len(sys.argv) == 3 and sys.argv[1] == "--p":
-        run_simulator(int(sys.argv[2]), 50)
+        run_simulator(int(sys.argv[2]), 30)
 
     elif len(sys.argv) == 3:
         main_runner(sys.argv[1], sys.argv[2])
 
     elif len(sys.argv) == 2:
-        main_runner(sys.argv[1], "50") #default 50 days...
+        main_runner(sys.argv[1], "30") #default 50 days...
 
     elif len(sys.argv) == 1:
-        main_runner("seedTester/config/default_seeds.txt", "50")
+        main_runner("seedTester/config/seeds-20180222_101948.txt", "30")
 
