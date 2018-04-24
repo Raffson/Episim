@@ -22,6 +22,7 @@
 #include "pool/ContactPool.h"
 
 #include <vector>
+#include <util/SegmentedVector.h>
 
 namespace stride {
 
@@ -36,11 +37,11 @@ public:
         explicit Immunizer(util::RNManager& rn_manager);
 
         /// Random immunization.
-        void Random(const std::vector<ContactPool>& pools, std::vector<double>& immunity_distribution,
+        void Random(const util::SegmentedVector<ContactPool>& pools, std::vector<double>& immunity_distribution,
                     double immunity_link_probability);
 
         /// Cocoon immunization.
-        void Cocoon(const std::vector<ContactPool>& pools, std::vector<double>& immunity_distribution,
+        void Cocoon(const util::SegmentedVector<ContactPool>& pools, std::vector<double>& immunity_distribution,
                     double immunity_link_probability);
 
 private:

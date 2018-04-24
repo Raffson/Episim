@@ -84,10 +84,7 @@ public:
 
         /// Returns the communities of the given type
         /// @param: ct type of the community
-        /// @param: poolsize the maximum allowed size of contactpool
-        /// @param: filter
-        vector<Community*> GetCommunitiesOfType(CommunityType ct, unsigned int poolsize = 2000,
-                                                const bool filter = false);
+        vector<Community*> GetCommunitiesOfType(CommunityType ct);
 
         /// Adds a new community of the given type to the city.
         /// @param: community_type the type of community that is to be added

@@ -36,8 +36,7 @@ using namespace std;
 
 namespace stride {
 
-//the next 2 statics are only here for stand-alone run/tests...
-static ContactPoolSys default_pool_sys;
+//the next statics variable is only here for stand-alone run/tests...
 static util::RNManager default_generator;
 
 /**
@@ -58,8 +57,7 @@ public:
         ///             things like name of the city data file, information about
         ///             the population...
         /// @param pool_sys: A reference to the ContactPoolSys to be used.
-        void Initialize(const boost::filesystem::path& config, ContactPoolSys& pool_sys = default_pool_sys,
-                        util::RNManager* rng = nullptr);
+        void Initialize(const boost::filesystem::path& config, util::RNManager* rng = nullptr);
 
         /// Resets the entire GeoGrid.
         void Reset();
@@ -165,11 +163,13 @@ public:
 
         /// Getter
         /// @retval <const vector<City*>&> const reference to a vector of pointers to cities within the given radius.
+        /// that contain the given CommunityType
         /// @param origin A constant reference to the city for which we want to get other cities in the given radius.
         /// @param radius Radius around the origin in km. If the radius is not valid, the closest valid radius will
         /// be chosen. Valid values are 2^x * (initial search radius) where x is a positive integer. If the radius
         /// exceeds the maximum range between cities, the largest possible radius is chosen.
-        const vector<City*>& GetCitiesWithinRadius(const City& origin, unsigned int radius);
+        const vector<City*>& GetCitiesWithinRadiusWithCommunityType(const City& origin, unsigned int radius,
+                                                                    CommunityType type);
 
         /// Getter
         /// @retval <ContactPoolSys&> Returns a reference to the ContactPoolSys.
@@ -214,7 +214,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         ///< Contains cityIDs that are mapped to a map which holds a vector with pointers to cities
         ///< for each of the radius distance-categories (10km, 20km, 40km, ...) in relation to the city with ID
-        map<unsigned int, map<unsigned int, vector<City*>>> m_neighbours_in_radius;
+        map<unsigned int, map<unsigned int, map<CommunityType, vector<City*>>>> m_neighbours_in_radius;
 
         ///< The initial search-radius for getting nearby cities
         unsigned int m_initial_search_radius;

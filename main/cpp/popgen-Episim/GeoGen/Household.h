@@ -44,10 +44,10 @@ public:
         unsigned int GetID() const { return m_id; }
 
         /// Return the members of this household.
-        const vector<Person*>& GetMembers() const { return m_pool.GetPool(); }
+        const vector<Person*>& GetMembers() const { return m_pool->GetPool(); }
 
         /// Number of members of the household.
-        size_t GetSize() const { return m_pool.GetSize(); }
+        size_t GetSize() const { return m_pool->GetSize(); }
 
         // Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
         // second thought, after fixing PopulationGenerator I wonder if we need these at all...
@@ -62,7 +62,7 @@ private:
         static unsigned int m_id_generator; ///< Id generator.
         size_t m_id;            ///< A unique ID of the household.
         City* m_city;           ///< The City in which the household is located
-        ContactPool m_pool;     ///< A ContactPool with the people belonging to this household.
+        ContactPool* m_pool;    ///< A ContactPool with the people belonging to this household.
 
 };
 

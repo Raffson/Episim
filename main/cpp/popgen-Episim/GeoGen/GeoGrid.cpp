@@ -58,14 +58,17 @@ void GeoGrid::ClassifyNeighbours()
                         // i believe the following code is more efficient than the alternative code below...
                         while ((distance / category) > 0)
                                 category <<= 1; // equivalent to multiplying by 2
-                        m_neighbours_in_radius[cityA.first][category].emplace_back(&cityB.second);
+                        for( auto type : CommunityTypes ) {
+                            if( cityB.second.GetCommunitiesOfType(type).size() )
+                                m_neighbours_in_radius[cityA.first][category][type].emplace_back(&cityB.second);
+                        }
                 }
         }
 }
 
 GeoGrid::GeoGrid()
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
-          m_population(make_shared<Population>()), m_pool_sys(default_pool_sys),
+          m_population(make_shared<Population>()), m_pool_sys(m_population->GetContactPoolSys()),
           m_initialized(false), m_rng(nullptr)
 {
         for( auto frac : FractionList )
@@ -75,7 +78,7 @@ GeoGrid::GeoGrid()
             m_sizes_map[size] = 0;
 }
 
-void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPoolSys& pool_sys, util::RNManager* rng)
+void GeoGrid::Initialize(const boost::filesystem::path& config_file, util::RNManager* rng)
 {
 
         REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
@@ -116,7 +119,6 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPool
         parser::ParseCommuting(base_path + commuting_file, m_cities, m_fract_map);
 
         m_initial_search_radius = p_tree.get<unsigned int>("popgen.neighbour_classification.initial_search_radius", 10U);
-        ClassifyNeighbours();
 
         // Setting up RNG
         unsigned long seed = (unsigned long)abs(p_tree.get("popgen.rng.seed", 0));
@@ -146,7 +148,6 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPool
         ENSURE(m_sizes_map[Sizes::AVERAGE_CP] > 0 and m_sizes_map[Sizes::AVERAGE_CP] <= 1000,
                "Contactpool's size must be bigger than 0 and smaller than or equal to 1000");
 
-        m_pool_sys = pool_sys;
         m_initialized = true;
         m_rng = (rng) ? rng : &default_generator;
 }
@@ -154,8 +155,8 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPool
 void GeoGrid::Reset()
 {
         m_initialized = false;
-        m_pool_sys = default_pool_sys;
         m_population = make_shared<Population>();
+        m_pool_sys = m_population->GetContactPoolSys();
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
         for( auto size : SizeList )
@@ -179,7 +180,7 @@ void GeoGrid::GenerateAll()
         // Changed the order so I can call GetAllCommunites which is faster than calling GetColleges when looking
         // for colleges during GenerateWorkplaces, because only colleges should be present at that time...
         GenerateCommunities();
-
+        ClassifyNeighbours();
 
     /*double possible_workers_frac = (m_fract_map[Fractions::MIDDLE_AGED] +
                                     m_fract_map[Fractions::YOUNG] * (1 - m_fract_map[Fractions::STUDENTS]));
@@ -472,7 +473,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         // cout << m_cities.size() << endl;
 }
 
-const vector<City*>& GeoGrid::GetCitiesWithinRadius(const City& origin, unsigned int radius)
+const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City& origin, unsigned int radius, CommunityType type)
 {
         if (!m_neighbours_in_radius[origin.GetId()].count(radius)) {
                 unsigned int next_smaller = m_initial_search_radius;
@@ -484,7 +485,7 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadius(const City& origin, unsigned
                 else
                         radius = next_bigger;
         }
-        return m_neighbours_in_radius[origin.GetId()][radius];
+        return m_neighbours_in_radius[origin.GetId()][radius][type];
 }
 
 } // namespace stride

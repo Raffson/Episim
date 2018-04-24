@@ -67,7 +67,7 @@ public:
         ContactPool& AddContactPool(ContactPoolSys& pool_sys);
 
         /// Get all the contactpools
-        std::vector<ContactPool>& GetContactPools() { return m_contact_pools; }
+        std::vector<ContactPool*>& GetContactPools() { return m_contact_pools; }
 
         /// Get the total number members of all contactpools for this community
         unsigned int GetSize() const;
@@ -86,7 +86,7 @@ private:
         ///< Helps to figure out the ContactPoolType depending on the community's type.
         static std::map<CommunityType, ContactPoolType::Id> m_type_mapper;
 
-        std::vector<ContactPool> m_contact_pools; ///< Contains contactpools
+        std::vector<ContactPool*> m_contact_pools; ///< Contains contactpools
 };
 
 } // namespace stride

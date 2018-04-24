@@ -25,6 +25,7 @@
 
 #include <trng/uniform01_dist.hpp>
 #include <trng/uniform_int_dist.hpp>
+#include <util/SegmentedVector.h>
 
 namespace stride {
 
@@ -32,7 +33,7 @@ using namespace util;
 
 Immunizer::Immunizer(stride::util::RNManager& rn_manager) : m_rn_manager(rn_manager) {}
 
-void Immunizer::Random(const std::vector<ContactPool>& pools, std::vector<double>& immunity_distribution,
+void Immunizer::Random(const util::SegmentedVector<ContactPool>& pools, std::vector<double>& immunity_distribution,
                        double immunity_link_probability)
 {
         // Initialize a vector to count the population per age class [0-100].
@@ -92,7 +93,7 @@ void Immunizer::Random(const std::vector<ContactPool>& pools, std::vector<double
         }
 }
 
-void Immunizer::Cocoon(const std::vector<ContactPool>& /*pools*/, std::vector<double>& /*immunity_distribution*/,
+void Immunizer::Cocoon(const util::SegmentedVector<ContactPool>& /*pools*/, std::vector<double>& /*immunity_distribution*/,
                        double /*immunity_link_probability*/)
 {
         /*

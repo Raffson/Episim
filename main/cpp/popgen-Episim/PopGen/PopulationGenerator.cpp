@@ -158,11 +158,11 @@ ContactPool* PopulationGenerator::GetRandomCommunityContactPool(vector<Community
 
         trng::uniform_int_dist distr(0, comms.size());
         unsigned int           index = (unsigned int)m_rng->GetGenerator(distr)();
-        vector<ContactPool>&  pools = comms[index]->GetContactPools();
+        vector<ContactPool*>&  pools = comms[index]->GetContactPools();
         if (!pools.empty()) {
                 trng::uniform_int_dist pdistr(0, pools.size());
                 unsigned int           index2 = (unsigned int)m_rng->GetGenerator(pdistr)();
-                return &pools[index2];
+                return pools[index2];
         } else
                 return nullptr;
 }
@@ -198,7 +198,7 @@ ContactPool* PopulationGenerator::AssignWorkerAtRandom(City& origin)
                 City& commuter_city = GetRandomCommutingCity(origin);
                 workplaces          = commuter_city.GetCommunitiesOfType(CommunityType::Work);
         } else
-                GetCommunitiesOfRandomNearbyCity(origin, CommunityType::Work, workplaces);
+                workplaces = GetCommunitiesOfRandomNearbyCity(origin, CommunityType::Work);
         return GetRandomCommunityContactPool(workplaces);
 }
 
@@ -217,12 +217,10 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
         Fractions          category  = get_category(age);
         ContactPool*       school    = nullptr;
         ContactPool*       workplace = nullptr;
-        vector<Community*> seccomms;
-        GetCommunitiesOfRandomNearbyCity(city, CommunityType::Secondary, seccomms);
+        vector<Community*> seccomms = GetCommunitiesOfRandomNearbyCity(city, CommunityType::Secondary);
         ContactPool* seccomm = GetRandomCommunityContactPool(seccomms);
         if (category == Fractions::SCHOOLED) { // [3, 18)
-                vector<Community*> schools;
-                GetCommunitiesOfRandomNearbyCity(city, CommunityType::School, schools);
+                vector<Community*> schools = GetCommunitiesOfRandomNearbyCity(city, CommunityType::School);
                 school = GetRandomCommunityContactPool(schools);
         } else if (category == Fractions::YOUNG) { // [18, 26)
                 // first check if we have a student or not...
@@ -266,8 +264,7 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         auto&        the_household = city.AddHousehold(pool_sys); // Returns a reference to the new household...
         unsigned int hid           = the_household.GetID();
 
-        vector<Community*> primcomms;
-        GetCommunitiesOfRandomNearbyCity(city, CommunityType::Primary, primcomms);
+        vector<Community*> primcomms = GetCommunitiesOfRandomNearbyCity(city, CommunityType::Primary);
         ContactPool* primcomm = GetRandomCommunityContactPool(primcomms);
         // Meaning you always get assigned to a community?
         unsigned int pcid = (primcomm) ? primcomm->GetID() : 0;
@@ -312,26 +309,16 @@ void PopulationGenerator::GeneratePopulation()
         cout << "Done generating population, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
 }
 
-void PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const City& city, const CommunityType& community_type,
-                                                           vector<Community*>& result)
+vector<Community*> PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const City& city, const CommunityType& community_type)
 {
         unsigned int search_radius = m_geogrid.GetInitialSearchRadius();
-        unsigned int avgcommsize   = m_geogrid.GetAvgSize(Sizes::COMMUNITIES);
-        const bool   filter = (community_type == CommunityType::Primary or community_type == CommunityType::Secondary);
-        while (result.empty()) {
-                const vector<City*>& near_cities = m_geogrid.GetCitiesWithinRadius(city, search_radius);
-                // Two approaches, either we choose a random city and only take those communities,
-                // or we take all commuties of the nearby cities <-- very slow, took about 12-13mins...
-                // question remain whether we're allowed to use this first approach...
-                // update: in case we use the first approach, this function must be called for each person,
-                // not for each household which was the case...
-                // this first approach in combination with pre-classified distances is way faster,
-                // specifically about 12-14x faster...
+        vector<Community*> result;
+        while (result.empty() and search_radius != 0) {
+                const vector<City*>& near_cities = m_geogrid.GetCitiesWithinRadiusWithCommunityType(city, search_radius, community_type);
                 if (!near_cities.empty()) {
                         trng::uniform_int_dist distr(0, near_cities.size());
                         unsigned int           index = (unsigned int)m_rng->GetGenerator(distr)();
-                        result = near_cities[index]->GetCommunitiesOfType(community_type, avgcommsize, filter);
-                        return;
+                        result = near_cities[index]->GetCommunitiesOfType(community_type);
                 }
                 /*for (auto& a_city : near_cities) {
                         for (auto& a_community : a_city->GetCommunitiesOfType(community_type)) {
@@ -344,6 +331,8 @@ void PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const City& city, con
                 }*/
                 search_radius <<= 1; // equivalent to multiplying by 2
         }
+        if( search_radius == 0 ) cout << "Result of 'GetCommunitiesOfRandomNearbyCity' is empty!" << endl;
+        return result;
 }
 
 void PopulationGenerator::GetNearestColleges(const City& origin, std::vector<Community*>& result)
