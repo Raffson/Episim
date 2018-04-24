@@ -1,5 +1,5 @@
 #pragma once
-/*
+ /*
  *  This is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,25 +16,28 @@
 
 /**
  * @file
- * Payload for Subject/Observer for SimEvents.
+ * Implementation of Infector algorithms.
  */
 
-#include "Id.h"
-
-#include <memory>
+#include "pop/Person.h"
 
 namespace stride {
 
-class SimRunner;
-
-namespace sim_event {
-
-struct Payload
+/// Primary R0_POLICY: do nothing i.e. track all cases.
+/// \tparam TIC         TrackIndexCase
+template <bool TIC>
+class R0_POLICY
 {
-        Payload(std::shared_ptr<SimRunner> s, sim_event::Id e) : m_runner(std::move(s)), m_event_id(e){};
-        std::shared_ptr<SimRunner> m_runner;
-        sim_event::Id              m_event_id;
+public:
+        static void Exec(Person*) {}
 };
 
-} // namespace sim_event
+/// Specialized R0_POLICY: track only the index case.
+template <>
+class R0_POLICY<true>
+{
+public:
+        static void Exec(Person* p) { p->GetHealth().StopInfection(); }
+};
+
 } // namespace stride

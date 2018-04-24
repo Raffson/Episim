@@ -47,7 +47,7 @@ def run_simulator(seed, num_days):
     simulator.loadRunConfig("../config/run_default_nolog.xml")
     set_influenza(simulator)
     simulator.runConfig.setParameter("rng_seed", seed)
-    simulator.run(genFiles=False)
+    simulator.run()
 
 
 def main_runner(f, days):

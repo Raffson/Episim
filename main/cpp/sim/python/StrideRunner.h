@@ -56,19 +56,13 @@ public:
         void Setup(bool track_index_case, const std::string& config_file_name, bool use_install_dirs = false);
 
         /// Run the simulator with config information provided.
-        void Run(const bool genFiles = true);
+        void Run();
 
         /// Stop the run.
         void Stop();
 
         /// Get the simulator (method used by the python environment).
         std::shared_ptr<Sim> GetSimulator() { return m_sim; }
-
-private:
-        /// Generate output files (at the end of the simulation).
-        void GenerateOutputFiles(const std::string& output_prefix, const std::vector<unsigned int>& cases,
-                                 const std::vector<unsigned int>& adopted, const boost::property_tree::ptree& pt_config,
-                                 unsigned int run_time, unsigned int total_time);
 
 private:
         bool                        m_is_running;    ///< Sim is running.

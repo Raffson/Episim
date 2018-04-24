@@ -27,7 +27,9 @@
 #include "util/RNManager.h"
 
 #include <boost/property_tree/ptree.hpp>
+#include <map>
 #include <spdlog/spdlog.h>
+#include <tuple>
 
 namespace stride {
 
@@ -44,8 +46,11 @@ public:
         /// Default constructor for empty Simulator.
         Sim();
 
-        /// Caledar associated with simulated world. Represents date/simulated day of
-        /// last TimeStep completed (it is incremented at the very end of TimeStep).
+        /// Calendar associated with simulated world. Gets initialized with the date
+        /// in the simulation world at whic simulation starts. It represents date/simulated day
+        /// of the last TimeStep completed (it is incremented at the very end of TimeStep).
+        /// GetCalendar()->GetsimulationDay() is the number of days simulated in the alst
+        /// completed time step.
         std::shared_ptr<Calendar> GetCalendar() const { return m_calendar; }
 
         /// Get the transmission profile.
@@ -65,6 +70,9 @@ private:
         template <ContactLogMode::Id log_level, typename local_information_policy, bool track_index_case = false>
         void UpdatePools();
 
+        using UpdaterKeyT = std::tuple<stride::ContactLogMode::Id, std::string, bool>;
+        std::map<UpdaterKeyT, void (Sim::*)()> m_updaters;
+
 private:
         boost::property_tree::ptree m_config_pt;            ///< Configuration property tree
         ContactLogMode::Id          m_contact_log_mode;     ///< Specifies contact/transmission logging mode.
@@ -72,19 +80,11 @@ private:
         unsigned int                m_num_threads;          ///< The number of (OpenMP) threads.
         bool                        m_track_index_case;     ///< General simulation or tracking index case.
         TransmissionProfile         m_transmission_profile; ///< Profile of disease.
+        std::string                 m_local_info_policy;    ///< Local information name.
 
-        std::shared_ptr<Calendar> m_calendar;   ///< Management of calendar.
-        util::RNManager           m_rn_manager; ///< Random numbere generation management.
-
-private:
-        ///< Last simulated day; in TimeStep it is the currently simulating day i.e. m_sim_day is
-        ///< incremented at the beginning of TimeStep and should be used with coution inside TimeStep.
-        unsigned int m_sim_day;
-
-private:
+        std::shared_ptr<Calendar>   m_calendar;   ///< Managment of calendar.
         std::shared_ptr<Population> m_population; ///< Pointer to the Population.
-
-        std::string m_local_info_policy; ///< Local information name.
+        util::RNManager             m_rn_manager; ///< Random numbere generation management.
 
 private:
         friend class SimBuilder;

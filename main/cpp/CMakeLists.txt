@@ -43,7 +43,8 @@ set(LIB_SRC
 	contact/ContactHandler.h
 	contact/ContactLogMode.cpp
 	contact/Infector.cpp
-	contact/TransmissionProfile.cpp
+	contact/LogPolicy.h
+    contact/TransmissionProfile.cpp
 #---
     disease/DiseaseSeeder.cpp
 	disease/Health.cpp
@@ -71,7 +72,6 @@ set(LIB_SRC
     sim/Sim.cpp
     sim/SimBuilder.cpp
     sim/event/Id.cpp
-    sim/event/Payload.h
 	sim/event/Subject.cpp
 	sim/python/StrideRunner.cpp
 #---

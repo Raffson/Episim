@@ -97,6 +97,7 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, util::RNMan
         m_belief              = p_tree.get_child("popgen.belief_policy");
 
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
+        m_population->reserve(m_total_pop);
 
         m_fract_map[Fractions::STUDENTS] = abs(p_tree.get<double>("popgen.pop_info.fraction_students"));
         m_fract_map[Fractions::COMMUTING_STUDENTS] =

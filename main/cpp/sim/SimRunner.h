@@ -19,8 +19,8 @@
  * Header for the SimRunner class.
  */
 
-#include "event/Subject.h"
-#include "sim/event/Payload.h"
+#include "sim/event/Id.h"
+#include "sim/event/Subject.h"
 #include "sim/python/SimulatorObserver.h"
 #include "util/Stopwatch.h"
 
@@ -53,21 +53,11 @@ class Sim;
  * \li manages time steps
  * All the while SimRunner notifies viewers of its events (@see sim_event::Id)
  */
-class SimRunner : public util::Subject<stride::sim_event::Payload>, public std::enable_shared_from_this<SimRunner>
+class SimRunner : public util::Subject<stride::sim_event::Id>
 {
 public:
-        /// The enable_shared_from_this make it so we need to instatiate a live shared_ptr
-        /// to use the object. To enforce this, the constructor has been made private.
-        static std::shared_ptr<SimRunner> Create()
-        {
-                // See discussion on make_shared and private constructor
-                // https://stackoverflow.com/questions/8147027/
-                // how-do-i-call-stdmake-shared-on-a-class-with-only-protected-or-private-const
-                struct make_shared_enabler : public SimRunner
-                {
-                };
-                return std::make_shared<make_shared_enabler>();
-        }
+        /// Default initialization.
+        SimRunner();
 
         /// Destructor
         virtual ~SimRunner() = default;
@@ -84,24 +74,30 @@ public:
         /// Setup the context for the simulation run.
         /// \param config_pt        config info for run and for config of simulator
         /// \param logger               general logger
-        /// \return                     status value
-        bool Setup(const boost::property_tree::ptree& config_pt);
+        void Setup(const boost::property_tree::ptree& config_pt);
 
-        /// Run the simulator with config information provided.
+        /// Run simulator for numDays steps.
         void Run();
+
+public:
+        ///
+        void AtFinish();
+
+        ///
+        void AtStart();
+
+        /// Run simulator for numDays steps.
+        void Run(unsigned int numDays);
 
 private:
         /// Private constructor, @see Create.
-        SimRunner();
 
 private:
-        util::Stopwatch<>               m_clock;         ///< Stopwatch for timing the computation.
-        std::shared_ptr<spdlog::logger> m_stride_logger; ///< General logger (!= contact_logger).
-        std::string                     m_log_level;     ///< Log level (see spdlog::level in spdlog/common.h).
-        std::string                     m_output_prefix; ///< Prefix for output data files.
-        boost::property_tree::ptree     m_config_pt;     ///< Ptree with configuration.
-        std::shared_ptr<Sim>            m_sim;           ///< Simulator object.
-        std::shared_ptr<GeoGrid>        m_geogrid;       ///< The GeoGrid
+        util::Stopwatch<>           m_clock;         ///< Stopwatch for timing the computation.
+        std::string                 m_output_prefix; ///< Prefix for output data files.
+        boost::property_tree::ptree m_config_pt;     ///< Ptree with configuration.
+        std::shared_ptr<Sim>        m_sim;           ///< Simulator object.
+        std::shared_ptr<GeoGrid>    m_geogrid;       ///< The GeoGrid
 };
 
 } // namespace stride
