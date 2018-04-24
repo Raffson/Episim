@@ -21,7 +21,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <memory>
-#include <spdlog/spdlog.h>
 
 #include "popgen-Episim/GeoGen/GeoGrid.h"
 #include "popgen-Episim/PopGen/PopulationGenerator.h"
@@ -43,17 +42,12 @@ class SimBuilder
 {
 public:
         /// Initializing SimBuilder.
-        SimBuilder(const boost::property_tree::ptree& configPt);
+        explicit SimBuilder(const boost::property_tree::ptree& configPt);
 
         /// Build the simulator.
         std::shared_ptr<Sim> Build(std::shared_ptr<GeoGrid>& grid);
 
 private:
-        /// Build the simulator.
-        std::shared_ptr<Sim> Build(const boost::property_tree::ptree& diseasePt,
-                                         const boost::property_tree::ptree& ageContactPt,
-                                         std::shared_ptr<GeoGrid>& grid);
-
         /// Get the contact configuration data.
         boost::property_tree::ptree ReadAgeContactPtree();
 

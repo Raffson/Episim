@@ -178,35 +178,8 @@ void GeoGrid::GenerateAll()
         GenerateColleges();
         GenerateWorkplaces();
         GenerateSchools();
-        // Changed the order so I can call GetAllCommunites which is faster than calling GetColleges when looking
-        // for colleges during GenerateWorkplaces, because only colleges should be present at that time...
         GenerateCommunities();
         ClassifyNeighbours();
-
-    /*double possible_workers_frac = (m_fract_map[Fractions::MIDDLE_AGED] +
-                                    m_fract_map[Fractions::YOUNG] * (1 - m_fract_map[Fractions::STUDENTS]));
-
-    double active_workers_frac = possible_workers_frac * m_fract_map[Fractions::ACTIVE];
-
-    for( auto& city : m_cities )
-    {
-        // Colleges are the only communities that should be present at this time...
-        const bool no_colleges = city.second.GetAllCommunities().empty();
-        // I believe possible_workers_frac is all we need because in-commuters are definitely active...
-        double in_commuters_modifier = (no_colleges) ? 1 : possible_workers_frac;
-
-        auto work_pop = (city.second.GetPopulation() * active_workers_frac +
-                         city.second.GetTotalInCommutersCount() * in_commuters_modifier -
-                         city.second.GetTotalOutCommutersCount() * possible_workers_frac);
-
-        cout << city.second.GetName() << " has " << city.second.GetCommunitySize() << " communities:" << endl;
-        cout << "Colleges = " << city.second.GetColleges().size() << " with pop-size = " << city.second.GetPopulation() << endl;
-        cout << "Workplaces = " << city.second.GetWorkplaces().size() << " with working pop = " << work_pop << endl;
-        cout << "Schools = " << city.second.GetSchools().size() << " with #schoolkids = "
-             << city.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED] << endl;
-        cout << "Primary Communities = " << city.second.GetPrimaryCommunities().size() << endl;
-        cout << "Secondary Communities = " << city.second.GetSecondaryCommunities().size() << endl;
-    }*/
 }
 
 void GeoGrid::GenerateSchools()
@@ -217,7 +190,7 @@ void GeoGrid::GenerateSchools()
         REQUIRE(m_sizes_map[Sizes::SCHOOLS] >= 0, "The initial school size can't be negative");
         // Calculating extra data
         const double amount_schooled = m_total_pop * m_fract_map[Fractions::SCHOOLED];
-        // ceil because we want to at least build 1 school if amount_school > 0
+        // ceil because we want to at least build 1 school
         auto amount_of_schools = (const unsigned int)ceil(amount_schooled / m_sizes_map[Sizes::SCHOOLS]);
 
         // Determine number of contactpools

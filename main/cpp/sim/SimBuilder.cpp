@@ -45,19 +45,12 @@ SimBuilder::SimBuilder(const ptree& configPt) : m_config_pt(configPt) {}
 
 std::shared_ptr<Sim> SimBuilder::Build(std::shared_ptr<GeoGrid>& grid)
 {
-        const auto contactPt = ReadAgeContactPtree();
-        const auto diseasePt = ReadDiseasePtree();
-        auto sim = Build(diseasePt, contactPt, grid);
-        return sim;
-}
-
-std::shared_ptr<Sim> SimBuilder::Build(const ptree& diseasePt, const ptree& ageContactPt,
-                                                   std::shared_ptr<GeoGrid>& grid)
-{
         // --------------------------------------------------------------
-        // Uninitialized simulator object.
+        // Preliminaries.
         // --------------------------------------------------------------
         auto sim = make_shared<Sim>();
+        const auto diseasePt    = ReadDiseasePtree();
+        const auto ageContactPt = ReadAgeContactPtree();
 
         // --------------------------------------------------------------
         // Config info.
