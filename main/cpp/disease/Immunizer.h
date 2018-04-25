@@ -34,15 +34,15 @@ class Immunizer
 {
 public:
         ///
-        explicit Immunizer(util::RNManager& rn_manager);
+        explicit Immunizer(util::RNManager& rnManager);
 
         /// Random immunization.
-        void Random(const util::SegmentedVector<ContactPool>& pools, std::vector<double>& immunity_distribution,
-                    double immunity_link_probability);
+        void Random(const util::SegmentedVector<ContactPool>& pools, std::vector<double>& immunityDistribution,
+                    double immunityLinkProbability);
 
         /// Cocoon immunization.
-        void Cocoon(const util::SegmentedVector<ContactPool>& pools, std::vector<double>& immunity_distribution,
-                    double immunity_link_probability);
+        void Cocoon(const util::SegmentedVector<ContactPool>& pools, std::vector<double>& immunityDistribution,
+                    double immunityLinkProbability);
 
 private:
         util::RNManager& m_rn_manager; ///< Random number manager.

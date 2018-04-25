@@ -48,7 +48,7 @@ std::shared_ptr<Sim> SimBuilder::Build(std::shared_ptr<GeoGrid>& grid)
         // --------------------------------------------------------------
         // Preliminaries.
         // --------------------------------------------------------------
-        auto sim = make_shared<Sim>();
+        auto       sim          = make_shared<Sim>();
         const auto diseasePt    = ReadDiseasePtree();
         const auto ageContactPt = ReadAgeContactPtree();
 

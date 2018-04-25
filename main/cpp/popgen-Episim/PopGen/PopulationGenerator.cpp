@@ -312,6 +312,7 @@ void PopulationGenerator::GeneratePopulation()
 vector<Community*> PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const City& city, const CommunityType& community_type)
 {
         unsigned int search_radius = m_geogrid.GetInitialSearchRadius();
+        REQUIRE(search_radius > 0, "Initial search radius of the GeoGrid must be bigger than 0.");
         vector<Community*> result;
         while (result.empty() and search_radius != 0) {
                 const vector<City*>& near_cities = m_geogrid.GetCitiesWithinRadiusWithCommunityType(city, search_radius, community_type);

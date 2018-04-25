@@ -44,8 +44,10 @@ public:
         Person(unsigned int id, double age, unsigned int householdId, unsigned int schoolId, unsigned int workId,
                unsigned int primaryCommunityId, unsigned int secondaryCommunityId, Health health = Health(),
                double risk_averseness = 0, Belief* bp = nullptr)
-            : m_age(age), m_belief(bp), m_gender('M'), m_health(health), m_id(id), m_is_participant(false),
-              m_pool_ids{householdId, schoolId, workId, primaryCommunityId, secondaryCommunityId}, m_in_pools(true)
+            : m_age(age), m_belief(bp), m_gender('M'), m_health(health), m_id(id),
+              m_is_participant(false), m_pool_ids{householdId, schoolId, workId, primaryCommunityId,
+                                                  secondaryCommunityId},
+              m_in_pools(true)
         {
         }
 
@@ -80,7 +82,7 @@ public:
         bool IsInPool(const ContactPoolType::Id& poolType) const { return m_in_pools[poolType]; }
 
         /// Does this person participates in the social contact study?
-        bool IsParticipatingInSurvey() const { return m_is_participant; }
+        bool IsSurveyParticipant() const { return m_is_participant; }
 
         /// Participate in social contact study and log person details
         void ParticipateInSurvey() { m_is_participant = true; }

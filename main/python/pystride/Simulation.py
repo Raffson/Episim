@@ -89,7 +89,7 @@ class Simulation:
         f = Fork(name, self)
         return f
 
-    def run(self, trackIndexCase=False, genFiles=True):
+    def run(self, trackIndexCase=False):
         """ Run the current simulation. """
         self._setup()
 
@@ -97,7 +97,7 @@ class Simulation:
         try:
             self.runner.Setup(trackIndexCase, configPath)
             self.runner.RegisterObserver(self.observer)
-            self.runner.Run(genFiles)
+            self.runner.Run()
         except:
             print("Exception while running the simulator. Closing down.")
             exit(1)
