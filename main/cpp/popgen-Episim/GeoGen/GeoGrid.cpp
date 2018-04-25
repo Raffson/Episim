@@ -39,11 +39,12 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
         m_fract_map[Fractions::OLDIES]      = oldies / total;
 }
 
-void GeoGrid::GetAgeFractions(vector<double>& popfracs)
+//deprecated?
+/*void GeoGrid::GetAgeFractions(vector<double>& popfracs)
 {
         for (auto& category : AgeList)
                 popfracs.emplace_back(m_fract_map[category]);
-}
+}*/
 
 void GeoGrid::ClassifyNeighbours()
 {
@@ -214,8 +215,6 @@ void GeoGrid::GenerateSchools()
                 // Add contactpools
                 for (auto j = 0; j < cps; j++)
                         nw_school.AddContactPool(m_pool_sys);
-                // m_communities[nw_school->getID()] = nw_school
-                // TODO: What is this?? -> probably no need for this but keeping it there just in case...
         }
         // We should ENSURE schools are effectively placed in cities.
         // The OO nature makes this assertion rather complex -> found in tests
@@ -276,8 +275,6 @@ void GeoGrid::GenerateColleges()
             for (auto j = 0; j < cps; j++){
                 college.AddContactPool(m_pool_sys);
             }
-
-            // m_communities[college->getID()] = college
         }
 }
 
@@ -322,7 +319,6 @@ void GeoGrid::GenerateWorkplaces()
         for (unsigned int i = 0; i < number_of_workplaces; i++) {
                 City*      chosen_city  = c_vec[rndm_vec[i]];
                 Community& nw_workplace = chosen_city->AddCommunity(CommunityType::Work);
-
                 // A workplace has a contactpool.
                 nw_workplace.AddContactPool(m_pool_sys);
         }
@@ -341,8 +337,6 @@ void GeoGrid::GenerateCommunities()
         vector<double> p_vec;
         vector<City*>  c_vec;
         for (auto& it : m_cities) {
-                // same story as in GenerateSchools, simply push straight into p_vec... (delete comments if agreed)
-                // double c_pop = it.second.GetPopulation();
                 c_vec.emplace_back(&it.second);
                 p_vec.emplace_back(it.second.GetPopulation());
         }
