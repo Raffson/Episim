@@ -59,7 +59,7 @@ void GeoGrid::ClassifyNeighbours()
                         while ((distance / category) > 0)
                                 category <<= 1; // equivalent to multiplying by 2
                         for( auto type : CommunityTypes ) {
-                            if( cityB.second.GetCommunitiesOfType(type).size() )
+                            if( cityB.second.HasCommunityType(type) )
                                 m_neighbours_in_radius[cityA.first][category][type].emplace_back(&cityB.second);
                         }
                 }
