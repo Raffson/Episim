@@ -39,18 +39,19 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
         m_fract_map[Fractions::OLDIES]      = oldies / total;
 }
 
-void GeoGrid::  GetAgeFractions(vector<double>& popfracs)
+//deprecated?
+/*void GeoGrid::GetAgeFractions(vector<double>& popfracs)
 {
         for (auto& category : AgeList)
                 popfracs.emplace_back(m_fract_map[category]);
-}
+}*/
 
 void GeoGrid::ClassifyNeighbours()
 {
         for (auto& cityA : m_cities) {
                 for (auto& cityB : m_cities) {
                         // truncating distance on purpose to avoid using floor-function
-                        auto distance = (unsigned int)
+                        unsigned int distance =
                             cityB.second.GetCoordinates().GetDistance(cityA.second.GetCoordinates());
                         // mind that the categories go as follows [0, initial_radius), [initial_radius,
                         // 2*initial_radius), etc.
@@ -58,14 +59,17 @@ void GeoGrid::ClassifyNeighbours()
                         // i believe the following code is more efficient than the alternative code below...
                         while ((distance / category) > 0)
                                 category <<= 1; // equivalent to multiplying by 2
-                        m_neighbours_in_radius[cityA.first][category].emplace_back(&cityB.second);
+                        for( auto type : CommunityTypes ) {
+                            if( cityB.second.HasCommunityType(type) )
+                                m_neighbours_in_radius[cityA.first][category][type].emplace_back(&cityB.second);
+                        }
                 }
         }
 }
 
 GeoGrid::GeoGrid()
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
-          m_population(make_shared<Population>()), m_pool_sys(default_pool_sys),
+          m_population(make_shared<Population>()), m_pool_sys(m_population->GetContactPoolSys()),
           m_initialized(false), m_rng(nullptr)
 {
         for( auto frac : FractionList )
@@ -75,7 +79,7 @@ GeoGrid::GeoGrid()
             m_sizes_map[size] = 0;
 }
 
-void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPoolSys& pool_sys, util::RNManager* rng)
+void GeoGrid::Initialize(const boost::filesystem::path& config_file, util::RNManager* rng)
 {
 
         REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
@@ -94,6 +98,7 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPool
         m_belief              = p_tree.get_child("popgen.belief_policy");
 
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
+        m_population->reserve(m_total_pop);
 
         m_fract_map[Fractions::STUDENTS] = abs(p_tree.get<double>("popgen.pop_info.fraction_students"));
         m_fract_map[Fractions::COMMUTING_STUDENTS] =
@@ -116,7 +121,6 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPool
         parser::ParseCommuting(base_path + commuting_file, m_cities, m_fract_map);
 
         m_initial_search_radius = p_tree.get<unsigned int>("popgen.neighbour_classification.initial_search_radius", 10U);
-        ClassifyNeighbours();
 
         // Setting up RNG
         unsigned long seed = (unsigned long)abs(p_tree.get("popgen.rng.seed", 0));
@@ -146,7 +150,6 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPool
         ENSURE(m_sizes_map[Sizes::AVERAGE_CP] > 0 and m_sizes_map[Sizes::AVERAGE_CP] <= 1000,
                "Contactpool's size must be bigger than 0 and smaller than or equal to 1000");
 
-        m_pool_sys = pool_sys;
         m_initialized = true;
         m_rng = (rng) ? rng : &default_generator;
 }
@@ -154,8 +157,8 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, ContactPool
 void GeoGrid::Reset()
 {
         m_initialized = false;
-        m_pool_sys = default_pool_sys;
         m_population = make_shared<Population>();
+        m_pool_sys = m_population->GetContactPoolSys();
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
         for( auto size : SizeList )
@@ -176,35 +179,8 @@ void GeoGrid::GenerateAll()
         GenerateColleges();
         GenerateWorkplaces();
         GenerateSchools();
-        // Changed the order so I can call GetAllCommunites which is faster than calling GetColleges when looking
-        // for colleges during GenerateWorkplaces, because only colleges should be present at that time...
         GenerateCommunities();
-
-
-    /*double possible_workers_frac = (m_fract_map[Fractions::MIDDLE_AGED] +
-                                    m_fract_map[Fractions::YOUNG] * (1 - m_fract_map[Fractions::STUDENTS]));
-
-    double active_workers_frac = possible_workers_frac * m_fract_map[Fractions::ACTIVE];
-
-    for( auto& city : m_cities )
-    {
-        // Colleges are the only communities that should be present at this time...
-        const bool no_colleges = city.second.GetAllCommunities().empty();
-        // I believe possible_workers_frac is all we need because in-commuters are definitely active...
-        double in_commuters_modifier = (no_colleges) ? 1 : possible_workers_frac;
-
-        auto work_pop = (city.second.GetPopulation() * active_workers_frac +
-                         city.second.GetTotalInCommutersCount() * in_commuters_modifier -
-                         city.second.GetTotalOutCommutersCount() * possible_workers_frac);
-
-        cout << city.second.GetName() << " has " << city.second.GetCommunitySize() << " communities:" << endl;
-        cout << "Colleges = " << city.second.GetColleges().size() << " with pop-size = " << city.second.GetPopulation() << endl;
-        cout << "Workplaces = " << city.second.GetWorkplaces().size() << " with working pop = " << work_pop << endl;
-        cout << "Schools = " << city.second.GetSchools().size() << " with #schoolkids = "
-             << city.second.GetPopulation() * m_fract_map[Fractions::SCHOOLED] << endl;
-        cout << "Primary Communities = " << city.second.GetPrimaryCommunities().size() << endl;
-        cout << "Secondary Communities = " << city.second.GetSecondaryCommunities().size() << endl;
-    }*/
+        ClassifyNeighbours();
 }
 
 void GeoGrid::GenerateSchools()
@@ -215,7 +191,7 @@ void GeoGrid::GenerateSchools()
         REQUIRE(m_sizes_map[Sizes::SCHOOLS] >= 0, "The initial school size can't be negative");
         // Calculating extra data
         const double amount_schooled = m_total_pop * m_fract_map[Fractions::SCHOOLED];
-        // ceil because we want to at least build 1 school if amount_school > 0
+        // ceil because we want to at least build 1 school
         auto amount_of_schools = (const unsigned int)ceil(amount_schooled / m_sizes_map[Sizes::SCHOOLS]);
 
         // Determine number of contactpools
@@ -239,8 +215,6 @@ void GeoGrid::GenerateSchools()
                 // Add contactpools
                 for (auto j = 0; j < cps; j++)
                         nw_school.AddContactPool(m_pool_sys);
-                // m_communities[nw_school->getID()] = nw_school
-                // TODO: What is this?? -> probably no need for this but keeping it there just in case...
         }
         // We should ENSURE schools are effectively placed in cities.
         // The OO nature makes this assertion rather complex -> found in tests
@@ -301,8 +275,6 @@ void GeoGrid::GenerateColleges()
             for (auto j = 0; j < cps; j++){
                 college.AddContactPool(m_pool_sys);
             }
-
-            // m_communities[college->getID()] = college
         }
 }
 
@@ -347,7 +319,6 @@ void GeoGrid::GenerateWorkplaces()
         for (unsigned int i = 0; i < number_of_workplaces; i++) {
                 City*      chosen_city  = c_vec[rndm_vec[i]];
                 Community& nw_workplace = chosen_city->AddCommunity(CommunityType::Work);
-
                 // A workplace has a contactpool.
                 nw_workplace.AddContactPool(m_pool_sys);
         }
@@ -366,8 +337,6 @@ void GeoGrid::GenerateCommunities()
         vector<double> p_vec;
         vector<City*>  c_vec;
         for (auto& it : m_cities) {
-                // same story as in GenerateSchools, simply push straight into p_vec... (delete comments if agreed)
-                // double c_pop = it.second.GetPopulation();
                 c_vec.emplace_back(&it.second);
                 p_vec.emplace_back(it.second.GetPopulation());
         }
@@ -472,7 +441,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         // cout << m_cities.size() << endl;
 }
 
-const vector<City*>& GeoGrid::GetCitiesWithinRadius(const City& origin, unsigned int radius)
+const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City& origin, unsigned int radius, CommunityType type)
 {
         if (!m_neighbours_in_radius[origin.GetId()].count(radius)) {
                 unsigned int next_smaller = m_initial_search_radius;
@@ -484,7 +453,7 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadius(const City& origin, unsigned
                 else
                         radius = next_bigger;
         }
-        return m_neighbours_in_radius[origin.GetId()][radius];
+        return m_neighbours_in_radius[origin.GetId()][radius][type];
 }
 
 } // namespace stride

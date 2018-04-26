@@ -21,9 +21,10 @@ namespace stride {
 City::City(const unsigned int city_id, const unsigned int province, unsigned int population,
            const Coordinate coordinates, const string name)
     : m_city_id(city_id), m_province(province), m_population(population), m_coordinates(coordinates), m_name(name),
-      m_in_commuter_count(0), m_out_commuter_count(0), m_in_commuting_changed(false), m_out_commuting_changed(false),
-      m_has_college(false)
+      m_in_commuter_count(0), m_out_commuter_count(0), m_in_commuting_changed(false), m_out_commuting_changed(false)
 {
+        for( auto type : CommunityTypes )
+                m_types_present[type] = false;
 }
 
 vector<Community*> City::GetColleges()
@@ -90,16 +91,12 @@ vector<Community*> City::GetSecondaryCommunities()
 
 // this is  much better, taking away the need for all the above functions,
 // except the functions above make life easier sometimes, so leaving them for now...
-vector<Community*> City::GetCommunitiesOfType(CommunityType ct, unsigned int poolsize, const bool filter)
+vector<Community*> City::GetCommunitiesOfType(CommunityType ct)
 {
         vector<Community*> communities;
         for (auto& it : m_communities) {
                 if (it.GetCommunityType() == ct) {
-                        if (filter and (ct == CommunityType::Primary or ct == CommunityType::Secondary)) {
-                                if (it.GetSize() < poolsize)
-                                        communities.emplace_back(&it);
-                        } else
-                                communities.emplace_back(&it);
+                        communities.emplace_back(&it);
                 }
         }
         return communities;
@@ -108,8 +105,7 @@ vector<Community*> City::GetCommunitiesOfType(CommunityType ct, unsigned int poo
 Community& City::AddCommunity(CommunityType community_type)
 {
         m_communities.emplace_back(Community(community_type, this));
-        if(community_type == CommunityType::College)
-                m_has_college = true;
+        m_types_present[community_type] = true;
         return m_communities.back();
 }
 

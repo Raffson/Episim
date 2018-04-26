@@ -41,7 +41,7 @@ class Simulation:
         return os.path.join(self.getWorkingDirectory(), self.getLabel()+"/")
 
     def _linkData(self):
-        dataDestDir = os.path.join(self.getOutputDirectory(), "data")
+        dataDestDir = os.path.join(self.getWorkingDirectory(), "data_sim")
         os.makedirs(dataDestDir, exist_ok=True)
         file_params = [
             "population_file",
@@ -50,9 +50,9 @@ class Simulation:
             # TODO disease_config_file?
         ]
         for param in file_params:
-            src = os.path.join(self.dataDir, self.runConfig.getParameter(param))
-            self.runConfig.setParameter(param, src)
-            dst = os.path.join(dataDestDir, os.path.basename(src))
+            src = os.path.realpath(os.path.join(self.dataDir,self.runConfig.getParameter(param)))
+            dst = os.path.join(dataDestDir, self.runConfig.getParameter(param))
+            self.runConfig.setParameter(param, dst)
             if (os.path.isfile(src)) and (not (os.path.isfile(dst))):
                 os.symlink(src, dst)
 
@@ -63,7 +63,6 @@ class Simulation:
         """
         if linkData:
             self._linkData()
-
         os.makedirs(self.getOutputDirectory(), exist_ok=True)
         # Store disease configuration
         oldDiseaseFile = self.runConfig.getParameter("disease_config_file")[:-4]
@@ -90,7 +89,7 @@ class Simulation:
         f = Fork(name, self)
         return f
 
-    def run(self, trackIndexCase=False, genFiles=True):
+    def run(self, trackIndexCase=False):
         """ Run the current simulation. """
         self._setup()
 
@@ -98,14 +97,16 @@ class Simulation:
         try:
             self.runner.Setup(trackIndexCase, configPath)
             self.runner.RegisterObserver(self.observer)
-            self.runner.Run(genFiles)
+            self.runner.Run()
         except:
             print("Exception while running the simulator. Closing down.")
             exit(1)
 
     def runForks(self, *args, **kwargs):
+        """ Create the root simulation folder. """
+        os.makedirs(self.getOutputDirectory(), exist_ok=True)
+
         """ Run all forks but not the root simulation. """
-        self._setup()
         for fork in self.forks:
             fork.run(*args, **kwargs)
 

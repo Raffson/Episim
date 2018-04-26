@@ -71,7 +71,7 @@ public:
                          std::shared_ptr<spdlog::logger> c_logger);
 };
 
-/// Time-optimized version (Only for NoLocalInformation policy and None || Transmission logging).
+/// Time-optimized version (Only for NoLocalInformation policy in combination with None || Transmission logging).
 /// \tparam LL          LogLevel
 /// \tparam TIC         TrackIndexCase
 template <ContactLogMode::Id LL, bool TIC>
@@ -83,6 +83,11 @@ public:
                          ContactHandler& c_handler, unsigned short int sim_day,
                          std::shared_ptr<spdlog::logger> c_logger);
 };
+
+/// For use in the Sim.
+using InfectorExecT = void (*)(ContactPool& pool, const AgeContactProfile& profile,
+                               const TransmissionProfile& trans_profile, ContactHandler& c_handler,
+                               unsigned short int sim_day, std::shared_ptr<spdlog::logger> c_logger);
 
 /// Explicit instantiations in cpp file.
 extern template class Infector<ContactLogMode::Id::None, false, NoLocalInformation>;

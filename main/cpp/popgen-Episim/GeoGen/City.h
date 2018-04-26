@@ -58,7 +58,7 @@ public:
         /// Get the number of total commuters leaving the city
         double GetTotalOutCommutersCount();
 
-        bool HasCollege(){ return m_has_college;}
+        bool HasCollege(){ return m_types_present[CommunityType::College]; }
 
         /// Returns all the communities
         vector<Community>& GetAllCommunities(){ return m_communities; };
@@ -84,10 +84,7 @@ public:
 
         /// Returns the communities of the given type
         /// @param: ct type of the community
-        /// @param: poolsize the maximum allowed size of contactpool
-        /// @param: filter
-        vector<Community*> GetCommunitiesOfType(CommunityType ct, unsigned int poolsize = 2000,
-                                                const bool filter = false);
+        vector<Community*> GetCommunitiesOfType(CommunityType ct);
 
         /// Adds a new community of the given type to the city.
         /// @param: community_type the type of community that is to be added
@@ -116,6 +113,9 @@ public:
         /// Gets the households of the city
         vector<Household>& GetHouseholds() { return m_households; }
 
+        /// Returns whether or not the given type of community is present in this city.
+        const bool HasCommunityType(CommunityType type) { return m_types_present[type]; }
+
 private:
         const unsigned int m_city_id;   ///< A unique ID of the city.
         const unsigned int m_province;  ///< Province
@@ -135,7 +135,7 @@ private:
         bool m_in_commuting_changed;
         bool m_out_commuting_changed;
 
-        bool m_has_college;
+        map<CommunityType, bool> m_types_present; ///< This map keeps track of the community types present.
 };
 
 } // namespace stride
