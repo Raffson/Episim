@@ -1,0 +1,24 @@
+Robbe:
+- Rewrite paper
+- Generate data for influenza A
+- If there's time left, assist Nishchal with test for PopulationGenerator
+
+Nishchal:
+- Improve HappyDayScenario-tests for Community, Schools, Colleges & Workplaces
+	(mostly for Community & Schools, Colleges & Workplaces are half-way done)
+- Write test for PopulationGenerator
+- Generate data for Measles12
+
+Beau:
+- Add ability to call MapViewer through CliController
+- Improve/Expand Mapviewer
+- Generate data for influenza C
+- If all is done, start working on GuiController
+
+Raphael:
+- Improve integration with stride
+- Fixing household generation
+- Add ability to write generated population to file
+- Generate data for measles16
+- Fix GeoGen::GetCitiesWithinRadiusWithCommunityType,
+	forgot something that was promised in comments...
