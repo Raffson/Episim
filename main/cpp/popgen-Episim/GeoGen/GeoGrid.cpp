@@ -39,7 +39,7 @@ void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
         m_fract_map[Fractions::OLDIES]      = oldies / total;
 }
 
-void GeoGrid::GetAgeFractions(vector<double>& popfracs)
+void GeoGrid::  GetAgeFractions(vector<double>& popfracs)
 {
         for (auto& category : AgeList)
                 popfracs.emplace_back(m_fract_map[category]);
@@ -50,7 +50,7 @@ void GeoGrid::ClassifyNeighbours()
         for (auto& cityA : m_cities) {
                 for (auto& cityB : m_cities) {
                         // truncating distance on purpose to avoid using floor-function
-                        unsigned int distance =
+                        auto distance = (unsigned int)
                             cityB.second.GetCoordinates().GetDistance(cityA.second.GetCoordinates());
                         // mind that the categories go as follows [0, initial_radius), [initial_radius,
                         // 2*initial_radius), etc.
