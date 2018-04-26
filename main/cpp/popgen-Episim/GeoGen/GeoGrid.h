@@ -124,9 +124,9 @@ public:
         City& operator[](unsigned int i) { return m_cities.at(i); }
 
         /// Getter
-        /// @retval <const vector<vector<double>>&> Returns the age distribution of our houses as a 2D vector.
-        ///                             With every vector representing a household.
-        const vector<vector<double>>& GetModelHouseholds() const { return m_household_age_distr; }
+        /// @retval <const map<unsigned int, vector<vector<double>>>&> Returns the households as a 2D vector,
+        ///                             with every vector representing a household.
+        const map<unsigned int, vector<vector<double>>>& GetModelHouseholds() const { return m_model_households; }
 
         /// Getter
         /// @retval <const vector<City*>>> Returns the Cities that contain a College.
@@ -193,7 +193,7 @@ private:
         void AdjustLargestCities(vector<City*>& lc, City& city);
 
         /// Assigns the main fractions: schooled, worker1, worker2 & rest
-        void GetMainFractions(const vector<vector<double>>& hhs);
+        void GetMainFractions();
 
         /// Computes for each city the distances to all other cities and classifies them
         /// in exponential order, assigning this to m_neighbours_in_radius. The default initial search radius = 10km.
@@ -206,8 +206,9 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         ///< Effective map of all our sizes. Read the Sizes Enum what it will contain.
         map<Sizes, unsigned int> m_sizes_map{};
 
-        ///< Contains the model for the age distribition for households
-        vector<vector<double>> m_household_age_distr{};
+        ///< Contains the model for the for households. The key is the size of the household while the value contains
+        ///< all households of that size. Each houshold is represented by a vector with the ages of the occupants.
+        map<unsigned int, vector<vector<double>>> m_model_households{};
 
         ///< Contains all cities for the GeoGrid
         map<unsigned int, City> m_cities{};

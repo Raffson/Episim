@@ -20,32 +20,9 @@ PopulationGenerator::PopulationGenerator(GeoGrid& geogrid) : m_geogrid(geogrid)
 
 void PopulationGenerator::InitializeHouseholdFractions()
 {
-        auto households = m_geogrid.GetModelHouseholds(); // get the model, model should be const...
-        map<unsigned int, unsigned int> sizes;
-        // The next map 'ages' will map a household's size to a 2nd map cotaining a Fraction type
-        // which maps to the number people that belong to an age-category...
-        // Thus we'll only be using SCHOOLED, YOUNG, MIDDLE_AGED, TODDLERS & OLDIES from the Fractions enum...
-        map<unsigned int, map<Fractions, double>> ages;
-        // The next map 'total_ages' will simply map a household's 'size'
-        // to the total amount of people that belong to a household with 'size'
-        map<unsigned int, unsigned int> total_ages;
-        for (auto& household : households) // count households with size x
-        {
-                sizes[household.size()] += 1;
-                total_ages[household.size()] += household.size();
-                for (auto& age : household)
-                        ages[household.size()][get_category(age)] += 1;
-        }
-
-        double totalhhs = households.size();
-        for (auto& elem : sizes) // household-count with size x divided by total nr of households (calculate fraction)
-                m_household_size_fracs.emplace_back(elem.second / totalhhs);
-        for (auto& elem : ages) {
-                vector<double> composition_fracs;
-                for (auto& cat : AgeList)
-                        composition_fracs.emplace_back(elem.second[cat] / total_ages[elem.first]);
-                m_household_comp_fracs.emplace(elem.first, composition_fracs);
-        }
+        auto households = m_geogrid.GetModelHouseholds();
+        for (auto& elem : households)
+                m_household_size_fracs.emplace_back(elem.second.size());
 }
 
 void PopulationGenerator::InitializeCommutingFractions()
@@ -106,29 +83,33 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
         return (unsigned int)(m_rng->GetGenerator(distr)() + 1);
 }
 
-double PopulationGenerator::GetRandomAge(unsigned int hhsize)
+vector<double> PopulationGenerator::GetRandomModelHouseholdOfSize(unsigned int size)
 {
-        trng::discrete_dist distr(m_household_comp_fracs[hhsize].begin(), m_household_comp_fracs[hhsize].end());
-        unsigned int        category = (unsigned int)m_rng->GetGenerator(distr)();
+    const vector<vector<double>>& households = m_geogrid.GetModelHouseholds().at(size);
+    trng::uniform_int_dist distr(0, households.size());
+    return households[m_rng->GetGenerator(distr)()];
+}
 
+double PopulationGenerator::GetRandomAge(Fractions category)
+{
         switch (category) {
-        case 0: {                                             // [3, 17]
+        case Fractions::SCHOOLED : {                          // [3, 17]
                 trng::uniform_dist<double> distr2(3.0, 18.0); // generates number between [a, b)
                 return (double)m_rng->GetGenerator(distr2)();
         }
-        case 1: { // [18, 25]
+        case Fractions::YOUNG : { // [18, 25]
                 trng::uniform_dist<double> distr2(18.0, 26.0);
                 return (double)m_rng->GetGenerator(distr2)();
         }
-        case 2: { // [26, 64]
+        case Fractions::MIDDLE_AGED : { // [26, 64]
                 trng::uniform_dist<double> distr2(26.0, 65.0);
                 return (double)m_rng->GetGenerator(distr2)();
         }
-        case 3: { // [0, 2]
+        case Fractions::TODDLERS : { // [0, 2]
                 trng::uniform_dist<double> distr2(0.0, 3.0);
                 return (double)m_rng->GetGenerator(distr2)();
         }
-        case 4: { // [65, 80], cause maximum age according to Age.h is 80...
+        case Fractions::OLDIES : { // [65, 80], cause maximum age according to Age.h is 80...
                 // gotta improve this since we would need [65, 80] but not with a uniform distribution...
                 // because the chances you become older get smaller and smaller right?
                 trng::uniform_dist<double> distr2(65.0, 81.0);
@@ -255,10 +236,6 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
 
 void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
 {
-        // TODO if we generate somebody less than 18 y then s/he should be accompanied by an adult?
-        // update: turns out the household file has a very slim chance that a person between 3y en 18y old
-        //    can be living alone... we're gonna have to notify the professor next time we get feedback...
-
         auto&        pop           = *m_geogrid.GetPopulation();
         auto&        pool_sys      = m_geogrid.GetContactPoolSys();
         auto&        the_household = city.AddHousehold(pool_sys); // Returns a reference to the new household...
@@ -269,8 +246,13 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         // Meaning you always get assigned to a community?
         unsigned int pcid = (primcomm) ? primcomm->GetID() : 0;
 
-        for (unsigned int i = 0; i < size; i++) {
-                double age = GetRandomAge(size);
+        vector<double> model_household = GetRandomModelHouseholdOfSize(size);
+
+        for (unsigned int i = 0; i < model_household.size(); i++) {
+                Fractions category = get_category(model_household[i]);
+                double age = GetRandomAge(category);
+                //if( model_household.size() == 1 and category == Fractions::SCHOOLED)
+                //    cout << "Lonely minor of model age=" << model_household[i] << " has now received age=" << age << endl;
                 GeneratePerson(age, hid, pcid, pop, city);
                 the_household.AddMember(&pop.back());
                 if (primcomm)
@@ -280,7 +262,7 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
 
 void PopulationGenerator::GeneratePopulation()
 {
-        // TODO: currently it takes about a minute to generate the total population,
+        // TODO: currently it takes about 30sec to generate 4.3 million people,
         // TODO: this should be improved even more if possible...
 
         cout << "Starting population generation..." << endl;
