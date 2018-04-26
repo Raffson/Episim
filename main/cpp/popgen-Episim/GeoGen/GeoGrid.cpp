@@ -8,28 +8,30 @@ using namespace std;
 
 namespace stride {
 
-void GeoGrid::GetMainFractions(const vector<vector<double>>& hhs)
+void GeoGrid::GetMainFractions()
 {
         unsigned int schooled = 0;
         unsigned int workers1 = 0;
         unsigned int workers2 = 0;
         unsigned int toddlers = 0;
         unsigned int oldies   = 0;
-        for (auto& house : hhs) {
-                for (auto& age : house) {
-                        // Ordered these if-else if construction to fall as quickly as possible
-                        // in the (statistically) most likely age-category...
-                        if (age >= 26 and age < 65)
-                                workers2 += 1;
-                        else if (age >= 3 and age < 18)
-                                schooled += 1;
-                        else if (age >= 18 and age < 26)
-                                workers1 += 1;
-                        else if (age >= 65)
-                                oldies += 1;
-                        else
-                                toddlers += 1;
+        for (auto& houses : m_model_households) {
+            for (auto &house : houses.second) {
+                for (auto &age : house) {
+                    // Ordered these if-else if construction to fall as quickly as possible
+                    // in the (statistically) most likely age-category...
+                    if (age >= 26 and age < 65)
+                        workers2 += 1;
+                    else if (age >= 3 and age < 18)
+                        schooled += 1;
+                    else if (age >= 18 and age < 26)
+                        workers1 += 1;
+                    else if (age >= 65)
+                        oldies += 1;
+                    else
+                        toddlers += 1;
                 }
+            }
         }
         double total                        = schooled + workers1 + workers2 + toddlers + oldies;
         m_fract_map[Fractions::SCHOOLED]    = schooled / total;
@@ -114,8 +116,8 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, util::RNMan
         m_sizes_map[Sizes::COMMUNITIES] = (unsigned int)abs(p_tree.get<long>("popgen.contactpool_info.community.size"));
         m_sizes_map[Sizes::WORKPLACES]  = (unsigned int)abs(p_tree.get<long>("popgen.contactpool_info.workplace.size"));
 
-        m_household_age_distr = parser::ParseHouseholds(base_path + household_file);
-        GetMainFractions(m_household_age_distr);
+        m_model_households = parser::ParseHouseholds(base_path + household_file);
+        GetMainFractions();
 
         parser::ParseCities(base_path + city_file, m_cities, m_model_pop);
         parser::ParseCommuting(base_path + commuting_file, m_cities, m_fract_map);
@@ -163,7 +165,7 @@ void GeoGrid::Reset()
             m_fract_map[frac] = 0;
         for( auto size : SizeList )
             m_sizes_map[size] = 0;
-        m_household_age_distr.clear();
+        m_model_households.clear();
         m_cities.clear();
         m_neighbours_in_radius.clear();
         m_initial_search_radius = 0;

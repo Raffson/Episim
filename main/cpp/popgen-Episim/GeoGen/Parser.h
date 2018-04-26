@@ -44,7 +44,7 @@ vector<City> DefragmentCity(const City& ct, vector<double> distr, util::RNManage
 /// Parse the household information
 /// @param: path to the file containing information about the commuting behaviour
 /// @retval vector<vector<double>> composition of the model households
-vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path);
+map<unsigned int, vector<vector<double>>> ParseHouseholds(const boost::filesystem::path& path);
 
 } // namespace parser
 } // namespace stride

@@ -73,9 +73,9 @@ private:
         unsigned int GetRandomHouseholdSize();
 
         /// Returns a random age according to the household-composition.
-        /// @param hhsize The size of the household which determines an age-distribution.
+        /// @param category The age category for which we need to generate a random age.
         /// @retval <double> A random age for a person.
-        double GetRandomAge(unsigned int hhsize);
+        double GetRandomAge(Fractions category);
 
         /// Returns a reference to a random city according to the
         /// distribution initialized in InitializeCityPopFractions.
@@ -120,6 +120,11 @@ private:
         /// The assignment itself happens in GeneratePerson.
         ContactPool* AssignWorkerAtRandom(City& origin);
 
+        /// Retrieves a random household of the given 'size' from GeoGrid's model.
+        /// @param size The size of the household which we need.
+        /// @retval <std::vector<double>> The randomly chosen household of the given size.
+        std::vector<double> GetRandomModelHouseholdOfSize(unsigned int size);
+
 private:
         /// ID generator for creating persons, starting from 0 which in this case doesn't matter...
         static unsigned int m_id_generator;
@@ -131,10 +136,6 @@ private:
         /// The first element is the chance a household has 1 member,
         /// The second element is the chance that a household has 2 members, and so on...
         std::vector<double> m_household_size_fracs;
-
-        /// This member will map a household's size onto a vector representing
-        /// the fractions for the age-composition of that household
-        std::map<unsigned int, std::vector<double>> m_household_comp_fracs;
 
         /// This member will keep a worker-commuting distribution for each city...
         /// thus, cityID -> commuting distribution for the city with cityID

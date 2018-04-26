@@ -96,11 +96,11 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
         }
 }
 
-vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path)
+map<unsigned int, vector<vector<double>>> ParseHouseholds(const boost::filesystem::path& path)
 {
         boost::property_tree::ptree p_tree;
         boost::property_tree::read_xml(path.string(), p_tree);
-        vector<vector<double>> result;
+        map<unsigned int, vector<vector<double>>> result;
 
         for (auto& node : p_tree.get_child("HouseholdProfile")) {
                 vector<double> ages;
@@ -110,7 +110,7 @@ vector<vector<double>> ParseHouseholds(const boost::filesystem::path& path)
                         age = min(age, 80.0); // cause max age is 80 according to pop/Age.h
                         ages.push_back(age);
                 }
-                result.push_back(ages);
+                result[ages.size()].emplace_back(ages);
         }
         return result;
 }
