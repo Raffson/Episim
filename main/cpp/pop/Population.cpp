@@ -91,3 +91,10 @@ void Population::NewPerson(unsigned int id, double age, unsigned int householdId
 }
 
 } // namespace stride
+
+std::ostream& operator<<(std::ostream& os, const stride::Population& pop)
+{
+        for( auto& p : pop )
+                os << p << endl;
+        return os;
+}

@@ -110,3 +110,5 @@ private:
 };
 
 } // namespace stride
+
+std::ostream& operator<<(std::ostream& os, const stride::Person& person);

@@ -454,8 +454,19 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
                         radius = next_smaller;
                 else
                         radius = next_bigger;
+                //make sure radius does not exceed the limit
+                radius = min(radius, m_neighbours_in_radius[origin.GetId()].rbegin()->first);
         }
         return m_neighbours_in_radius[origin.GetId()][radius][type];
+}
+
+void GeoGrid::WritePopToFile(const string &fname) const
+{
+    std::ofstream file;
+    file.open (fname.c_str(), std::ofstream::out);
+    file << "\"age\",\"household_id\",\"school_id\",\"work_id\",\"primary_community\",\"secundary_community\"" << endl;
+    file << *m_population << endl;
+    file.close();
 }
 
 } // namespace stride

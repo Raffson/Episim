@@ -57,3 +57,14 @@ void Person::Update(Person*)
 }
 
 } // namespace stride
+
+std::ostream& operator<<(std::ostream& os, const stride::Person& person)
+{
+        os << person.GetAge() << ",";
+        os << person.GetPoolId(stride::ContactPoolType::Id::Household) << ",";
+        os << person.GetPoolId(stride::ContactPoolType::Id::School) << ",";
+        os << person.GetPoolId(stride::ContactPoolType::Id::Work) << ",";
+        os << person.GetPoolId(stride::ContactPoolType::Id::PrimaryCommunity) << ",";
+        os << person.GetPoolId(stride::ContactPoolType::Id::SecondaryCommunity);
+        return os;
+}

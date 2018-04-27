@@ -9,6 +9,7 @@
 #include <memory>
 #include <random>
 #include <vector>
+#include <fstream>
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -182,6 +183,12 @@ public:
         /// Getter
         /// @retval <util::RNManager*> A pointer to the random number generator being used by GeoGrid.
         util::RNManager* GetRNG() { return m_rng; }
+
+        /// Writes the current population to a file.
+        /// @param fname The name of the file to be written.
+        // TODO: this file should be written to some specific folder,
+        // TODO: perhaps the output folder mentioned in the config file...
+        void WritePopToFile(const string& fname) const;
 
 private:
         /// Returns index of city with smallest population from 'lc'
