@@ -61,7 +61,7 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         ASSERT_NO_FATAL_FAILURE(grid.GenerateColleges()); //Must generate colleges to keep track of commuters
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
-        float        margin       = 0.4;
+        float        margin       = 0.4; //how come we need such a big margin?
 
         double possible_workers =  grid.GetFraction(Fractions::YOUNG) * (1 - grid.GetFraction(Fractions::STUDENTS))
                                + grid.GetFraction(Fractions::MIDDLE_AGED);

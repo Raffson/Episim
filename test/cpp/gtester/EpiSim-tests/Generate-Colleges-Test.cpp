@@ -83,12 +83,11 @@ TEST_P(CollegeTest, HappyDayScenario)
             total_pop_biggest += it->GetPopulation();
         }
 
-        double margin = 5.0;
+        double margin = 0.41; //how come we need such a big margin?
 
         for(auto& a_city:grid.GetCitiesWithCollege()){
             auto exp = ceil(a_city->GetPopulation() / (double) total_pop_biggest * expected_col_amount);
-            EXPECT_NEAR(a_city->GetColleges().size(), exp, margin);
-
+            EXPECT_NEAR(a_city->GetColleges().size(), exp, ceil(exp*margin));
         }
 
         auto cities = grid.GetCities();
