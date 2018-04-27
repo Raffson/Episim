@@ -249,9 +249,11 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         vector<double> model_household = GetRandomModelHouseholdOfSize(size);
 
         for (unsigned int i = 0; i < model_household.size(); i++) {
-                // TODO: make this random age optional, by default take the age from the model...
-                Fractions category = get_category(model_household[i]);
-                double age = GetRandomAge(category);
+                double age = model_household[i];
+                if( m_geogrid.UsingRandomAges() ) {
+                    Fractions category = get_category(age);
+                    age = GetRandomAge(category);
+                }
                 //if( model_household.size() == 1 and category == Fractions::SCHOOLED)
                 //    cout << "Lonely minor of model age=" << model_household[i] << " has now received age=" << age << endl;
                 GeneratePerson(age, hid, pcid, pop, city);

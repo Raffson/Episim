@@ -72,7 +72,7 @@ void GeoGrid::ClassifyNeighbours()
 GeoGrid::GeoGrid()
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
           m_population(make_shared<Population>()), m_pool_sys(m_population->GetContactPoolSys()),
-          m_initialized(false), m_rng(nullptr)
+          m_initialized(false), m_rng(nullptr), m_random_ages(false)
 {
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
@@ -101,6 +101,8 @@ void GeoGrid::Initialize(const boost::filesystem::path& config_file, util::RNMan
 
         m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
         m_population->reserve(m_total_pop);
+
+        m_random_ages = p_tree.get<bool>("popgen.pop_info.random_ages", false);
 
         m_fract_map[Fractions::STUDENTS] = abs(p_tree.get<double>("popgen.pop_info.fraction_students"));
         m_fract_map[Fractions::COMMUTING_STUDENTS] =
@@ -174,6 +176,7 @@ void GeoGrid::Reset()
         m_school_count = 0;
         m_cities_with_college.clear();
         m_belief.clear();
+        m_random_ages = false;
 }
 
 void GeoGrid::GenerateAll()

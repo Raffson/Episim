@@ -159,7 +159,7 @@ public:
 
         /// Getter
         /// @retval <unsigned int> Returns the initial search radius.
-        unsigned int GetInitialSearchRadius() { return m_initial_search_radius; }
+        unsigned int GetInitialSearchRadius() const { return m_initial_search_radius; }
 
         /// Getter
         /// @retval <const vector<City*>&> A const reference to a vector of pointers to cities within the given radius
@@ -178,7 +178,7 @@ public:
 
         /// Getter
         /// @retval <const bool> Returns whether or not the GeoGrid is initialized.
-        const bool IsInitialized() { return m_initialized; }
+        const bool IsInitialized() const { return m_initialized; }
 
         /// Getter
         /// @retval <util::RNManager*> A pointer to the random number generator being used by GeoGrid.
@@ -189,6 +189,10 @@ public:
         // TODO: this file should be written to some specific folder,
         // TODO: perhaps the output folder mentioned in the config file...
         void WritePopToFile(const string& fname) const;
+
+        /// Getter
+        /// @retval <const bool> Returns whether or not we're using random ages for the population builder.
+        const bool UsingRandomAges() const { return m_random_ages; }
 
 private:
         /// Returns index of city with smallest population from 'lc'
@@ -253,6 +257,9 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         ///< The random number generator.
         util::RNManager* m_rng;
+
+        ///< Indicates whether or not we want to use random age generation.
+        bool m_random_ages;
 };
 
 } // namespace stride
