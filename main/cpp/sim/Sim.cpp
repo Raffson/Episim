@@ -24,13 +24,11 @@
 #include "behaviour/information_policies/NoLocalInformation.h"
 #include "calendar/Calendar.h"
 #include "calendar/DaysOffStandard.h"
-#include "contact/ContactHandler.h"
-#include "contact/Infector.h"
-#include "contact/InfectorMap.h"
 #include "pool/ContactPoolType.h"
 #include "pop/Population.h"
+#include "sim/SimBuilder.h"
+#include "util/RunConfigManager.h"
 
-#include <trng/uniform01_dist.hpp>
 #include <omp.h>
 
 namespace stride {
@@ -41,9 +39,17 @@ using namespace util;
 using namespace ContactLogMode;
 
 Sim::Sim()
-    : m_config_pt(), m_contact_log_mode(Id::None), m_contact_profiles(), m_num_threads(1U), m_track_index_case(false),
-      m_transmission_profile(), m_local_info_policy(), m_calendar(), m_population(nullptr), m_rn_manager()
+    : m_config_pt(), m_contact_log_mode(Id::None), m_num_threads(1U), m_track_index_case(false), m_local_info_policy(),
+      m_calendar(nullptr), m_contact_profiles(), m_population(nullptr), m_rn_manager(), m_transmission_profile(),
+      m_geogrid(nullptr)
 {
+}
+
+std::shared_ptr<Sim> Sim::Create(const boost::property_tree::ptree& configPt) { return SimBuilder(configPt).Build(); }
+
+std::shared_ptr<Sim> Sim::Create(const string& configString)
+{
+        return SimBuilder(RunConfigManager::FromString(configString)).Build();
 }
 
 void Sim::TimeStep()
@@ -58,44 +64,33 @@ void Sim::TimeStep()
         const bool isWorkOff   = daysOff->IsWorkOff();
         const bool isSchoolOff = daysOff->IsSchoolOff();
 
-        // Update individual's health status & presence in contactpools.
-        for (auto& p : *m_population) {
-                p.Update(isWorkOff, isSchoolOff);
-        }
+        // To be used in update of population & contact pools.
+        Population& population    = *m_population;
+        auto&       poolSys       = population.GetContactPoolSys();
+        auto        contactLogger = population.GetContactLogger();
+        const auto  simDay        = m_calendar->GetSimulationDay();
+        const auto& infector      = *m_infector;
 
-        // Update contact/transmission in contact pools & advance calendar.
-        UpdatePools();
-        m_calendar->AdvanceDay();
-}
-
-void Sim::UpdatePools()
-{
-        // Contact handlers, each bound to a generator bound to a different random engine stream.
-        vector<ContactHandler> handlers;
-        for (size_t i = 0; i < m_num_threads; i++) {
-                // RN generators with double in [0.0, 1.0) each bound to a different stream.
-                auto gen = m_rn_manager.GetGenerator(trng::uniform01_dist<double>(), i);
-                handlers.emplace_back(ContactHandler(gen));
-        }
-
-        const auto simDay        = m_calendar->GetSimulationDay();
-        auto&      poolSys       = m_population->GetContactPoolSys();
-        auto       contactLogger = m_population->GetContactLogger();
-
-        // Loop over the various types of contact pool systems (household, school, work, etc
-        // Infector updates individuals for contacts & transmission within a pool.
 #pragma omp parallel num_threads(m_num_threads)
         {
+                // Update presence/absence in pools.
+#pragma omp for schedule(static)
+                for (size_t i = 0; i < population.size(); ++i) {
+                        population[i].Update(isWorkOff, isSchoolOff);
+                }
+                // Loop over types of contact pool systems (household, school, etc.)
+                // Infector updates individuals for contacts & transmission within a pool.
                 const auto thread_num = static_cast<unsigned int>(omp_get_thread_num());
                 for (auto typ : ContactPoolType::IdList) {
-#pragma omp for schedule(runtime)
+#pragma omp for schedule(static)
                         for (size_t i = 0; i < poolSys[typ].size(); i++) { // NOLINT
-                                const auto s = make_tuple(m_contact_log_mode, m_track_index_case, m_local_info_policy);
-                                (*m_infectors.at(s))(poolSys[typ][i], m_contact_profiles[typ], m_transmission_profile,
-                                                     handlers[thread_num], simDay, contactLogger);
+                                infector(poolSys[typ][i], m_contact_profiles[typ], m_transmission_profile,
+                                         m_handlers[thread_num], simDay, contactLogger);
                         }
                 }
         }
+        m_population->GetContactLogger()->flush();
+        m_calendar->AdvanceDay();
 }
 
 } // namespace stride

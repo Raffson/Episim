@@ -40,25 +40,6 @@ target_link_libraries( ${EXEC}    ${LIBS} gtest pthread libstride)
 install(TARGETS ${EXEC}  DESTINATION   ${BIN_INSTALL_LOCATION})
 
 
-#output isn't written, gotta figure this out...
-#also, need to figure out a way to copy only the files that have been changed...
-add_custom_target( episim-test
-	COMMAND ${CMAKE_COMMAND} -E remove_directory
-		${CMAKE_BINARY_DIR}/test/cpp/gtester/config
-	COMMAND ${CMAKE_COMMAND} -E remove_directory
-		${CMAKE_BINARY_DIR}/test/cpp/gtester/data
-	COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_SOURCE_DIR}/main/resources/EpiSim-test-files/config/
-		${CMAKE_BINARY_DIR}/test/cpp/gtester/config
-	COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_SOURCE_DIR}/main/resources/EpiSim-test-files/data/
-		${CMAKE_BINARY_DIR}/test/cpp/gtester/data
-	COMMAND gtester-episim 
-	${CTEST_VERBOSE_OPTION} -O ${TESTS_DIR}/EpiSim/etests.txt
-	WORKING_DIR ${TESTS_DIR}
-	COMMENT "Running EpiSim's tests..."
-)
-
 set( EXEC2       gtester-episim     )
 set( SRC2
 		EpiSim-tests/main.cpp
@@ -72,6 +53,12 @@ set( SRC2
 add_executable(${EXEC2}   ${SRC2} )
 target_link_libraries( ${EXEC2}    ${LIBS} gtest pthread libstride)
 install(TARGETS ${EXEC2}  DESTINATION   ${BIN_INSTALL_LOCATION})
+
+add_custom_target( episim-test
+	COMMAND ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_LOCATION}/${EXEC2}
+	WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}
+	COMMENT "Running EpiSim's tests..."
+)
 
 #============================================================================
 # Define tests.

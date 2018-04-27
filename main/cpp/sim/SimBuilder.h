@@ -45,7 +45,7 @@ public:
         explicit SimBuilder(const boost::property_tree::ptree& configPt);
 
         /// Build the simulator.
-        std::shared_ptr<Sim> Build(std::shared_ptr<GeoGrid>& grid);
+        std::shared_ptr<Sim> Build();
 
 private:
         /// Get the contact configuration data.

@@ -47,8 +47,7 @@ using namespace std;
 using namespace std::chrono;
 
 StrideRunner::StrideRunner()
-    : m_is_running(false), m_output_prefix(""), m_pt_config(), m_clock("total_clock"), m_sim(make_shared<Sim>()),
-      m_geogrid(nullptr)
+    : m_is_running(false), m_output_prefix(""), m_pt_config(), m_clock("total_clock"), m_sim(nullptr)
 {
 }
 
@@ -138,8 +137,7 @@ void StrideRunner::Setup(bool track_index_case, const string& config_file_name, 
         //------------------------------------------------------------------------------
         m_clock.Start();
         cout << "Building the simulator. " << endl;
-        SimBuilder builder(m_pt_config);
-        m_sim = builder.Build(m_geogrid);
+        m_sim = Sim::Create(m_pt_config);
         cout << "Done building the simulator. " << endl;
 }
 

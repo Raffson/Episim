@@ -46,6 +46,9 @@ public:
         /// @return              Pointer to the population.
         std::shared_ptr<Population> Build();
 
+        static void CreateContactLogger(const boost::property_tree::ptree& configPt,
+                                        const std::shared_ptr<Population>& pop);
+
 private:
         /// Fills up the contact pool system.
         void MakePoolSys();
