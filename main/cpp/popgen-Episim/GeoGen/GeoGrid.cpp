@@ -198,7 +198,6 @@ void GeoGrid::GenerateSchools()
         const double amount_schooled = m_total_pop * m_fract_map[Fractions::SCHOOLED];
         // ceil because we want to at least build 1 school
         auto amount_of_schools = (const unsigned int)ceil(amount_schooled / m_sizes_map[Sizes::SCHOOLS]);
-
         // Determine number of contactpools
         auto cps = ceil(m_sizes_map[Sizes::SCHOOLS] / m_sizes_map[Sizes::AVERAGE_CP]);
 

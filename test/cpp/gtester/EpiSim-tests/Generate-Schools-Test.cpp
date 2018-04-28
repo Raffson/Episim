@@ -60,12 +60,20 @@ TEST_P(SchoolTest, HappyDayScenario)
 
         // Do the test...
         ASSERT_NO_THROW(grid.GenerateSchools()); // happy day
-        // Raphael@Robbe, after deducing fractions from the households, the expected number is incorrect,
-        // so I changed this to what I believe needs to be done...
-        // EXPECT_EQ(grid.GetSchoolCount(), 1736);
         unsigned int target =
             ceil(grid.GetTotalPop() * grid.GetFraction(Fractions::SCHOOLED) / grid.GetAvgSize(Sizes::SCHOOLS));
         EXPECT_EQ(grid.GetSchoolCount(), target);
+
+        float        margin       = 0.4;
+
+        for(auto& it:grid.GetCities()){
+            City* a_city = &it.second;
+            double target = (a_city->GetPopulation() *
+                    grid.GetFraction(Fractions::SCHOOLED)) / grid.GetAvgSize(Sizes::SCHOOLS);
+            EXPECT_NEAR(a_city->GetSchools().size(), target, ceil(target*margin));
+        }
+
+
 }
 
 TEST_P(SchoolTest, WrongInput)
