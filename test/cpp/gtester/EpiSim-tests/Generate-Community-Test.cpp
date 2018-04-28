@@ -42,7 +42,36 @@ protected:
         /// Tearing down the test fixture
         void TearDown() override {}
 };
+    TEST_P(CommunityTest, HappyDayScenario)
+    {
 
+            // -----------------------------------------------------------------------------------------
+            // Initialize the GeoGrid.
+            // -----------------------------------------------------------------------------------------
+            cout << "Building the GeoGrid." << endl;
+            GeoGrid grid;
+            grid.Initialize("config/geogen_default.xml");
+            cout << "Done building the GeoGrid." << endl;
+
+            // -----------------------------------------------------------------------------------------
+            // Check results against expected results.
+            // -----------------------------------------------------------------------------------------
+
+            // Do the test...
+            grid.GenerateColleges();
+            grid.GenerateWorkplaces();
+            grid.GenerateSchools();
+            ASSERT_NO_THROW(grid.GenerateCommunities());
+            float margin = 0.4;
+
+            for(auto& it: grid.GetCities()){
+                    City* a_city = &it.second;
+                    double target = a_city->GetPopulation() / grid.GetAvgSize(Sizes::COMMUNITIES);
+                    EXPECT_NEAR(a_city->GetCommunitiesOfType(CommunityType::Secondary).size(), target, ceil(target*margin));
+            }
+
+
+    }
 TEST_P(CommunityTest, Run)
 {
         // -----------------------------------------------------------------------------------------
