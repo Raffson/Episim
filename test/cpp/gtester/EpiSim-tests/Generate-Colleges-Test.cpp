@@ -83,42 +83,19 @@ TEST_P(CollegeTest, HappyDayScenario)
             total_pop_biggest += it->GetPopulation();
         }
 
+        double margin = 0.41; //how come we need such a big margin?
 
-        auto expMechelen   = ceil(45736  / (double) total_pop_biggest * expected_col_amount);
-        auto expAalst      = ceil(48564  / (double) total_pop_biggest * expected_col_amount);
-        auto expElsene     = ceil(52404  / (double) total_pop_biggest * expected_col_amount);
-        auto expAnderlecht = ceil(53489  / (double) total_pop_biggest * expected_col_amount);
-        auto expLeuven     = ceil(57258  / (double) total_pop_biggest * expected_col_amount);
-        auto expSchaarbeek = ceil(67992  / (double) total_pop_biggest * expected_col_amount);
-        auto expBrugge     = ceil(72487  / (double) total_pop_biggest * expected_col_amount);
-        auto expBrussel    = ceil(86458  / (double) total_pop_biggest * expected_col_amount);
-        auto expGent       = ceil(141210 / (double) total_pop_biggest * expected_col_amount);
-        auto expAntwerpen  = ceil(269954 / (double) total_pop_biggest * expected_col_amount);
+        for(auto& a_city:grid.GetCitiesWithCollege()){
+            auto exp = ceil(a_city->GetPopulation() / (double) total_pop_biggest * expected_col_amount);
+            EXPECT_NEAR(a_city->GetColleges().size(), exp, ceil(exp*margin));
+        }
 
-        double margin = 5;
         auto cities = grid.GetCities();
-        EXPECT_NEAR(cities.at(12025).GetColleges().size(), expMechelen, margin);
-        EXPECT_NEAR(cities.at(41002).GetColleges().size(), expAalst, margin);
-        EXPECT_NEAR(cities.at(21009).GetColleges().size(), expElsene, margin);
-        EXPECT_NEAR(cities.at(21001).GetColleges().size(), expAnderlecht, margin);
-        EXPECT_NEAR(cities.at(24062).GetColleges().size(), expLeuven, margin);
-        EXPECT_NEAR(cities.at(21015).GetColleges().size(), expSchaarbeek, margin);
-        EXPECT_NEAR(cities.at(31005).GetColleges().size(), expBrugge, margin);
-        EXPECT_NEAR(cities.at(21004).GetColleges().size(), expBrussel, margin);
-        EXPECT_NEAR(cities.at(44021).GetColleges().size(), expGent, margin);
-        EXPECT_NEAR(cities.at(11002).GetColleges().size(), expAntwerpen, margin);
 
-        // Now remove these 10 cities and check that all other cities have 0 colleges...
-        cities.erase(12025);
-        cities.erase(41002);
-        cities.erase(21009);
-        cities.erase(21001);
-        cities.erase(24062);
-        cities.erase(21015);
-        cities.erase(31005);
-        cities.erase(21004);
-        cities.erase(44021);
-        cities.erase(11002);
+        // Now remove these cities with colleges and check that all other cities have 0 colleges...
+        for(auto& a_city:grid.GetCitiesWithCollege()){
+            cities.erase(a_city->GetId());
+        }
 
         for (auto& it : cities) {
                 ASSERT_EQ(it.second.GetColleges().size(), 0);

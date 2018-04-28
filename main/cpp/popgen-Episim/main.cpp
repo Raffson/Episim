@@ -141,6 +141,8 @@ int main(int argc, char** argv)
         stride::PopulationGenerator pop_generator(grid);
         pop_generator.GeneratePopulation();
 
+        //grid.WritePopToFile("Test-pop.txt");
+
 #ifdef USING_QT
         // startMap(argc, argv);
         startMap(grid);

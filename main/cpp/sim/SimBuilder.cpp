@@ -21,6 +21,7 @@
 #include "SimBuilder.h"
 
 #include "calendar/Calendar.h"
+#include "contact/InfectorMap.h"
 #include "disease/DiseaseSeeder.h"
 #include "disease/HealthSeeder.h"
 #include "pool/ContactPoolSys.h"
@@ -32,6 +33,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <trng/uniform01_dist.hpp>
 
 namespace stride {
 
@@ -43,14 +45,17 @@ using namespace ContactPoolType;
 
 SimBuilder::SimBuilder(const ptree& configPt) : m_config_pt(configPt) {}
 
-std::shared_ptr<Sim> SimBuilder::Build(std::shared_ptr<GeoGrid>& grid)
+std::shared_ptr<Sim> SimBuilder::Build()
 {
         // --------------------------------------------------------------
         // Preliminaries.
         // --------------------------------------------------------------
-        auto       sim          = make_shared<Sim>();
-        const auto diseasePt    = ReadDiseasePtree();
-        const auto ageContactPt = ReadAgeContactPtree();
+        struct make_shared_enabler : public Sim
+        {
+        };
+        shared_ptr<Sim> sim          = make_shared<make_shared_enabler>();
+        const auto      diseasePt    = ReadDiseasePtree();
+        const auto      ageContactPt = ReadAgeContactPtree();
 
         // --------------------------------------------------------------
         // Config info.
@@ -63,11 +68,23 @@ std::shared_ptr<Sim> SimBuilder::Build(std::shared_ptr<GeoGrid>& grid)
         sim->m_contact_log_mode  = ContactLogMode::ToMode(m_config_pt.get<string>("run.contact_log_level", "None"));
 
         // --------------------------------------------------------------
-        // Initialize RNManager for random number engine management.
+        // Random number manager.
         // --------------------------------------------------------------
         sim->m_rn_manager.Initialize(RNManager::Info{m_config_pt.get<string>("run.rng_type", "mrg2"),
                                                      m_config_pt.get<unsigned long>("run.rng_seed", 1UL), "",
                                                      sim->m_num_threads});
+
+        // --------------------------------------------------------------
+        // Contact handlers, each with generator bound to different
+        // random engine stream) and infector.
+        // --------------------------------------------------------------
+        for (size_t i = 0; i < sim->m_num_threads; i++) {
+                auto gen = sim->m_rn_manager.GetGenerator(trng::uniform01_dist<double>(), i);
+                sim->m_handlers.emplace_back(ContactHandler(gen));
+        }
+
+        const auto& select = make_tuple(sim->m_contact_log_mode, sim->m_track_index_case, sim->m_local_info_policy);
+        sim->m_infector    = InfectorMap().at(select);
 
         // --------------------------------------------------------------
         // Read configuration to determine the Build-profile,
@@ -79,13 +96,14 @@ std::shared_ptr<Sim> SimBuilder::Build(std::shared_ptr<GeoGrid>& grid)
         // Build population.
         // --------------------------------------------------------------
         if( random ) {
-                grid = make_shared<GeoGrid>();
+                sim->m_geogrid = make_shared<GeoGrid>();
                 string path = m_config_pt.get<string>("run.random_geopop_file", "geogen_default.xml");
                 path = "config/" + path;
-                grid->Initialize(path, &sim->m_rn_manager);
-                grid->GenerateAll();
-                PopulationGenerator(*grid).GeneratePopulation();
-                sim->m_population = grid->GetPopulation();
+                sim->m_geogrid->Initialize(path, &sim->m_rn_manager);
+                sim->m_geogrid->GenerateAll();
+                PopulationGenerator(*sim->m_geogrid).GeneratePopulation();
+                sim->m_population = sim->m_geogrid->GetPopulation();
+                PopBuilder::CreateContactLogger(m_config_pt, sim->m_population); //temp solution i guess...
         }
         else sim->m_population = PopBuilder(m_config_pt).Build();
 

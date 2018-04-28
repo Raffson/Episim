@@ -145,14 +145,22 @@ void PopBuilder::Preliminaries()
         // -----------------------------------------------------------------------------------------
         // Create contact_logger to log contacts/transmissions. Do NOT register it.
         // -----------------------------------------------------------------------------------------
-        if (m_config_pt.get<bool>("run.contact_output_file", true)) {
-                const auto prefix         = m_config_pt.get<string>("run.output_prefix");
-                const auto logPath        = FileSys::BuildPath(prefix, "contact_log.txt");
-                m_pop->GetContactLogger() = LogUtils::CreateRotatingLogger("contact_logger", logPath.string());
-                m_pop->GetContactLogger()->set_pattern("%v");
+        CreateContactLogger(m_config_pt, m_pop);
+}
+
+//temp solution i guess...
+void PopBuilder::CreateContactLogger(const boost::property_tree::ptree &configPt,
+                                     const std::shared_ptr<Population> &pop)
+{
+        if (configPt.get<bool>("run.contact_output_file", true)) {
+                const auto prefix       = configPt.get<string>("run.output_prefix");
+                const auto logPath      = FileSys::BuildPath(prefix, "contact_log.txt");
+                pop->GetContactLogger() = LogUtils::CreateRotatingLogger("contact_logger", logPath.string());
+                pop->GetContactLogger()->set_pattern("%v");
         } else {
-                m_pop->GetContactLogger() = LogUtils::CreateNullLogger("contact_logger");
+                pop->GetContactLogger() = LogUtils::CreateNullLogger("contact_logger");
         }
+
 }
 
 } // namespace stride

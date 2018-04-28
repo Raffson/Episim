@@ -2,9 +2,9 @@
 <popgen>
 
     <data_files>
-        <cities>flanders_cities_test.csv</cities>
-        <commuting>flanders_commuting_test.csv</commuting>
-        <households>households_flanders_test.xml</households>
+        <cities>flanders_cities.csv</cities>
+        <commuting>flanders_commuting.csv</commuting>
+        <households>households_flanders.xml</households>
     </data_files>
 
     <belief_policy>
@@ -16,9 +16,13 @@
         <type>lcg64</type>
     </rng>
 
+    <neighbour_classification>
+	<initial_search_radius>10</initial_search_radius>
+    </neighbour_classification>
+
     <pop_info>
         <pop_total>4341923</pop_total>
-
+	<random_ages>false</random_ages>
 
         <!-- fraction of people able to work that is student (18y-26y) -->
         <fraction_students>0.5</fraction_students>
