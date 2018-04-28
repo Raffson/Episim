@@ -191,15 +191,15 @@ void GeoGrid::GenerateAll()
 void GeoGrid::GenerateSchools()
 {
 
-        REQUIRE(m_fract_map[Fractions::SCHOOLED] <= 1, "Schooled Fract is bigger then 1, not possible!");
-        REQUIRE(m_fract_map[Fractions::SCHOOLED] >= 0, "Schooled fract can't be negative");
-        REQUIRE(m_sizes_map[Sizes::SCHOOLS] >= 0, "The initial school size can't be negative");
+        REQUIRE(m_fract_map[Fractions::SCHOOLED] <= 1, "Schooled fraction can't be bigger then 1.");
+        REQUIRE(m_fract_map[Fractions::SCHOOLED] >= 0, "Schooled fraction can't be negative.");
+        REQUIRE(m_sizes_map[Sizes::SCHOOLS] > 0, "The school's average size must be strictly positive.");
         // Calculating extra data
         const double amount_schooled = m_total_pop * m_fract_map[Fractions::SCHOOLED];
         // ceil because we want to at least build 1 school
         auto amount_of_schools = (const unsigned int)ceil(amount_schooled / m_sizes_map[Sizes::SCHOOLS]);
         // Determine number of contactpools
-        auto cps = ceil(m_sizes_map[Sizes::SCHOOLS] / m_sizes_map[Sizes::AVERAGE_CP]);
+        auto cps = ceil((double)m_sizes_map[Sizes::SCHOOLS] / m_sizes_map[Sizes::AVERAGE_CP]);
 
         // Setting up to divide the schools to cities
         vector<double> p_vec;
@@ -261,7 +261,7 @@ void GeoGrid::GenerateColleges()
         }
 
         // Determine number of contactpools
-        auto cps = ceil(m_sizes_map[Sizes::COLLEGES] / m_sizes_map[Sizes::AVERAGE_CP]);
+        auto cps = ceil((double)m_sizes_map[Sizes::COLLEGES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
         double students = m_total_pop * m_fract_map[Fractions::YOUNG] * m_fract_map[Fractions::STUDENTS];
         auto nrcolleges = (unsigned int)ceil(students / m_sizes_map[Sizes::COLLEGES]);

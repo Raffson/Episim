@@ -62,12 +62,19 @@ protected:
             grid.GenerateWorkplaces();
             grid.GenerateSchools();
             ASSERT_NO_THROW(grid.GenerateCommunities());
-            float margin = 0.4;
+
+            //times 2 because we have to count both Primary and Secondary communities
+            double total_communities = 2 * ceil((double)grid.GetTotalPop() / grid.GetAvgSize(Sizes::COMMUNITIES));
+            double popmod = (double)grid.GetTotalPopOfModel() / grid.GetTotalPop();
+            double margin = 0.01 * popmod;
 
             for(auto& it: grid.GetCities()){
                     City* a_city = &it.second;
-                    double target = a_city->GetPopulation() / grid.GetAvgSize(Sizes::COMMUNITIES);
-                    EXPECT_NEAR(a_city->GetCommunitiesOfType(CommunityType::Secondary).size(), target, ceil(target*margin));
+                    double target = (double)a_city->GetPopulation() / grid.GetTotalPopOfModel();
+                    double actual = (a_city->GetPrimaryCommunities().size() + a_city->GetSecondaryCommunities().size())
+                                    / total_communities;
+
+                    EXPECT_NEAR(actual, target, margin);
             }
 
 

@@ -104,7 +104,7 @@ public:
         map<unsigned int, City>& GetCities() { return m_cities; }
 
         /// Getter
-        /// @retval <unsigned int> returns the total population of GeoGrid.
+        /// @retval <unsigned int> returns the total population to be generated for GeoGrid.
         unsigned int GetTotalPop() const { return m_total_pop; }
 
         /// Getter
@@ -193,6 +193,10 @@ public:
         /// Getter
         /// @retval <const bool> Returns whether or not we're using random ages for the population builder.
         const bool UsingRandomAges() const { return m_random_ages; }
+
+        /// Getter
+        /// @retval <unsigned int> Returns the total population of the model.
+        unsigned int GetTotalPopOfModel() { return m_model_pop; } //used for tests
 
 private:
         /// Returns index of city with smallest population from 'lc'

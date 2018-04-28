@@ -59,18 +59,21 @@ TEST_P(SchoolTest, HappyDayScenario)
         // -----------------------------------------------------------------------------------------
 
         // Do the test...
+        grid.GenerateColleges();
+        grid.GenerateWorkplaces();
         ASSERT_NO_THROW(grid.GenerateSchools()); // happy day
         unsigned int target =
             ceil(grid.GetTotalPop() * grid.GetFraction(Fractions::SCHOOLED) / grid.GetAvgSize(Sizes::SCHOOLS));
         EXPECT_EQ(grid.GetSchoolCount(), target);
 
-        float        margin       = 0.4;
+        double popmod = (double)grid.GetTotalPopOfModel() / grid.GetTotalPop();
+        double margin = 0.01 * popmod;
 
         for(auto& it:grid.GetCities()){
             City* a_city = &it.second;
-            double target = (a_city->GetPopulation() *
-                    grid.GetFraction(Fractions::SCHOOLED)) / grid.GetAvgSize(Sizes::SCHOOLS);
-            //EXPECT_NEAR(a_city->GetSchools().size(), target, ceil(target*margin));
+            double target = (double)a_city->GetPopulation() / grid.GetTotalPopOfModel();
+            double actual = (double)a_city->GetSchools().size() / grid.GetSchoolCount();
+            EXPECT_NEAR(actual, target, margin);
         }
 
 
@@ -111,10 +114,6 @@ TEST_P(SchoolTest, HighMoreLowLess)
 
         auto mp = grid.GetCities();
 
-        // Raphael@everyone, is it just me, or are we counting communities instead of population?
-        // Robbe@raphael, the test checks if city with the lowest population has less communities
-        // then the city with the highes population. There shouldn't be an extreme case where
-        // this is not the case
         City*         highest_pop_c = &mp.begin()->second;
         unsigned long highest_pop   = highest_pop_c->GetAllCommunities().size();
 
