@@ -1,0 +1,8 @@
+Mean:                    5.0
+Standard deviation:      0.0
+Lower bound:             5
+Higher_bound:            5
+Shapiro-wilk test-stat:  1.0
+Shapiro-Wilk p-value:    1.0
+99% confidence interval: (nan, nan)
+Batchrun.cpp margin:     0.0
