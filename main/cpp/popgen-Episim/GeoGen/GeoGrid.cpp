@@ -83,14 +83,21 @@ GeoGrid::GeoGrid()
 
 void GeoGrid::Initialize(const boost::filesystem::path& config_file, util::RNManager* rng)
 {
-
+        //i got plans to get rid of this require,
+        // if the file's not found we'll simply build the default ptree ourselves
+        // analogous to the way it's done in RunConfigManager
         REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
-
-        m_school_count = 0;
-        // Setting up property tree to parse xml config file
         boost::property_tree::ptree p_tree;
-
         boost::property_tree::read_xml(config_file.string(), p_tree);
+        Initialize(p_tree, rng);
+}
+
+
+void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree, util::RNManager* rng)
+{
+        //got to check if p_tree came from stride or if we're using stand-alone,
+        // another option would be to always pass on run_default.xml's ptree and somehow combine
+        // this with geogen_default.xml's ptree... i believe the latter is more appropriate...
 
         // reading the cities data file
         string base_path      = "data/";

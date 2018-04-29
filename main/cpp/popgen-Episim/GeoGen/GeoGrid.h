@@ -60,6 +60,12 @@ public:
         /// @param rng: A pointer to the random number generator to be used.
         void Initialize(const boost::filesystem::path& config, util::RNManager* rng = nullptr);
 
+
+        /// Takes a filepath to city_config file and initializes the GeoGrid.
+        /// @param p_tree: A property-tree containing the necessary information.
+        /// @param rng: A pointer to the random number generator to be used.
+        void Initialize(const boost::property_tree::ptree& p_tree, util::RNManager* rng = nullptr);
+
         /// Resets the entire GeoGrid.
         void Reset();
 
