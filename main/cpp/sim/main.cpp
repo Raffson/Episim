@@ -103,6 +103,7 @@ int main(int argc, char** argv)
                         if (configPt.get<string>("run.output_prefix", "").empty()) {
                                 configPt.put("run.output_prefix", TimeStamp().ToTag().append("/"));
                         }
+                        configPt.put("run.random_geopop", false); //override in case someone tries to mess with this...
                         configPt.sort();
 
                         CliController(configPt).Control();
