@@ -187,11 +187,11 @@ ApplicationWindow {
                         if(map.children[k].objectName === "mqi"){
                             if(map.children[k].sourceItem.city_id === out_id){
                                 var endCoordinate = QtPositioning.coordinate(map.children[k].sourceItem.lati, map.children[k].sourceItem.longi);
-                                var path = Qt.createQmlObject('import "custom"; PathDraw{}', pagegi );
-                                path.point1x = circle.sourceItem.xco;
-                                path.point1y = circle.sourceItem.yco;
-                                path.point2x = map.children[k].sourceItem.xco;
-                                path.point2y = map.children[k].sourceItem.yco;
+                                var path = Qt.createQmlObject('import "custom"; PathDraw{}', page);
+                                path.point1x = circle.sourceItem.lati;
+                                path.point1y = circle.sourceItem.longi;
+                                path.point2x = map.children[k].sourceItem.lati;
+                                path.point2y = map.children[k].sourceItem.longi;
                                 stride_paths.push(path);
                             }
                         }
@@ -299,6 +299,8 @@ ApplicationWindow {
         circle.longi = values["longitude"]
         circle.lati = values["latitude"]
         circle.radius = values["radius"]
+        circle.xco = values["x"]
+        circle.yco = values["y"]
         circle.opacity = 0.25
         circle.area_text = values["info"]
         circle.population = values["population"]

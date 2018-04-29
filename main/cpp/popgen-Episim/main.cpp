@@ -75,7 +75,8 @@ int startMap(stride::GeoGrid& grid)
     /// To add cities on the map: use following.
     auto cities = grid.GetCities();
     map<unsigned int, vector<stride::City>> sorted;
-    bubbleSort(cities, sorted);
+    for( auto& city : cities)
+        sorted[-city.second.GetPopulation()].emplace_back(city.second);
     for (auto c_it = sorted.begin(); c_it != sorted.end(); c_it++) {
         for (auto city : (*c_it).second) {
             std::stringstream ss;
