@@ -87,19 +87,14 @@ std::shared_ptr<Sim> SimBuilder::Build()
         sim->m_infector    = InfectorMap().at(select);
 
         // --------------------------------------------------------------
-        // Read configuration to determine the Build-profile,
-        // i.e. read population from file or random generation
-        // --------------------------------------------------------------
-        const bool random = m_config_pt.get<bool>("run.random_geopop", false);
-
-        // --------------------------------------------------------------
         // Build population.
         // --------------------------------------------------------------
-        if( random ) {
+        if( m_config_pt.get<bool>("run.random_geopop", false) ) {
                 sim->m_geogrid = make_shared<GeoGrid>();
-                string path = m_config_pt.get<string>("run.random_geopop_file", "geogen_default.xml");
-                path = "config/" + path;
-                sim->m_geogrid->Initialize(path, &sim->m_rn_manager);
+                const auto file_name        = m_config_pt.get<string>("run.geopop_file", "geogen_default.xml");
+                const auto use_install_dirs = m_config_pt.get<bool>("run.use_install_dirs");
+                const auto file_path        = (use_install_dirs) ? FileSys::GetConfigDir() /= file_name : file_name;
+                sim->m_geogrid->Initialize(file_path, &sim->m_rn_manager);
                 sim->m_geogrid->GenerateAll();
                 PopulationGenerator(*sim->m_geogrid).GeneratePopulation();
                 sim->m_population = sim->m_geogrid->GetPopulation();
