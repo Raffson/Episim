@@ -67,6 +67,7 @@ ApplicationWindow {
     property variant minimap
     property variant parameters
     property variant pop_info
+    property var stride_paths: []
 
     readonly property bool inPortrait: appWindow.width < appWindow.height
 
@@ -87,7 +88,7 @@ ApplicationWindow {
             }
             ToolButton {
                 text: qsTr("show commutings")
-                onClicked: menu.open()
+                onClicked: showCommutes()
             }
             ToolButton {
                 text: qsTr("future function")
@@ -141,7 +142,10 @@ ApplicationWindow {
                         text: qsTr("update population")
                         onClicked: updateSelected()
                     }
-
+                    ToolButton {
+                        text: qsTr("show commuters")
+                        onClicked: showCommutes()
+                    }
                 }
             }
 
@@ -166,6 +170,36 @@ ApplicationWindow {
         }
 
         pop_info = total_count
+    }
+
+
+    function showCommutes(number){
+        console.warn("start commuting");
+        if(number === undefined) number = 10
+        for (var i = 0; i < number; i++){
+            if(map.children[i].objectName === "mqi"){
+                var circle = map.children[i];
+                var startCoordinate = QtPositioning.coordinate(circle.sourceItem.lati, circle.sourceItem.longi);
+
+                for (var j = 0; j < circle.sourceItem.out_commuting.length; j++){
+                    var out_id = circle.sourceItem.out_commuting[j];
+                    for (var k = 0; k < map.children.length; k++){
+                        if(map.children[k].objectName === "mqi"){
+                            if(map.children[k].sourceItem.city_id === out_id){
+                                var endCoordinate = QtPositioning.coordinate(map.children[k].sourceItem.lati, map.children[k].sourceItem.longi);
+                                var path = Qt.createQmlObject('import "custom"; PathDraw{}', pagegi );
+                                path.point1x = circle.sourceItem.xco;
+                                path.point1y = circle.sourceItem.yco;
+                                path.point2x = map.children[k].sourceItem.xco;
+                                path.point2y = map.children[k].sourceItem.yco;
+                                stride_paths.push(path);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        console.warn("finished commuting");
     }
 
     //defaults
@@ -243,7 +277,7 @@ ApplicationWindow {
     }
 
 
-    function placeCity(values, commuting_in, commuting_out){
+    function placeCity(values, commuting_in_id, commuting_in_size, commuting_out_id, commuting_out_size){
         var item = Qt.createQmlObject('import QtQuick 2.7; import QtLocation 5.3; MapQuickItem{objectName: "mqi";}', map, "dynamic")
         item.coordinate = QtPositioning.coordinate(values["latitude"], values["longitude"])
 
@@ -258,10 +292,12 @@ ApplicationWindow {
             wh = min
         }
         circle.city_id = values["id"]
-        circle.in_commuting = commuting_in
-        circle.out_commuting = commuting_out
+        circle.in_commuting = commuting_in_id
+        circle.out_commuting = commuting_out_id
         circle.width = wh
         circle.height = wh
+        circle.longi = values["longitude"]
+        circle.lati = values["latitude"]
         circle.radius = values["radius"]
         circle.opacity = 0.25
         circle.area_text = values["info"]

@@ -72,62 +72,74 @@ int startMap(stride::GeoGrid& grid)
         coords.push_back(c.longitude);
         QMetaObject::invokeMethod(item, "setCentre", Q_ARG(QVariant, QVariant::fromValue(coords)));
 
-        /// To add cities on the map: use following.
-        auto cities = grid.GetCities();
-        for (map<unsigned int, stride::City>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {
-                std::stringstream ss;
-                string            s;
-                string            temp;
-                /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
-                stride::City&          city = (*c_it).second;
-                QVariantMap            vals;
-                QList<QPair<int, int>> in_commuting;
-                QList<QPair<int, int>> out_commuting;
-                /// ID of the city, used for the commuting details
-                vals["id"] = city.GetId();
-                /// Latitude
-                vals["latitude"] = city.GetCoordinates().latitude;
-                /// Longitude
-                vals["longitude"] = city.GetCoordinates().longitude;
-                /// X coordinate
-                vals["x"] = city.GetCoordinates().x;
-                /// Y coordinate
-                vals["y"] = city.GetCoordinates().y;
-                /// Radius
-                vals["radius"] = city.GetPopulation() / (2 * M_PI);
-                /// Percentage
-                vals["perc"] = city.GetPopulation() / (double)grid.GetTotalPop();
-                // cout << 50000 * (city.GetPopulation() / (double)grid.GetTotalPop()) << endl;
-                /// Population
-                vals["population"] = city.GetPopulation();
-                /// Info
-                ss << city.GetPopulation();
-                ss >> s;
-                s += "\n";
-                s.append(city.GetName());
-                s += "\n";
-                QString qs   = QString(s.c_str());
-                vals["info"] = qs;
-                /// Commuting information
-                auto com_in = city.GetInCommuting();
-                for (auto it : com_in) {
-                        // it.first: id of other city
-                        // it.second: number of commuters
-                        in_commuting.push_back(qMakePair(it.first, it.second));
-                }
-                auto com_out = city.GetOutCommuting();
-                for (auto it : com_out) {
-                        // it.first: id of other city
-                        // it.second: number of commuters
-                        out_commuting.push_back(qMakePair(it.first, it.second));
-                }
+    /// To add cities on the map: use following.
+    auto cities = grid.GetCities();
+    map<unsigned int, vector<stride::City>> sorted;
+    bubbleSort(cities, sorted);
+    for (auto c_it = sorted.begin(); c_it != sorted.end(); c_it++) {
+        for (auto city : (*c_it).second) {
+            std::stringstream ss;
+            string s;
+            string temp;
+            /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
+//            stride::City &city = (*c_it).second;
+            QVariantMap vals;
+            QList<int> in_commuting_id;
+            QList<int> in_commuting_size;
+            QList<int> out_commuting_id;
+            QList<int> out_commuting_size;
+            /// ID of the city, used for the commuting details
+            vals["id"] = city.GetId();
+            /// Latitude
+            vals["latitude"] = city.GetCoordinates().latitude;
+            /// Longitude
+            vals["longitude"] = city.GetCoordinates().longitude;
+            /// X coordinate
+            vals["x"] = city.GetCoordinates().x;
+            /// Y coordinate
+            vals["y"] = city.GetCoordinates().y;
+            /// Radius
+            vals["radius"] = city.GetPopulation() / (2 * M_PI);
+            /// Percentage
+            vals["perc"] = city.GetPopulation() / (double) grid.GetTotalPop();
+            // cout << 50000 * (city.GetPopulation() / (double)grid.GetTotalPop()) << endl;
+            /// Population
+            vals["population"] = city.GetPopulation();
+            /// Info
+            ss << city.GetPopulation();
+            ss >> s;
+            s += "\n";
+            s.append(city.GetName());
+            s += "\n";
+            QString qs = QString(s.c_str());
+            vals["info"] = qs;
+            /// Commuting information
+            auto com_in = city.GetInCommuting();
+            for (auto it : com_in) {
+                // it.first: id of other city
+                // it.second: number of commuters
+                in_commuting_id.push_back(it.first);
+                in_commuting_size.push_back(it.second);
+            }
+            auto com_out = city.GetOutCommuting();
+            for (auto it : com_out) {
+                // it.first: id of other city
+                // it.second: number of commuters
+                out_commuting_id.push_back(it.first);
+                out_commuting_size.push_back(it.second);
+            }
 
-                QMetaObject::invokeMethod(item, "placeCity", Q_ARG(QVariant, QVariant::fromValue(vals)),
-                                          Q_ARG(QVariant, QVariant::fromValue(in_commuting)),
-                                          Q_ARG(QVariant, QVariant::fromValue(out_commuting)));
+
+            QMetaObject::invokeMethod(item, "placeCity", Q_ARG(QVariant, QVariant::fromValue(vals)),
+                                      Q_ARG(QVariant, QVariant::fromValue(in_commuting_id)),
+                                      Q_ARG(QVariant, QVariant::fromValue(in_commuting_size)),
+                                      Q_ARG(QVariant, QVariant::fromValue(out_commuting_id)),
+                                      Q_ARG(QVariant, QVariant::fromValue(out_commuting_size)));
         }
+    }
 
-        return application.exec();
+
+    return application.exec();
 }
 
 #endif
