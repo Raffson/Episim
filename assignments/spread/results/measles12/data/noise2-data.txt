@@ -1,0 +1,8 @@
+Mean:                    114873.19
+Standard deviation:      119.17500034432852
+Lower bound:             114632
+Higher_bound:            115235
+Shapiro-wilk test-stat:  0.986790657043457
+Shapiro-Wilk p-value:    0.4237042963504791
+99% confidence interval: (114792.71174175879, 114953.66825796083)
+Batchrun.cpp margin:     0.0031496470151129055
