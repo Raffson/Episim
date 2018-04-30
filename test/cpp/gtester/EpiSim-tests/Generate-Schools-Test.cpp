@@ -51,7 +51,7 @@ TEST_P(SchoolTest, HappyDayScenario)
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
         GeoGrid grid;
-        grid.Initialize("config/geogen_default.xml");
+        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default_test.xml"));
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -59,9 +59,9 @@ TEST_P(SchoolTest, HappyDayScenario)
         // -----------------------------------------------------------------------------------------
 
         // Do the test...
-        grid.GenerateColleges();
-        grid.GenerateWorkplaces();
-        ASSERT_NO_THROW(grid.GenerateSchools()); // happy day
+        ASSERT_NO_FATAL_FAILURE(grid.GenerateColleges());
+        ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
+        ASSERT_NO_FATAL_FAILURE(grid.GenerateSchools()); // happy day
         unsigned int target =
             ceil(grid.GetTotalPop() * grid.GetFraction(Fractions::SCHOOLED) / grid.GetAvgSize(Sizes::SCHOOLS));
         EXPECT_EQ(grid.GetSchoolCount(), target);
@@ -109,7 +109,7 @@ TEST_P(SchoolTest, HighMoreLowLess)
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
         GeoGrid grid;
-        grid.Initialize("config/geogen_default.xml");
+        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default_test.xml"));
         cout << "Done building the GeoGrid." << endl;
 
         auto mp = grid.GetCities();

@@ -90,15 +90,9 @@ std::shared_ptr<Sim> SimBuilder::Build()
         // Build population.
         // --------------------------------------------------------------
         if( m_config_pt.get<bool>("run.random_geopop", false) ) {
-                sim->m_geogrid = make_shared<GeoGrid>();
-                const auto file_name        = m_config_pt.get<string>("run.geopop_file", "geogen_default.xml");
-                const auto use_install_dirs = m_config_pt.get<bool>("run.use_install_dirs");
-                const auto file_path        = (use_install_dirs) ? FileSys::GetConfigDir() /= file_name : file_name;
-                sim->m_geogrid->Initialize(file_path, &sim->m_rn_manager);
-                sim->m_geogrid->GenerateAll();
+                sim->m_geogrid = make_shared<GeoGrid>(m_config_pt, &sim->m_rn_manager);
                 PopulationGenerator(*sim->m_geogrid).GeneratePopulation();
                 sim->m_population = sim->m_geogrid->GetPopulation();
-                PopBuilder::CreateContactLogger(m_config_pt, sim->m_population); //temp solution i guess...
         }
         else sim->m_population = PopBuilder(m_config_pt).Build();
 

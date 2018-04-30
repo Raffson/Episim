@@ -81,62 +81,81 @@ GeoGrid::GeoGrid()
             m_sizes_map[size] = 0;
 }
 
-void GeoGrid::Initialize(const boost::filesystem::path& config_file, util::RNManager* rng)
+GeoGrid::GeoGrid(const boost::property_tree::ptree& p_tree, util::RNManager* rng)
+        : GeoGrid()
 {
-        //i got plans to get rid of this require,
-        // if the file's not found we'll simply build the default ptree ourselves
-        // analogous to the way it's done in RunConfigManager
-        REQUIRE(file_exists(config_file), "Could not find the provided configuration file");
-        boost::property_tree::ptree p_tree;
-        boost::property_tree::read_xml(config_file.string(), p_tree);
-        Initialize(p_tree, rng);
+    Initialize(p_tree, rng);
+    GenerateAll();
+}
+
+void GeoGrid::Initialize(const boost::filesystem::path& configFile, util::RNManager* rng)
+{
+        boost::property_tree::ptree pTree;
+        boost::filesystem::path config;
+        config = file_exists(configFile) ? configFile : util::FileSys::GetConfigDir() / configFile;
+        config = file_exists(config) ? config : util::FileSys::GetConfigDir() / "run_default.xml";
+        boost::property_tree::read_xml(config.string(), pTree);
+        Initialize(pTree, rng);
 }
 
 
 void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree, util::RNManager* rng)
 {
-        //got to check if p_tree came from stride or if we're using stand-alone,
-        // another option would be to always pass on run_default.xml's ptree and somehow combine
-        // this with geogen_default.xml's ptree... i believe the latter is more appropriate...
+        // TODO: This is getting too big, may want to refactor this a bit...
+        //If an incorrect ptree is passed, this function may throw an exception...
+        m_config_pt = p_tree;
+        if (m_config_pt.get<string>("run.output_prefix", "").empty()) {
+            m_config_pt.put("run.output_prefix", util::TimeStamp().ToTag().append("/"));
+        }
+        const auto file_name        = m_config_pt.get<string>("run.geopop_file", "geogen_default.xml");
+        const auto use_install_dirs = m_config_pt.get<bool>("run.use_install_dirs");
+        const auto file_path        = (use_install_dirs) ? util::FileSys::GetConfigDir() /= file_name : file_name;
+        boost::property_tree::ptree popgen;
+        boost::property_tree::read_xml(file_path.string(), popgen);
+        m_config_pt.add_child("run.popgen", popgen);
+        m_config_pt.sort();
 
         // reading the cities data file
-        string base_path      = "data/";
-        string city_file      = p_tree.get("popgen.data_files.cities", "flanders_cities.csv");
-        string commuting_file = p_tree.get("popgen.data_files.commuting", "flanders_commuting.csv");
-        string household_file = p_tree.get("popgen.data_files.households", "households_flanders.xml");
-        m_belief              = p_tree.get_child("popgen.belief_policy");
+        const auto base_path  = (use_install_dirs) ? util::FileSys::GetDataDir() : "";
+        string city_file      = m_config_pt.get("run.popgen.data_files.cities", "flanders_cities.csv");
+        string commuting_file = m_config_pt.get("run.popgen.data_files.commuting", "flanders_commuting.csv");
+        string household_file = m_config_pt.get("run.popgen.data_files.households", "households_flanders.xml");
+        m_belief              = m_config_pt.get_child("run.belief_policy");
 
-        m_total_pop = p_tree.get<unsigned int>("popgen.pop_info.pop_total");
+        m_total_pop = m_config_pt.get<unsigned int>("run.popgen.pop_info.pop_total", 4341923);
         m_population->reserve(m_total_pop);
+        PopBuilder::CreateContactLogger(m_config_pt, m_population);
 
-        m_random_ages = p_tree.get<bool>("popgen.pop_info.random_ages", false);
+        m_random_ages = m_config_pt.get<bool>("run.popgen.pop_info.random_ages", false);
 
-        m_fract_map[Fractions::STUDENTS] = abs(p_tree.get<double>("popgen.pop_info.fraction_students"));
+        m_fract_map[Fractions::STUDENTS] = abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_students", 0.5));
         m_fract_map[Fractions::COMMUTING_STUDENTS] =
-            abs(p_tree.get<double>("popgen.pop_info.fraction_commuting_students"));
-        m_fract_map[Fractions::ACTIVE] = abs(p_tree.get<double>("popgen.pop_info.fraction_active_workers"));
+            abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_commuting_students", 0.5));
+        m_fract_map[Fractions::ACTIVE] = abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_active_workers", 0.5));
         m_fract_map[Fractions::COMMUTING_WORKERS] =
-            abs(p_tree.get<double>("popgen.pop_info.fraction_commuting_workers"));
+            abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_commuting_workers", 0.5));
 
-        m_sizes_map[Sizes::AVERAGE_CP]  = (unsigned int)abs(p_tree.get<long>("popgen.contactpool_info.average_size"));
-        m_sizes_map[Sizes::SCHOOLS]     = (unsigned int)abs(p_tree.get<long>("popgen.contactpool_info.school.size"));
-        m_sizes_map[Sizes::COLLEGES]    = (unsigned int)abs(p_tree.get<long>("popgen.contactpool_info.college.size"));
-        m_sizes_map[Sizes::MAXLC]       = (unsigned int)abs(p_tree.get<long>("popgen.contactpool_info.college.cities"));
-        m_sizes_map[Sizes::COMMUNITIES] = (unsigned int)abs(p_tree.get<long>("popgen.contactpool_info.community.size"));
-        m_sizes_map[Sizes::WORKPLACES]  = (unsigned int)abs(p_tree.get<long>("popgen.contactpool_info.workplace.size"));
+        m_sizes_map[Sizes::AVERAGE_CP]  = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.average_size", 20));
+        m_sizes_map[Sizes::SCHOOLS]     = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.school.size", 500));
+        m_sizes_map[Sizes::COLLEGES]    = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.college.size", 3000));
+        m_sizes_map[Sizes::MAXLC]       = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.college.cities", 10));
+        m_sizes_map[Sizes::COMMUNITIES] = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.community.size", 2000));
+        m_sizes_map[Sizes::WORKPLACES]  = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.workplace.size", 20));
 
-        m_model_households = parser::ParseHouseholds(base_path + household_file);
+        m_model_households = parser::ParseHouseholds(base_path / household_file);
         GetMainFractions();
 
-        parser::ParseCities(base_path + city_file, m_cities, m_model_pop);
-        parser::ParseCommuting(base_path + commuting_file, m_cities, m_fract_map);
+        parser::ParseCities(base_path / city_file, m_cities, m_model_pop);
+        parser::ParseCommuting(base_path / commuting_file, m_cities, m_fract_map);
 
-        m_initial_search_radius = p_tree.get<unsigned int>("popgen.neighbour_classification.initial_search_radius", 10U);
+        m_initial_search_radius = m_config_pt.get<unsigned int>("run.popgen.neighbour_classification.initial_search_radius", 10U);
 
         // Setting up RNG
-        unsigned long seed = (unsigned long)abs(p_tree.get("popgen.rng.seed", 0));
-        string        type = p_tree.get("popgen.rng.type", "mrg2");
-        if( rng == nullptr ) default_generator.Initialize(util::RNManager::Info(type, seed));
+        if( rng == nullptr ) {
+            unsigned long seed = (unsigned long)abs(m_config_pt.get("run.rng_seed", 0));
+            string        type = m_config_pt.get("run.rng_type", "mrg2");
+            default_generator.Initialize(util::RNManager::Info(type, seed));
+        }
         //else we're assuming the RNG was initialized already...
 
         // rounding errors cause the first ensure to fail in some conditions...
@@ -184,6 +203,7 @@ void GeoGrid::Reset()
         m_cities_with_college.clear();
         m_belief.clear();
         m_random_ages = false;
+        m_config_pt.clear();
 }
 
 void GeoGrid::GenerateAll()
@@ -326,12 +346,16 @@ void GeoGrid::GenerateWorkplaces()
         auto   number_of_workplaces = (unsigned int)ceil(allworkers / m_sizes_map[Sizes::WORKPLACES]);
         auto   rndm_vec             = generate_random(lottery_vec, m_rng, number_of_workplaces);
 
+        auto cps = ceil((double)m_sizes_map[Sizes::WORKPLACES] / m_sizes_map[Sizes::AVERAGE_CP]);
+
         // Now we will place each workplace randomly in our city, making use of our lottery vec.
         for (unsigned int i = 0; i < number_of_workplaces; i++) {
                 City*      chosen_city  = c_vec[rndm_vec[i]];
                 Community& nw_workplace = chosen_city->AddCommunity(CommunityType::Work);
                 // A workplace has a contactpool.
-                nw_workplace.AddContactPool(m_pool_sys);
+                for (auto j = 0; j < cps; j++) {
+                    nw_workplace.AddContactPool(m_pool_sys);
+                }
         }
 }
 
@@ -472,7 +496,7 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
 void GeoGrid::WritePopToFile(const string &fname) const
 {
     std::ofstream file;
-    file.open (fname.c_str(), std::ofstream::out);
+    file.open ((m_config_pt.get<string>("run.output_prefix") + fname).c_str(), std::ofstream::out);
     file << "\"age\",\"household_id\",\"school_id\",\"work_id\",\"primary_community\",\"secundary_community\"" << endl;
     file << *m_population << endl;
     file.close();

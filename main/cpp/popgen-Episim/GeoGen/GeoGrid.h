@@ -15,9 +15,13 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "pop/PopBuilder.h"
 #include "pop/Population.h"
 #include "util/ConfigInfo.h"
+#include "util/FileSys.h"
 #include "util/RNManager.h"
+#include "util/TimeStamp.h"
+
 
 #include "popgen-Episim/GeoGen/City.h"
 #include "popgen-Episim/GeoGen/Community.h"
@@ -52,6 +56,12 @@ class GeoGrid
 public:
         /// Default constructor which initializes some members to 0.
         GeoGrid();
+
+        /// Specialized constructor which will immediately initialize and generate the GeoGrid.
+        /// @param p_tree: A property-tree containing the necessary information.
+        /// @param rng: A pointer to the random number generator to be used.
+        GeoGrid(const boost::property_tree::ptree& p_tree, util::RNManager* rng = nullptr);
+
 
         /// Takes a filepath to city_config file and initializes the GeoGrid.
         /// @param config: a path to a gegogen config file. This file contains
@@ -194,7 +204,7 @@ public:
         /// @param fname The name of the file to be written.
         // TODO: this file should be written to some specific folder,
         // TODO: perhaps the output folder mentioned in the config file...
-        void WritePopToFile(const string& fname) const;
+        void WritePopToFile(const string& fname = "population.csv") const;
 
         /// Getter
         /// @retval <const bool> Returns whether or not we're using random ages for the population builder.
@@ -203,6 +213,11 @@ public:
         /// Getter
         /// @retval <unsigned int> Returns the total population of the model.
         unsigned int GetTotalPopOfModel() { return m_model_pop; } //used for tests
+
+        /// Getter
+        /// @retval <const boost::property_tree::ptree&> A const reference to the property tree
+        /// representing the configuration.
+        const boost::property_tree::ptree& GetConfigPtree() const { return m_config_pt; }
 
 private:
         /// Returns index of city with smallest population from 'lc'
@@ -221,6 +236,10 @@ private:
         void ClassifyNeighbours();
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
+
+        ///< The property tree containing the configuration.
+        boost::property_tree::ptree m_config_pt;
+
         ///< Effective map of all our fractions. Read the Fractions Enum what it will contain.
         map<Fractions, double> m_fract_map{};
 

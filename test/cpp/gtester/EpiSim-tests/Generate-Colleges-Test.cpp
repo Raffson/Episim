@@ -50,7 +50,7 @@ TEST_P(CollegeTest, HappyDayScenario)
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
         GeoGrid grid;
-        grid.Initialize("config/geogen_default.xml");
+        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default_test.xml"));
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ TEST_P(CollegeTest, HappyDayScenario)
          * 11002,1,269954,153104.586,212271.7101,51.2165845,4.413545489,ANTWERPEN
          *
          */
-         grid.GenerateColleges();
+        ASSERT_NO_FATAL_FAILURE(grid.GenerateColleges());
 
         // Expected nr of colleges
         double       stufrac       = grid.GetFraction(Fractions::STUDENTS);
@@ -84,7 +84,7 @@ TEST_P(CollegeTest, HappyDayScenario)
         }
 
         double popmod = (double)grid.GetTotalPopOfModel() / grid.GetTotalPop();
-        double margin = 0.04 * popmod;
+        double margin = 0.075 * popmod;
 
         for(auto& a_city:grid.GetCitiesWithCollege()){
             double target = a_city->GetPopulation() / total_pop_biggest;

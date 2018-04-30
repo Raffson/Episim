@@ -29,7 +29,7 @@ protected:
         void SetUp() override
         {
                 geo = new GeoGrid();
-                geo->Initialize("config/geogen_default.xml");
+                geo->Initialize("run_default_test.xml");
         }
 
         /// Tearing down the test fixture

@@ -50,7 +50,7 @@ protected:
             // -----------------------------------------------------------------------------------------
             cout << "Building the GeoGrid." << endl;
             GeoGrid grid;
-            grid.Initialize("config/geogen_default.xml");
+            ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default_test.xml"));
             cout << "Done building the GeoGrid." << endl;
 
             // -----------------------------------------------------------------------------------------
@@ -58,10 +58,10 @@ protected:
             // -----------------------------------------------------------------------------------------
 
             // Do the test...
-            grid.GenerateColleges();
-            grid.GenerateWorkplaces();
-            grid.GenerateSchools();
-            ASSERT_NO_THROW(grid.GenerateCommunities());
+            ASSERT_NO_FATAL_FAILURE(grid.GenerateColleges());
+            ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
+            ASSERT_NO_FATAL_FAILURE(grid.GenerateSchools());
+            ASSERT_NO_FATAL_FAILURE(grid.GenerateCommunities());
 
             //times 2 because we have to count both Primary and Secondary communities
             double total_communities = 2 * ceil((double)grid.GetTotalPop() / grid.GetAvgSize(Sizes::COMMUNITIES));
@@ -86,7 +86,7 @@ TEST_P(CommunityTest, Run)
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
         GeoGrid grid;
-        grid.Initialize("config/geogen_default.xml");
+        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default_test.xml"));
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
