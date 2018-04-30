@@ -123,28 +123,20 @@ TEST(GeoGridCtorTest, BadFractions)
         boost::property_tree::read_xml("config/run_default_test.xml", p_tree);
         p_tree.put("run.geopop_file", "bad_student_frac_0.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
-        ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_stucom_frac_0.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
-        ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_active_frac_0.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
-        ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_workcom_frac_0.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
-        ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_student_frac_1.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
-        ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_stucom_frac_1.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
-        ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_active_frac_1.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
-        ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_workcom_frac_1.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
-        ASSERT_NO_FATAL_FAILURE(grid.Reset());
 
         // This last test will check a contactpool's size that exceeds the cap op 1000...
         p_tree.put("run.geopop_file", "bad_contactpool_size.xml");

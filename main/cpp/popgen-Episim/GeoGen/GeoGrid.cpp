@@ -204,6 +204,7 @@ void GeoGrid::Reset()
         m_belief.clear();
         m_random_ages = false;
         m_config_pt.clear();
+        m_rng = nullptr;
 }
 
 void GeoGrid::GenerateAll()
