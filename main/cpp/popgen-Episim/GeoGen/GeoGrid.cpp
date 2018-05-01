@@ -88,66 +88,123 @@ GeoGrid::GeoGrid(const boost::property_tree::ptree& p_tree, util::RNManager* rng
     GenerateAll();
 }
 
-void GeoGrid::Initialize(const boost::filesystem::path& configFile, util::RNManager* rng)
+void GeoGrid::Initialize(const boost::filesystem::path& configFile, util::RNManager* rng, const bool override)
 {
         boost::property_tree::ptree pTree;
         boost::filesystem::path config;
         config = file_exists(configFile) ? configFile : util::FileSys::GetConfigDir() / configFile;
         config = file_exists(config) ? config : util::FileSys::GetConfigDir() / "run_default.xml";
         boost::property_tree::read_xml(config.string(), pTree);
+        if( override )
+        {
+            pTree.put("run.contact_output_file", false);
+            pTree.put("run.rng_type", "lcg64");
+        }
         Initialize(pTree, rng);
 }
 
+void GeoGrid::InitOutputStuff()
+{
+    if (m_config_pt.get<string>("run.output_prefix", "").empty()) {
+        m_config_pt.put("run.output_prefix", util::TimeStamp().ToTag().append("-PopGen_Standalone/"));
+        if( !m_config_pt.get<bool>("run.contact_output_file", false) )
+            return;
+        if (util::FileSys::IsDirectoryString(m_config_pt.get<string>("run.output_prefix"))) {
+            try {
+                boost::filesystem::create_directories(m_config_pt.get<string>("run.output_prefix"));
+            } catch (exception& e) {
+                cerr << "GeoGrid::Initialize> Exception creating directory:  {}"
+                     << m_config_pt.get<string>("run.output_prefix") << endl;
+                throw;
+            }
+        }
+    }
+}
+
+void GeoGrid::AddPopgenPtree()
+{
+    const auto file_name        = m_config_pt.get<string>("run.geopop_file", "geogen_default.xml");
+    const auto use_install_dirs = m_config_pt.get<bool>("run.use_install_dirs");
+    const auto file_path        = (use_install_dirs) ? util::FileSys::GetConfigDir() /= file_name : file_name;
+    boost::property_tree::ptree popgen;
+    boost::property_tree::read_xml(file_path.string(), popgen);
+    m_config_pt.add_child("run.popgen", popgen);
+    m_config_pt.sort();
+}
+
+void GeoGrid::ReadFractionsAndSizes()
+{
+    m_fract_map[Fractions::STUDENTS] = abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_students", 0.5));
+    m_fract_map[Fractions::COMMUTING_STUDENTS] =
+            abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_commuting_students", 0.5));
+    m_fract_map[Fractions::ACTIVE] = abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_active_workers", 0.5));
+    m_fract_map[Fractions::COMMUTING_WORKERS] =
+            abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_commuting_workers", 0.5));
+
+    m_sizes_map[Sizes::AVERAGE_CP]  = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.average_size", 20));
+    m_sizes_map[Sizes::SCHOOLS]     = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.school.size", 500));
+    m_sizes_map[Sizes::COLLEGES]    = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.college.size", 3000));
+    m_sizes_map[Sizes::MAXLC]       = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.college.cities", 10));
+    m_sizes_map[Sizes::COMMUNITIES] = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.community.size", 2000));
+    m_sizes_map[Sizes::WORKPLACES]  = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.workplace.size", 20));
+}
+
+void GeoGrid::ReadDataFiles()
+{
+    // reading the cities data file
+    const auto base_path  = (m_config_pt.get<bool>("run.use_install_dirs")) ? util::FileSys::GetDataDir() : "";
+    string city_file      = m_config_pt.get("run.popgen.data_files.cities", "flanders_cities.csv");
+    string commuting_file = m_config_pt.get("run.popgen.data_files.commuting", "flanders_commuting.csv");
+    string household_file = m_config_pt.get("run.popgen.data_files.households", "households_flanders.xml");
+
+    m_model_households = parser::ParseHouseholds(base_path / household_file);
+    GetMainFractions();
+
+    parser::ParseCities(base_path / city_file, m_cities, m_model_pop);
+    parser::ParseCommuting(base_path / commuting_file, m_cities, m_fract_map);
+
+}
+
+void GeoGrid::EnforceEnsures()
+{
+    // rounding errors cause the first ensure to fail in some conditions...
+    // however, is this first ENSURE necessary?
+    // it should never fail since we decude the fractions from the households,
+    // so removed the correspronding death test until we find a better test...
+    // TODO: Working with DesignByContract still relevant?
+    // Raphael@Robbe, of course it is, everywhere where we have these REQUIRES and ENSURES, let them be...
+    double totalfrac = m_fract_map[Fractions::YOUNG] + m_fract_map[Fractions::MIDDLE_AGED] +
+                       m_fract_map[Fractions::TODDLERS] + m_fract_map[Fractions::OLDIES] +
+                       m_fract_map[Fractions::SCHOOLED];
+    ENSURE(fabs(totalfrac - 1) < constants::EPSILON, "Pop frac should equal 1");
+    ENSURE(1 >= m_fract_map[Fractions::STUDENTS] and m_fract_map[Fractions::STUDENTS] >= 0,
+           "Student fraction must be between 0 and 1");
+    ENSURE(1 >= m_fract_map[Fractions::COMMUTING_STUDENTS] and m_fract_map[Fractions::COMMUTING_STUDENTS] >= 0,
+           "Student Commuting fraction must be between 0 and 1");
+    ENSURE(1 >= m_fract_map[Fractions::ACTIVE] and m_fract_map[Fractions::ACTIVE] >= 0,
+           "Active workers fraction must be between 0 and 1");
+    ENSURE(1 >= m_fract_map[Fractions::COMMUTING_WORKERS] and m_fract_map[Fractions::COMMUTING_WORKERS] >= 0,
+           "Commuting workers fraction must be between 0 and 1");
+    // Capping pool size at 1000, gotta ask the professor what the actual cap should be...
+    ENSURE(m_sizes_map[Sizes::AVERAGE_CP] > 0 and m_sizes_map[Sizes::AVERAGE_CP] <= 1000,
+           "Contactpool's size must be bigger than 0 and smaller than or equal to 1000");
+
+}
 
 void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree, util::RNManager* rng)
 {
-        // TODO: This is getting too big, may want to refactor this a bit...
         //If an incorrect ptree is passed, this function may throw an exception...
         m_config_pt = p_tree;
-        if (m_config_pt.get<string>("run.output_prefix", "").empty()) {
-            m_config_pt.put("run.output_prefix", util::TimeStamp().ToTag().append("/"));
-        }
-        const auto file_name        = m_config_pt.get<string>("run.geopop_file", "geogen_default.xml");
-        const auto use_install_dirs = m_config_pt.get<bool>("run.use_install_dirs");
-        const auto file_path        = (use_install_dirs) ? util::FileSys::GetConfigDir() /= file_name : file_name;
-        boost::property_tree::ptree popgen;
-        boost::property_tree::read_xml(file_path.string(), popgen);
-        m_config_pt.add_child("run.popgen", popgen);
-        m_config_pt.sort();
-
-        // reading the cities data file
-        const auto base_path  = (use_install_dirs) ? util::FileSys::GetDataDir() : "";
-        string city_file      = m_config_pt.get("run.popgen.data_files.cities", "flanders_cities.csv");
-        string commuting_file = m_config_pt.get("run.popgen.data_files.commuting", "flanders_commuting.csv");
-        string household_file = m_config_pt.get("run.popgen.data_files.households", "households_flanders.xml");
-        m_belief              = m_config_pt.get_child("run.belief_policy");
+        InitOutputStuff();
+        AddPopgenPtree();
+        ReadFractionsAndSizes();
+        ReadDataFiles();
 
         m_total_pop = m_config_pt.get<unsigned int>("run.popgen.pop_info.pop_total", 4341923);
         m_population->reserve(m_total_pop);
         PopBuilder::CreateContactLogger(m_config_pt, m_population);
 
         m_random_ages = m_config_pt.get<bool>("run.popgen.pop_info.random_ages", false);
-
-        m_fract_map[Fractions::STUDENTS] = abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_students", 0.5));
-        m_fract_map[Fractions::COMMUTING_STUDENTS] =
-            abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_commuting_students", 0.5));
-        m_fract_map[Fractions::ACTIVE] = abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_active_workers", 0.5));
-        m_fract_map[Fractions::COMMUTING_WORKERS] =
-            abs(m_config_pt.get<double>("run.popgen.pop_info.fraction_commuting_workers", 0.5));
-
-        m_sizes_map[Sizes::AVERAGE_CP]  = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.average_size", 20));
-        m_sizes_map[Sizes::SCHOOLS]     = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.school.size", 500));
-        m_sizes_map[Sizes::COLLEGES]    = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.college.size", 3000));
-        m_sizes_map[Sizes::MAXLC]       = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.college.cities", 10));
-        m_sizes_map[Sizes::COMMUNITIES] = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.community.size", 2000));
-        m_sizes_map[Sizes::WORKPLACES]  = (unsigned int)abs(m_config_pt.get<long>("run.popgen.contactpool_info.workplace.size", 20));
-
-        m_model_households = parser::ParseHouseholds(base_path / household_file);
-        GetMainFractions();
-
-        parser::ParseCities(base_path / city_file, m_cities, m_model_pop);
-        parser::ParseCommuting(base_path / commuting_file, m_cities, m_fract_map);
-
         m_initial_search_radius = m_config_pt.get<unsigned int>("run.popgen.neighbour_classification.initial_search_radius", 10U);
 
         // Setting up RNG
@@ -157,37 +214,17 @@ void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree, util::RNMana
             default_generator.Initialize(util::RNManager::Info(type, seed));
         }
         //else we're assuming the RNG was initialized already...
-
-        // rounding errors cause the first ensure to fail in some conditions...
-        // however, is this first ENSURE necessary?
-        // it should never fail since we decude the fractions from the households,
-        // so removed the correspronding death test until we find a better test...
-        // TODO: Working with DesignByContract still relevant?
-        // Raphael@Robbe, of course it is, everywhere where we have these REQUIRES and ENSURES, let them be...
-        double totalfrac = m_fract_map[Fractions::YOUNG] + m_fract_map[Fractions::MIDDLE_AGED] +
-                           m_fract_map[Fractions::TODDLERS] + m_fract_map[Fractions::OLDIES] +
-                           m_fract_map[Fractions::SCHOOLED];
-        ENSURE(fabs(totalfrac - 1) < constants::EPSILON, "Pop frac should equal 1");
-        ENSURE(1 >= m_fract_map[Fractions::STUDENTS] and m_fract_map[Fractions::STUDENTS] >= 0,
-               "Student fraction must be between 0 and 1");
-        ENSURE(1 >= m_fract_map[Fractions::COMMUTING_STUDENTS] and m_fract_map[Fractions::COMMUTING_STUDENTS] >= 0,
-               "Student Commuting fraction must be between 0 and 1");
-        ENSURE(1 >= m_fract_map[Fractions::ACTIVE] and m_fract_map[Fractions::ACTIVE] >= 0,
-               "Active workers fraction must be between 0 and 1");
-        ENSURE(1 >= m_fract_map[Fractions::COMMUTING_WORKERS] and m_fract_map[Fractions::COMMUTING_WORKERS] >= 0,
-               "Commuting workers fraction must be between 0 and 1");
-        // Capping pool size at 1000, gotta ask the professor what the actual cap should be...
-        ENSURE(m_sizes_map[Sizes::AVERAGE_CP] > 0 and m_sizes_map[Sizes::AVERAGE_CP] <= 1000,
-               "Contactpool's size must be bigger than 0 and smaller than or equal to 1000");
-
-        m_initialized = true;
         m_rng = (rng) ? rng : &default_generator;
+        EnforceEnsures();
+        m_initialized = true;
 }
 
 void GeoGrid::Reset()
 {
+        //Reset causes a crash if called multiple times like in the Ctor-test,
+        // I have no clue why...
         m_initialized = false;
-        m_population = make_shared<Population>();
+        m_population.reset(new Population);
         m_pool_sys = m_population->GetContactPoolSys();
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
@@ -201,7 +238,6 @@ void GeoGrid::Reset()
         m_model_pop = 0;
         m_school_count = 0;
         m_cities_with_college.clear();
-        m_belief.clear();
         m_random_ages = false;
         m_config_pt.clear();
         m_rng = nullptr;

@@ -68,7 +68,13 @@ public:
         ///             things like name of the city data file, information about
         ///             the population...
         /// @param rng: A pointer to the random number generator to be used.
-        void Initialize(const boost::filesystem::path& config, util::RNManager* rng = nullptr);
+        /// @param override: A boolean value indicating if we're overriding the 'output_contact_file' value
+        /// of the given configuration. This is specifically to prevent output during the tests. Currently
+        /// this will also override the RNG type to LCG64 until we can figure out why MRG2 flips out with
+        /// the default RNG, i.e. the static RNG defined in this header. For now, by default this is set to true.
+        void Initialize(const boost::filesystem::path& config,
+                        util::RNManager* rng = nullptr,
+                        const bool override = true);
 
 
         /// Takes a filepath to city_config file and initializes the GeoGrid.
@@ -164,7 +170,7 @@ public:
 
         /// Getter
         /// @retval <boost::property_tree::ptree> Returns the property tree for Belief
-        const boost::property_tree::ptree& GetBelief() const { return m_belief; }
+        const boost::property_tree::ptree& GetBelief() const { return m_config_pt.get_child("run.belief_policy"); }
 
         /// Splits up the X fract cities that have less then Y fract of the total population in fragmented
         /// Cities.
@@ -235,6 +241,22 @@ private:
         /// in exponential order, assigning this to m_neighbours_in_radius. The default initial search radius = 10km.
         void ClassifyNeighbours();
 
+        /// Used by GeoGrid::Initialize to create an output-directory if needed.
+        void InitOutputStuff();
+
+        /// Used by GeoGrid::Initialize to add the Popgen's configuration ptree.
+        void AddPopgenPtree();
+
+        /// Used by GeoGrid::Initialize to read the Fractions and Sizes.
+        void ReadFractionsAndSizes();
+
+        /// Used by GeoGrid::Initialize to read cities, households & commuting data from files.
+        void ReadDataFiles();
+
+        /// Used by GeoGrid::Initialize to ensure correct fractions and a "correct" average contactpool size.
+        /// With "correct" we assume the average contactpool's size is bigger than 0 and is capped by 1000.
+        void EnforceEnsures();
+
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
 
         ///< The property tree containing the configuration.
@@ -274,9 +296,6 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         ///< The population of the GeoGrid
         shared_ptr<Population> m_population;
-
-        ///< Variable to store Belief used for creating people
-        boost::property_tree::ptree m_belief;
 
         ///< The ContactPoolSys needed for stide itself.
         ContactPoolSys& m_pool_sys;

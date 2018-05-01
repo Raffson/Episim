@@ -50,7 +50,7 @@ TEST_P(CollegeTest, HappyDayScenario)
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
         GeoGrid grid;
-        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default_test.xml"));
+        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default.xml"));
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------

@@ -51,7 +51,7 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
         GeoGrid grid;
-        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default_test.xml"));
+        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default.xml"));
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ TEST_P(WorkplaceTest, CommuterVsLocal)
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
         GeoGrid grid;
-        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default_test.xml"));
+        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default.xml"));
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -129,7 +129,7 @@ TEST_P(WorkplaceTest, Extremeregion)
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
         GeoGrid grid;
-        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default_test.xml"));
+        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default.xml"));
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------

@@ -46,7 +46,7 @@ TEST(GeoGridCtorTest, HappyDayScenario)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default_test.xml"));
+        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default.xml"));
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -86,10 +86,6 @@ TEST(GeoGridCtorTest, DefaultConstructor)
 
 TEST(GeoGridCtorTest, NonExistingFile)
 {
-        /* Commenting out this test until I find a solution to prevent the ContactLogger from crashing...
-         * this happens because the default GeoGrid will use run_default.xml
-         * which sets 'output_contact_file' to 'true' and thus making it crash...
-         * I fixed this for other tests by temporarily providing a seperate configuration file...
         ::testing::FLAGS_gtest_death_test_style = "threadsafe";
         // Test with a non-existing file
         GeoGrid grid;
@@ -112,7 +108,6 @@ TEST(GeoGridCtorTest, NonExistingFile)
         EXPECT_EQ(grid.UsingRandomAges(), false);
         EXPECT_EQ(grid.GetSchoolCount(), 0);
         EXPECT_EQ(grid.IsInitialized(), true);
-         */
 }
 
 TEST(GeoGridCtorTest, BadFractions)
@@ -120,23 +115,33 @@ TEST(GeoGridCtorTest, BadFractions)
         ::testing::FLAGS_gtest_death_test_style = "threadsafe";
         GeoGrid grid;
         boost::property_tree::ptree p_tree;
-        boost::property_tree::read_xml("config/run_default_test.xml", p_tree);
+        boost::property_tree::read_xml("config/run_default.xml", p_tree);
+        p_tree.put("run.contact_output_file", false);
+        p_tree.put("run.rng_type", "lcg64");
         p_tree.put("run.geopop_file", "bad_student_frac_0.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
+        //ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_stucom_frac_0.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
+        //ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_active_frac_0.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
+        //ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_workcom_frac_0.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
+        //ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_student_frac_1.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
+        //ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_stucom_frac_1.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
+        //ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_active_frac_1.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
+        //ASSERT_NO_FATAL_FAILURE(grid.Reset());
         p_tree.put("run.geopop_file", "bad_workcom_frac_1.xml");
         ASSERT_DEATH_IF_SUPPORTED(grid.Initialize(p_tree), "");
+        //ASSERT_NO_FATAL_FAILURE(grid.Reset());
 
         // This last test will check a contactpool's size that exceeds the cap op 1000...
         p_tree.put("run.geopop_file", "bad_contactpool_size.xml");
@@ -201,7 +206,7 @@ TEST(GeoGridCtorTest, CityRowCounter)
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
         GeoGrid grid;
-        grid.Initialize("run_default_test.xml");
+        grid.Initialize("run_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
