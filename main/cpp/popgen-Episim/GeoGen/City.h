@@ -23,6 +23,7 @@
 #include "popgen-Episim/GeoGen/Community.h"
 #include "popgen-Episim/GeoGen/Coordinate.h"
 #include "popgen-Episim/GeoGen/Household.h"
+#include "util/SegmentedVector.h"
 
 using namespace std;
 
@@ -61,30 +62,30 @@ public:
         bool HasCollege(){ return m_types_present[CommunityType::College]; }
 
         /// Returns all the communities
-        vector<Community>& GetAllCommunities(){ return m_communities; };
+        util::SegmentedVector<Community>& GetAllCommunities(){ return m_communities; };
 
 
         /// Returns all the colleges in the city
-        vector<Community*> GetColleges();
+        vector<Community*> GetColleges() { return m_moc[CommunityType::College]; }
 
         /// Returns all the schools in the city
-        vector<Community*> GetSchools();
+        vector<Community*> GetSchools() { return m_moc[CommunityType::School]; }
 
         /// Returns all the workplaces in the city
-        vector<Community*> GetWorkplaces();
+        vector<Community*> GetWorkplaces() { return m_moc[CommunityType::Work]; }
 
         /// Returns all the communities
-        vector<Community*> GetCommunities();
+        //vector<Community*> GetCommunities(); //deprecated?
 
         /// Returns the primary communities
-        vector<Community*> GetPrimaryCommunities();
+        vector<Community*> GetPrimaryCommunities() { return m_moc[CommunityType::Primary]; }
 
         /// Returns the secondary communities
-        vector<Community*> GetSecondaryCommunities();
+        vector<Community*> GetSecondaryCommunities() { return m_moc[CommunityType::Secondary]; }
 
         /// Returns the communities of the given type
         /// @param: ct type of the community
-        vector<Community*> GetCommunitiesOfType(CommunityType ct);
+        vector<Community*> GetCommunitiesOfType(CommunityType ct) { return m_moc[ct]; }
 
         /// Adds a new community of the given type to the city.
         /// @param: community_type the type of community that is to be added
@@ -123,10 +124,12 @@ private:
         Coordinate m_coordinates;       ///< Coordinate, smart coordinate container
         const string m_name;            ///< Name of the city.
 
-        vector<Community> m_communities;           ///< Vector of Communities in the city
+        util::SegmentedVector<Community>       m_communities;  ///< Vector of Communities in the city
+        map<CommunityType, vector<Community*>> m_moc;          ///< Map of communities for faster retieval
+
         map<unsigned int, double> m_in_commuting;  ///< Contains number of commuters from other cities to this city
         map<unsigned int, double> m_out_commuting; ///< Contains number of commuters from this city to other cities
-        vector<Household> m_households;             ///< contains households of the city
+        vector<Household> m_households;            ///< contains households of the city
 
         double m_in_commuter_count;     ///< Number of incomming commuters to the city
         double m_out_commuter_count;    ///< Number of outgoing commuters from the city
