@@ -77,17 +77,19 @@ TEST_P(CollegeTest, HappyDayScenario)
         double       ywfrac        = grid.GetFraction(Fractions::YOUNG);
         unsigned int colsize       = grid.GetAvgSize(Sizes::COLLEGES);
 
-        auto expected_col_amount = ceil(grid.GetTotalPop() * stufrac * ywfrac / colsize);
-        auto total_pop_biggest = 0;
+        double nrcolleges = ceil(grid.GetTotalPop() * stufrac * ywfrac / colsize);
+        double total_pop_biggest = 0;
         for (auto& it: grid.GetCitiesWithCollege()){
-            total_pop_biggest += it->GetPopulation();
+            total_pop_biggest += it->GetPopulation() ;
         }
 
-        double margin = 0.41; //how come we need such a big margin?
+        double popmod = (double)grid.GetTotalPopOfModel() / grid.GetTotalPop();
+        double margin = 0.04 * popmod;
 
         for(auto& a_city:grid.GetCitiesWithCollege()){
-            auto exp = ceil(a_city->GetPopulation() / (double) total_pop_biggest * expected_col_amount);
-            EXPECT_NEAR(a_city->GetColleges().size(), exp, ceil(exp*margin));
+            double target = a_city->GetPopulation() / total_pop_biggest;
+            double actual = a_city->GetColleges().size() / nrcolleges;
+            EXPECT_NEAR(actual, target, margin);
         }
 
         auto cities = grid.GetCities();

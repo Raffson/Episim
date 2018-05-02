@@ -103,6 +103,7 @@ int main(int argc, char** argv)
                         if (configPt.get<string>("run.output_prefix", "").empty()) {
                                 configPt.put("run.output_prefix", TimeStamp().ToTag().append("/"));
                         }
+                        configPt.put("run.random_geopop", false); //override in case someone tries to mess with this...
                         configPt.sort();
 
                         CliController(configPt).Control();
@@ -117,7 +118,13 @@ int main(int argc, char** argv)
                 // If geopop ...
                 // -----------------------------------------------------------------------------------------
                 else if (execArg.getValue() == "geopop") {
-                        cout << "Not implented here yet ..." << endl;
+                        if (configPt.get<string>("run.output_prefix", "").empty()) {
+                                configPt.put("run.output_prefix", TimeStamp().ToTag().append("/"));
+                        }
+                        configPt.put("run.random_geopop", true);
+                        configPt.sort();
+
+                        CliController(configPt).Control();
                 }
                 // -----------------------------------------------------------------------------------------
                 // If clean/dump ...

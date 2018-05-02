@@ -72,8 +72,8 @@ double convert_to_radians(double degrees);
 //void init_generator(const unsigned long seed, const string& generator);
 
 /// Takes a distribution -> a vec of numbers and generates N random numbers given the distribution vector.
-/// @param p_vec a vector representing our distribution, each entry contains a relative probabillity.
-///              The probabillity to generate the number on that index (first entry is probabillity to
+/// @param p_vec a vector representing our distribution, each entry contains a relative probability.
+///              The probability to generate the number on that index (first entry is probability to
 ///              generate 0)
 /// @param rng  a pointer to a RNMmanager object. See "RNMmanger".h for more info.
 /// @param amount default = 1 The amount of random numbers we will generate.

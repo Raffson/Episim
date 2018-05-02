@@ -11,6 +11,10 @@ Rectangle {
         property variant is_clicked: false
         property variant in_commuting: 0
         property variant out_commuting: 0
+        property variant longi: 0
+        property variant lati: 0
+        property variant xco: 0
+        property variant yco: 0
         property alias area_text: m_area.info_text
 
         color: 'green'

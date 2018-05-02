@@ -42,7 +42,43 @@ protected:
         /// Tearing down the test fixture
         void TearDown() override {}
 };
+    TEST_P(CommunityTest, HappyDayScenario)
+    {
 
+            // -----------------------------------------------------------------------------------------
+            // Initialize the GeoGrid.
+            // -----------------------------------------------------------------------------------------
+            cout << "Building the GeoGrid." << endl;
+            GeoGrid grid;
+            grid.Initialize("config/geogen_default.xml");
+            cout << "Done building the GeoGrid." << endl;
+
+            // -----------------------------------------------------------------------------------------
+            // Check results against expected results.
+            // -----------------------------------------------------------------------------------------
+
+            // Do the test...
+            grid.GenerateColleges();
+            grid.GenerateWorkplaces();
+            grid.GenerateSchools();
+            ASSERT_NO_THROW(grid.GenerateCommunities());
+
+            //times 2 because we have to count both Primary and Secondary communities
+            double total_communities = 2 * ceil((double)grid.GetTotalPop() / grid.GetAvgSize(Sizes::COMMUNITIES));
+            double popmod = (double)grid.GetTotalPopOfModel() / grid.GetTotalPop();
+            double margin = 0.01 * popmod;
+
+            for(auto& it: grid.GetCities()){
+                    City* a_city = &it.second;
+                    double target = (double)a_city->GetPopulation() / grid.GetTotalPopOfModel();
+                    double actual = (a_city->GetPrimaryCommunities().size() + a_city->GetSecondaryCommunities().size())
+                                    / total_communities;
+
+                    EXPECT_NEAR(actual, target, margin);
+            }
+
+
+    }
 TEST_P(CommunityTest, Run)
 {
         // -----------------------------------------------------------------------------------------

@@ -61,22 +61,25 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         ASSERT_NO_FATAL_FAILURE(grid.GenerateColleges()); //Must generate colleges to keep track of commuters
         ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
 
-        float        margin       = 0.4; //how come we need such a big margin?
-
         double possible_workers =  grid.GetFraction(Fractions::YOUNG) * (1 - grid.GetFraction(Fractions::STUDENTS))
                                + grid.GetFraction(Fractions::MIDDLE_AGED);
         double active_pop = possible_workers * grid.GetFraction(Fractions::ACTIVE);
+        double allworkers           = active_pop * grid.GetTotalPopOfModel();
+        double number_of_workplaces = ceil(allworkers / grid.GetAvgSize(Sizes::WORKPLACES));
 
 
-        auto cities = grid.GetCities();
-        for(auto& it: cities){
+        double popmod = (double)grid.GetTotalPopOfModel() / grid.GetTotalPop();
+        double margin = 0.01 * popmod;
+
+        for(auto& it: grid.GetCities()){
             City* a_city = &it.second;
             double in_commuters_modifier = (a_city->HasCollege()) ? possible_workers : 1.0;
             double workers = a_city->GetPopulation() * active_pop +
                              a_city->GetTotalInCommutersCount() * in_commuters_modifier -
                              a_city->GetTotalOutCommutersCount() * possible_workers;
-            auto target_workplaces = workers / grid.GetAvgSize(Sizes::WORKPLACES);
-            EXPECT_NEAR(a_city->GetWorkplaces().size(), target_workplaces, ceil(target_workplaces*margin));
+            double target = workers / allworkers;
+            double actual = a_city->GetWorkplaces().size() / number_of_workplaces;
+            EXPECT_NEAR(actual, target, margin);
             //ceil helps when there is a city with no workplace (eg-HERSTAPPE)
         }
 

@@ -60,6 +60,12 @@ public:
         /// @param rng: A pointer to the random number generator to be used.
         void Initialize(const boost::filesystem::path& config, util::RNManager* rng = nullptr);
 
+
+        /// Takes a filepath to city_config file and initializes the GeoGrid.
+        /// @param p_tree: A property-tree containing the necessary information.
+        /// @param rng: A pointer to the random number generator to be used.
+        void Initialize(const boost::property_tree::ptree& p_tree, util::RNManager* rng = nullptr);
+
         /// Resets the entire GeoGrid.
         void Reset();
 
@@ -104,7 +110,7 @@ public:
         map<unsigned int, City>& GetCities() { return m_cities; }
 
         /// Getter
-        /// @retval <unsigned int> returns the total population of GeoGrid.
+        /// @retval <unsigned int> returns the total population to be generated for GeoGrid.
         unsigned int GetTotalPop() const { return m_total_pop; }
 
         /// Getter
@@ -193,6 +199,10 @@ public:
         /// Getter
         /// @retval <const bool> Returns whether or not we're using random ages for the population builder.
         const bool UsingRandomAges() const { return m_random_ages; }
+
+        /// Getter
+        /// @retval <unsigned int> Returns the total population of the model.
+        unsigned int GetTotalPopOfModel() { return m_model_pop; } //used for tests
 
 private:
         /// Returns index of city with smallest population from 'lc'
