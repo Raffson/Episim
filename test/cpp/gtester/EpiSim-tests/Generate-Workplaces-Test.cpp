@@ -104,7 +104,7 @@ TEST_P(WorkplaceTest, CommuterVsLocal)
         for (auto city : cities) {
                 cities.at(random_city1).SetInCommuters(city.first, 0);
                 cities.at(random_city2).SetInCommuters(city.first, 0);
-        }+
+        }
 
         cities.at(random_city1).SetInCommuters(random_city1, 200);
 
