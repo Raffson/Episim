@@ -148,7 +148,7 @@ int startMap(stride::GeoGrid& grid)
 int main(int argc, char** argv)
 {
         stride::GeoGrid grid;
-        grid.Initialize("config/geogen_default.xml");
+        grid.Initialize("run_default.xml");
         grid.GenerateAll();
 
         stride::PopulationGenerator pop_generator(grid);
