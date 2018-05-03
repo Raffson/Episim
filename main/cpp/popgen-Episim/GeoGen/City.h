@@ -50,8 +50,8 @@ public:
         /// Get the name of the city
         const string GetName() const { return m_name; };
 
-        /// Get the size of all the communities
-        unsigned int GetCommunitySize() const { return m_communities.size(); };
+        /// Get the number of all the communities
+        unsigned int GetNrOfCommunities() const { return m_communities.size(); };
 
         /// Get the number of total commuters to the city
         double GetTotalInCommutersCount();

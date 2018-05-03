@@ -265,7 +265,7 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
 
 void PopulationGenerator::GeneratePopulation()
 {
-        // TODO: currently it takes about 30sec to generate 4.3 million people,
+        // TODO: currently it takes about 20sec to generate 4.3 million people,
         // TODO: this should be improved even more if possible...
 
         cout << "Starting population generation..." << endl;
