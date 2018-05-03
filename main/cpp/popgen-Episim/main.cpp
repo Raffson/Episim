@@ -68,8 +68,8 @@ int startMap(stride::GeoGrid& grid)
         /// To center the map on a specific location: use following code.
         QVariantList       coords;
         stride::Coordinate c = grid.GetCenterOfGrid();
-        coords.push_back(c.latitude);
-        coords.push_back(c.longitude);
+        coords.push_back(c.GetLatitude());
+        coords.push_back(c.GetLongitude());
         QMetaObject::invokeMethod(item, "setCentre", Q_ARG(QVariant, QVariant::fromValue(coords)));
 
     /// To add cities on the map: use following.
@@ -92,13 +92,13 @@ int startMap(stride::GeoGrid& grid)
             /// ID of the city, used for the commuting details
             vals["id"] = city.GetId();
             /// Latitude
-            vals["latitude"] = city.GetCoordinates().latitude;
+            vals["latitude"] = city.GetCoordinates().GetLatitude();
             /// Longitude
-            vals["longitude"] = city.GetCoordinates().longitude;
+            vals["longitude"] = city.GetCoordinates().GetLongitude();
             /// X coordinate
-            vals["x"] = city.GetCoordinates().x;
+            vals["x"] = city.GetCoordinates().GetX();
             /// Y coordinate
-            vals["y"] = city.GetCoordinates().y;
+            vals["y"] = city.GetCoordinates().GetY();
             /// Radius
             vals["radius"] = city.GetPopulation() / (2 * M_PI);
             /// Percentage

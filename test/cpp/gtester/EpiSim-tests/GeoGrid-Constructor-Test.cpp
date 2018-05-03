@@ -60,10 +60,10 @@ TEST(GeoGridCtorTest, HappyDayScenario)
 
         EXPECT_EQ(1, antwerp.GetProvince());
         EXPECT_EQ(269954, antwerp.GetPopulation());
-        EXPECT_FLOAT_EQ(153104.586, coord.x);
-        EXPECT_FLOAT_EQ(212271.7101, coord.y);
-        EXPECT_FLOAT_EQ(51.2165845, coord.latitude);
-        EXPECT_FLOAT_EQ(4.413545489, coord.longitude);
+        EXPECT_FLOAT_EQ(153104.586, coord.GetX());
+        EXPECT_FLOAT_EQ(212271.7101, coord.GetY());
+        EXPECT_FLOAT_EQ(51.2165845, coord.GetLatitude());
+        EXPECT_FLOAT_EQ(4.413545489, coord.GetLongitude());
         EXPECT_EQ("ANTWERPEN", antwerp.GetName());
 }
 
@@ -191,10 +191,10 @@ TEST(GeoGridCtorTest, FaultyCityColumn)
         EXPECT_EQ(1, antwerp.GetProvince());
         EXPECT_EQ(269954, antwerp.GetPopulation());
 
-        EXPECT_FLOAT_EQ(153104.586, coord.x);
-        EXPECT_FLOAT_EQ(212271.7101, coord.y);
-        EXPECT_FLOAT_EQ(51.2165845, coord.latitude);
-        EXPECT_FLOAT_EQ(4.413545489, coord.longitude);
+        EXPECT_FLOAT_EQ(153104.586, coord.GetX());
+        EXPECT_FLOAT_EQ(212271.7101, coord.GetY());
+        EXPECT_FLOAT_EQ(51.2165845, coord.GetLatitude());
+        EXPECT_FLOAT_EQ(4.413545489, coord.GetLongitude());
         EXPECT_EQ("ANTWERPEN", antwerp.GetName());
 }
 

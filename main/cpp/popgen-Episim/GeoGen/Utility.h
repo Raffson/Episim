@@ -112,7 +112,7 @@ namespace constants {
 // Changed to 10^(-12) after refactor to double...
 const double EPSILON = 0.000000000001;
 /// Radius of the earth ~= 6371.0 km
-const double EARTH_RADIUS = 6371.0; // in kilometer
+const double EARTH_RADIUS = 6371.0; // in kilometer <- deprecated now that we use boost's geometry...
 
 } // namespace constants
 } // namespace stride

@@ -78,16 +78,16 @@ TEST_P(DefragCityTest, value_test)
         ASSERT_NE(last_city, second_last_city);
 
         // Splitted in 2 cities. Coordinates of the first city should match the original city
-        EXPECT_FLOAT_EQ(old_coordinate.longitude, second_last_city->GetCoordinates().longitude);
-        EXPECT_FLOAT_EQ(old_coordinate.latitude, second_last_city->GetCoordinates().latitude);
-        EXPECT_FLOAT_EQ(old_coordinate.x, second_last_city->GetCoordinates().x);
-        EXPECT_FLOAT_EQ(old_coordinate.y, second_last_city->GetCoordinates().y);
+        EXPECT_FLOAT_EQ(old_coordinate.GetLongitude(), second_last_city->GetCoordinates().GetLongitude());
+        EXPECT_FLOAT_EQ(old_coordinate.GetLatitude(), second_last_city->GetCoordinates().GetLatitude());
+        EXPECT_FLOAT_EQ(old_coordinate.GetX(), second_last_city->GetCoordinates().GetX());
+        EXPECT_FLOAT_EQ(old_coordinate.GetY(), second_last_city->GetCoordinates().GetY());
 
         // Coordinates of the second city are 0.1 off the original
-        EXPECT_FLOAT_EQ(old_coordinate.longitude - 0.1, last_city->GetCoordinates().longitude);
-        EXPECT_FLOAT_EQ(old_coordinate.latitude - 0.1, last_city->GetCoordinates().latitude);
-        EXPECT_FLOAT_EQ(old_coordinate.x - 0.1, last_city->GetCoordinates().x);
-        EXPECT_FLOAT_EQ(old_coordinate.y - 0.1, last_city->GetCoordinates().y);
+        EXPECT_FLOAT_EQ(old_coordinate.GetLongitude() - 0.1, last_city->GetCoordinates().GetLongitude());
+        EXPECT_FLOAT_EQ(old_coordinate.GetLatitude() - 0.1, last_city->GetCoordinates().GetLatitude());
+        EXPECT_FLOAT_EQ(old_coordinate.GetX() - 0.1, last_city->GetCoordinates().GetX());
+        EXPECT_FLOAT_EQ(old_coordinate.GetY() - 0.1, last_city->GetCoordinates().GetY());
 
         // Province check, should be the same
         EXPECT_EQ(old_province, second_last_city->GetProvince());

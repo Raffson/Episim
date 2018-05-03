@@ -50,6 +50,7 @@ void GeoGrid::GetMainFractions()
 
 void GeoGrid::ClassifyNeighbours()
 {
+        // I believe we should be making use of boost's geometry queries here...
         for (auto& cityA : m_cities) {
                 for (auto& cityB : m_cities) {
                         // truncating distance on purpose to avoid using floor-function
@@ -443,22 +444,22 @@ Coordinate GeoGrid::GetCenterOfGrid()
         // don't understand me wrong, not right now, but later when we're going for beta or in the final phase...
         for (auto& city : m_cities) {
                 Coordinate cc = city.second.GetCoordinates();
-                if (cc.x < smallestX)
-                        smallestX = cc.x;
-                if (cc.x > biggestX)
-                        biggestX = cc.x;
-                if (cc.y < smallestY)
-                        smallestY = cc.y;
-                if (cc.y > biggestY)
-                        biggestY = cc.y;
-                if (cc.latitude < smallestLat)
-                        smallestLat = cc.latitude;
-                if (cc.latitude > biggestLat)
-                        biggestLat = cc.latitude;
-                if (cc.longitude < smallestLong)
-                        smallestLong = cc.longitude;
-                if (cc.longitude > biggestLong)
-                        biggestLong = cc.longitude;
+                if (cc.GetX() < smallestX)
+                        smallestX = cc.GetX();
+                if (cc.GetX() > biggestX)
+                        biggestX = cc.GetX();
+                if (cc.GetY() < smallestY)
+                        smallestY = cc.GetY();
+                if (cc.GetY() > biggestY)
+                        biggestY = cc.GetY();
+                if (cc.GetLatitude() < smallestLat)
+                        smallestLat = cc.GetLatitude();
+                if (cc.GetLatitude() > biggestLat)
+                        biggestLat = cc.GetLatitude();
+                if (cc.GetLongitude()< smallestLong)
+                        smallestLong = cc.GetLongitude();
+                if (cc.GetLongitude()> biggestLong)
+                        biggestLong = cc.GetLongitude();
         }
 
         double halfX    = (biggestX - smallestX) / 2;
@@ -495,17 +496,17 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                 // We add 2 to the amount to defrag, bcs we want to defrag in atleast 2 parts
                 for (unsigned int i = 0; i < amount_to_frag[counter] + 2; i++) {
 
-                        auto new_id          = m_cities.rbegin()->first + 1;
-                        auto new_coordinates = it->GetCoordinates();
-                        new_coordinates.latitude += pow(-1, i) * (0.1 * i);
-                        new_coordinates.longitude += pow(-1, i) * (0.1 * i);
-                        new_coordinates.x += pow(-1, i) * (0.1 * i);
-                        new_coordinates.y += pow(-1, i) * (0.1 * i);
+                        auto new_id    = m_cities.rbegin()->first + 1;
+                        auto coords    = it->GetCoordinates();
+                        double newLat  = coords.GetLatitude() + pow(-1, i) * (0.1 * i);
+                        double newLong = coords.GetLongitude() + pow(-1, i) * (0.1 * i);
+                        double newX    = coords.GetX() + pow(-1, i) * (0.1 * i);
+                        double newY    = coords.GetY() + pow(-1, i) * (0.1 * i);
                         auto new_name = it->GetName();
                         new_name += to_string(i);
                         m_cities.insert(pair<unsigned int, City>(
                             new_id, City(new_id, it->GetProvince(), it->GetPopulation() / (amount_to_frag[counter] + 2),
-                                         new_coordinates, new_name)));
+                                         Coordinate(newX, newY, newLat, newLong), new_name)));
                 }
                 counter++;
                 m_cities.erase(it->GetId());

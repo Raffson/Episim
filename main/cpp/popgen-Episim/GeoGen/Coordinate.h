@@ -13,6 +13,19 @@
  *
  *
  */
+
+#include "Utility.h"
+
+#include <boost/geometry/algorithms/distance.hpp>
+#include <boost/geometry/geometries/point.hpp>
+#include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
+#include <boost/geometry/strategies/spherical/distance_haversine.hpp>
+#include <boost/geometry/strategies/cartesian/distance_pythagoras.hpp>
+
+namespace bg = boost::geometry;
+typedef bg::model::point<double, 2, bg::cs::cartesian>  cPoint;             //carthesian point (x, y)
+typedef bg::model::point<double, 2, bg::cs::geographic<bg::degree>> gPoint; //geographical point in degrees (long, lat)
+
 namespace stride {
 
 /*
@@ -27,20 +40,31 @@ public:
         Coordinate();
         Coordinate(double x, double y, double longitude, double latitude);
 
-        /// Calculates the distance based on haversine formula
-        /// credit: https://www.movable-type.co.uk/scripts/latlong.html
-        /// @param: c1 the coordinate whose distance has to be calculated from this coordinate
-        /// @retval: <double> distance between two coordinates by using longitude and latitude
-        double GetDistance(const Coordinate& c1) const;
+        /// Calculates the distance using boost's
+        /// @param: c1 The coordinate whose distance has to be calculated from this coordinate.
+        /// @param: cartesian A boolean value indicating whether or not we want the cartesian distance
+        /// using Pythagoras' theorem.
+        /// The default is set to false and thus by default we're looking at the geographical distance
+        /// using Andoyer's method.
+        /// @retval: <double> Distance between the two coordinates using the given method.
+        double GetDistance(const Coordinate& c1, const bool cartesian = false) const;
 
-        double x;       ///< x-coordinate
-        double y;       ///< y-coordinate
+        /// Getter for the cartesian X coordinate.
+        double GetX() const { return bg::get<0>(xy); }
 
-        ///< a geographic coordinate that specifies the east-west position of a point on the Earth's surface.
-        double longitude;
+        /// Getter for the cartesian Y coordinate.
+        double GetY() const { return bg::get<1>(xy); }
 
-        ///< a geographic coordinate that specifies the north–south position of a point on the Earth's surface.
-        double latitude;
+        /// Getter for the geographical longitude coordinate.
+        double GetLongitude() const { return bg::get<0>(longlat); }
+
+        /// Getter for the geographical latitude coordinate.
+        double GetLatitude() const { return bg::get<1>(longlat); }
+
+private:
+
+        cPoint xy;      ///< The coordinate represented in cartesian format.
+        gPoint longlat; ///< The coordinate represented in geographical format.
 };
 
 } // namespace stride
