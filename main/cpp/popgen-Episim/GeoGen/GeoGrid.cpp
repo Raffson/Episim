@@ -506,7 +506,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                         new_name += to_string(i);
                         m_cities.insert(pair<unsigned int, City>(
                             new_id, City(new_id, it->GetProvince(), it->GetPopulation() / (amount_to_frag[counter] + 2),
-                                         Coordinate(newX, newY, newLat, newLong), new_name)));
+                                         Coordinate(newX, newY, newLong, newLat), new_name)));
                 }
                 counter++;
                 m_cities.erase(it->GetId());

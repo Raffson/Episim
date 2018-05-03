@@ -88,24 +88,26 @@ TEST(GeoGridCtorTest, NonExistingFile)
 {
         ::testing::FLAGS_gtest_death_test_style = "threadsafe";
         // Test with a non-existing file
+        boost::property_tree::ptree p_tree;
+        boost::property_tree::read_xml("config/geogen_default.xml", p_tree);
         GeoGrid grid;
         ASSERT_NO_FATAL_FAILURE(grid.Initialize("bad input")); //should now construct a default geogrid...
-        EXPECT_EQ(grid.GetCities().size(), 327);
-        EXPECT_EQ(grid.GetTotalPop(), 4341923);
-        EXPECT_EQ(grid.GetTotalPopOfModel(), 4341923);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::ACTIVE), 0.5);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::STUDENTS), 0.5);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::COMMUTING_STUDENTS), 0.5);
-        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::COMMUTING_WORKERS), 0.5);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::AVERAGE_CP), 20);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::WORKPLACES), 20);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::SCHOOLS), 500);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::COMMUNITIES), 2000);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::COLLEGES), 3000);
-        EXPECT_EQ(grid.GetAvgSize(Sizes::MAXLC), 10);
+        EXPECT_EQ(grid.GetCities().size(), 327); //this test is hard to make not hard-coded...
+        EXPECT_EQ(grid.GetTotalPop(), p_tree.get<unsigned int>("pop_info.pop_total"));
+        EXPECT_EQ(grid.GetTotalPopOfModel(), 4341923); //this test is hard to make not hard-coded...
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::ACTIVE), p_tree.get<double>("pop_info.fraction_active_workers"));
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::STUDENTS), p_tree.get<double>("pop_info.fraction_students"));
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::COMMUTING_STUDENTS), p_tree.get<double>("pop_info.fraction_commuting_students"));
+        EXPECT_FLOAT_EQ(grid.GetFraction(Fractions::COMMUTING_WORKERS), p_tree.get<double>("pop_info.fraction_commuting_workers"));
+        EXPECT_EQ(grid.GetAvgSize(Sizes::AVERAGE_CP), p_tree.get<unsigned int>("contactpool_info.average_size"));
+        EXPECT_EQ(grid.GetAvgSize(Sizes::WORKPLACES), p_tree.get<unsigned int>("contactpool_info.workplace.size"));
+        EXPECT_EQ(grid.GetAvgSize(Sizes::SCHOOLS), p_tree.get<unsigned int>("contactpool_info.school.size"));
+        EXPECT_EQ(grid.GetAvgSize(Sizes::COMMUNITIES), p_tree.get<unsigned int>("contactpool_info.community.size"));
+        EXPECT_EQ(grid.GetAvgSize(Sizes::COLLEGES), p_tree.get<unsigned int>("contactpool_info.college.size"));
+        EXPECT_EQ(grid.GetAvgSize(Sizes::MAXLC), p_tree.get<unsigned int>("contactpool_info.college.cities"));
         EXPECT_EQ(grid.GetPopulation()->size(), 0);
-        EXPECT_EQ(grid.GetInitialSearchRadius(), 10);
-        EXPECT_EQ(grid.UsingRandomAges(), false);
+        EXPECT_EQ(grid.GetInitialSearchRadius(), p_tree.get<unsigned int>("neighbour_classification.initial_search_radius"));
+        EXPECT_EQ(grid.UsingRandomAges(), p_tree.get<bool>("pop_info.random_ages"));
         EXPECT_EQ(grid.GetSchoolCount(), 0);
         EXPECT_EQ(grid.IsInitialized(), true);
 }
