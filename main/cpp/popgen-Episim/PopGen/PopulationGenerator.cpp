@@ -183,7 +183,7 @@ ContactPool* PopulationGenerator::AssignWorkerAtRandom(City& origin)
         return GetRandomCommunityContactPool(workplaces);
 }
 
-void PopulationGenerator::GeneratePerson(const double& age, const unsigned int hid, const unsigned int pcid,
+void PopulationGenerator::GeneratePerson(const double& age, const unsigned int hid, const unsigned int scid,
                                          Population& pop, City& city)
 {
         // need the following:
@@ -198,8 +198,8 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
         Fractions          category  = get_category(age);
         ContactPool*       school    = nullptr;
         ContactPool*       workplace = nullptr;
-        vector<Community*> seccomms = GetCommunitiesOfRandomNearbyCity(city, CommunityType::Secondary);
-        ContactPool* seccomm = GetRandomCommunityContactPool(seccomms);
+        vector<Community*> primcomms = GetCommunitiesOfRandomNearbyCity(city, CommunityType::Primary);
+        ContactPool* primcomm = GetRandomCommunityContactPool(primcomms);
         if (category == Fractions::SCHOOLED) { // [3, 18)
                 vector<Community*> schools = GetCommunitiesOfRandomNearbyCity(city, CommunityType::School);
                 school = GetRandomCommunityContactPool(schools);
@@ -221,7 +221,7 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
         }
         unsigned int schoolid = (school) ? school->GetID() : 0;
         unsigned int workid   = (workplace) ? workplace->GetID() : 0;
-        unsigned int scid     = (seccomm) ? seccomm->GetID() : 0;
+        unsigned int pcid     = (primcomm) ? primcomm->GetID() : 0;
         pop.CreatePerson(m_id_generator++, age, hid, schoolid, workid, pcid, scid, Health(), m_geogrid.GetBelief(),
                          0.0);
         Person* person = &pop.back();
@@ -230,8 +230,8 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
                 school->AddMember(person);
         if (workplace)
                 workplace->AddMember(person);
-        if (seccomm)
-                seccomm->AddMember(person);
+        if (primcomm)
+                primcomm->AddMember(person);
 }
 
 void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
@@ -241,10 +241,10 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         auto&        the_household = city.AddHousehold(pool_sys); // Returns a reference to the new household...
         unsigned int hid           = the_household.GetID();
 
-        vector<Community*> primcomms = GetCommunitiesOfRandomNearbyCity(city, CommunityType::Primary);
-        ContactPool* primcomm = GetRandomCommunityContactPool(primcomms);
+        vector<Community*> seccomms = GetCommunitiesOfRandomNearbyCity(city, CommunityType::Secondary);
+        ContactPool* seccomm = GetRandomCommunityContactPool(seccomms);
         // Meaning you always get assigned to a community?
-        unsigned int pcid = (primcomm) ? primcomm->GetID() : 0;
+        unsigned int scid = (seccomm) ? seccomm->GetID() : 0;
 
         vector<double> model_household = GetRandomModelHouseholdOfSize(size);
 
@@ -256,10 +256,10 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
                 }
                 //if( model_household.size() == 1 and category == Fractions::SCHOOLED)
                 //    cout << "Lonely minor of model age=" << model_household[i] << " has now received age=" << age << endl;
-                GeneratePerson(age, hid, pcid, pop, city);
+                GeneratePerson(age, hid, scid, pop, city);
                 the_household.AddMember(&pop.back());
-                if (primcomm)
-                        primcomm->AddMember(&pop.back());
+                if (seccomm)
+                        seccomm->AddMember(&pop.back());
         }
 }
 
