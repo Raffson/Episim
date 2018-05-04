@@ -74,4 +74,13 @@ Household& City::AddHousehold(ContactPoolSys& pool_sys)
         return m_households.back();
 }
 
+unsigned int City::GetEffectivePopulation()
+{
+        unsigned int result = 0;
+        for(auto& hh:m_households){
+                result += hh.GetSize();
+        }
+        return result;
+}
+
 } // namespace stride

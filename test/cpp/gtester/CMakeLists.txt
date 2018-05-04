@@ -48,7 +48,8 @@ set( SRC2
 		EpiSim-tests/Generate-Schools-Test.cpp
 		EpiSim-tests/Generate-Workplaces-Test.cpp
 		EpiSim-tests/GeoGrid-Constructor-Test.cpp
-        EpiSim-tests/Defrag-Cities-Test.cpp)
+        EpiSim-tests/Defrag-Cities-Test.cpp
+		EpiSim-tests/GeneratePopTest.cpp)
 
 add_executable(${EXEC2}   ${SRC2} )
 target_link_libraries( ${EXEC2}    ${LIBS} gtest pthread libstride)
