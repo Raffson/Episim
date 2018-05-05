@@ -117,6 +117,7 @@ public:
         /// Returns whether or not the given type of community is present in this city.
         const bool HasCommunityType(CommunityType type) { return m_types_present[type]; }
 
+
 private:
         const unsigned int m_city_id;   ///< A unique ID of the city.
         const unsigned int m_province;  ///< Province

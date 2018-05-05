@@ -38,13 +38,13 @@ protected:
 
 TEST_P(DefragCityTest, happy_defrag)
 {
-        double         X     = 0.5;   // We will fragment half of the chosen cities
-        double         Y     = 0.001; // should be 32 cities
+        auto cty_amount = (unsigned int) geo->GetCities().size();
+        double         X     = 0.5;  // We will fragment half of the chosen cities
+        double         Y     = 1.0; // should be all cities
         vector<double> p_vec = {1};
         geo->DefragmentSmallestCities(X, Y, p_vec);
-        // 327 cities in basic config, 32 cities up for fragmentation, we fragment half.
-        // 327 + (32 * 0.5) = 343
-        EXPECT_FLOAT_EQ(343, geo->GetCities().size());
+
+        EXPECT_NEAR(cty_amount  + cty_amount / 2 , geo->GetCities().size(), 1);
 }
 
 TEST_P(DefragCityTest, value_test)
@@ -67,9 +67,10 @@ TEST_P(DefragCityTest, value_test)
         string       old_name       = smallest_city->GetName();
         unsigned int old_province   = smallest_city->GetProvince();
         unsigned int old_last_id    = geo->GetCities().rbegin()->second.GetId();
+        unsigned int cty_count = geo->GetCities().size();
         geo->DefragmentSmallestCities(X, Y, p_vec);
 
-        ASSERT_EQ(328, geo->GetCities().size()); // Test if we only fragmented one city
+        ASSERT_EQ(cty_count + 1, geo->GetCities().size()); // Test if we only fragmented one city
 
         City* last_city = &geo->GetCities().rbegin()->second;
         auto  r_it      = geo->GetCities().rbegin();
