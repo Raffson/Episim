@@ -31,7 +31,17 @@ public:
     /// Tearing down TestCase
     static void TearDownTestCase() {}
 
+    GenPopTest(){
+        grid.Initialize("run_default.xml");
+        grid.GenerateAll();
+
+        stride::PopulationGenerator pop_generator(grid);
+        pop_generator.GeneratePopulation();
+    }
+
 protected:
+    stride::GeoGrid grid;
+
     /// Destructor has to be virtual.
     ~GenPopTest() override {}
 
@@ -44,23 +54,71 @@ protected:
 
 TEST_P(GenPopTest, CityPopulationTest)
 {
-    stride::GeoGrid grid;
-    ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default.xml"));
-    grid.GenerateAll();
-
-    stride::PopulationGenerator pop_generator(grid);
-    pop_generator.GeneratePopulation();
-    
-    double margin = 0.15;
-
+    double margin = 0.11;
+    unsigned int pop_counter = 0;
     for(auto& it: grid.GetCities()){
         City* a_city = &it.second;
         double actual =  ((double)a_city->GetPopulation() / (double)grid.GetTotalPopOfModel());
         double target = ((double)a_city->GetEffectivePopulation() / (double)grid.GetTotalPop());
+        pop_counter += a_city->GetEffectivePopulation();
+
         EXPECT_NEAR(actual, target, actual * margin);
     }
-
+    EXPECT_EQ(grid.GetPopulation()->size(), pop_counter);
 }
+
+
+TEST_P(GenPopTest, AgeDistributionTest)
+{
+
+    unsigned int schooled = 0;
+    unsigned int youngsters = 0;
+    unsigned int middle_aged = 0;
+    unsigned int toddlers = 0;
+    unsigned int oldies = 0;
+
+    unsigned int pop_count = grid.GetPopulation()->size();
+
+    for(unsigned int i=0; i<grid.GetPopulation()->size(); i++){
+        auto a_person = grid.GetPopulation()->at(i);
+
+        switch(get_category(a_person.GetAge())) {
+            case Fractions::SCHOOLED : {
+                schooled++;
+                break;
+            }
+            case Fractions::YOUNG : {
+                youngsters++;
+                break;
+            }
+            case Fractions::MIDDLE_AGED : {
+                middle_aged++;
+                break;
+            }
+            case Fractions::TODDLERS : {
+                toddlers++;
+                break;
+            }
+            default: {
+                oldies++;
+                break;
+            }
+        }
+    }
+
+    double margin = 0.01;
+
+    EXPECT_NEAR((double)schooled/pop_count, grid.GetFraction(Fractions::SCHOOLED),
+                margin*grid.GetFraction(Fractions::SCHOOLED));
+    EXPECT_NEAR((double)youngsters/pop_count, grid.GetFraction(Fractions::YOUNG),
+                margin*grid.GetFraction(Fractions::YOUNG));
+    EXPECT_NEAR((double)middle_aged/pop_count, grid.GetFraction(Fractions::MIDDLE_AGED),
+                margin*grid.GetFraction(Fractions::MIDDLE_AGED));
+    EXPECT_NEAR((double)oldies/pop_count, grid.GetFraction(Fractions::OLDIES),
+                margin*grid.GetFraction(Fractions::OLDIES));
+}
+
+
 
 namespace {
 // OpenMP should have no effect atm...
