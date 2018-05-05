@@ -27,85 +27,11 @@ City::City(const unsigned int city_id, const unsigned int province, unsigned int
                 m_types_present[type] = false;
 }
 
-vector<Community*> City::GetColleges()
-{
-        vector<Community*> colleges;
-        for (auto& it : m_communities) {
-                if (it.GetCommunityType() == CommunityType::College)
-                        colleges.emplace_back(&it);
-        }
-        return colleges;
-}
-
-vector<Community*> City::GetSchools()
-{
-        vector<Community*> schools;
-        for (auto& it : m_communities) {
-                if (it.GetCommunityType() == CommunityType::School)
-                        schools.emplace_back(&it);
-        }
-        return schools;
-}
-
-vector<Community*> City::GetWorkplaces()
-{
-        vector<Community*> workplaces;
-        for (auto& it : m_communities) {
-                if (it.GetCommunityType() == CommunityType::Work)
-                        workplaces.emplace_back(&it);
-        }
-        return workplaces;
-}
-
-vector<Community*> City::GetCommunities()
-{
-        vector<Community*> communities;
-        for (auto& it : m_communities) {
-                if (it.GetCommunityType() == CommunityType::Primary)
-                        communities.emplace_back(&it);
-                else if (it.GetCommunityType() == CommunityType::Secondary)
-                        communities.emplace_back(&it);
-        }
-        return communities;
-}
-
-vector<Community*> City::GetPrimaryCommunities()
-{
-        vector<Community*> communities;
-        for (auto& it : m_communities) {
-                if (it.GetCommunityType() == CommunityType::Primary)
-                        communities.emplace_back(&it);
-        }
-        return communities;
-}
-
-vector<Community*> City::GetSecondaryCommunities()
-{
-        vector<Community*> communities;
-        for (auto& it : m_communities) {
-                if (it.GetCommunityType() == CommunityType::Secondary)
-                        communities.emplace_back(&it);
-        }
-        return communities;
-}
-
-// this is  much better, taking away the need for all the above functions,
-// except the functions above make life easier sometimes, so leaving them for now...
-vector<Community*> City::GetCommunitiesOfType(CommunityType ct)
-{
-        vector<Community*> communities;
-        for (auto& it : m_communities) {
-                if (it.GetCommunityType() == ct) {
-                        communities.emplace_back(&it);
-                }
-        }
-        return communities;
-}
-
 Community& City::AddCommunity(CommunityType community_type)
 {
         m_communities.emplace_back(Community(community_type, this));
         m_types_present[community_type] = true;
+        m_moc[community_type].emplace_back(&m_communities.back());
         return m_communities.back();
 }
 

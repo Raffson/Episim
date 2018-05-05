@@ -1,0 +1,19 @@
+Robbe:
+- Finalize second version of paper
+- Test for PopulationGenerator in co-operation wth Nishchal
+
+Nishchal:
+- Count effective population in cities, needed for PopulationGenerator's test
+- Count infected count in cities, needed to the color-coding
+- Test for PopulationGenerator in co-operation with Robbe
+
+Beau:
+- Add ability to call MapViewer through CliController
+- Start working on GuiController
+- Improve/Expand MapViewer where needed
+
+Raphael:
+- Improve performance
+- Incorporate Boost's Geometry
+- Merge with stride & improve integration more if possible
+- Assist the rest where needed

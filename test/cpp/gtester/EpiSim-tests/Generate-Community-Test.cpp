@@ -107,12 +107,12 @@ TEST_P(CommunityTest, Run)
                         /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
                         if ((*c_it).first != (*c_it2).first) {
                                 if ((*c_it).second.GetPopulation() >= (*c_it2).second.GetPopulation()) {
-                                        EXPECT_GE((*c_it).second.GetCommunitySize(),
-                                                  (*c_it2).second.GetCommunitySize());
+                                        EXPECT_GE((*c_it).second.GetNrOfCommunities(),
+                                                  (*c_it2).second.GetNrOfCommunities());
                                 }
                                 if ((*c_it).second.GetPopulation() <= (*c_it2).second.GetPopulation()) {
-                                        EXPECT_LE((*c_it).second.GetCommunitySize(),
-                                                  (*c_it2).second.GetCommunitySize());
+                                        EXPECT_LE((*c_it).second.GetNrOfCommunities(),
+                                                  (*c_it2).second.GetNrOfCommunities());
                                 }
                         }
                 } catch (std::exception& e) {
