@@ -117,9 +117,8 @@ public:
         /// Returns whether or not the given type of community is present in this city.
         const bool HasCommunityType(CommunityType type) { return m_types_present[type]; }
 
-        //unsigned int GetEffectivePopulation(){ return m_effective_pop; }
-
         unsigned int GetEffectivePopulation();
+        unsigned int GetInfectedCount();
 
 private:
         const unsigned int m_city_id;   ///< A unique ID of the city.
@@ -143,8 +142,6 @@ private:
         bool m_out_commuting_changed;
 
         map<CommunityType, bool> m_types_present; ///< This map keeps track of the community types present.
-
-        //unsigned int m_effective_pop;  ///< This is the population that the city will have after population generation
 };
 
 } // namespace stride

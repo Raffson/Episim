@@ -83,4 +83,18 @@ unsigned int City::GetEffectivePopulation()
         return result;
 }
 
+
+unsigned int City::GetInfectedCount(){
+
+    unsigned int result = 0;
+    for(auto& hh:m_households){
+        for(auto& a_person:hh.GetMembers()){
+            if(a_person->GetHealth().IsInfected() || a_person->GetHealth().IsRecovered()){
+                result++;
+            }
+        }
+    }
+    return result;
+}
+
 } // namespace stride

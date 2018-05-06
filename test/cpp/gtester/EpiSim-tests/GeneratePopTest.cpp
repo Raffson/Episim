@@ -61,7 +61,6 @@ TEST_P(GenPopTest, CityPopulationTest)
         double actual =  ((double)a_city->GetPopulation() / (double)grid.GetTotalPopOfModel());
         double target = ((double)a_city->GetEffectivePopulation() / (double)grid.GetTotalPop());
         pop_counter += a_city->GetEffectivePopulation();
-
         EXPECT_NEAR(actual, target, actual * margin);
     }
     EXPECT_EQ(grid.GetPopulation()->size(), pop_counter);
@@ -76,6 +75,7 @@ TEST_P(GenPopTest, AgeDistributionTest)
     unsigned int middle_aged = 0;
     unsigned int toddlers = 0;
     unsigned int oldies = 0;
+    unsigned int active = 0;
 
     unsigned int pop_count = grid.GetPopulation()->size();
 
@@ -89,10 +89,16 @@ TEST_P(GenPopTest, AgeDistributionTest)
             }
             case Fractions::YOUNG : {
                 youngsters++;
+                if(a_person.GetPoolId(ContactPoolType::Id::Work) != 0){
+                    active++;
+                }
                 break;
             }
             case Fractions::MIDDLE_AGED : {
                 middle_aged++;
+                if(a_person.GetPoolId(ContactPoolType::Id::Work) != 0){
+                    active++;
+                }
                 break;
             }
             case Fractions::TODDLERS : {
@@ -116,6 +122,11 @@ TEST_P(GenPopTest, AgeDistributionTest)
                 margin*grid.GetFraction(Fractions::MIDDLE_AGED));
     EXPECT_NEAR((double)oldies/pop_count, grid.GetFraction(Fractions::OLDIES),
                 margin*grid.GetFraction(Fractions::OLDIES));
+
+    double actual_active = (double) active / (middle_aged + youngsters);
+    //we have approx. 46% active from the people of the working age 4% less than we are supposed to have
+    margin = 0.1;
+    EXPECT_NEAR(actual_active, grid.GetFraction(Fractions::ACTIVE), margin * grid.GetFraction(Fractions::ACTIVE));
 }
 
 
