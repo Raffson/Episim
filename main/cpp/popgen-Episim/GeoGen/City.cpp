@@ -74,4 +74,27 @@ Household& City::AddHousehold(ContactPoolSys& pool_sys)
         return m_households.back();
 }
 
+unsigned int City::GetEffectivePopulation()
+{
+        unsigned int result = 0;
+        for(auto& hh:m_households){
+                result += hh.GetSize();
+        }
+        return result;
+}
+
+
+unsigned int City::GetInfectedCount(){
+
+    unsigned int result = 0;
+    for(auto& hh:m_households){
+        for(auto& a_person:hh.GetMembers()){
+            if(a_person->GetHealth().IsInfected() || a_person->GetHealth().IsRecovered()){
+                result++;
+            }
+        }
+    }
+    return result;
+}
+
 } // namespace stride
