@@ -237,7 +237,7 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
 void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
 {
         auto&        pop           = *m_geogrid.GetPopulation();
-        auto&        pool_sys      = m_geogrid.GetContactPoolSys();
+        auto&        pool_sys      = pop.GetContactPoolSys();
         auto&        the_household = city.AddHousehold(pool_sys); // Returns a reference to the new household...
         unsigned int hid           = the_household.GetID();
 
@@ -292,6 +292,7 @@ void PopulationGenerator::GeneratePopulation()
                 }
         }
         cout << "Done generating population, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
+        SurveySeeder(m_geogrid.GetConfigPtree(), *m_geogrid.GetRNG()).Seed(m_geogrid.GetPopulation());
 }
 
 vector<Community*> PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const City& city, const CommunityType& community_type)

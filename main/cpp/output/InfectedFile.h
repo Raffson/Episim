@@ -16,23 +16,34 @@
 
 /**
  * @file
- * Header for the SimulatorObserver class.
+ * Header for the CasesFile class.
  */
 
-namespace stride {
-namespace python {
+#include <fstream>
+#include <string>
+#include <vector>
 
-/// Hook to allow python environment to get simulator state.
-class SimulatorObserver
+namespace stride {
+namespace output {
+
+/**
+ * Produces a file with daily cases count.
+ */
+class InfectedFile
 {
 public:
-        SimulatorObserver() {}
+        /// Constructor: initialize.
+        explicit InfectedFile(const std::string& output_dir = "output");
 
-        virtual ~SimulatorObserver() {}
+        /// Destructor: close the file stream.
+        ~InfectedFile();
 
-        /// Update with time step as an argument.
-        virtual void Update(unsigned int) {}
+        /// Print the given cases with corresponding tag.
+        void Print(const std::vector<unsigned int>& infectionCounts);
+
+private:
+        std::ofstream m_fstream; ///< The file stream.
 };
 
-} // namespace python
+} // namespace output
 } // namespace stride

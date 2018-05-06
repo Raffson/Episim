@@ -24,13 +24,12 @@ INSTALL( DIRECTORY ${DEPLOY_FILES} DESTINATION ${BIN_INSTALL_LOCATION} )
 
 INSTALL(FILES
 		create_contactmatrix.py
+		experimenter.py
+		experimenter_r0.py
 		interactive_maps.py
 		log2csv.py
 		plot_maps.py
-		runExperiments.py
-		runExperimentsR0.py
 		runManualConfig.py
-		runRepeat.py
 		seedTester.py
 		seedGenerator.py
 	DESTINATION ${BIN_INSTALL_LOCATION}

@@ -3,6 +3,7 @@
 // Created by Nishchal Shrestha on 20/03/2018.
 //
 
+#include "pop/SurveySeeder.h"
 #include "popgen-Episim/GeoGen/GeoGrid.h"
 #include "popgen-Episim/GeoGen/Household.h"
 

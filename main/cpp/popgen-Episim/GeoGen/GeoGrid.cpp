@@ -72,8 +72,7 @@ void GeoGrid::ClassifyNeighbours()
 
 GeoGrid::GeoGrid()
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
-          m_population(make_shared<Population>()), m_pool_sys(m_population->GetContactPoolSys()),
-          m_initialized(false), m_rng(nullptr), m_random_ages(false)
+          m_population(nullptr), m_initialized(false), m_rng(nullptr), m_random_ages(false)
 {
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
@@ -124,6 +123,7 @@ void GeoGrid::InitOutputStuff()
 
 void GeoGrid::AddPopgenPtree()
 {
+    m_config_pt.put<bool>("run.random_geopop", true); //Set this value to true for Population::Create
     const auto file_name        = m_config_pt.get<string>("run.geopop_file", "geogen_default.xml");
     const auto use_install_dirs = m_config_pt.get<bool>("run.use_install_dirs");
     const auto file_path        = (use_install_dirs) ? util::FileSys::GetConfigDir() /= file_name : file_name;
@@ -202,8 +202,7 @@ void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree, util::RNMana
         ReadDataFiles();
 
         m_total_pop = m_config_pt.get<unsigned int>("run.popgen.pop_info.pop_total", 4341923);
-        m_population->reserve(m_total_pop);
-        PopBuilder::CreateContactLogger(m_config_pt, m_population);
+        m_population = Population::Create(m_config_pt);
 
         m_random_ages = m_config_pt.get<bool>("run.popgen.pop_info.random_ages", false);
         m_initial_search_radius = m_config_pt.get<unsigned int>("run.popgen.neighbour_classification.initial_search_radius", 10U);
@@ -225,8 +224,7 @@ void GeoGrid::Reset()
         //Reset causes a crash if called multiple times like in the Ctor-test,
         // I have no clue why...
         m_initialized = false;
-        m_population.reset(new Population);
-        m_pool_sys = m_population->GetContactPoolSys();
+        m_population = nullptr;
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
         for( auto size : SizeList )
@@ -255,6 +253,7 @@ void GeoGrid::GenerateAll()
 
 void GeoGrid::GenerateSchools()
 {
+        REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");
 
         REQUIRE(m_fract_map[Fractions::SCHOOLED] <= 1, "Schooled fraction can't be bigger then 1.");
         REQUIRE(m_fract_map[Fractions::SCHOOLED] >= 0, "Schooled fraction can't be negative.");
@@ -283,7 +282,7 @@ void GeoGrid::GenerateSchools()
 
                 // Add contactpools
                 for (auto j = 0; j < cps; j++)
-                        nw_school.AddContactPool(m_pool_sys);
+                        nw_school.AddContactPool(m_population->GetContactPoolSys());
         }
         // We should ENSURE schools are effectively placed in cities.
         // The OO nature makes this assertion rather complex -> found in tests
@@ -313,6 +312,8 @@ void GeoGrid::AdjustLargestCities(vector<City*>& lc, City& city)
 
 void GeoGrid::GenerateColleges()
 {
+        REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");
+
         // need m_maxlc largest cities, largest determined by number of people in the city...
         // After deducing fractions from households, these should never fail,
         // they also become difficult to test since we can no longer play with the fractions,
@@ -342,13 +343,15 @@ void GeoGrid::GenerateColleges()
 
             Community& college = cty->AddCommunity(CommunityType::College);
             for (auto j = 0; j < cps; j++){
-                college.AddContactPool(m_pool_sys);
+                college.AddContactPool(m_population->GetContactPoolSys());
             }
         }
 }
 
 void GeoGrid::GenerateWorkplaces()
 {
+        REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");
+
         // We create the vec we will choose our city_id's out of.
         // Meaning a citiy has a probality to get assigned a workplace equal to the fraction
         // of people working IN the city (not the active working pop in the city).
@@ -392,7 +395,7 @@ void GeoGrid::GenerateWorkplaces()
                 Community& nw_workplace = chosen_city->AddCommunity(CommunityType::Work);
                 // A workplace has a contactpool.
                 for (auto j = 0; j < cps; j++) {
-                    nw_workplace.AddContactPool(m_pool_sys);
+                    nw_workplace.AddContactPool(m_population->GetContactPoolSys());
                 }
         }
 }
@@ -400,6 +403,7 @@ void GeoGrid::GenerateWorkplaces()
 // Communities need to be distributed according to the relative population size.
 void GeoGrid::GenerateCommunities()
 {
+        REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");
 
         // Determine number of contactpools
         auto cps = ceil((double)m_sizes_map[Sizes::COMMUNITIES] / m_sizes_map[Sizes::AVERAGE_CP]);
@@ -423,8 +427,8 @@ void GeoGrid::GenerateCommunities()
                 Community& nw_scommunity = chosen_city2.AddCommunity(CommunityType::Secondary);
                 // Add contactpools for secondary community...
                 for (auto j = 0; j < cps; j++) {
-                        nw_pcommunity.AddContactPool(m_pool_sys);
-                        nw_scommunity.AddContactPool(m_pool_sys);
+                        nw_pcommunity.AddContactPool(m_population->GetContactPoolSys());
+                        nw_scommunity.AddContactPool(m_population->GetContactPoolSys());
                 }
         }
 }

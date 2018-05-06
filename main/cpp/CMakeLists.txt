@@ -46,7 +46,6 @@ set(LIB_SRC
 	contact/InfectorExec.h
 	contact/InfectorMap.h
 	contact/LogPolicy.h
-	contact/R0Policy.h
     contact/TransmissionProfile.cpp
 #---
     disease/DiseaseSeeder.cpp
@@ -55,7 +54,7 @@ set(LIB_SRC
 	disease/Immunizer.cpp
 #---
 	output/AdoptedFile.cpp
-	output/CasesFile.cpp
+    output/InfectedFile.cpp
     output/PersonsFile.cpp
 	output/SummaryFile.cpp
 #---
@@ -76,7 +75,6 @@ set(LIB_SRC
     sim/SimBuilder.cpp
     sim/event/Id.cpp
 	sim/event/Subject.cpp
-	sim/python/StrideRunner.cpp
 #---
     util/Any.h
     util/ConfigInfo.cpp
@@ -97,7 +95,7 @@ set(LIB_SRC
     util/TimeToString.h
 #---
 	viewers/AdoptedViewer.cpp
-	viewers/CasesViewer.cpp
+	viewers/InfectedViewer.cpp
     viewers/CliViewer.cpp
     viewers/PersonsViewer.cpp
 	viewers/SummaryViewer.cpp
@@ -120,9 +118,6 @@ add_library(libstride ${LIB_SRC})
 target_link_libraries(libstride ${LIBS})
 target_compile_options(libstride PUBLIC "-fPIC")
 target_compile_definitions(libstride PUBLIC "-DSTRIDE_GIT_HASH=${STRIDE_WC_REVISION_HASH}")
-include(ProcessorCount)
-ProcessorCount(PROCCOUNT)
-target_compile_definitions(libstride PUBLIC "-DPROCCOUNT=${PROCCOUNT}")
 set_target_properties(libstride PROPERTIES PREFIX "")
 
 #============================================================================
@@ -152,6 +147,6 @@ install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
 #============================================================================
 # Clean up.
 #============================================================================
-unset(MAIN_SRC)
+unset(LIB_SRC)
 
 #############################################################################

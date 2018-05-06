@@ -19,16 +19,14 @@
  * Header for the command line controller.
  */
 
+#include "popgen-Episim/GeoGen/GeoGrid.h"
+#include "popgen-Episim/PopGen/PopulationGenerator.h"
 #include "util/Stopwatch.h"
 
-//#include <boost/filesystem/path.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <memory>
 #include <spdlog/spdlog.h>
 #include <string>
-#include <tuple>
-#include <utility>
-#include <vector>
 
 namespace stride {
 
@@ -86,6 +84,7 @@ private:
         util::Stopwatch<>               m_run_clock;        ///< Stopwatch for timing the computation.
         std::shared_ptr<spdlog::logger> m_stride_logger;    ///< General logger.
         bool                            m_use_install_dirs; /// Working dir or install dir mode.
+        std::shared_ptr<GeoGrid>        m_geogrid;          ///< The GeoGrid.
 };
 
 } // namespace stride

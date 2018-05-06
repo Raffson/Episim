@@ -22,9 +22,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <memory>
 
-#include "popgen-Episim/GeoGen/GeoGrid.h"
-#include "popgen-Episim/PopGen/PopulationGenerator.h"
-
 namespace stride {
 
 class Sim;
@@ -44,8 +41,8 @@ public:
         /// Initializing SimBuilder.
         explicit SimBuilder(const boost::property_tree::ptree& configPt);
 
-        /// Build the simulator.
-        std::shared_ptr<Sim> Build();
+        /// Build the simulator and return it afterwards.
+        std::shared_ptr<Sim> Build(std::shared_ptr<Sim> sim, std::shared_ptr<Population> pop);
 
 private:
         /// Get the contact configuration data.

@@ -15,7 +15,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "pop/PopBuilder.h"
 #include "pop/Population.h"
 #include "util/ConfigInfo.h"
 #include "util/FileSys.h"
@@ -196,7 +195,7 @@ public:
 
         /// Getter
         /// @retval <ContactPoolSys&> Returns a reference to the ContactPoolSys.
-        ContactPoolSys& GetContactPoolSys() { return m_pool_sys; }
+        //ContactPoolSys& GetContactPoolSys() { return m_pool_sys; }
 
         /// Getter
         /// @retval <const bool> Returns whether or not the GeoGrid is initialized.
@@ -298,7 +297,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         shared_ptr<Population> m_population;
 
         ///< The ContactPoolSys needed for stide itself.
-        ContactPoolSys& m_pool_sys;
+        //ContactPoolSys& m_pool_sys;
 
         ///< A variable indicating if the GeoGrid was initialized.
         bool m_initialized;
