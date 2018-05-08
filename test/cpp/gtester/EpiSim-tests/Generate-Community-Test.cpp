@@ -65,8 +65,7 @@ protected:
 
             //times 2 because we have to count both Primary and Secondary communities
             double total_communities = 2 * ceil((double)grid.GetTotalPop() / grid.GetAvgSize(Sizes::COMMUNITIES));
-            double popmod = (double)grid.GetTotalPopOfModel() / grid.GetTotalPop();
-            double margin = 0.01 * popmod;
+            double margin = 0.01;
 
             for(auto& it: grid.GetCities()){
                     City* a_city = &it.second;

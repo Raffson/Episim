@@ -83,8 +83,7 @@ TEST_P(CollegeTest, HappyDayScenario)
             total_pop_biggest += it->GetPopulation() ;
         }
 
-        double popmod = (double)grid.GetTotalPopOfModel() / grid.GetTotalPop();
-        double margin = 0.075 * popmod;
+        double margin = 0.075;
 
         for(auto& a_city:grid.GetCitiesWithCollege()){
             double target = a_city->GetPopulation() / total_pop_biggest;
