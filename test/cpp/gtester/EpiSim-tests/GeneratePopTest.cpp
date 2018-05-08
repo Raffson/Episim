@@ -58,10 +58,10 @@ TEST_P(GenPopTest, CityPopulationTest)
     unsigned int pop_counter = 0;
     for(auto& it: grid.GetCities()){
         City* a_city = &it.second;
-        double actual =  ((double)a_city->GetPopulation() / (double)grid.GetTotalPopOfModel());
-        double target = ((double)a_city->GetEffectivePopulation() / (double)grid.GetTotalPop());
+        double target =  ((double)a_city->GetPopulation() / (double)grid.GetTotalPopOfModel());
+        double actual = ((double)a_city->GetEffectivePopulation() / (double)grid.GetTotalPop());
         pop_counter += a_city->GetEffectivePopulation();
-        EXPECT_NEAR(actual, target, actual * margin);
+        EXPECT_NEAR(actual, target, target * margin);
     }
     EXPECT_EQ(grid.GetPopulation()->size(), pop_counter);
 }

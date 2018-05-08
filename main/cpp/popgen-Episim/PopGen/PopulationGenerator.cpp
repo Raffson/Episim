@@ -273,7 +273,6 @@ void PopulationGenerator::GeneratePopulation()
         const unsigned int max_population = m_geogrid.GetTotalPop();
         long long int      remaining_population = max_population; // long long to make sure the unsigned int fits...
 
-        unsigned int counter = 0;
         while (remaining_population > 0) {
                 City& city           = GetRandomCity();
                 auto  household_size = GetRandomHouseholdSize();
@@ -285,11 +284,6 @@ void PopulationGenerator::GeneratePopulation()
                         household_size = remaining_population;
                 GenerateHousehold(household_size, city);
                 remaining_population -= household_size;
-                counter += household_size;
-                if (counter >= 100000) {
-                        cout << "Mark 100000, " << remaining_population << " remaining..." << endl;
-                        counter -= 100000;
-                }
         }
         cout << "Done generating population, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
         SurveySeeder(m_geogrid.GetConfigPtree(), *m_geogrid.GetRNG()).Seed(m_geogrid.GetPopulation());
