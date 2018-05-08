@@ -186,15 +186,6 @@ ContactPool* PopulationGenerator::AssignWorkerAtRandom(City& origin)
 void PopulationGenerator::GeneratePerson(const double& age, const unsigned int hid, const unsigned int scid,
                                          Population& pop, City& city)
 {
-        // need the following:
-        // unsigned int id, double age, unsigned int household_id, unsigned int school_id,
-        // unsigned int work_id, unsigned int primary_community_id, unsigned int secondary_community_id,
-        // Health health, const ptree& belief_pt, double risk_averseness
-        // currently i have no clue what to do with risk_averseness,
-        // so i'm just assigning it to 0...
-
-        // TODO: gotta refactor because this is becoming too big & ugly...
-
         Fractions          category  = get_category(age);
         ContactPool*       school    = nullptr;
         ContactPool*       workplace = nullptr;
@@ -222,8 +213,7 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
         unsigned int schoolid = (school) ? school->GetID() : 0;
         unsigned int workid   = (workplace) ? workplace->GetID() : 0;
         unsigned int pcid     = (primcomm) ? primcomm->GetID() : 0;
-        pop.CreatePerson(m_id_generator++, age, hid, schoolid, workid, pcid, scid, Health(), m_geogrid.GetBelief(),
-                         0.0);
+        pop.CreatePerson(m_id_generator++, age, hid, schoolid, workid, pcid, scid);
         Person* person = &pop.back();
         // Add the person to the contactpools, if any...
         if (school)

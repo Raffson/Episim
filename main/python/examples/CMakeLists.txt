@@ -29,7 +29,6 @@ INSTALL(FILES
 		interactive_maps.py
 		log2csv.py
 		plot_maps.py
-		runManualConfig.py
 		seedTester.py
 		seedGenerator.py
 	DESTINATION ${BIN_INSTALL_LOCATION}
