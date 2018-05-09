@@ -70,9 +70,9 @@ void GeoGrid::ClassifyNeighbours()
         }
 }
 
-GeoGrid::GeoGrid()
+GeoGrid::GeoGrid(const util::RNManager::Info& info)
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
-          m_population(nullptr), m_initialized(false), m_rng(nullptr), m_random_ages(false)
+          m_population(nullptr), m_initialized(false), m_rng(info), m_random_ages(false)
 {
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
@@ -81,26 +81,22 @@ GeoGrid::GeoGrid()
             m_sizes_map[size] = 0;
 }
 
-GeoGrid::GeoGrid(const boost::property_tree::ptree& p_tree, util::RNManager* rng)
-        : GeoGrid()
+GeoGrid::GeoGrid(const boost::property_tree::ptree& p_tree, const util::RNManager::Info& info)
+        : GeoGrid(info)
 {
-    Initialize(p_tree, rng);
+    Initialize(p_tree);
     GenerateAll();
 }
 
-void GeoGrid::Initialize(const boost::filesystem::path& configFile, util::RNManager* rng, const bool override)
+void GeoGrid::Initialize(const boost::filesystem::path& configFile, const bool contactFile)
 {
         boost::property_tree::ptree pTree;
         boost::filesystem::path config;
         config = file_exists(configFile) ? configFile : util::FileSys::GetConfigDir() / configFile;
         config = file_exists(config) ? config : util::FileSys::GetConfigDir() / "run_default.xml";
         boost::property_tree::read_xml(config.string(), pTree);
-        if( override )
-        {
-            pTree.put("run.contact_output_file", false);
-            pTree.put("run.rng_type", "lcg64");
-        }
-        Initialize(pTree, rng);
+        pTree.put("run.contact_output_file", contactFile);
+        Initialize(pTree);
 }
 
 void GeoGrid::InitOutputStuff()
@@ -192,7 +188,7 @@ void GeoGrid::EnforceEnsures()
 
 }
 
-void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree, util::RNManager* rng)
+void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree)
 {
         //If an incorrect ptree is passed, this function may throw an exception...
         m_config_pt = p_tree;
@@ -208,13 +204,10 @@ void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree, util::RNMana
         m_initial_search_radius = m_config_pt.get<unsigned int>("run.popgen.neighbour_classification.initial_search_radius", 10U);
 
         // Setting up RNG
-        if( rng == nullptr ) {
-            unsigned long seed = (unsigned long)abs(m_config_pt.get("run.rng_seed", 0));
-            string        type = m_config_pt.get("run.rng_type", "mrg2");
-            default_generator.Initialize(util::RNManager::Info(type, seed));
-        }
-        //else we're assuming the RNG was initialized already...
-        m_rng = (rng) ? rng : &default_generator;
+        unsigned long seed = m_config_pt.get<unsigned long>("run.rng_seed", 1UL);
+        string        type = m_config_pt.get("run.rng_type", "mrg2");
+        m_rng.Initialize(util::RNManager::Info(type, seed));
+
         EnforceEnsures();
         m_initialized = true;
 }
@@ -239,7 +232,7 @@ void GeoGrid::Reset()
         m_cities_with_college.clear();
         m_random_ages = false;
         m_config_pt.clear();
-        m_rng = nullptr;
+        m_rng.Initialize();
 }
 
 void GeoGrid::GenerateAll()
@@ -489,7 +482,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         auto to_defrag = (unsigned int)round(defrag_cty.size() * X);
         while (defrag_cty.size() > to_defrag) {
                 trng::uniform_int_dist distr(0, (unsigned int)defrag_cty.size() - 1);
-                defrag_cty.erase(defrag_cty.begin() + m_rng->GetGenerator(distr)());
+                defrag_cty.erase(defrag_cty.begin() + m_rng.GetGenerator(distr)());
         }
 
         // Step 3: replace X% of these cities
@@ -538,8 +531,11 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
 void GeoGrid::WritePopToFile(const string &fname) const
 {
     std::ofstream file;
-    file.open ((m_config_pt.get<string>("run.output_prefix") + fname).c_str(), std::ofstream::out);
-    file << "\"age\",\"household_id\",\"school_id\",\"work_id\",\"primary_community\",\"secundary_community\"" << endl;
+    if (util::FileSys::IsDirectoryString(m_config_pt.get<string>("run.output_prefix")))
+        file.open((m_config_pt.get<string>("run.output_prefix") + fname).c_str(), std::ofstream::out);
+    else
+        file.open((m_config_pt.get<string>("run.output_prefix") + "_" + fname).c_str(), std::ofstream::out);
+    file << R"("age","household_id","school_id","work_id","primary_community","secundary_community")" << endl;
     file << *m_population << endl;
     file.close();
 }

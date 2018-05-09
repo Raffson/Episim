@@ -54,32 +54,28 @@ class GeoGrid
 
 public:
         /// Default constructor which initializes some members to 0.
-        GeoGrid();
+        /// @param info: A const reference to an RNManager's state.
+        GeoGrid(const util::RNManager::Info& info = util::RNManager::Info());
 
         /// Specialized constructor which will immediately initialize and generate the GeoGrid.
         /// @param p_tree: A property-tree containing the necessary information.
-        /// @param rng: A pointer to the random number generator to be used.
-        GeoGrid(const boost::property_tree::ptree& p_tree, util::RNManager* rng = nullptr);
+        /// @param info: A const reference to an RNManager's state.
+        GeoGrid(const boost::property_tree::ptree& p_tree, const util::RNManager::Info& info = util::RNManager::Info());
 
 
         /// Takes a filepath to city_config file and initializes the GeoGrid.
         /// @param config: a path to a gegogen config file. This file contains
         ///             things like name of the city data file, information about
         ///             the population...
-        /// @param rng: A pointer to the random number generator to be used.
-        /// @param override: A boolean value indicating if we're overriding the 'output_contact_file' value
-        /// of the given configuration. This is specifically to prevent output during the tests. Currently
-        /// this will also override the RNG type to LCG64 until we can figure out why MRG2 flips out with
-        /// the default RNG, i.e. the static RNG defined in this header. For now, by default this is set to true.
+        /// @param contactFile: A boolean value indicating if we're overriding the 'output_contact_file' value
+        /// of the given configuration. This is specifically to prevent output during the tests.
         void Initialize(const boost::filesystem::path& config,
-                        util::RNManager* rng = nullptr,
-                        const bool override = true);
+                        const bool contactFile = false);
 
 
         /// Takes a filepath to city_config file and initializes the GeoGrid.
         /// @param p_tree: A property-tree containing the necessary information.
-        /// @param rng: A pointer to the random number generator to be used.
-        void Initialize(const boost::property_tree::ptree& p_tree, util::RNManager* rng = nullptr);
+        void Initialize(const boost::property_tree::ptree& p_tree);
 
         /// Resets the entire GeoGrid.
         void Reset();
@@ -167,10 +163,6 @@ public:
         /// @retval <Population> Returns a reference to population
         shared_ptr<Population> GetPopulation() { return m_population; }
 
-        /// Getter
-        /// @retval <boost::property_tree::ptree> Returns the property tree for Belief
-        const boost::property_tree::ptree& GetBelief() const { return m_config_pt.get_child("run.belief_policy"); }
-
         /// Splits up the X fract cities that have less then Y fract of the total population in fragmented
         /// Cities.
         /// @param X The first fraction.
@@ -198,8 +190,8 @@ public:
         const bool IsInitialized() const { return m_initialized; }
 
         /// Getter
-        /// @retval <util::RNManager*> A pointer to the random number generator being used by GeoGrid.
-        util::RNManager* GetRNG() { return m_rng; }
+        /// @retval <const util::RNManager&> A const reference to the random number generator being used by GeoGrid.
+        const util::RNManager& GetRNG() { return m_rng; }
 
         /// Writes the current population to a file.
         /// @param fname The name of the file to be written.
@@ -296,7 +288,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
         bool m_initialized;
 
         ///< The random number generator.
-        util::RNManager* m_rng;
+        util::RNManager m_rng;
 
         ///< Indicates whether or not we want to use random age generation.
         bool m_random_ages;

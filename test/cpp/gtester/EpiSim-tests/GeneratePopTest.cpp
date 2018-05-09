@@ -34,9 +34,7 @@ public:
     GenPopTest(){
         grid.Initialize("run_default.xml");
         grid.GenerateAll();
-
-        stride::PopulationGenerator pop_generator(grid);
-        pop_generator.GeneratePopulation();
+        stride::PopulationGenerator(grid).GeneratePopulation();
     }
 
 protected:
@@ -54,14 +52,14 @@ protected:
 
 TEST_P(GenPopTest, CityPopulationTest)
 {
-    double margin = 0.11;
+    double margin = 0.01;
     unsigned int pop_counter = 0;
     for(auto& it: grid.GetCities()){
         City* a_city = &it.second;
         double target =  ((double)a_city->GetPopulation() / (double)grid.GetTotalPopOfModel());
         double actual = ((double)a_city->GetEffectivePopulation() / (double)grid.GetTotalPop());
         pop_counter += a_city->GetEffectivePopulation();
-        EXPECT_NEAR(actual, target, target * margin);
+        EXPECT_NEAR(actual, target, margin);
     }
     EXPECT_EQ(grid.GetPopulation()->size(), pop_counter);
 }
