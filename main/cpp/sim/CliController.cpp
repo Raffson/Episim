@@ -90,7 +90,7 @@ void CliController::Control()
         // -----------------------------------------------------------------------------------------
         std::shared_ptr<Population> pop;
         if( m_config_pt.get<bool>("run.random_geopop", false) ) {
-            m_geogrid = make_shared<GeoGrid>(m_config_pt); //using our static RNG, which one should we use???
+            m_geogrid = make_shared<GeoGrid>(m_config_pt);
             PopulationGenerator(*m_geogrid).GeneratePopulation();
             pop = m_geogrid->GetPopulation();
         }

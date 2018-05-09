@@ -74,7 +74,7 @@ Household& City::AddHousehold(ContactPoolSys& pool_sys)
         return m_households.back();
 }
 
-unsigned int City::GetEffectivePopulation()
+unsigned int City::GetEffectivePopulation() const
 {
         unsigned int result = 0;
         for(auto& hh:m_households){
@@ -84,8 +84,8 @@ unsigned int City::GetEffectivePopulation()
 }
 
 
-unsigned int City::GetInfectedCount(){
-
+unsigned int City::GetInfectedCount() const
+{
     unsigned int result = 0;
     for(auto& hh:m_households){
         for(auto& a_person:hh.GetMembers()){

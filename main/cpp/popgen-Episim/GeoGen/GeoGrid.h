@@ -194,10 +194,6 @@ public:
                                                                     CommunityType type);
 
         /// Getter
-        /// @retval <ContactPoolSys&> Returns a reference to the ContactPoolSys.
-        //ContactPoolSys& GetContactPoolSys() { return m_pool_sys; }
-
-        /// Getter
         /// @retval <const bool> Returns whether or not the GeoGrid is initialized.
         const bool IsInitialized() const { return m_initialized; }
 
@@ -295,9 +291,6 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         ///< The population of the GeoGrid
         shared_ptr<Population> m_population;
-
-        ///< The ContactPoolSys needed for stide itself.
-        //ContactPoolSys& m_pool_sys;
 
         ///< A variable indicating if the GeoGrid was initialized.
         bool m_initialized;

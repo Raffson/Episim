@@ -58,7 +58,7 @@ std::shared_ptr<Population> Population::Create(const boost::property_tree::ptree
         }
 
         if( configPt.get<bool>("run.random_geopop", false) )
-            return pop; //but what about SurveySeeder which is called in PopBuilder::Build?
+            return pop;
 
 
         // ------------------------------------------------

@@ -276,7 +276,7 @@ void PopulationGenerator::GeneratePopulation()
                 remaining_population -= household_size;
         }
         cout << "Done generating population, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
-        SurveySeeder(m_geogrid.GetConfigPtree(), *m_geogrid.GetRNG()).Seed(m_geogrid.GetPopulation());
+        SurveySeeder(m_geogrid.GetConfigPtree(), *m_rng).Seed(m_geogrid.GetPopulation());
 }
 
 vector<Community*> PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const City& city, const CommunityType& community_type)

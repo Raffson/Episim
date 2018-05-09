@@ -117,8 +117,8 @@ public:
         /// Returns whether or not the given type of community is present in this city.
         const bool HasCommunityType(CommunityType type) { return m_types_present[type]; }
 
-        unsigned int GetEffectivePopulation();
-        unsigned int GetInfectedCount();
+        unsigned int GetEffectivePopulation() const;
+        unsigned int GetInfectedCount() const;
 
 private:
         const unsigned int m_city_id;   ///< A unique ID of the city.
@@ -128,7 +128,7 @@ private:
         const string m_name;            ///< Name of the city.
 
         util::SegmentedVector<Community>       m_communities;  ///< Vector of Communities in the city
-        map<CommunityType, vector<Community*>> m_moc;          ///< Map of communities for faster retieval
+        map<CommunityType, vector<Community*>> m_moc;          ///< Map of communities for faster retrieval
 
         map<unsigned int, double> m_in_commuting;  ///< Contains number of commuters from other cities to this city
         map<unsigned int, double> m_out_commuting; ///< Contains number of commuters from this city to other cities
