@@ -33,6 +33,7 @@ namespace stride {
 
 class Sim;
 class Population;
+class GeoGrid;
 
 /**
  * The simulation runner:
@@ -47,7 +48,7 @@ public:
         /// Initialization with property tree.
         /// \param configPt config info for run and for config of simulator
         explicit SimRunner(const boost::property_tree::ptree& configPt, std::shared_ptr<Population> pop,
-                           const util::RNManager::Info& info = util::RNManager::Info());
+                           std::shared_ptr<GeoGrid> grid = nullptr);
 
         /// Destructor
         virtual ~SimRunner() override = default;

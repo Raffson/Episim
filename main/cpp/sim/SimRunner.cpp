@@ -30,14 +30,14 @@ using namespace std;
 
 namespace stride {
 
-SimRunner::SimRunner(const ptree& configPt, shared_ptr<Population> pop, const util::RNManager::Info& info)
+SimRunner::SimRunner(const ptree& configPt, shared_ptr<Population> pop, std::shared_ptr<GeoGrid> grid)
     : m_clock("total_clock"), m_config_pt(configPt), m_output_prefix(""), m_sim(nullptr)
 {
         m_clock.Start();
         Notify(Id::SetupBegin);
 
         m_output_prefix = m_config_pt.get<string>("run.output_prefix");
-        m_sim           = Sim::Create(m_config_pt, std::move(pop), info);
+        m_sim           = Sim::Create(m_config_pt, std::move(pop), grid);
 
         Notify(Id::SetupEnd);
         m_clock.Stop();

@@ -148,15 +148,16 @@ int startMap(stride::GeoGrid& grid)
 int main(int argc, char** argv)
 {
         stride::GeoGrid grid;
-        grid.Initialize("run_default.xml", true);
-        grid.ReadRNGstateFromFile();
+        grid.Initialize("run_default.xml");
+        //grid.Initialize("run_default.xml", true);
+        //grid.ReadRNGstateFromFile();
         grid.GenerateAll();
 
         stride::PopulationGenerator pop_generator(grid);
         pop_generator.GeneratePopulation();
 
         //grid.WritePopToFile("Test-pop.txt");
-        grid.WriteRNGstateToFile();
+        //grid.WriteRNGstateToFile();
 
 #ifdef USING_QT
         // startMap(argc, argv);

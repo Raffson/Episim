@@ -27,6 +27,7 @@ namespace stride {
 
 class Sim;
 class Population;
+class GeoGrid;
 
 /**
  * Builds a simulator (@see Sim) based a configuration property tree.
@@ -44,7 +45,7 @@ public:
 
         /// Build the simulator and return it afterwards.
         std::shared_ptr<Sim> Build(std::shared_ptr<Sim> sim, std::shared_ptr<Population> pop,
-                                   const util::RNManager::Info& info = util::RNManager::Info());
+                                   std::shared_ptr<GeoGrid> grid = nullptr);
 
 private:
         /// Get the contact configuration data.

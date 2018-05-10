@@ -26,6 +26,7 @@
 #include "disease/HealthSeeder.h"
 #include "pool/ContactPoolSys.h"
 #include "pool/ContactPoolType.h"
+#include "popgen-Episim/GeoGen/GeoGrid.h"
 #include "sim/Sim.h"
 #include "util/FileSys.h"
 
@@ -41,7 +42,7 @@ using namespace ContactPoolType;
 
 SimBuilder::SimBuilder(const ptree& configPt) : m_config_pt(configPt) {}
 
-shared_ptr<Sim> SimBuilder::Build(shared_ptr<Sim> sim, shared_ptr<Population> pop, const util::RNManager::Info& info)
+shared_ptr<Sim> SimBuilder::Build(shared_ptr<Sim> sim, shared_ptr<Population> pop, std::shared_ptr<GeoGrid> grid)
 {
         // --------------------------------------------------------------
         // Read config info and setup random number manager
@@ -53,7 +54,14 @@ shared_ptr<Sim> SimBuilder::Build(shared_ptr<Sim> sim, shared_ptr<Population> po
         sim->m_calendar          = make_shared<Calendar>(m_config_pt);
         sim->m_local_info_policy = m_config_pt.get<string>("run.local_information_policy", "NoLocalInformation");
         sim->m_contact_log_mode  = ContactLogMode::ToMode(m_config_pt.get<string>("run.contact_log_level", "None"));
-        sim->m_rn_manager.Initialize(info);
+
+        if( grid )
+                sim->m_rn_manager.Initialize(grid->GetRNG().GetInfo());
+        else
+                sim->m_rn_manager.Initialize(RNManager::Info{m_config_pt.get<string>("run.rng_type", "mrg2"),
+                                                             m_config_pt.get<unsigned long>("run.rng_seed", 1UL), "",
+                                                             sim->m_num_threads});
+
         //still gotta check if we're using file-based geopop,
         // in which case we'd need to read the RNG's state from a file...
 
