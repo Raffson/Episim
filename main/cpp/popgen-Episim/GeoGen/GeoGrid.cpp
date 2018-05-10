@@ -199,14 +199,16 @@ void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree)
 
         m_total_pop = m_config_pt.get<unsigned int>("run.popgen.pop_info.pop_total", 4341923);
         m_population = Population::Create(m_config_pt);
+        m_population->reserve(m_total_pop);
 
         m_random_ages = m_config_pt.get<bool>("run.popgen.pop_info.random_ages", false);
         m_initial_search_radius = m_config_pt.get<unsigned int>("run.popgen.neighbour_classification.initial_search_radius", 10U);
 
         // Setting up RNG
-        unsigned long seed = m_config_pt.get<unsigned long>("run.rng_seed", 1UL);
-        string        type = m_config_pt.get("run.rng_type", "mrg2");
-        m_rng.Initialize(util::RNManager::Info(type, seed));
+        unsigned long seed       = m_config_pt.get<unsigned long>("run.rng_seed", 1UL);
+        string        type       = m_config_pt.get("run.rng_type", "mrg2");
+        unsigned int  numThreads = m_config_pt.get<unsigned int>("run.num_threads");
+        m_rng.Initialize(util::RNManager::Info{type, seed, "", numThreads});
 
         EnforceEnsures();
         m_initialized = true;

@@ -1,0 +1,15 @@
+Robbe:
+- OpenMP
+- Test plan
+Nishchal:
+- Automated summary of tests with indication of failing tests and their corresponding output (preferably on the website)
+- Ability to write entire GeoGrid to files
+Beau:
+- Add ability to call MapViewer through CliController
+- Start working on GuiController
+- Improve/Expand MapViewer where needed
+Raphael:
+- Use k-d tree for queries of Boost's Geometry
+- Fix RNManager issues
+- Ability to read/write RNManager's state both in-memory & file-based.
+- Ability to read entire GeoGrid from files
