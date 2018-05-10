@@ -137,7 +137,8 @@ private:
         double m_in_commuter_count;     ///< Number of incomming commuters to the city
         double m_out_commuter_count;    ///< Number of outgoing commuters from the city
 
-        ///< These booleans will improve efficiency...
+        ///< These booleans will improve efficiency as they will indicate whether the commuters count has changed.
+        ///< If it didn't, we can return the commuters count straight away, else we'll recalculate.
         bool m_in_commuting_changed;
         bool m_out_commuting_changed;
 

@@ -49,7 +49,7 @@ public:
         explicit SimRunner(const boost::property_tree::ptree& configPt, std::shared_ptr<Population> pop);
 
         /// Destructor
-        virtual ~SimRunner() = default;
+        virtual ~SimRunner() override = default;
 
         /// Return the run & sim configuration.
         const util::Stopwatch<>& GetClock() const { return m_clock; }
