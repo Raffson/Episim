@@ -78,8 +78,8 @@ echo "" > .nojekyll
 ################################################################################
 echo 'Generating Doxygen code documentation...'
 # Redirect both stderr and stdout to the log file AND the console.
-cd $TRAVIS_BUILD_DIR && make -DSTRIDE_INCLUDE_DOC=TRUE configure
-cd cmake_build_release/doc/doxygen && make all && mv html $TRAVIS_BUILD_DIR/code_docs
+cd $TRAVIS_BUILD_DIR && make STRIDE_INCLUDE_DOC=TRUE configure
+cd cmake-build-release/doc/doxygen && make all && mv html $TRAVIS_BUILD_DIR/code_docs
 cd $TRAVIS_BUILD_DIR && mv doc/doxygen/ReferenceManual.html code_docs/index.html
 #doxygen $DOXYFILE 2>&1 | tee doxygen.log
 
