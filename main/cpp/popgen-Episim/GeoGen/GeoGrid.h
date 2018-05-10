@@ -40,9 +40,6 @@ using namespace std;
 
 namespace stride {
 
-//the next statics variable is only here for stand-alone run/tests...
-static util::RNManager default_generator;
-
 /**
  * Class representing our GeoGrid;
  * Geogrid contains information about the cities. placing of contactpools
@@ -83,6 +80,7 @@ public:
         /// Generates the schools, places them into the cities
         /// using a discrete distribution.
         /// Preconditions:\n
+        ///     \li REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");\n
         ///     \li REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");\n
         ///     \li REQUIRE(m_schooled_frac >= 0, "Schooled fract can't be negative");\n
         ///     \li REQUIRE(m_school_size >= 0, "The initial school size can't be negative");
@@ -94,6 +92,7 @@ public:
         /// Generates the colleges, places them into the cities
         /// using a discrete distribution.
         /// Preconditions:\n
+        ///     \li REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");\n
         ///     \li REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");\n
         ///     \li REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");\n
         ///     \li REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");\n
@@ -106,10 +105,14 @@ public:
 
         /// Generates the workplaces, places them into the cities a random with chances
         /// discretly distributed according to size. Generates contactpools for the communities.
+        /// Preconditions:\n
+        ///     \li REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");\n
         void GenerateWorkplaces();
 
         /// Generates the communties, places them into the cities a random with chances
         /// discretly distributed according to size. Generates contactpools for the communities.
+        /// Preconditions:\n
+        ///     \li REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");\n
         void GenerateCommunities();
 
         /// Calls all other generator functions.
@@ -191,12 +194,10 @@ public:
 
         /// Getter
         /// @retval <const util::RNManager&> A const reference to the random number generator being used by GeoGrid.
-        const util::RNManager& GetRNG() { return m_rng; }
+        util::RNManager& GetRNG() { return m_rng; }
 
         /// Writes the current population to a file.
         /// @param fname The name of the file to be written.
-        // TODO: this file should be written to some specific folder,
-        // TODO: perhaps the output folder mentioned in the config file...
         void WritePopToFile(const string& fname = "population.csv") const;
 
         /// Getter
@@ -211,6 +212,14 @@ public:
         /// @retval <const boost::property_tree::ptree&> A const reference to the property tree
         /// representing the configuration.
         const boost::property_tree::ptree& GetConfigPtree() const { return m_config_pt; }
+
+        /// Writes the current RNG's state to a file.
+        /// @param fname The name of the file to be written.
+        void WriteRNGstateToFile(const string& fname = "RNG-state.xml") const;
+
+        /// Reads an RNG's state from a file.
+        /// @param fname The name of the file to be read from.
+        void ReadRNGstateFromFile(const string& fname = "RNG-state.xml");
 
 private:
         /// Returns index of city with smallest population from 'lc'

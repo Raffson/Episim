@@ -95,7 +95,11 @@ void CliController::Control()
             pop = m_geogrid->GetPopulation();
         }
         else pop = Population::Create(m_config_pt);
-        auto runner = make_shared<SimRunner>(m_config_pt, pop);
+        RNManager::Info info{m_config_pt.get<string>("run.rng_type", "mrg2"),
+                             m_config_pt.get<unsigned long>("run.rng_seed", 1UL), "",
+                             m_config_pt.get<unsigned int>("run.num_threads")};
+        auto runner = m_geogrid ? make_shared<SimRunner>(m_config_pt, pop, m_geogrid->GetRNG().GetInfo())
+                                : make_shared<SimRunner>(m_config_pt, pop, info);
         RegisterViewers(runner);
         runner->Run();
         m_stride_logger->info("CliController shutting down.");

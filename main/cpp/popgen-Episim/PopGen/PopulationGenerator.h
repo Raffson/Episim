@@ -159,7 +159,7 @@ private:
         std::vector<double> m_city_pop_fracs;
 
         ///< The random number generator.
-        util::RNManager m_rng;
+        util::RNManager& m_rng;
 };
 
 } // namespace stride

@@ -41,7 +41,7 @@ using namespace ContactPoolType;
 
 SimBuilder::SimBuilder(const ptree& configPt) : m_config_pt(configPt) {}
 
-shared_ptr<Sim> SimBuilder::Build(shared_ptr<Sim> sim, shared_ptr<Population> pop)
+shared_ptr<Sim> SimBuilder::Build(shared_ptr<Sim> sim, shared_ptr<Population> pop, const util::RNManager::Info& info)
 {
         // --------------------------------------------------------------
         // Read config info and setup random number manager
@@ -53,9 +53,9 @@ shared_ptr<Sim> SimBuilder::Build(shared_ptr<Sim> sim, shared_ptr<Population> po
         sim->m_calendar          = make_shared<Calendar>(m_config_pt);
         sim->m_local_info_policy = m_config_pt.get<string>("run.local_information_policy", "NoLocalInformation");
         sim->m_contact_log_mode  = ContactLogMode::ToMode(m_config_pt.get<string>("run.contact_log_level", "None"));
-        sim->m_rn_manager.Initialize(RNManager::Info{m_config_pt.get<string>("run.rng_type", "mrg2"),
-                                                     m_config_pt.get<unsigned long>("run.rng_seed", 1UL), "",
-                                                     sim->m_num_threads});
+        sim->m_rn_manager.Initialize(info);
+        //still gotta check if we're using file-based geopop,
+        // in which case we'd need to read the RNG's state from a file...
 
         // --------------------------------------------------------------
         // Contact handlers, each with generator bound to different

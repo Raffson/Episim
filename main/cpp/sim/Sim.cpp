@@ -43,13 +43,14 @@ Sim::Sim()
 {
 }
 
-std::shared_ptr<Sim> Sim::Create(const boost::property_tree::ptree& configPt, shared_ptr<Population> pop)
+std::shared_ptr<Sim> Sim::Create(const boost::property_tree::ptree& configPt, shared_ptr<Population> pop,
+                                 const util::RNManager::Info& info)
 {
         struct make_shared_enabler : public Sim
         {
         };
         shared_ptr<Sim> sim = make_shared<make_shared_enabler>();
-        SimBuilder(configPt).Build(sim, std::move(pop));
+        SimBuilder(configPt).Build(sim, std::move(pop), info);
         return sim;
 }
 

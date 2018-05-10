@@ -124,14 +124,6 @@ shared_ptr<Population> PopBuilder::MakePersons(std::shared_ptr<Population> pop)
 shared_ptr<Population> PopBuilder::Build(std::shared_ptr<Population> pop)
 {
         //------------------------------------------------
-        // Check validity of input data.
-        //------------------------------------------------
-        const auto seeding_rate = m_config_pt.get<double>("run.seeding_rate");
-        if (seeding_rate > 1.0) {
-                throw runtime_error(string(__func__) + "> Bad input data for seeding_rate.");
-        }
-
-        //------------------------------------------------
         // Add persons & fill pools & surveyseeding.
         //------------------------------------------------
         SurveySeeder(m_config_pt, m_rn_manager).Seed(MakePoolSys(MakePersons(pop)));

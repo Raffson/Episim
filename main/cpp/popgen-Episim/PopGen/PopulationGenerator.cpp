@@ -10,7 +10,7 @@ namespace stride {
 
 unsigned int PopulationGenerator::m_id_generator = 1;
 
-PopulationGenerator::PopulationGenerator(GeoGrid& geogrid) : m_geogrid(geogrid), m_rng(geogrid.GetRNG().GetInfo())
+PopulationGenerator::PopulationGenerator(GeoGrid& geogrid) : m_geogrid(geogrid), m_rng(geogrid.GetRNG())
 {
         InitializeHouseholdFractions();
         InitializeCommutingFractions();

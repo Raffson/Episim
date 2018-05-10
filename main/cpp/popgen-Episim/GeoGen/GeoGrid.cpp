@@ -4,6 +4,8 @@
 
 #include "GeoGrid.h"
 
+#include "util/RunConfigManager.h"
+
 using namespace std;
 
 namespace stride {
@@ -207,7 +209,7 @@ void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree)
         // Setting up RNG
         unsigned long seed       = m_config_pt.get<unsigned long>("run.rng_seed", 1UL);
         string        type       = m_config_pt.get("run.rng_type", "mrg2");
-        unsigned int  numThreads = m_config_pt.get<unsigned int>("run.num_threads");
+        unsigned int  numThreads = m_config_pt.get<unsigned int>("run.num_threads", 1U);
         m_rng.Initialize(util::RNManager::Info{type, seed, "", numThreads});
 
         EnforceEnsures();
@@ -531,7 +533,7 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
 }
 
 void GeoGrid::WritePopToFile(const string &fname) const
-{
+{ //TODO: refactor to a better location perhaps...
     std::ofstream file;
     if (util::FileSys::IsDirectoryString(m_config_pt.get<string>("run.output_prefix")))
         file.open((m_config_pt.get<string>("run.output_prefix") + fname).c_str(), std::ofstream::out);
@@ -541,5 +543,42 @@ void GeoGrid::WritePopToFile(const string &fname) const
     file << *m_population << endl;
     file.close();
 }
+
+void GeoGrid::WriteRNGstateToFile(const string& fname) const
+{ //TODO: refactor to a better location perhaps...
+    boost::property_tree::ptree pt;
+    pt.put("rng_state.seed", m_rng.GetInfo().m_seed);
+    pt.put("rng_state.state", m_rng.GetInfo().m_state);
+    pt.put("rng_state.stream_count", m_rng.GetInfo().m_stream_count);
+    pt.put("rng_state.type", m_rng.GetInfo().m_type);
+
+    std::ofstream file;
+    if (util::FileSys::IsDirectoryString(m_config_pt.get<string>("run.output_prefix")))
+        file.open((m_config_pt.get<string>("run.output_prefix") + fname).c_str(), std::ofstream::out);
+    else
+        file.open((m_config_pt.get<string>("run.output_prefix") + "_" + fname).c_str(), std::ofstream::out);
+
+    file << util::RunConfigManager::ToString(pt) << endl;
+    file.close();
+}
+
+void GeoGrid::ReadRNGstateFromFile(const string& fname)
+{ //TODO: refactor to a better location perhaps...
+    boost::property_tree::ptree pt;
+    boost::filesystem::path filePath;
+    filePath = file_exists(fname) ? fname : m_config_pt.get<string>("run.output_prefix") + fname;
+    if( file_exists(filePath) )
+        boost::property_tree::read_xml(filePath.string(), pt);
+    else
+        cerr << "GeoGrid::ReadRNGstateFromFile> Could not find given file:  "
+             << filePath.string() << endl << "Initializing to default state..." << endl;
+
+    unsigned long seed       = m_config_pt.get<unsigned long>("rng_state.seed", 1UL);
+    string        type       = m_config_pt.get("rng_state.type", "mrg2");
+    string        state      = m_config_pt.get("rng_state.state", "");
+    unsigned int  numThreads = m_config_pt.get<unsigned int>("rng_state.stream_count", 1U);
+    m_rng.Initialize(util::RNManager::Info{type, seed, "", numThreads});
+}
+
 
 } // namespace stride

@@ -43,7 +43,8 @@ class Sim
 public:
         /// Create Sim initialized by the configuration in property tree and population.
         static std::shared_ptr<Sim> Create(const boost::property_tree::ptree& configPt,
-                                           std::shared_ptr<Population>        pop);
+                                           std::shared_ptr<Population>        pop,
+                                           const util::RNManager::Info& info = util::RNManager::Info());
 
         /// For use in python environment: create using configuration string i.o ptree.
         static std::shared_ptr<Sim> Create(const std::string& configString, std::shared_ptr<Population> pop);

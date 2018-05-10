@@ -21,6 +21,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <memory>
+#include <util/RNManager.h>
 
 namespace stride {
 
@@ -42,7 +43,8 @@ public:
         explicit SimBuilder(const boost::property_tree::ptree& configPt);
 
         /// Build the simulator and return it afterwards.
-        std::shared_ptr<Sim> Build(std::shared_ptr<Sim> sim, std::shared_ptr<Population> pop);
+        std::shared_ptr<Sim> Build(std::shared_ptr<Sim> sim, std::shared_ptr<Population> pop,
+                                   const util::RNManager::Info& info = util::RNManager::Info());
 
 private:
         /// Get the contact configuration data.
