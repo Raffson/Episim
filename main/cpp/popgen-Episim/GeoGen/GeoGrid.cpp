@@ -6,6 +6,9 @@
 
 #include "util/RunConfigManager.h"
 
+#include <boost/geometry/algorithms/distance.hpp>
+#include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
+
 using namespace std;
 
 namespace stride {
@@ -50,9 +53,40 @@ void GeoGrid::GetMainFractions()
                 popfracs.emplace_back(m_fract_map[category]);
 }*/
 
+void GeoGrid::ClassifyNeighbours2()
+{
+    //cout << "Starting classification..." << endl;
+    //const clock_t begin_time = clock();
+    for (auto& cityA : m_cities) {
+        unsigned int last = 0;
+        unsigned int radius = m_initial_search_radius;
+        while( radius > last ) { //this while-loop should be optimized...
+            std::vector<rtElem> cities;
+            m_rtree.query(
+                    bgi::satisfies([&](rtElem const& e)
+                                   {double dist = bg::distance(e.first, cityA.second.GetCoordinates().GetLongLat());
+                                       return (dist < radius and dist >= last);}),
+                    std::back_inserter(cities));
+            for( const auto& city : cities ) {
+                for (auto type : CommunityTypes) {
+                    if( m_cities.at(city.second).HasCommunityType(type) )
+                        m_neighbours_in_radius[cityA.first][radius][type].emplace_back(&m_cities.at(city.second));
+
+                }
+            }
+            last = radius;
+            radius <<= 1; // multiply by 2
+        }
+    }
+    //cout << "Done classifying, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
+}
+
 void GeoGrid::ClassifyNeighbours()
 {
-        // I believe we should be making use of boost's geometry queries here...
+        //cout << "Starting classification..." << endl;
+        //const clock_t begin_time = clock();
+        //this approach without boost's rtree queries is much faster for flanders_cities (327 cities)
+        // could be different if we had more cities though, but can we test that?
         for (auto& cityA : m_cities) {
                 for (auto& cityB : m_cities) {
                         // truncating distance on purpose to avoid using floor-function
@@ -69,6 +103,7 @@ void GeoGrid::ClassifyNeighbours()
                         }
                 }
         }
+        //cout << "Done classifying, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
 }
 
 GeoGrid::GeoGrid(const util::RNManager::Info& info)
@@ -158,7 +193,7 @@ void GeoGrid::ReadDataFiles()
     m_model_households = parser::ParseHouseholds(base_path / household_file);
     GetMainFractions();
 
-    parser::ParseCities(base_path / city_file, m_cities, m_model_pop);
+    parser::ParseCities(base_path / city_file, m_cities, m_model_pop, m_rtree);
     parser::ParseCommuting(base_path / commuting_file, m_cities, m_fract_map);
 
 }

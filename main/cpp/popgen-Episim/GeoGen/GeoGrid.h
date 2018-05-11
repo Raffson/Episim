@@ -236,6 +236,7 @@ private:
         /// Computes for each city the distances to all other cities and classifies them
         /// in exponential order, assigning this to m_neighbours_in_radius. The default initial search radius = 10km.
         void ClassifyNeighbours();
+        void ClassifyNeighbours2(); //for benchmarking purposes...
 
         /// Used by GeoGrid::Initialize to create an output-directory if needed.
         void InitOutputStuff();
@@ -301,6 +302,9 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         ///< Indicates whether or not we want to use random age generation.
         bool m_random_ages;
+
+        ///< A boost R-tree used for neighbour classification
+        bgi::rtree<rtElem, bgi::quadratic<16>> m_rtree;
 };
 
 } // namespace stride

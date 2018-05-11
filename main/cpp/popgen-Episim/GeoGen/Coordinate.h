@@ -58,6 +58,12 @@ public:
         /// Getter for the geographical latitude coordinate.
         double GetLatitude() const { return bg::get<1>(longlat); }
 
+        /// Getter for the cartesian coordinates.
+        const cPoint& GetXY() const { return xy; }
+
+        /// Getter for the geographical coordinates.
+        const gPoint& GetLongLat() const { return longlat; }
+
 private:
 
         cPoint xy;      ///< The coordinate represented in cartesian format.
