@@ -36,7 +36,8 @@ class Population;
 class GeoGrid;
 
 /**
- * The simulation runner:
+ * The simulation runner drive simulator throufgh time steps.
+ * It's functions are:
  * \li invokes the simulator builder (@see SimulatorBuilder)
  * \li manages elapsed time clock
  * \li manages time steps
@@ -51,7 +52,7 @@ public:
                            std::shared_ptr<GeoGrid> grid = nullptr);
 
         /// Destructor
-        virtual ~SimRunner() override = default;
+        ~SimRunner() override = default;
 
         /// Return the run & sim configuration.
         const util::Stopwatch<>& GetClock() const { return m_clock; }

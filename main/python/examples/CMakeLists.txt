@@ -28,6 +28,7 @@ INSTALL(FILES
 		experimenter_r0.py
 		interactive_maps.py
 		log2csv.py
+		LogParser.py
 		plot_maps.py
 		seedTester.py
 		seedGenerator.py
