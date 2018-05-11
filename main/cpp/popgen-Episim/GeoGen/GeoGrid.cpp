@@ -61,7 +61,6 @@ void GeoGrid::ClassifyNeighbours()
                         // mind that the categories go as follows [0, initial_radius), [initial_radius,
                         // 2*initial_radius), etc.
                         unsigned int category = m_initial_search_radius;
-                        // i believe the following code is more efficient than the alternative code below...
                         while ((distance / category) > 0)
                                 category <<= 1; // equivalent to multiplying by 2
                         for( auto type : CommunityTypes ) {

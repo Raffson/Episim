@@ -4,23 +4,16 @@
 //
 
 #include <algorithm>
-#include <iostream>
 #include <map>
-#include <memory>
 #include <vector>
-
-#include "util/CSV.h"
-#include "util/CSVRow.h"
-#include "util/RNManager.h"
-
-#include <boost/filesystem.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
 
 #include "popgen-Episim/GeoGen/City.h"
 #include "popgen-Episim/GeoGen/Utility.h"
 
-#include "trng/discrete_dist.hpp"
+#include "util/RNManager.h"
+
+#include <boost/filesystem.hpp>
+
 
 using namespace std;
 
