@@ -21,14 +21,16 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <memory>
+#include <util/RNManager.h>
 
 namespace stride {
 
 class Sim;
 class Population;
+class GeoGrid;
 
 /**
- * Builds a simulator (@see Sim) based a configuration property tree.
+ * Builds a simulator based a configuration property tree.
  * It
  * \li reads any additional configuration files (disease, contact, ...)
  * \li initializes calendar and random number manager for the simulator
@@ -42,7 +44,8 @@ public:
         explicit SimBuilder(const boost::property_tree::ptree& configPt);
 
         /// Build the simulator and return it afterwards.
-        std::shared_ptr<Sim> Build(std::shared_ptr<Sim> sim, std::shared_ptr<Population> pop);
+        std::shared_ptr<Sim> Build(std::shared_ptr<Sim> sim, std::shared_ptr<Population> pop,
+                                   std::shared_ptr<GeoGrid> grid = nullptr);
 
 private:
         /// Get the contact configuration data.

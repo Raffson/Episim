@@ -68,29 +68,26 @@ bool file_exists(const boost::filesystem::path& path);
 /// @retval <double> a number in radians.
 double convert_to_radians(double degrees);
 
-// deprecated?
-//void init_generator(const unsigned long seed, const string& generator);
-
 /// Takes a distribution -> a vec of numbers and generates N random numbers given the distribution vector.
 /// @param p_vec a vector representing our distribution, each entry contains a relative probability.
 ///              The probability to generate the number on that index (first entry is probability to
 ///              generate 0)
-/// @param rng  a pointer to a RNMmanager object. See "RNMmanger".h for more info.
+/// @param rng  a reference to a RNMmanager object. See "RNMmanger".h for more info.
 /// @param amount default = 1 The amount of random numbers we will generate.
 /// @retval <vector<unsigned int>> a vector of unsigned ints of length == amount. Each number is between
 ///                                [0 and p_vec.size() - 1 ]
 /// @example a vec with numbers [1,4,8,2] as relative probabillities, and amount = 3. Will generate
 ///          3 numbers out of the interval [0,3] with chance on p(0) = 1/15, p(1) = 4/15, p(2) = 8/15, p(3) = 2/15
-vector<unsigned int> generate_random(const vector<double>& p_vec, util::RNManager* rng, unsigned int amount = 1);
+vector<unsigned int> generate_random(const vector<double>& p_vec, util::RNManager& rng, unsigned int amount = 1);
 
 /// Generates the 'amount' of random unsigned ints between 'begin' and 'end' using 'rng'.
 /// @param begin an unsigned int marking the beginning of the random interval
 /// @param end an unsigned int marking the end of a random interval, with 'end' not included).
-/// @param rng  a pointer to a RNMmanager object. See "RNMmanger".h for more info.
+/// @param rng  a reference to a RNMmanager object. See "RNMmanger".h for more info.
 /// @param amount default = 1 The amount of random numbers we will generate.
 /// @retval <vector<unsigned int>> a vector of unsigned ints of length == amount. Each number is between
 ///                                [begin and end - 1 ]
-vector<unsigned int> generate_random(unsigned int begin, unsigned int end, util::RNManager* rng, unsigned int amount);
+vector<unsigned int> generate_random(unsigned int begin, unsigned int end, util::RNManager& rng, unsigned int amount);
 
 /// Checks the given distribution if all elements are zero. If this is the case,
 /// we transform to a uniform distribution. This is needed to take students into account from cities

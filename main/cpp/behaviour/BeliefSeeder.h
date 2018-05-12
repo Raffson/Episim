@@ -16,39 +16,35 @@
 
 /**
  * @file
- * Header for the Immunizer class.
+ * Header file for the HealthSeeder.
  */
 
-#include "pool/ContactPool.h"
+#include "behaviour/belief_policies/Imitation.h"
+#include "behaviour/belief_policies/NoBelief.h"
+#include "util/RNManager.h"
 
-#include <vector>
-#include <util/SegmentedVector.h>
+#include <boost/property_tree/ptree.hpp>
+#include <functional>
+#include <memory>
 
 namespace stride {
 
-namespace util {
-class RNManager;
-}
+class Population;
 
 /**
- * Deals with immunization strategies.
+ * Seeds the population with Health data.
  */
-class Immunizer
+class BeliefSeeder
 {
 public:
-        ///
-        explicit Immunizer(util::RNManager& rnManager);
+        /// Constructor requires diease data and random number manager.
+        BeliefSeeder(const boost::property_tree::ptree& configPt, util::RNManager& rnManager);
 
-        /// Random immunization.
-        void Random(const util::SegmentedVector<ContactPool>& pools, std::vector<double>& immunityDistribution,
-                    double immunityLinkProbability);
-
-        /// Cocoon immunization.
-        void Cocoon(const util::SegmentedVector<ContactPool>& pools, std::vector<double>& immunityDistribution,
-                    double immunityLinkProbability);
+        /// Seeds the population with Health data.
+        void Seed(std::shared_ptr<Population> pop);
 
 private:
-        util::RNManager& m_rn_manager; ///< Random number manager.
+        boost::property_tree::ptree m_config_pt;
 };
 
 } // namespace stride

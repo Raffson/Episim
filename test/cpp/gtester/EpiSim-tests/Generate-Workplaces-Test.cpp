@@ -67,9 +67,7 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         double allworkers           = active_pop * grid.GetTotalPopOfModel();
         double number_of_workplaces = ceil(allworkers / grid.GetAvgSize(Sizes::WORKPLACES));
 
-
-        double popmod = (double)grid.GetTotalPopOfModel() / grid.GetTotalPop();
-        double margin = 0.01 * popmod;
+        double margin = 0.01;
 
         for(auto& it: grid.GetCities()){
             City* a_city = &it.second;

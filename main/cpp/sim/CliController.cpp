@@ -90,12 +90,12 @@ void CliController::Control()
         // -----------------------------------------------------------------------------------------
         std::shared_ptr<Population> pop;
         if( m_config_pt.get<bool>("run.random_geopop", false) ) {
-            m_geogrid = make_shared<GeoGrid>(m_config_pt); //using our static RNG, which one should we use???
+            m_geogrid = make_shared<GeoGrid>(m_config_pt);
             PopulationGenerator(*m_geogrid).GeneratePopulation();
             pop = m_geogrid->GetPopulation();
         }
         else pop = Population::Create(m_config_pt);
-        auto runner = make_shared<SimRunner>(m_config_pt, pop);
+        auto runner = make_shared<SimRunner>(m_config_pt, pop, m_geogrid);
         RegisterViewers(runner);
         runner->Run();
         m_stride_logger->info("CliController shutting down.");
