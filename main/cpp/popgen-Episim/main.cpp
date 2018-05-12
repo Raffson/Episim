@@ -150,6 +150,7 @@ int main(int argc, char** argv)
         stride::GeoGrid grid;
         grid.Initialize("run_default.xml");
         grid.GenerateAll();
+        grid.WriteToFile();
 
         stride::PopulationGenerator pop_generator(grid);
         pop_generator.GeneratePopulation();
@@ -158,6 +159,6 @@ int main(int argc, char** argv)
 
 #ifdef USING_QT
         // startMap(argc, argv);
-        startMap(grid);
+        //startMap(grid);
 #endif
 }

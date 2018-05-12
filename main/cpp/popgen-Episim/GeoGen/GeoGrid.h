@@ -224,6 +224,11 @@ public:
         /// representing the configuration.
         const boost::property_tree::ptree& GetConfigPtree() const { return m_config_pt; }
 
+        /// Write all the important information of this class to files
+        /// all the information regarding number of different types of communities will be written to 'communties.csv'
+        /// remaining information to 'fractions.xml'
+        void WriteToFile();
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)

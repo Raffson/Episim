@@ -485,7 +485,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                         defrag_cty.emplace_back(&it.second);
         }
 
-        // Step2: Decide wich X% of cities to delete
+        // Step2: Decide which X% of cities to delete
         auto to_defrag = (unsigned int)round(defrag_cty.size() * X);
         while (defrag_cty.size() > to_defrag) {
                 trng::uniform_int_dist distr(0, (unsigned int)defrag_cty.size() - 1);
@@ -542,6 +542,46 @@ void GeoGrid::WritePopToFile(const string &fname) const
     file << "\"age\",\"household_id\",\"school_id\",\"work_id\",\"primary_community\",\"secundary_community\"" << endl;
     file << *m_population << endl;
     file.close();
+}
+
+void GeoGrid::WriteToFile()
+{
+    //creating a directory if it doesn't exist
+    std::string path = "data/geogrid";
+    boost::filesystem::path dir(path.c_str());
+    if(!(boost::filesystem::exists(dir))){
+        boost::filesystem::create_directory(dir);
+    }
+
+    std::ofstream file(path + "/communities.csv");
+    file << "City_id, Schools, Colleges, Workplaces, PrimaryCommunities, SecondaryCommunities" << endl;
+    for(auto& it: m_cities){
+        City* a_city = &it.second;
+        file <<a_city->GetId()<<","<<a_city->GetSchools().size()<<","
+             <<a_city->GetColleges().size() <<"," <<a_city->GetWorkplaces().size()<< ","
+             <<a_city->GetPrimaryCommunities().size()<<"," <<a_city->GetSecondaryCommunities().size() << endl;
+
+    }
+    file.close();
+
+    //writing remaining informations as a xml-file
+    boost::property_tree::ptree tree;
+
+    tree.put("geogrid.fractions.schooled", m_fract_map[Fractions::SCHOOLED]);
+    tree.put("geogrid.fractions.young", m_fract_map[Fractions::YOUNG]);
+    tree.put("geogrid.fractions.middle_aged", m_fract_map[Fractions::MIDDLE_AGED]);
+    tree.put("geogrid.fractions.toddlers", m_fract_map[Fractions::TODDLERS]);
+    tree.put("geogrid.fractions.oldies", m_fract_map[Fractions::OLDIES]);
+
+    auto center = GetCenterOfGrid();
+    tree.put("geogrid.center_of_grid.x", center.GetX());
+    tree.put("geogrid.center_of_grid.y", center.GetY());
+    tree.put("geogrid.center_of_grid.long", center.GetLongitude());
+    tree.put("geogrid.center_of_grid.lat", center.GetLatitude());
+
+    boost::property_tree::xml_writer_settings<std::string> settings('\t', 1);
+    boost::property_tree::write_xml(path + "/fractions.xml", tree, std::locale(), settings);
+
 }
 
 } // namespace stride
