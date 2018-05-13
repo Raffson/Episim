@@ -60,7 +60,7 @@ void GeoGrid::ClassifyNeighbours()
 {
         // I believe we should be making use of boost's geometry queries here...
 #pragma openmp simd for collapse(3)\
-        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)\
+        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)
         for (auto& cityA : m_cities) {
                 for (auto& cityB : m_cities) {
                         // truncating distance on purpose to avoid using floor-function
