@@ -130,7 +130,7 @@ void GeoGrid::Initialize(const boost::filesystem::path& configFile, const bool c
         boost::filesystem::path config;
         config = file_exists(configFile) ? configFile : util::FileSys::GetConfigDir() / configFile;
         config = file_exists(config) ? config : util::FileSys::GetConfigDir() / "run_default.xml";
-        boost::property_tree::read_xml(config.string(), pTree);
+        boost::property_tree::read_xml(config.string(), pTree, boost::property_tree::xml_parser::trim_whitespace);
         pTree.put("run.contact_output_file", contactFile);
         Initialize(pTree);
 }
@@ -160,7 +160,7 @@ void GeoGrid::AddPopgenPtree()
     const auto use_install_dirs = m_config_pt.get<bool>("run.use_install_dirs");
     const auto file_path        = (use_install_dirs) ? util::FileSys::GetConfigDir() /= file_name : file_name;
     boost::property_tree::ptree popgen;
-    boost::property_tree::read_xml(file_path.string(), popgen);
+    boost::property_tree::read_xml(file_path.string(), popgen, boost::property_tree::xml_parser::trim_whitespace);
     m_config_pt.add_child("run.popgen", popgen);
     m_config_pt.sort();
 }
@@ -581,40 +581,29 @@ void GeoGrid::WritePopToFile(const string &fname) const
 void GeoGrid::WriteToFile()
 {
     //creating a directory if it doesn't exist
-    std::string path = "data/geogrid";
+    std::string path = m_config_pt.get<string>("run.output_prefix");
+    path += util::FileSys::IsDirectoryString(path) ? "GeoGrid" : "/GeoGrid";
     boost::filesystem::path dir(path.c_str());
     if(!(boost::filesystem::exists(dir))){
         boost::filesystem::create_directory(dir);
     }
 
-    std::ofstream file(path + "/communities.csv");
-    file << "City_id, Schools, Colleges, Workplaces, PrimaryCommunities, SecondaryCommunities" << endl;
-    for(auto& it: m_cities){
-        City* a_city = &it.second;
-        file <<a_city->GetId()<<","<<a_city->GetSchools().size()<<","
-             <<a_city->GetColleges().size() <<"," <<a_city->GetWorkplaces().size()<< ","
-             <<a_city->GetPrimaryCommunities().size()<<"," <<a_city->GetSecondaryCommunities().size() << endl;
+    //should we write all cities with their communities etc. to be read back in,
+    // or should we just write m_config_pt and regenerate back to the same state?
+    //in case we would write everything, we'll need to store all relevant data...
+    // the contact pool system is probably the most relevant,
+    // preserving the link between its members(in population-file) and location(in this file)...
+    //essentially we'll need to read (and thus write) all communities with their
+    // contactpools in the same order as they were generated, a simple count-keeper will not suffice...
 
-    }
+    //write m_config_pt to file, it should rebuild the grid exactly the same...
+    std::ofstream file;
+    if (util::FileSys::IsDirectoryString(path))
+        file.open((path + "/config.xml").c_str(), std::ofstream::out);
+    else
+        file.open((path + "_" + "config.xml").c_str(), std::ofstream::out);
+    file << util::RunConfigManager::ToString(m_config_pt) << endl;
     file.close();
-
-    //writing remaining informations as a xml-file
-    boost::property_tree::ptree tree;
-
-    tree.put("geogrid.fractions.schooled", m_fract_map[Fractions::SCHOOLED]);
-    tree.put("geogrid.fractions.young", m_fract_map[Fractions::YOUNG]);
-    tree.put("geogrid.fractions.middle_aged", m_fract_map[Fractions::MIDDLE_AGED]);
-    tree.put("geogrid.fractions.toddlers", m_fract_map[Fractions::TODDLERS]);
-    tree.put("geogrid.fractions.oldies", m_fract_map[Fractions::OLDIES]);
-
-    auto center = GetCenterOfGrid();
-    tree.put("geogrid.center_of_grid.x", center.GetX());
-    tree.put("geogrid.center_of_grid.y", center.GetY());
-    tree.put("geogrid.center_of_grid.long", center.GetLongitude());
-    tree.put("geogrid.center_of_grid.lat", center.GetLatitude());
-
-    boost::property_tree::xml_writer_settings<std::string> settings('\t', 1);
-    boost::property_tree::write_xml(path + "/fractions.xml", tree, std::locale(), settings);
 
 }
 
