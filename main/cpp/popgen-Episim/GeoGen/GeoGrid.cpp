@@ -3,10 +3,12 @@
 //
 
 #include "GeoGrid.h"
+#include <omp.h>
 
 using namespace std;
 
 namespace stride {
+
 
 void GeoGrid::GetMainFractions()
 {
@@ -15,18 +17,20 @@ void GeoGrid::GetMainFractions()
         unsigned int workers2 = 0;
         unsigned int toddlers = 0;
         unsigned int oldies   = 0;
-        for (auto& houses : m_model_households) {
-            for (auto &house : houses.second) {
-                for (auto &age : house) {
+        #pragma openmp simd for collapse(3) num_threads(m_config_pt.get<unsigned int>("run/num_threads");)
+        for (auto houses = m_model_households.begin(); houses != m_model_households.end(); houses++) {
+            //C++ 11 ranged based loops did not play nice with openMP
+            for (vector<vector<double>>::iterator house = houses->second.begin();house < houses->second.end(); house++) {
+                for (vector<double>::iterator age = house->begin() ; age < house->end(); age++) {
                     // Ordered these if-else if construction to fall as quickly as possible
                     // in the (statistically) most likely age-category...
-                    if (age >= 26 and age < 65)
+                    if (*age >= 26 and *age < 65)
                         workers2 += 1;
-                    else if (age >= 3 and age < 18)
+                    else if (*age >= 3 and *age < 18)
                         schooled += 1;
-                    else if (age >= 18 and age < 26)
+                    else if (*age >= 18 and *age < 26)
                         workers1 += 1;
-                    else if (age >= 65)
+                    else if (*age >= 65)
                         oldies += 1;
                     else
                         toddlers += 1;
