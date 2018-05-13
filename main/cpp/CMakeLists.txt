@@ -127,6 +127,10 @@ add_executable(stride sim/main.cpp)
 target_link_libraries(stride ${LIBS} libstride)
 install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
 
+add_executable(openmp popgen-Episim/main2.cpp)
+target_link_libraries(stride ${LIBS} libstride)
+install(TARGETS openmp DESTINATION   ${BIN_INSTALL_LOCATION})
+
 #============================================================================
 # Build and install the Episim executable.
 #============================================================================

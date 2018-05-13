@@ -3,7 +3,7 @@
 //
 
 #include "GeoGrid.h"
-#include <omp.h>
+
 
 using namespace std;
 
@@ -17,11 +17,15 @@ void GeoGrid::GetMainFractions()
         unsigned int workers2 = 0;
         unsigned int toddlers = 0;
         unsigned int oldies   = 0;
-        #pragma openmp simd for collapse(3) num_threads(m_config_pt.get<unsigned int>("run/num_threads");)
-        for (auto houses = m_model_households.begin(); houses != m_model_households.end(); houses++) {
-            //C++ 11 ranged based loops did not play nice with openMP
-            for (vector<vector<double>>::iterator house = houses->second.begin();house < houses->second.end(); house++) {
-                for (vector<double>::iterator age = house->begin() ; age < house->end(); age++) {
+
+        // collapse to apply on the nested loops.
+        // reduction, make var copies, + them together at thread merge
+#pragma openmp parallel for collapse(3)\
+        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)\
+        reduction(+:schooled, workers1, workers2, toddlers, oldies)
+        for (auto &m_model_household : m_model_households) {
+            for (auto house = m_model_household.second.begin(); house < m_model_household.second.end(); house++) {
+                for (auto age = house->begin() ; age < house->end(); age++) {
                     // Ordered these if-else if construction to fall as quickly as possible
                     // in the (statistically) most likely age-category...
                     if (*age >= 26 and *age < 65)
@@ -55,10 +59,12 @@ void GeoGrid::GetMainFractions()
 void GeoGrid::ClassifyNeighbours()
 {
         // I believe we should be making use of boost's geometry queries here...
+#pragma openmp simd for collapse(3)\
+        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)\
         for (auto& cityA : m_cities) {
                 for (auto& cityB : m_cities) {
                         // truncating distance on purpose to avoid using floor-function
-                        unsigned int distance =
+                        unsigned int distance = (unsigned int)
                             cityB.second.GetCoordinates().GetDistance(cityA.second.GetCoordinates());
                         // mind that the categories go as follows [0, initial_radius), [initial_radius,
                         // 2*initial_radius), etc.
@@ -176,8 +182,6 @@ void GeoGrid::EnforceEnsures()
     // however, is this first ENSURE necessary?
     // it should never fail since we decude the fractions from the households,
     // so removed the correspronding death test until we find a better test...
-    // TODO: Working with DesignByContract still relevant?
-    // Raphael@Robbe, of course it is, everywhere where we have these REQUIRES and ENSURES, let them be...
     double totalfrac = m_fract_map[Fractions::YOUNG] + m_fract_map[Fractions::MIDDLE_AGED] +
                        m_fract_map[Fractions::TODDLERS] + m_fract_map[Fractions::OLDIES] +
                        m_fract_map[Fractions::SCHOOLED];
