@@ -22,11 +22,11 @@ void GeoGrid::GetMainFractions()
         unsigned int oldies   = 0;
 
 
-        #pragma omp parallel for collapse(3)\
+        #pragma omp parallel for \
                 reduction(+ : schooled, workers1, workers2, toddlers, oldies)
-        for(size_t i = 0; i < m_model_households.size()){
+        for(size_t i = 0; i < m_model_households.size(); i++){
                auto houses = m_model_households.begin();
-               advance(houses, i)
+               advance(houses, i);
             for (size_t house_index = 0; house_index < houses->second.size() ; house_index ++) {
                 for (size_t age_index = 0; age_index < houses->second[house_index].size() ; age_index++) {
                     // Ordered these if-else if construction to fall as quickly as possible
@@ -64,13 +64,15 @@ void GeoGrid::GetMainFractions()
 
 void GeoGrid::ClassifyNeighbours2()
 {
-#pragma omp parallel{
 
     //cout << "Starting classification..." << endl;
     //const clock_t begin_time = clock();
 
-    #pragma omp for private(last, radius)
-    for (auto& cityA : m_cities) {
+    auto cityA = m_cities.begin();
+
+    //#pragma omp parallel for
+    for(size_t i = 0; i < m_cities.size(); i++){
+        advance(cityA, i);
         unsigned int last = 0;
         unsigned int radius = m_initial_search_radius;
 
@@ -78,18 +80,18 @@ void GeoGrid::ClassifyNeighbours2()
             std::vector<rtElem> cities;
             m_rtree.query(
                     bgi::satisfies([&](rtElem const& e)
-                                   {double dist = bg::distance(e.first, cityA.second.GetCoordinates().GetLongLat());
+                                   {double dist = bg::distance(e.first, cityA->second.GetCoordinates().GetLongLat());
                                        return (dist < radius and dist >= last);}),
                     std::back_inserter(cities));
 
 
-            #pragma openmp for collapse(2)
+            //#pragma omp for collapse(2)
             for( const auto& city : cities ) {
                 for (auto type : CommunityTypes) {
                     if( m_cities.at(city.second).HasCommunityType(type) )
 
-                        #pragma openmp critical
-                        m_neighbours_in_radius[cityA.first][radius][type].emplace_back(&m_cities.at(city.second));
+                        //#pragma omp critical
+                        m_neighbours_in_radius[cityA->first][radius][type].emplace_back(&m_cities.at(city.second));
 
                 }
             }
@@ -98,12 +100,11 @@ void GeoGrid::ClassifyNeighbours2()
         }
     }
     //cout << "Done classifying, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
-}}
+}
 
 
 void GeoGrid::ClassifyNeighbours() {
-    #pragma omp parallel
-        {
+
         //cout << "Starting classification..." << endl;
         //const clock_t begin_time = clock();
         //this approach without boost's rtree queries is much faster for flanders_cities (327 cities)
@@ -111,7 +112,7 @@ void GeoGrid::ClassifyNeighbours() {
 
 
 
-        #pragma omp for collapse(2) private(distance, category)
+        //#pragma omp parallel for collapse(2) private(distance, category)
         for (auto &cityA : m_cities) {
             for (auto &cityB : m_cities) {
                 // truncating distance on purpose to avoid using floor-function
@@ -123,16 +124,15 @@ void GeoGrid::ClassifyNeighbours() {
                 while ((distance / category) > 0)
                     category <<= 1; // equivalent to multiplying by 2
 
-                #pragma omp for
+                //#pragma omp for
                 for (auto type : CommunityTypes) {
                     if (cityB.second.HasCommunityType(type))
-                        #pragma omp critical
+                        //#pragma omp critical
                         m_neighbours_in_radius[cityA.first][category][type].emplace_back(&cityB.second);
                 }
             }
         }
         //cout << "Done classifying, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
-    }
 }
 
 GeoGrid::GeoGrid(const util::RNManager::Info& info)
