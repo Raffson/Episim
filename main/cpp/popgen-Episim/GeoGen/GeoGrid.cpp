@@ -24,7 +24,7 @@ void GeoGrid::GetMainFractions()
         num_threads(m_config_pt.get<unsigned int>("run/num_threads");)\
         reduction(+:schooled, workers1, workers2, toddlers, oldies)
         for (auto &m_model_household : m_model_households) {
-            for (auto house = m_model_household.second.begin(); house < m_model_household.second.end(); house++) {
+            for (auto house = m_model_household.second.begin(); house > m_model_household.second.end(); house++) {
                 for (auto age = house->begin() ; age < house->end(); age++) {
                     // Ordered these if-else if construction to fall as quickly as possible
                     // in the (statistically) most likely age-category...
@@ -59,7 +59,7 @@ void GeoGrid::GetMainFractions()
 void GeoGrid::ClassifyNeighbours()
 {
         // I believe we should be making use of boost's geometry queries here...
-#pragma openmp simd for collapse(3)\
+#pragma openmp parallel for collapse(3)\
         num_threads(m_config_pt.get<unsigned int>("run/num_threads");)
         for (auto& cityA : m_cities) {
                 for (auto& cityB : m_cities) {
@@ -84,9 +84,14 @@ GeoGrid::GeoGrid()
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
           m_population(nullptr), m_initialized(false), m_rng(nullptr), m_random_ages(false)
 {
+
+#pragma openmp parallel for\
+        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
 
+#pragma openmp parallel\
+        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)
         for( auto size : SizeList )
             m_sizes_map[size] = 0;
 }
