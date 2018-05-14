@@ -92,8 +92,9 @@ void GeoGrid::ClassifyNeighbours2()
                 for (auto type : CommunityTypes) {
                     if( m_cities.at(city.second).HasCommunityType(type) )
 
-                        #pragma omp critical
+
                         m_neighbours_in_radius[cityA->first][radius][type].emplace_back(&m_cities.at(city.second));
+
 
                 }
             }
@@ -113,12 +114,10 @@ void GeoGrid::ClassifyNeighbours() {
         // could be different if we had more cities though, but can we test that?
 
 
-
-        //#pragma omp parallel for collapse(2) private(distance, category)
         for (auto &cityA : m_cities) {
             for (auto &cityB : m_cities) {
                 // truncating distance on purpose to avoid using floor-function
-                unsigned int distance =
+                auto distance =
                         cityB.second.GetCoordinates().GetDistance(cityA.second.GetCoordinates());
                 // mind that the categories go as follows [0, initial_radius), [initial_radius,
                 // 2*initial_radius), etc.
@@ -129,7 +128,7 @@ void GeoGrid::ClassifyNeighbours() {
                 //#pragma omp for
                 for (auto type : CommunityTypes) {
                     if (cityB.second.HasCommunityType(type))
-                        //#pragma omp critical
+                        #pragma omp critical
                         m_neighbours_in_radius[cityA.first][category][type].emplace_back(&cityB.second);
                 }
             }
