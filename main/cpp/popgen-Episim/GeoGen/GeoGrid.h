@@ -226,6 +226,8 @@ public:
         /// @param fname The name of the file to be read from.
         void ReadRNGstateFromFile(const string& fname = "RNG-state.xml");
 
+
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
@@ -258,6 +260,9 @@ private:
         /// Used by GeoGrid::Initialize to ensure correct fractions and a "correct" average contactpool size.
         /// With "correct" we assume the average contactpool's size is bigger than 0 and is capped by 1000.
         void EnforceEnsures();
+
+        void WriteModelHouseholdToFile(const string& fname);
+
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
 

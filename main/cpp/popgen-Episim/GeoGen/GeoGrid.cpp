@@ -605,6 +605,7 @@ void GeoGrid::WriteToFile()
     file << util::RunConfigManager::ToString(m_config_pt) << endl;
     file.close();
 
+    this->WriteModelHouseholdToFile(path+"/model_household.xml");
 }
 
 void GeoGrid::WriteRNGstateToFile(const string& fname) const
@@ -643,5 +644,25 @@ void GeoGrid::ReadRNGstateFromFile(const string& fname)
     m_rng.Initialize(util::RNManager::Info{type, seed, "", numThreads});
 }
 
+void GeoGrid::WriteModelHouseholdToFile(const string& fname)
+{
+    boost::property_tree::ptree tree;
+
+    for(auto& it: m_model_households){
+        //auto hh_size = to_string(it.first);
+        for(auto& hh: it.second){
+            boost::property_tree::ptree t2;
+            for(auto& age: hh){
+                t2.add("age",age);
+            }
+            //tree.add_child("household."+hh_size +".hh",t2);
+            tree.add_child("household.hh",t2);
+
+        }
+    }
+    boost::property_tree::xml_writer_settings<std::string> settings('\t', 1);
+    boost::property_tree::write_xml(fname, tree, std::locale(), settings);
+
+}
 
 } // namespace stride
