@@ -22,13 +22,15 @@ void GeoGrid::GetMainFractions()
         unsigned int oldies   = 0;
 
 
-        #pragma omp parallel for \
-                reduction(+ : schooled, workers1, workers2, toddlers, oldies)
+        #pragma omp parallel for\
+        reduction(+: schooled, workers1, workers2, toddlers, oldies)
         for(size_t i = 0; i < m_model_households.size(); i++){
                auto houses = m_model_households.begin();
                advance(houses, i);
-            for (size_t house_index = 0; house_index < houses->second.size() ; house_index ++) {
-                for (size_t age_index = 0; age_index < houses->second[house_index].size() ; age_index++) {
+               auto houses_size = houses->second.size();
+            for (size_t house_index = 0; house_index < houses_size ; house_index ++) {
+                       auto house_size = houses->second[house_index].size();
+                for (size_t age_index = 0; age_index < house_size ; age_index++) {
                     // Ordered these if-else if construction to fall as quickly as possible
                     // in the (statistically) most likely age-category...
                     double age = houses->second[house_index][age_index];
@@ -70,7 +72,7 @@ void GeoGrid::ClassifyNeighbours2()
 
     auto cityA = m_cities.begin();
 
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for(size_t i = 0; i < m_cities.size(); i++){
         advance(cityA, i);
         unsigned int last = 0;
@@ -90,7 +92,7 @@ void GeoGrid::ClassifyNeighbours2()
                 for (auto type : CommunityTypes) {
                     if( m_cities.at(city.second).HasCommunityType(type) )
 
-                        //#pragma omp critical
+                        #pragma omp critical
                         m_neighbours_in_radius[cityA->first][radius][type].emplace_back(&m_cities.at(city.second));
 
                 }
@@ -263,8 +265,9 @@ void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree)
         AddPopgenPtree();
         ReadFractionsAndSizes();
         ReadDataFiles();
-        //omp_set_num_threads(m_config_pt.get<unsigned int>("run/num_threads"));
-        omp_set_num_threads(4);
+
+        // this should be program wise static, different location?
+        omp_set_num_threads( m_config_pt.get<unsigned int>("run.num_threads"));
         m_total_pop = m_config_pt.get<unsigned int>("run.popgen.pop_info.pop_total", 4341923);
         m_population = Population::Create(m_config_pt);
         m_population->reserve(m_total_pop);
