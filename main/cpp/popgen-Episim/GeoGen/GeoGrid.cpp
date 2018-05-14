@@ -20,11 +20,18 @@ void GeoGrid::GetMainFractions()
         unsigned int workers2 = 0;
         unsigned int toddlers = 0;
         unsigned int oldies   = 0;
-        for (auto& houses : m_model_households) {
-            for (auto &house : houses.second) {
-                for (auto &age : house) {
+
+
+        #pragma omp parallel for collapse(3)\
+                reduction(+ : schooled, workers1, workers2, toddlers, oldies)
+        for(size_t i = 0; i < m_model_households.size()){
+               auto houses = m_model_households.begin();
+               advance(houses, i)
+            for (size_t house_index = 0; house_index < houses->second.size() ; house_index ++) {
+                for (size_t age_index = 0; age_index < houses->second[house_index].size() ; age_index++) {
                     // Ordered these if-else if construction to fall as quickly as possible
                     // in the (statistically) most likely age-category...
+                    double age = houses->second[house_index][age_index];
                     if (age >= 26 and age < 65)
                         workers2 += 1;
                     else if (age >= 3 and age < 18)
@@ -37,6 +44,7 @@ void GeoGrid::GetMainFractions()
                         toddlers += 1;
                 }
             }
+
         }
         double total                        = schooled + workers1 + workers2 + toddlers + oldies;
         m_fract_map[Fractions::SCHOOLED]    = schooled / total;
@@ -53,13 +61,19 @@ void GeoGrid::GetMainFractions()
                 popfracs.emplace_back(m_fract_map[category]);
 }*/
 
+
 void GeoGrid::ClassifyNeighbours2()
 {
+#pragma omp parallel{
+
     //cout << "Starting classification..." << endl;
     //const clock_t begin_time = clock();
+
+    #pragma omp for private(last, radius)
     for (auto& cityA : m_cities) {
         unsigned int last = 0;
         unsigned int radius = m_initial_search_radius;
+
         while( radius > last ) { //this while-loop should be optimized...
             std::vector<rtElem> cities;
             m_rtree.query(
@@ -67,9 +81,14 @@ void GeoGrid::ClassifyNeighbours2()
                                    {double dist = bg::distance(e.first, cityA.second.GetCoordinates().GetLongLat());
                                        return (dist < radius and dist >= last);}),
                     std::back_inserter(cities));
+
+
+            #pragma openmp for collapse(2)
             for( const auto& city : cities ) {
                 for (auto type : CommunityTypes) {
                     if( m_cities.at(city.second).HasCommunityType(type) )
+
+                        #pragma openmp critical
                         m_neighbours_in_radius[cityA.first][radius][type].emplace_back(&m_cities.at(city.second));
 
                 }
@@ -79,36 +98,47 @@ void GeoGrid::ClassifyNeighbours2()
         }
     }
     //cout << "Done classifying, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
-}
+}}
 
-void GeoGrid::ClassifyNeighbours()
-{
+
+void GeoGrid::ClassifyNeighbours() {
+    #pragma omp parallel
+        {
         //cout << "Starting classification..." << endl;
         //const clock_t begin_time = clock();
         //this approach without boost's rtree queries is much faster for flanders_cities (327 cities)
         // could be different if we had more cities though, but can we test that?
-        for (auto& cityA : m_cities) {
-                for (auto& cityB : m_cities) {
-                        // truncating distance on purpose to avoid using floor-function
-                        unsigned int distance =
-                            cityB.second.GetCoordinates().GetDistance(cityA.second.GetCoordinates());
-                        // mind that the categories go as follows [0, initial_radius), [initial_radius,
-                        // 2*initial_radius), etc.
-                        unsigned int category = m_initial_search_radius;
-                        while ((distance / category) > 0)
-                                category <<= 1; // equivalent to multiplying by 2
-                        for( auto type : CommunityTypes ) {
-                            if( cityB.second.HasCommunityType(type) )
-                                m_neighbours_in_radius[cityA.first][category][type].emplace_back(&cityB.second);
-                        }
+
+
+
+        #pragma omp for collapse(2) private(distance, category)
+        for (auto &cityA : m_cities) {
+            for (auto &cityB : m_cities) {
+                // truncating distance on purpose to avoid using floor-function
+                unsigned int distance =
+                        cityB.second.GetCoordinates().GetDistance(cityA.second.GetCoordinates());
+                // mind that the categories go as follows [0, initial_radius), [initial_radius,
+                // 2*initial_radius), etc.
+                unsigned int category = m_initial_search_radius;
+                while ((distance / category) > 0)
+                    category <<= 1; // equivalent to multiplying by 2
+
+                #pragma omp for
+                for (auto type : CommunityTypes) {
+                    if (cityB.second.HasCommunityType(type))
+                        #pragma omp critical
+                        m_neighbours_in_radius[cityA.first][category][type].emplace_back(&cityB.second);
                 }
+            }
         }
         //cout << "Done classifying, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
+    }
 }
 
 GeoGrid::GeoGrid(const util::RNManager::Info& info)
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
           m_population(nullptr), m_initialized(false), m_rng(info), m_random_ages(false)
+
 {
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
@@ -133,6 +163,7 @@ void GeoGrid::Initialize(const boost::filesystem::path& configFile, const bool c
         boost::property_tree::read_xml(config.string(), pTree);
         pTree.put("run.contact_output_file", contactFile);
         Initialize(pTree);
+
 }
 
 void GeoGrid::InitOutputStuff()
@@ -232,7 +263,8 @@ void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree)
         AddPopgenPtree();
         ReadFractionsAndSizes();
         ReadDataFiles();
-
+        //omp_set_num_threads(m_config_pt.get<unsigned int>("run/num_threads"));
+        omp_set_num_threads(4);
         m_total_pop = m_config_pt.get<unsigned int>("run.popgen.pop_info.pop_total", 4341923);
         m_population = Population::Create(m_config_pt);
         m_population->reserve(m_total_pop);
