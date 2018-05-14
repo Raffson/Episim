@@ -66,8 +66,7 @@ TEST_P(SchoolTest, HappyDayScenario)
             ceil(grid.GetTotalPop() * grid.GetFraction(Fractions::SCHOOLED) / grid.GetAvgSize(Sizes::SCHOOLS));
         EXPECT_EQ(grid.GetSchoolCount(), target);
 
-        double popmod = (double)grid.GetTotalPopOfModel() / grid.GetTotalPop();
-        double margin = 0.01 * popmod;
+        double margin = 0.01;
 
         for(auto& it:grid.GetCities()){
             City* a_city = &it.second;

@@ -4,11 +4,14 @@
 
 #include "GeoGrid.h"
 
+#include "util/RunConfigManager.h"
+
+#include <boost/geometry/algorithms/distance.hpp>
+#include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
 
 using namespace std;
 
 namespace stride {
-
 
 void GeoGrid::GetMainFractions()
 {
@@ -17,24 +20,18 @@ void GeoGrid::GetMainFractions()
         unsigned int workers2 = 0;
         unsigned int toddlers = 0;
         unsigned int oldies   = 0;
-
-        // collapse to apply on the nested loops.
-        // reduction, make var copies, + them together at thread merge
-/*#pragma openmp parallel for collapse(3)\
-        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)\
-        reduction(+:schooled, workers1, workers2, toddlers, oldies)*/
-        for (auto &m_model_household : m_model_households) {
-            for (auto house = m_model_household.second.begin(); house > m_model_household.second.end(); house++) {
-                for (auto age = house->begin() ; age < house->end(); age++) {
+        for (auto& houses : m_model_households) {
+            for (auto &house : houses.second) {
+                for (auto &age : house) {
                     // Ordered these if-else if construction to fall as quickly as possible
                     // in the (statistically) most likely age-category...
-                    if (*age >= 26 and *age < 65)
+                    if (age >= 26 and age < 65)
                         workers2 += 1;
-                    else if (*age >= 3 and *age < 18)
+                    else if (age >= 3 and age < 18)
                         schooled += 1;
-                    else if (*age >= 18 and *age < 26)
+                    else if (age >= 18 and age < 26)
                         workers1 += 1;
-                    else if (*age >= 65)
+                    else if (age >= 65)
                         oldies += 1;
                     else
                         toddlers += 1;
@@ -42,7 +39,6 @@ void GeoGrid::GetMainFractions()
             }
         }
         double total                        = schooled + workers1 + workers2 + toddlers + oldies;
-        cout << "TOTAL;" << total << endl << " Schooled:" << schooled << endl;
         m_fract_map[Fractions::SCHOOLED]    = schooled / total;
         m_fract_map[Fractions::YOUNG]       = workers1 / total;
         m_fract_map[Fractions::MIDDLE_AGED] = workers2 / total;
@@ -57,20 +53,48 @@ void GeoGrid::GetMainFractions()
                 popfracs.emplace_back(m_fract_map[category]);
 }*/
 
+void GeoGrid::ClassifyNeighbours2()
+{
+    //cout << "Starting classification..." << endl;
+    //const clock_t begin_time = clock();
+    for (auto& cityA : m_cities) {
+        unsigned int last = 0;
+        unsigned int radius = m_initial_search_radius;
+        while( radius > last ) { //this while-loop should be optimized...
+            std::vector<rtElem> cities;
+            m_rtree.query(
+                    bgi::satisfies([&](rtElem const& e)
+                                   {double dist = bg::distance(e.first, cityA.second.GetCoordinates().GetLongLat());
+                                       return (dist < radius and dist >= last);}),
+                    std::back_inserter(cities));
+            for( const auto& city : cities ) {
+                for (auto type : CommunityTypes) {
+                    if( m_cities.at(city.second).HasCommunityType(type) )
+                        m_neighbours_in_radius[cityA.first][radius][type].emplace_back(&m_cities.at(city.second));
+
+                }
+            }
+            last = radius;
+            radius <<= 1; // multiply by 2
+        }
+    }
+    //cout << "Done classifying, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
+}
+
 void GeoGrid::ClassifyNeighbours()
 {
-        // I believe we should be making use of boost's geometry queries here...
-/*#pragma openmp parallel for collapse(3)\
-        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)*/
+        //cout << "Starting classification..." << endl;
+        //const clock_t begin_time = clock();
+        //this approach without boost's rtree queries is much faster for flanders_cities (327 cities)
+        // could be different if we had more cities though, but can we test that?
         for (auto& cityA : m_cities) {
                 for (auto& cityB : m_cities) {
                         // truncating distance on purpose to avoid using floor-function
-                        unsigned int distance = (unsigned int)
+                        unsigned int distance =
                             cityB.second.GetCoordinates().GetDistance(cityA.second.GetCoordinates());
                         // mind that the categories go as follows [0, initial_radius), [initial_radius,
                         // 2*initial_radius), etc.
                         unsigned int category = m_initial_search_radius;
-                        // i believe the following code is more efficient than the alternative code below...
                         while ((distance / category) > 0)
                                 category <<= 1; // equivalent to multiplying by 2
                         for( auto type : CommunityTypes ) {
@@ -79,44 +103,36 @@ void GeoGrid::ClassifyNeighbours()
                         }
                 }
         }
+        //cout << "Done classifying, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
 }
 
-GeoGrid::GeoGrid()
+GeoGrid::GeoGrid(const util::RNManager::Info& info)
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
-          m_population(nullptr), m_initialized(false), m_rng(nullptr), m_random_ages(false)
+          m_population(nullptr), m_initialized(false), m_rng(info), m_random_ages(false)
 {
-
-/*#pragma openmp parallel for\
-        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)*/
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
 
-/*#pragma openmp parallel\
-        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)*/
         for( auto size : SizeList )
             m_sizes_map[size] = 0;
 }
 
-GeoGrid::GeoGrid(const boost::property_tree::ptree& p_tree, util::RNManager* rng)
-        : GeoGrid()
+GeoGrid::GeoGrid(const boost::property_tree::ptree& p_tree, const util::RNManager::Info& info)
+        : GeoGrid(info)
 {
-    Initialize(p_tree, rng);
+    Initialize(p_tree);
     GenerateAll();
 }
 
-void GeoGrid::Initialize(const boost::filesystem::path& configFile, util::RNManager* rng, const bool override)
+void GeoGrid::Initialize(const boost::filesystem::path& configFile, const bool contactFile)
 {
         boost::property_tree::ptree pTree;
         boost::filesystem::path config;
         config = file_exists(configFile) ? configFile : util::FileSys::GetConfigDir() / configFile;
         config = file_exists(config) ? config : util::FileSys::GetConfigDir() / "run_default.xml";
         boost::property_tree::read_xml(config.string(), pTree);
-        if( override )
-        {
-            pTree.put("run.contact_output_file", false);
-            pTree.put("run.rng_type", "lcg64");
-        }
-        Initialize(pTree, rng);
+        pTree.put("run.contact_output_file", contactFile);
+        Initialize(pTree);
 }
 
 void GeoGrid::InitOutputStuff()
@@ -177,7 +193,7 @@ void GeoGrid::ReadDataFiles()
     m_model_households = parser::ParseHouseholds(base_path / household_file);
     GetMainFractions();
 
-    parser::ParseCities(base_path / city_file, m_cities, m_model_pop);
+    parser::ParseCities(base_path / city_file, m_cities, m_model_pop, m_rtree);
     parser::ParseCommuting(base_path / commuting_file, m_cities, m_fract_map);
 
 }
@@ -188,6 +204,8 @@ void GeoGrid::EnforceEnsures()
     // however, is this first ENSURE necessary?
     // it should never fail since we decude the fractions from the households,
     // so removed the correspronding death test until we find a better test...
+    // TODO: Working with DesignByContract still relevant?
+    // Raphael@Robbe, of course it is, everywhere where we have these REQUIRES and ENSURES, let them be...
     double totalfrac = m_fract_map[Fractions::YOUNG] + m_fract_map[Fractions::MIDDLE_AGED] +
                        m_fract_map[Fractions::TODDLERS] + m_fract_map[Fractions::OLDIES] +
                        m_fract_map[Fractions::SCHOOLED];
@@ -206,7 +224,7 @@ void GeoGrid::EnforceEnsures()
 
 }
 
-void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree, util::RNManager* rng)
+void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree)
 {
         //If an incorrect ptree is passed, this function may throw an exception...
         m_config_pt = p_tree;
@@ -217,18 +235,17 @@ void GeoGrid::Initialize(const boost::property_tree::ptree& p_tree, util::RNMana
 
         m_total_pop = m_config_pt.get<unsigned int>("run.popgen.pop_info.pop_total", 4341923);
         m_population = Population::Create(m_config_pt);
+        m_population->reserve(m_total_pop);
 
         m_random_ages = m_config_pt.get<bool>("run.popgen.pop_info.random_ages", false);
         m_initial_search_radius = m_config_pt.get<unsigned int>("run.popgen.neighbour_classification.initial_search_radius", 10U);
 
         // Setting up RNG
-        if( rng == nullptr ) {
-            unsigned long seed = (unsigned long)abs(m_config_pt.get("run.rng_seed", 0));
-            string        type = m_config_pt.get("run.rng_type", "mrg2");
-            default_generator.Initialize(util::RNManager::Info(type, seed));
-        }
-        //else we're assuming the RNG was initialized already...
-        m_rng = (rng) ? rng : &default_generator;
+        unsigned long seed       = m_config_pt.get<unsigned long>("run.rng_seed", 1UL);
+        string        type       = m_config_pt.get("run.rng_type", "mrg2");
+        unsigned int  numThreads = m_config_pt.get<unsigned int>("run.num_threads", 1U);
+        m_rng.Initialize(util::RNManager::Info{type, seed, "", numThreads});
+
         EnforceEnsures();
         m_initialized = true;
 }
@@ -239,14 +256,8 @@ void GeoGrid::Reset()
         // I have no clue why...
         m_initialized = false;
         m_population = nullptr;
-
-#pragma openmp parallel for\
-        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
-
-#pragma openmp parallel for\
-        num_threads(m_config_pt.get<unsigned int>("run/num_threads");)
         for( auto size : SizeList )
             m_sizes_map[size] = 0;
         m_model_households.clear();
@@ -259,7 +270,7 @@ void GeoGrid::Reset()
         m_cities_with_college.clear();
         m_random_ages = false;
         m_config_pt.clear();
-        m_rng = nullptr;
+        m_rng.Initialize();
 }
 
 void GeoGrid::GenerateAll()
@@ -509,7 +520,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         auto to_defrag = (unsigned int)round(defrag_cty.size() * X);
         while (defrag_cty.size() > to_defrag) {
                 trng::uniform_int_dist distr(0, (unsigned int)defrag_cty.size() - 1);
-                defrag_cty.erase(defrag_cty.begin() + m_rng->GetGenerator(distr)());
+                defrag_cty.erase(defrag_cty.begin() + m_rng.GetGenerator(distr)());
         }
 
         // Step 3: replace X% of these cities
@@ -556,12 +567,52 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
 }
 
 void GeoGrid::WritePopToFile(const string &fname) const
-{
+{ //TODO: refactor to a better location perhaps...
     std::ofstream file;
-    file.open ((m_config_pt.get<string>("run.output_prefix") + fname).c_str(), std::ofstream::out);
-    file << "\"age\",\"household_id\",\"school_id\",\"work_id\",\"primary_community\",\"secundary_community\"" << endl;
+    if (util::FileSys::IsDirectoryString(m_config_pt.get<string>("run.output_prefix")))
+        file.open((m_config_pt.get<string>("run.output_prefix") + fname).c_str(), std::ofstream::out);
+    else
+        file.open((m_config_pt.get<string>("run.output_prefix") + "_" + fname).c_str(), std::ofstream::out);
+    file << R"("age","household_id","school_id","work_id","primary_community","secundary_community")" << endl;
     file << *m_population << endl;
     file.close();
 }
+
+void GeoGrid::WriteRNGstateToFile(const string& fname) const
+{ //TODO: refactor to a better location perhaps...
+    boost::property_tree::ptree pt;
+    pt.put("rng_state.seed", m_rng.GetInfo().m_seed);
+    pt.put("rng_state.state", m_rng.GetInfo().m_state);
+    pt.put("rng_state.stream_count", m_rng.GetInfo().m_stream_count);
+    pt.put("rng_state.type", m_rng.GetInfo().m_type);
+
+    std::ofstream file;
+    if (util::FileSys::IsDirectoryString(m_config_pt.get<string>("run.output_prefix")))
+        file.open((m_config_pt.get<string>("run.output_prefix") + fname).c_str(), std::ofstream::out);
+    else
+        file.open((m_config_pt.get<string>("run.output_prefix") + "_" + fname).c_str(), std::ofstream::out);
+
+    file << util::RunConfigManager::ToString(pt) << endl;
+    file.close();
+}
+
+void GeoGrid::ReadRNGstateFromFile(const string& fname)
+{ //TODO: refactor to a better location perhaps...
+    boost::property_tree::ptree pt;
+    boost::filesystem::path filePath;
+    filePath = file_exists(fname) ? fname : m_config_pt.get<string>("run.output_prefix") + fname;
+    if( file_exists(filePath) )
+        boost::property_tree::read_xml(filePath.string(), pt);
+    else
+        cerr << "GeoGrid::ReadRNGstateFromFile> Could not find given file:  "
+             << filePath.string() << endl << "Initializing to default state..." << endl;
+
+    unsigned long seed       = m_config_pt.get<unsigned long>("rng_state.seed", 1UL);
+    string        type       = m_config_pt.get("rng_state.type", "mrg2");
+    string        state      = m_config_pt.get("rng_state.state", "");
+    unsigned int  numThreads = m_config_pt.get<unsigned int>("rng_state.stream_count", 1U);
+    m_rng.Initialize(util::RNManager::Info{type, seed, "", numThreads});
+}
+
 
 } // namespace stride

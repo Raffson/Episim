@@ -127,39 +127,39 @@ private:
         std::vector<double> GetRandomModelHouseholdOfSize(unsigned int size);
 
 private:
-        /// ID generator for creating persons, starting from 0 which in this case doesn't matter...
+        ///< ID generator for creating persons, starting from 0 which in this case doesn't matter...
         static unsigned int m_id_generator;
 
-        /// Reference to the GeoGrid so we can access relevant information.
+        ///< Reference to the GeoGrid so we can access relevant information.
         GeoGrid& m_geogrid;
 
-        /// This member will represent the chances for households with 1, 2, 3, 4,... members
-        /// The first element is the chance a household has 1 member,
-        /// The second element is the chance that a household has 2 members, and so on...
+        ///< This member will represent the chances for households with 1, 2, 3, 4,... members
+        ///< The first element is the chance a household has 1 member,
+        ///< The second element is the chance that a household has 2 members, and so on...
         std::vector<double> m_household_size_fracs;
 
-        /// This member will keep a worker-commuting distribution for each city...
-        /// thus, cityID -> commuting distribution for the city with cityID
+        ///> This member will keep a worker-commuting distribution for each city...
+        ///< thus, cityID -> commuting distribution for the city with cityID
         std::map<unsigned int, std::vector<double>> m_worker_commuting_fracs;
 
-        /// This member will keep a student-commuting distribution for each city...
-        /// thus, cityID -> commuting distribution for the city with cityID
+        ///< This member will keep a student-commuting distribution for each city...
+        ///< thus, cityID -> commuting distribution for the city with cityID
         std::map<unsigned int, std::vector<double>> m_student_commuting_fracs;
 
-        /// This member will keep the IDs for all cities to be used for getting a random city for assinging
-        /// a household as well as for a working commuter.
+        ///< This member will keep the IDs for all cities to be used for getting a random city for assinging
+        ///< a household as well as for a working commuter.
         std::vector<unsigned int> m_city_ids;
 
-        /// This member will keep the IDs for all cities with a college to be used for getting a random city for
-        /// a commuting student.
+        ///< This member will keep the IDs for all cities with a college to be used for getting a random city for
+        ///< a commuting student.
         std::vector<unsigned int> m_college_ids;
 
-        /// This member represents the population fraction relative to the total population. The i-th element
-        /// corresponds to the distribution for the city with the i-th ID in m_city_ids.
+        ///< This member represents the population fraction relative to the total population. The i-th element
+        ///< corresponds to the distribution for the city with the i-th ID in m_city_ids.
         std::vector<double> m_city_pop_fracs;
 
         ///< The random number generator.
-        util::RNManager* m_rng;
+        util::RNManager& m_rng;
 };
 
 } // namespace stride

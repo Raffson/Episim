@@ -11,6 +11,10 @@
 // SegmentedVector.h:83: Warning 509:  -- (JB) move constructor ignored because shadowed by copy constructor but that's OK
 // SegmentedVector.h:253: Warning 509: -- (JB) move push_back ignored because it is shadowed by copy push_back but that's OK
 #pragma SWIG nowarn=509
+//
+// Person.h:115: Warning 503: Can't wrap 'operator <<' unless renamed to a valid identifier. -- No need for ostream operator
+// Population.h:86: Warning 503: Can't wrap 'operator <<' unless renamed to a valid identifier. -- No need for ostream operator
+#pragma SWIG nowarn=503
 
 %{
 #include "pop/Person.h"

@@ -16,11 +16,8 @@
 
 #include "Utility.h"
 
-#include <boost/geometry/algorithms/distance.hpp>
+#include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/geometries/point.hpp>
-#include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
-#include <boost/geometry/strategies/spherical/distance_haversine.hpp>
-#include <boost/geometry/strategies/cartesian/distance_pythagoras.hpp>
 
 namespace bg = boost::geometry;
 typedef bg::model::point<double, 2, bg::cs::cartesian>  cPoint;             //carthesian point (x, y)
@@ -60,6 +57,12 @@ public:
 
         /// Getter for the geographical latitude coordinate.
         double GetLatitude() const { return bg::get<1>(longlat); }
+
+        /// Getter for the cartesian coordinates.
+        const cPoint& GetXY() const { return xy; }
+
+        /// Getter for the geographical coordinates.
+        const gPoint& GetLongLat() const { return longlat; }
 
 private:
 

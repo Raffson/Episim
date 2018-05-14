@@ -38,9 +38,15 @@ SurveySeeder::SurveySeeder(const ptree& configPt, RNManager& rnManager) : m_conf
 
 shared_ptr<Population> SurveySeeder::Seed(shared_ptr<Population> pop)
 {
+        //------------------------------------------------
+        // Check validity of input data.
+        //------------------------------------------------
+        if (m_config_pt.get<double>("run.seeding_rate") > 1.0) {
+                throw runtime_error(string(__func__) + "> Bad input data for seeding_rate.");
+        }
+
         const string log_level = m_config_pt.get<string>("run.contact_log_level", "None");
         if (log_level == "All" || log_level == "Susceptibles") {
-
                 Population& population   = *pop;
                 auto&       logger       = population.GetContactLogger();
                 const auto  max_index    = static_cast<unsigned int>(population.size() - 1);

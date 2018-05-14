@@ -33,6 +33,7 @@ namespace stride {
 
 class Calendar;
 class Population;
+class GeoGrid;
 
 /**
  * Simulator can time step and reveal some of the key data.
@@ -43,7 +44,8 @@ class Sim
 public:
         /// Create Sim initialized by the configuration in property tree and population.
         static std::shared_ptr<Sim> Create(const boost::property_tree::ptree& configPt,
-                                           std::shared_ptr<Population>        pop);
+                                           std::shared_ptr<Population>        pop,
+                                           std::shared_ptr<GeoGrid> grid = nullptr);
 
         /// For use in python environment: create using configuration string i.o ptree.
         static std::shared_ptr<Sim> Create(const std::string& configString, std::shared_ptr<Population> pop);

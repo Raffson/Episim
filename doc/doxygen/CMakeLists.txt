@@ -12,7 +12,7 @@
 #  along with the software. If not, see <http://www.gnu.org/licenses/>.
 #  see http://www.gnu.org/licenses/.
 #
-#  Copyright 2016, Willem L, Kuylen E & Broeckhove J
+#  Copyright 2016, 2018, Willem L, Kuylen E & Broeckhove J
 #############################################################################
 
 #============================================================================
@@ -30,15 +30,12 @@ if( DOXYGEN_FOUND )
 	endif()
 	
 	#=== setup ===			
-	set( DOXY_HTML_DIR 	"reference_doc_html" )
+	set( DOXY_HTML_DIR 	"html" )
 	configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.cmake.in 
 					${CMAKE_CURRENT_BINARY_DIR}/Doxyfile )	
 
 	#=== target ===
 	add_custom_target( api_doc ALL	${DOXYGEN_EXECUTABLE} Doxyfile )
-	add_custom_target( images ALL
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/images
-			 ${CMAKE_CURRENT_BINARY_DIR}/${DOXY_HTML_DIR} )
 			 
 	#=== install ===
 	install(DIRECTORY		${CMAKE_CURRENT_BINARY_DIR}/${DOXY_HTML_DIR}
