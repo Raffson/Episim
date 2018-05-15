@@ -99,6 +99,7 @@ set(LIB_SRC
     viewers/CliViewer.cpp
     viewers/PersonsViewer.cpp
 	viewers/SummaryViewer.cpp
+	viewers/MapViewer.cpp
 #---
 	popgen-Episim/main.cpp
 	popgen-Episim/GeoGen/Coordinate.cpp
