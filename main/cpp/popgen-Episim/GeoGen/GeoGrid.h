@@ -245,6 +245,8 @@ public:
         /// @param fname The name of the file to be read from.
         void ReadRNGstateFromFile(const string& fname = "RNG-state.xml");
 
+
+
 private:
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)

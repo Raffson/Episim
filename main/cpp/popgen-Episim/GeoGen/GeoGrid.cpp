@@ -695,14 +695,6 @@ void GeoGrid::WriteCommutingToFile(const string &fname) const
     file.close();
 }
 
-void GeoGrid::WriteModelHouseholdsToFile(const string &fname) const
-{
-    std::ofstream file;
-    file.open(fname.c_str(), std::ofstream::out);
-    //do it...
-    file.close();
-}
-
 void GeoGrid::WriteContactPoolSysToFile(const string &fname) const
 {
     std::ofstream file;
@@ -710,6 +702,22 @@ void GeoGrid::WriteContactPoolSysToFile(const string &fname) const
     file << R"("pool_id","pool_type","community_id","community_type","city_id")" << endl;
 
     file.close();
+}
+
+void GeoGrid::WriteModelHouseholdsToFile(const string &fname) const
+{
+    boost::property_tree::ptree tree;
+    for(const auto& it: m_model_households){
+        for(auto& hh: it.second){
+            boost::property_tree::ptree t2;
+            for(auto& age: hh){
+                t2.add("age",age);
+            }
+            tree.add_child("HouseholdProfile.hh",t2);
+
+        }
+    }
+    ptreeToFile(tree, fname);
 }
 
 } // namespace stride
