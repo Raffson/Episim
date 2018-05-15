@@ -85,5 +85,22 @@ void ptreeToFile(const boost::property_tree::ptree& pt, const string& fname)
         file.close();
 }
 
+string community_type_to_string (CommunityType ct){
+        switch(ct){
+                case CommunityType::School:
+                        return "School";
+                case CommunityType::College:
+                        return "College";
+                case CommunityType ::Work:
+                        return "Work";
+                case CommunityType ::Primary:
+                        return "Primary";
+                case CommunityType ::Secondary:
+                        return "Secondary";
+                default:
+                        return "Null";
+        }
+}
+
 
 } // namespace stride

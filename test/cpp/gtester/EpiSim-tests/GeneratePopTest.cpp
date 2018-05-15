@@ -125,6 +125,7 @@ TEST_P(GenPopTest, AgeDistributionTest)
     //we have approx. 46% active from the people of the working age 4% less than we are supposed to have
     margin = 0.1;
     EXPECT_NEAR(actual_active, grid.GetFraction(Fractions::ACTIVE), margin * grid.GetFraction(Fractions::ACTIVE));
+
 }
 
 

@@ -62,7 +62,7 @@ public:
         bool HasCollege(){ return m_types_present[CommunityType::College]; }
 
         /// Returns all the communities
-        util::SegmentedVector<Community>& GetAllCommunities(){ return m_communities; };
+        util::SegmentedVector<Community> GetAllCommunities() const { return m_communities; };
 
 
         /// Returns all the colleges in the city

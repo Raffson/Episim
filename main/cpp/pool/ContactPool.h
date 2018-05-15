@@ -67,6 +67,8 @@ public:
         /// Get size (number of members).
         std::size_t GetSize() const { return m_members.size(); }
 
+        std::string GetPoolType() const { return ContactPoolType::ToString(m_pool_type); }
+
 private:
         /// Sort w.r.t. health status: order: exposed/infected/recovered, susceptible, immune.
         std::tuple<bool, size_t> SortMembers();

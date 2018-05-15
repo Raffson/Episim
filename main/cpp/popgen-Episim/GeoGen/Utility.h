@@ -8,6 +8,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <array>
 #include <vector>
+#include <string>
+#include "Community.h"
 
 using namespace std;
 
@@ -104,6 +106,11 @@ Fractions get_category(const double& age);
 /// @param pt The boost property tree to be written to xml format.
 /// @param fname The name of the file to be be written.
 void ptreeToFile(const boost::property_tree::ptree& pt, const string& fname);
+
+/// Converts the communityType to string
+/// @param ct The community that has to be converted into string
+/// @retval <string> communityType in string
+string community_type_to_string(CommunityType ct);
 
 namespace constants {
 

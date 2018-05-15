@@ -701,6 +701,16 @@ void GeoGrid::WriteContactPoolSysToFile(const string &fname) const
     file.open(fname.c_str(), std::ofstream::out);
     file << R"("pool_id","pool_type","community_id","community_type","city_id")" << endl;
 
+    for(const auto& it:m_cities ){
+        const City& a_city = it.second;
+        for(auto& a_community: a_city.GetAllCommunities()){
+            for(auto& cp: a_community.GetContactPools()){
+                file << cp->GetID() << "," <<cp->GetPoolType() <<","<< a_community.GetID() << ","
+                     << community_type_to_string(a_community.GetCommunityType()) <<","<< a_city.GetId() << endl;
+            }
+        }
+    }
+
     file.close();
 }
 
