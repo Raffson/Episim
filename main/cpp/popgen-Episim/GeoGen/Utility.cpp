@@ -4,6 +4,15 @@
 
 #include "Utility.h"
 
+#include "util/RunConfigManager.h"
+
+#include "trng/discrete_dist.hpp"
+#include "trng/uniform_int_dist.hpp"
+
+#include <cmath>
+#include <fstream>
+#include <sys/stat.h>
+
 using namespace std;
 
 namespace stride {
@@ -67,5 +76,14 @@ Fractions get_category(const double& age)
         else
                 return Fractions::TODDLERS;
 }
+
+void ptreeToFile(const boost::property_tree::ptree& pt, const string& fname)
+{
+        std::ofstream file;
+        file.open(fname.c_str(), std::ofstream::out);
+        file << util::RunConfigManager::ToString(pt) << endl;
+        file.close();
+}
+
 
 } // namespace stride

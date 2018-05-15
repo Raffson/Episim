@@ -4,8 +4,6 @@
 
 #include "GeoGrid.h"
 
-#include "util/RunConfigManager.h"
-
 #include <boost/geometry/algorithms/distance.hpp>
 #include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
 
@@ -162,7 +160,6 @@ void GeoGrid::AddPopgenPtree()
     boost::property_tree::ptree popgen;
     boost::property_tree::read_xml(file_path.string(), popgen, boost::property_tree::xml_parser::trim_whitespace);
     m_config_pt.add_child("run.popgen", popgen);
-    m_config_pt.sort();
 }
 
 void GeoGrid::ReadFractionsAndSizes()
@@ -569,42 +566,59 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
 void GeoGrid::WritePopToFile(const string &fname) const
 { //TODO: refactor to a better location perhaps...
     std::ofstream file;
-    if (util::FileSys::IsDirectoryString(m_config_pt.get<string>("run.output_prefix")))
-        file.open((m_config_pt.get<string>("run.output_prefix") + fname).c_str(), std::ofstream::out);
-    else
-        file.open((m_config_pt.get<string>("run.output_prefix") + "_" + fname).c_str(), std::ofstream::out);
+    file.open(fname.c_str(), std::ofstream::out);
     file << R"("age","household_id","school_id","work_id","primary_community","secundary_community")" << endl;
     file << *m_population << endl;
     file.close();
 }
 
-void GeoGrid::WriteToFile()
+void GeoGrid::WriteToFile() const
 {
     //creating a directory if it doesn't exist
     std::string path = m_config_pt.get<string>("run.output_prefix");
-    path += util::FileSys::IsDirectoryString(path) ? "GeoGrid" : "/GeoGrid";
+    path += util::FileSys::IsDirectoryString(path) ? "GeoGrid/" : "/GeoGrid/";
     boost::filesystem::path dir(path.c_str());
     if(!(boost::filesystem::exists(dir))){
         boost::filesystem::create_directory(dir);
     }
 
-    //should we write all cities with their communities etc. to be read back in,
-    // or should we just write m_config_pt and regenerate back to the same state?
-    //in case we would write everything, we'll need to store all relevant data...
-    // the contact pool system is probably the most relevant,
-    // preserving the link between its members(in population-file) and location(in this file)...
-    //essentially we'll need to read (and thus write) all communities with their
-    // contactpools in the same order as they were generated, a simple count-keeper will not suffice...
+    WriteModelsToFiles(dir.string());
+    WritePopToFile(dir.string() + "population.csv");
+    WriteContactPoolSysToFile(dir.string() + "poolsys.csv");
+    WriteRNGstateToFile(dir.string() + "RNG-state.xml");
 
-    //write m_config_pt to file, it should rebuild the grid exactly the same...
-    std::ofstream file;
-    if (util::FileSys::IsDirectoryString(path))
-        file.open((path + "/config.xml").c_str(), std::ofstream::out);
-    else
-        file.open((path + "_" + "config.xml").c_str(), std::ofstream::out);
-    file << util::RunConfigManager::ToString(m_config_pt) << endl;
-    file.close();
+    boost::property_tree::ptree pt = m_config_pt;
+    pt.get_child("run").erase("popgen");
+    pt.put("run.geopop_file", dir.string()+"geogen.xml");
+    pt.put("run.population_file", dir.string()+"population.csv");
+    pt.put("run.poolsys_file", dir.string()+"poolsys.csv");
+    pt.put("run.rng_state_file", dir.string()+"RNG-state.xml");
+    pt.put("run.prebuilt_geopop", true);
+    pt.get_child("run").sort();
+    ptreeToFile(pt, dir.string()+"config.xml");
 
+    pt = m_config_pt.get_child("run.popgen");
+    pt.put("data_files.cities", dir.string()+"cities.csv");
+    pt.put("data_files.commuting", dir.string()+"commuting.csv");
+    pt.put("data_files.households", dir.string()+"households.xml");
+    pt.get_child("data_files").sort();
+    pt.put("neighbour_classification.initial_search_radius", m_initial_search_radius);
+    pt.put("pop_info.pop_total", m_total_pop);
+    pt.put("pop_info.random_ages", m_random_ages);
+    pt.put("pop_info.fraction_students", m_fract_map.at(Fractions::STUDENTS));
+    pt.put("pop_info.fraction_commuting_students", m_fract_map.at(Fractions::COMMUTING_STUDENTS));
+    pt.put("pop_info.fraction_active_workers", m_fract_map.at(Fractions::ACTIVE));
+    pt.put("pop_info.fraction_commuting_workers", m_fract_map.at(Fractions::COMMUTING_WORKERS));
+    pt.put("contactpool_info.average_size", m_sizes_map.at(Sizes::AVERAGE_CP));
+    pt.put("contactpool_info.school.size", m_sizes_map.at(Sizes::SCHOOLS));
+    pt.put("contactpool_info.college.size", m_sizes_map.at(Sizes::COLLEGES));
+    pt.put("contactpool_info.college.cities", m_sizes_map.at(Sizes::MAXLC));
+    pt.get_child("contactpool_info.college").sort();
+    pt.put("contactpool_info.community.size", m_sizes_map.at(Sizes::COMMUNITIES));
+    pt.put("contactpool_info.workplace.size", m_sizes_map.at(Sizes::WORKPLACES));
+    pt.get_child("contactpool_info").sort();
+    pt.sort();
+    ptreeToFile(pt, dir.string()+"geogen.xml");
 }
 
 void GeoGrid::WriteRNGstateToFile(const string& fname) const
@@ -615,14 +629,7 @@ void GeoGrid::WriteRNGstateToFile(const string& fname) const
     pt.put("rng_state.stream_count", m_rng.GetInfo().m_stream_count);
     pt.put("rng_state.type", m_rng.GetInfo().m_type);
 
-    std::ofstream file;
-    if (util::FileSys::IsDirectoryString(m_config_pt.get<string>("run.output_prefix")))
-        file.open((m_config_pt.get<string>("run.output_prefix") + fname).c_str(), std::ofstream::out);
-    else
-        file.open((m_config_pt.get<string>("run.output_prefix") + "_" + fname).c_str(), std::ofstream::out);
-
-    file << util::RunConfigManager::ToString(pt) << endl;
-    file.close();
+    ptreeToFile(pt, fname);
 }
 
 void GeoGrid::ReadRNGstateFromFile(const string& fname)
@@ -636,12 +643,73 @@ void GeoGrid::ReadRNGstateFromFile(const string& fname)
         cerr << "GeoGrid::ReadRNGstateFromFile> Could not find given file:  "
              << filePath.string() << endl << "Initializing to default state..." << endl;
 
-    unsigned long seed       = m_config_pt.get<unsigned long>("rng_state.seed", 1UL);
-    string        type       = m_config_pt.get("rng_state.type", "mrg2");
-    string        state      = m_config_pt.get("rng_state.state", "");
-    unsigned int  numThreads = m_config_pt.get<unsigned int>("rng_state.stream_count", 1U);
-    m_rng.Initialize(util::RNManager::Info{type, seed, "", numThreads});
+    unsigned long seed       = pt.get<unsigned long>("rng_state.seed", 1UL);
+    string        type       = pt.get("rng_state.type", "mrg2");
+    string        state      = pt.get("rng_state.state", "");
+    unsigned int  numThreads = pt.get<unsigned int>("rng_state.stream_count", 1U);
+    m_rng.Initialize(util::RNManager::Info{type, seed, state, numThreads});
 }
 
+void GeoGrid::WriteModelsToFiles(const string &path) const
+{
+    WriteCitiesToFile(path + "cities.csv");
+    WriteCommutingToFile(path + "commuting.csv");
+    WriteModelHouseholdsToFile(path + "households.xml");
+}
+
+void GeoGrid::WriteCitiesToFile(const string &fname) const
+{
+    std::ofstream file;
+    file.open(fname.c_str(), std::ofstream::out);
+    file << R"("id","province","population","x_coord","y_coord","latitude","longitude", "name")" << endl;
+    for( const auto& city : m_cities )
+    {
+        const City& c = city.second;
+        const Coordinate& co = c.GetCoordinates();
+        file << c.GetId() << "," << c.GetProvince() << "," << c.GetPopulation() << "," << co.GetX() << ","
+             << co.GetY() << "," << co.GetLatitude() << "," << co.GetLongitude() << "," << c.GetName() << endl;
+    }
+    file.close();
+}
+
+void GeoGrid::WriteCommutingToFile(const string &fname) const
+{
+    std::ofstream file;
+    file.open(fname.c_str(), std::ofstream::out);
+    for( const auto& city : m_cities )
+    {
+        file << "\"id_" << city.second.GetId() << "\"";
+        if( city.first != m_cities.rbegin()->first ) file << ",";
+    }
+    file << endl;
+    for( const auto& city : m_cities )
+    {
+        const City& c = city.second;
+        for( const auto& incomm : c.GetInCommuting() )
+        {
+            file << incomm.second;
+            if( incomm.first != c.GetInCommuting().rbegin()->first ) file << ",";
+        }
+        file << endl;
+    }
+    file.close();
+}
+
+void GeoGrid::WriteModelHouseholdsToFile(const string &fname) const
+{
+    std::ofstream file;
+    file.open(fname.c_str(), std::ofstream::out);
+    //do it...
+    file.close();
+}
+
+void GeoGrid::WriteContactPoolSysToFile(const string &fname) const
+{
+    std::ofstream file;
+    file.open(fname.c_str(), std::ofstream::out);
+    file << R"("pool_id","pool_type","community_id","community_type","city_id")" << endl;
+
+    file.close();
+}
 
 } // namespace stride

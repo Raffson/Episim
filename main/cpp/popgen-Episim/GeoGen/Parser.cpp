@@ -80,22 +80,18 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
 
                 // so when looping over a row's columns, we're looking the origins...
                 for (unsigned int i = 0; i < read_in.GetColumnCount(); i++) {
-                        double commuters = it.GetValue<unsigned int>(i);
+                        double commuters = it.GetValue<double>(i);
 
                         auto origin_id = (unsigned int)stoi(cityIds.at(i));
-
-                        // don't count local commuters...
-                        if (origin_id == destination_id)
-                                continue;
 
                         // normalize
                         double commuting_pop = cities.at(origin_id).GetPopulation() * commfrac;
                         double normalized    = commuting_pop * (commuters / total_commuters[i]);
 
-                        // we need a safety net here in case cities aren't read correctly..
-                        // if city is present, we call SetInCommuters...
-                        // else we should generate a warning, or maybe even throw an exception
-                        // because this should NOT happen, litterly never...
+                        // don't count local commuters...
+                        if (origin_id == destination_id)
+                                normalized = 0;
+
                         if (cities.count(destination_id)) {
                                 cities.at(destination_id).SetInCommuters(origin_id, normalized);
                                 cities.at(origin_id).SetOutCommuters(destination_id, normalized);

@@ -3,13 +3,10 @@
 //
 #pragma once
 
-#include "trng/discrete_dist.hpp"
-#include "trng/uniform_int_dist.hpp"
 #include "util/RNManager.h"
 #include <boost/filesystem/path.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <array>
-#include <cmath>
-#include <sys/stat.h>
 #include <vector>
 
 using namespace std;
@@ -102,6 +99,11 @@ void check_distribution(vector<double>& p_vec);
 /// @param age The age for which we want to know the category
 /// @retval <Fractions> The corresponsing enum value which represents the category for the given age.
 Fractions get_category(const double& age);
+
+/// Writes a property tree to an xml file.
+/// @param pt The boost property tree to be written to xml format.
+/// @param fname The name of the file to be be written.
+void ptreeToFile(const boost::property_tree::ptree& pt, const string& fname);
 
 namespace constants {
 

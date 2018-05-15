@@ -45,7 +45,7 @@ public:
         unsigned int GetPopulation() const { return m_population; };
 
         /// Get the coordinates of the city
-        const Coordinate GetCoordinates() const { return m_coordinates; };
+        const Coordinate& GetCoordinates() const { return m_coordinates; };
 
         /// Get the name of the city
         const string GetName() const { return m_name; };
@@ -102,7 +102,7 @@ public:
         /// @param: number_of_commuters the number of commuters leaving this city
         void SetOutCommuters(unsigned int id, double number_of_commuters);
 
-        /// Get all the in-coming commuters
+        /// Get all the incoming commuters
         const map<unsigned int, double>& GetInCommuting() const { return m_in_commuting; };
 
         /// Get all the outgoing commuters

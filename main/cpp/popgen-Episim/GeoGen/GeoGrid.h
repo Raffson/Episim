@@ -196,10 +196,6 @@ public:
         /// @retval <const util::RNManager&> A const reference to the random number generator being used by GeoGrid.
         util::RNManager& GetRNG() { return m_rng; }
 
-        /// Writes the current population to a file.
-        /// @param fname The name of the file to be written.
-        void WritePopToFile(const string& fname = "population.csv") const;
-
         /// Getter
         /// @retval <const bool> Returns whether or not we're using random ages for the population builder.
         const bool UsingRandomAges() const { return m_random_ages; }
@@ -213,10 +209,33 @@ public:
         /// representing the configuration.
         const boost::property_tree::ptree& GetConfigPtree() const { return m_config_pt; }
 
-        /// Write all the important information of this class to files
-        /// all the information regarding number of different types of communities will be written to 'communties.csv'
-        /// remaining information to 'fractions.xml'
-        void WriteToFile();
+        /// Write the entire GeoGrid to files. The configuration will be written along with the cities,
+        /// household model, commuting model, contact pool system and population.
+        void WriteToFile() const;
+
+        /// Writes the current models to files. All cities, commuting data and households will be written.
+        /// @param path The working directory in which the files should be written. Default is the path of execution.
+        void WriteModelsToFiles(const string& path = "") const;
+
+        /// Writes the current cities to a file.
+        /// @param fname The name of the file to be written.
+        void WriteCitiesToFile(const string& fname = "cities.csv") const;
+
+        /// Writes the current commuting data to a file.
+        /// @param fname The name of the file to be written.
+        void WriteCommutingToFile(const string& fname = "commuting.csv") const;
+
+        /// Writes the current model of households to a file.
+        /// @param fname The name of the file to be written.
+        void WriteModelHouseholdsToFile(const string& fname = "households.xml") const;
+
+        /// Writes the current population to a file.
+        /// @param fname The name of the file to be written.
+        void WritePopToFile(const string& fname = "population.csv") const;
+
+        /// Writes the current contact pool system to a file.
+        /// @param fname The name of the file to be written.
+        void WriteContactPoolSysToFile(const string& fname = "contactpoolsys.csv") const;
 
         /// Writes the current RNG's state to a file.
         /// @param fname The name of the file to be written.
