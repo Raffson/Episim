@@ -31,7 +31,10 @@
 #include "viewers/InfectedViewer.h"
 #include "viewers/PersonsViewer.h"
 #include "viewers/SummaryViewer.h"
-#include "viewers/MapViewer.h"
+
+#ifdef USING_QT
+    #include "viewers/MapViewer.h"
+#endif
 
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -147,12 +150,14 @@ void CliController::RegisterViewers(shared_ptr<SimRunner> runner)
                 runner->Register(v, bind(&viewers::SummaryViewer::Update, v, placeholders::_1));
         }
 
+#ifdef USING_QT
         // Map viewer
         if (m_config_pt.get<bool>("run.output_summary", false)) {
             m_stride_logger->info("Registering MapViewer");
             const auto v = make_shared<viewers::MapViewer>(runner, m_output_prefix, m_geogrid);
             runner->Register(v, bind(&viewers::MapViewer::Update, v, placeholders::_1));
         }
+#endif
 }
 
 void CliController::LogSetup()

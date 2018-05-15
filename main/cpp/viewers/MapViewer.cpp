@@ -1,24 +1,25 @@
 //
 // Created by beau on 5/8/18.
 //
+#ifdef USING_QT
 
 #include "MapViewer.h"
-#include "../qthack.h"
-#ifdef USING_QT
+
+#include <iostream>
+#include <sstream>
+
 #include <QPair>
 #include <QString>
 #include <QtCore/QTextStream>
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickItem>
-#endif
 
 using namespace std;
 using namespace std::chrono;
 using namespace stride::sim_event;
 namespace stride {
 namespace viewers {
-#ifdef USING_QT
 
 void MapViewer::Initialize() {
 #if QT_CONFIG(library)
@@ -99,7 +100,7 @@ void MapViewer::loadCities() {
     for (auto &city : cities)
         sorted[-city.second.GetPopulation()].emplace_back(city.second);
     for (auto c_it = sorted.begin(); c_it != sorted.end(); c_it++) {
-        for (auto city : (*c_it).second) {
+        for (const auto& city : (*c_it).second) {
             std::stringstream ss;
             string s;
             string temp;
@@ -160,6 +161,8 @@ void MapViewer::loadCities() {
         }
     }
 }
-#endif
+
 }
 }
+
+#endif //USING_QT

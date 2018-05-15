@@ -99,7 +99,6 @@ set(LIB_SRC
     viewers/CliViewer.cpp
     viewers/PersonsViewer.cpp
 	viewers/SummaryViewer.cpp
-	viewers/MapViewer.cpp
 #---
 	popgen-Episim/main.cpp
 	popgen-Episim/GeoGen/Coordinate.cpp
@@ -113,6 +112,13 @@ set(LIB_SRC
 )
 
 #============================================================================
+# Add specific sources if Qt was found.
+#============================================================================
+if(Qt5_FOUND)
+	set(LIB_SRC ${LIB_SRC} viewers/MapViewer.cpp)
+endif()
+
+#============================================================================
 # Build the Stride library.
 #============================================================================
 add_library(libstride ${LIB_SRC})
@@ -122,14 +128,7 @@ target_compile_definitions(libstride PUBLIC "-DSTRIDE_GIT_HASH=${STRIDE_WC_REVIS
 set_target_properties(libstride PROPERTIES PREFIX "")
 
 #============================================================================
-# Build and install the stride executable.
-#============================================================================
-add_executable(stride sim/main.cpp)
-target_link_libraries(stride ${LIBS} libstride)
-install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
-
-#============================================================================
-# Build and install the Episim executable.
+# Link Qt stuff.
 #============================================================================
 if(Qt5_FOUND)
 	set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -141,6 +140,16 @@ if(Qt5_FOUND)
 	add_definitions(-DUSING_QT=TRUE)
 endif()
 
+#============================================================================
+# Build and install the stride executable.
+#============================================================================
+add_executable(stride sim/main.cpp)
+target_link_libraries(stride ${LIBS} libstride)
+install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
+
+#============================================================================
+# Build and install the Episim executable.
+#============================================================================
 add_executable(popgen-Episim popgen-Episim/main.cpp)
 target_link_libraries(popgen-Episim ${LIBS} libstride)
 install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
