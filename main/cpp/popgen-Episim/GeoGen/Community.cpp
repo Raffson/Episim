@@ -36,25 +36,25 @@ map<CommunityType, ContactPoolType::Id> Community::m_type_mapper = {{CommunityTy
                                                                     {CommunityType::Primary, ContactPoolType::Id::PrimaryCommunity},
                                                                     {CommunityType::Secondary, ContactPoolType::Id::SecondaryCommunity}};
 
-Community::Community(CommunityType community_type, City* city)
-    : m_community_id(m_id_generator++), m_community_type(community_type), m_city(city)
+Community::Community(CommunityType communityType, City* city)
+    : m_community_id(m_id_generator++), m_community_type(communityType), m_city(city)
 {
 }
 
-stride::ContactPool& Community::AddContactPool(ContactPoolSys& pool_sys)
+stride::ContactPool& Community::AddContactPool(ContactPoolSys& poolSys)
 {
         ContactPoolType::Id type = m_type_mapper[m_community_type];
         unsigned int id = m_pool_ids.at(type)++;
-        pool_sys[type].emplace_back(ContactPool(id, type, this));
-        m_contact_pools.emplace_back(&pool_sys[type].back());
+        poolSys[type].emplace_back(ContactPool(id, type, this));
+        m_contact_pools.emplace_back(&poolSys[type].back());
         return (*m_contact_pools.back());
 }
 
 unsigned int Community::GetSize() const
 {
         unsigned int result = 0;
-        for (auto& a_contact_pool : m_contact_pools) {
-                result += a_contact_pool->GetSize();
+        for (auto& contactPool : m_contact_pools) {
+                result += contactPool->GetSize();
         }
 
         return result;

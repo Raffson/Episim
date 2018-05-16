@@ -32,7 +32,15 @@ namespace stride {
 class City
 {
 public:
+        /// No default constructor
+        City() = delete;
+
         /// Constructor: set the city data.
+        /// @param city_id The ID of this city
+        /// @param province The province of this city.
+        /// @param population The relative number of people in this city.
+        /// @param coordinates The coordinates of this city.
+        /// @param name The name of this city.
         City(unsigned int city_id, unsigned int province, unsigned int population, Coordinate coordinates, string name);
 
         /// Get the id of the city.

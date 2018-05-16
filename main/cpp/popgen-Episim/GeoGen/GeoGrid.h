@@ -59,16 +59,13 @@ public:
         /// @param info: A const reference to an RNManager's state.
         GeoGrid(const boost::property_tree::ptree& p_tree, const util::RNManager::Info& info = util::RNManager::Info());
 
-
         /// Takes a filepath to city_config file and initializes the GeoGrid.
         /// @param config: a path to a gegogen config file. This file contains
         ///             things like name of the city data file, information about
         ///             the population...
         /// @param contactFile: A boolean value indicating if we're overriding the 'output_contact_file' value
         /// of the given configuration. This is specifically to prevent output during the tests.
-        void Initialize(const boost::filesystem::path& config,
-                        const bool contactFile = false);
-
+        void Initialize(const boost::filesystem::path& config, const bool contactFile = false);
 
         /// Takes a filepath to city_config file and initializes the GeoGrid.
         /// @param p_tree: A property-tree containing the necessary information.

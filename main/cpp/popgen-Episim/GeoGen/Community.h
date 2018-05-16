@@ -45,11 +45,13 @@ constexpr std::array<CommunityType, 5> CommunityTypes{{CommunityType::School, Co
 class Community
 {
 public:
-        ///
-        Community() = default;
+        /// No default constructor
+        Community() = delete;
 
-        /// Constructor, pretty straight forward...
-        Community(CommunityType community_type, City* city);
+        /// Constructor
+        /// @param communityType The type of the community to be constructed
+        /// @param city A pointer to the city in which this community is located
+        Community(CommunityType communityType, City* city);
 
         /// Return the community's ID
         const unsigned int GetID() const { return m_community_id; }
@@ -64,9 +66,9 @@ public:
         City& GetCity() { return *m_city; }
 
         /// Adds a new contact pool to the community
-        /// @param: pool_sys A reference to the ContactPoolSys needed for stride, passed from GeoGrid.
+        /// @param: poolSys A reference to the ContactPoolSys needed for stride, passed from GeoGrid.
         /// @retval: <ContactPool> The recently added contactpool
-        ContactPool& AddContactPool(ContactPoolSys& pool_sys);
+        ContactPool& AddContactPool(ContactPoolSys& poolSys);
 
         /// Get all the contactpools
         std::vector<ContactPool*>& GetContactPools() { return m_contact_pools; }

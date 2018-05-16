@@ -28,6 +28,9 @@ class City;
 class Household
 {
 public:
+        /// No default constructor.
+        Household() = delete;
+
         /// Household's contructor.
         /// @param city A pointer to the city to which this household's assigned.
         /// @param pool A reference to the ContactPoolSys used by stride to create the contact pool
