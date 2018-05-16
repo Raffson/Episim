@@ -13,8 +13,8 @@
 #include <omp.h>
 #include <spdlog/spdlog.h>
 
-#include "popgen-Episim/GeoGen/GeoGrid.h"
-#include "popgen-Episim/PopGen/PopulationGenerator.h"
+#include "popgen-Episim/model/GeoGrid.h"
+#include "popgen-Episim/generator/PopulationGenerator.h"
 
 namespace Tests{
 

@@ -21,7 +21,7 @@
  */
 
 #include "pool/ContactPoolType.h"
-#include "popgen-Episim/GeoGen/Utility.h"
+#include "popgen-Episim/util/Utility.h"
 
 namespace stride {
 namespace CommunityType {

@@ -19,8 +19,8 @@
  * Header for the command line controller.
  */
 
-#include "popgen-Episim/GeoGen/GeoGrid.h"
-#include "popgen-Episim/PopGen/PopulationGenerator.h"
+#include "popgen-Episim/model/GeoGrid.h"
+#include "popgen-Episim/generator/PopulationGenerator.h"
 #include "util/Stopwatch.h"
 
 #include <boost/property_tree/ptree.hpp>

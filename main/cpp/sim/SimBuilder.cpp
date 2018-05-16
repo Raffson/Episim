@@ -26,7 +26,7 @@
 #include "disease/HealthSeeder.h"
 #include "pool/ContactPoolSys.h"
 #include "pool/ContactPoolType.h"
-#include "popgen-Episim/GeoGen/GeoGrid.h"
+#include "popgen-Episim/model/GeoGrid.h"
 #include "sim/Sim.h"
 #include "util/FileSys.h"
 

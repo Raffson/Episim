@@ -22,13 +22,13 @@
 #include "util/TimeStamp.h"
 
 
-#include "popgen-Episim/GeoGen/City.h"
-#include "popgen-Episim/GeoGen/Community.h"
-#include "popgen-Episim/GeoGen/Household.h"
-#include "popgen-Episim/GeoGen/Parser.h"
-#include "popgen-Episim/GeoGen/Utility.h"
+#include "City.h"
+#include "Community.h"
+#include "Household.h"
+#include "popgen-Episim/util/Parser.h"
+#include "popgen-Episim/util/Utility.h"
 
-#include "DesignByContract.h"
+#include "popgen-Episim/util/DesignByContract.h"
 
 #include "trng/discrete_dist.hpp"
 #include "trng/lcg64.hpp"

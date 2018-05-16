@@ -7,8 +7,8 @@
 #include <map>
 #include <vector>
 
-#include "popgen-Episim/GeoGen/City.h"
-#include "popgen-Episim/GeoGen/Utility.h"
+#include "popgen-Episim/model/City.h"
+#include "popgen-Episim/util/Utility.h"
 
 #include "util/RNManager.h"
 

@@ -2,7 +2,7 @@
 // Created by robbe on 12/04/18.
 //
 
-#include "popgen-Episim/GeoGen/GeoGrid.h"
+#include "popgen-Episim/model/GeoGrid.h"
 #include <vector>
 
 #include <gtest/gtest.h>

@@ -4,8 +4,8 @@
 //
 
 #include "pop/SurveySeeder.h"
-#include "popgen-Episim/GeoGen/GeoGrid.h"
-#include "popgen-Episim/GeoGen/Household.h"
+#include "popgen-Episim/model/GeoGrid.h"
+#include "popgen-Episim/model/Household.h"
 
 #include <boost/assign.hpp>
 #include <boost/filesystem.hpp>

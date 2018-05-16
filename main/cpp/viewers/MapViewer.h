@@ -5,7 +5,7 @@
 #ifdef USING_QT
 
 
-#include "popgen-Episim/GeoGen/GeoGrid.h"
+#include "popgen-Episim/model/GeoGrid.h"
 #include "output/SummaryFile.h"
 #include "sim/SimRunner.h"
 #include "sim/event/Id.h"

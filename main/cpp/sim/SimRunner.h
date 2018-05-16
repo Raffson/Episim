@@ -23,7 +23,7 @@
 #include "sim/event/Subject.h"
 #include "util/Stopwatch.h"
 
-#include "popgen-Episim/GeoGen/GeoGrid.h"
+#include "popgen-Episim/model/GeoGrid.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <memory>

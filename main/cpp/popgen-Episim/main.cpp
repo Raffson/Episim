@@ -14,8 +14,8 @@
 #include <QtQuick/QQuickItem>
 #endif
 
-#include "popgen-Episim/GeoGen/GeoGrid.h"
-#include "popgen-Episim/PopGen/PopulationGenerator.h"
+#include "popgen-Episim/model/GeoGrid.h"
+#include "popgen-Episim/generator/PopulationGenerator.h"
 
 using namespace std;
 

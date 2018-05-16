@@ -7,7 +7,7 @@
  * Implementation of tests to check the generation of communities.
  */
 
-#include "popgen-Episim/GeoGen/GeoGrid.h"
+#include "popgen-Episim/model/GeoGrid.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <exception>

@@ -19,7 +19,7 @@
 
 #include "pool/ContactPool.h"
 #include "pool/ContactPoolSys.h"
-#include "popgen-Episim/GeoGen/CommunityType.h"
+#include "CommunityType.h"
 
 namespace stride {
 

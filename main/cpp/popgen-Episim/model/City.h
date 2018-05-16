@@ -20,9 +20,9 @@
 #include <utility>
 #include <vector>
 
-#include "popgen-Episim/GeoGen/Community.h"
-#include "popgen-Episim/GeoGen/Coordinate.h"
-#include "popgen-Episim/GeoGen/Household.h"
+#include "Community.h"
+#include "Coordinate.h"
+#include "Household.h"
 #include "util/SegmentedVector.h"
 
 using namespace std;

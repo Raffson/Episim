@@ -100,16 +100,16 @@ set(LIB_SRC
     viewers/PersonsViewer.cpp
 	viewers/SummaryViewer.cpp
 #---
-	popgen-Episim/main.cpp
-	popgen-Episim/GeoGen/Coordinate.cpp
-	popgen-Episim/GeoGen/GeoGrid.cpp
-	popgen-Episim/GeoGen/Community.cpp
-	popgen-Episim/GeoGen/CommunityType.cpp
-	popgen-Episim/GeoGen/Household.cpp
-	popgen-Episim/GeoGen/City.cpp
-	popgen-Episim/GeoGen/Parser.cpp
-	popgen-Episim/GeoGen/Utility.cpp
-	popgen-Episim/PopGen/PopulationGenerator.cpp
+    popgen-Episim/main.cpp
+    popgen-Episim/model/Coordinate.cpp
+    popgen-Episim/model/GeoGrid.cpp
+    popgen-Episim/model/Community.cpp
+    popgen-Episim/model/CommunityType.cpp
+    popgen-Episim/model/Household.cpp
+    popgen-Episim/model/City.cpp
+    popgen-Episim/util/Parser.cpp
+    popgen-Episim/util/Utility.cpp
+    popgen-Episim/generator/PopulationGenerator.cpp
 )
 
 #============================================================================
