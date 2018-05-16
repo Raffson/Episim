@@ -66,7 +66,7 @@ void GeoGrid::ClassifyNeighbours2()
                                        return (dist < radius and dist >= last);}),
                     std::back_inserter(cities));
             for( const auto& city : cities ) {
-                for (auto type : CommunityTypes) {
+                for (auto type : CommunityType::IdList) {
                     if( m_cities.at(city.second).HasCommunityType(type) )
                         m_neighbours_in_radius[cityA.first][radius][type].emplace_back(&m_cities.at(city.second));
 
@@ -95,7 +95,7 @@ void GeoGrid::ClassifyNeighbours()
                         unsigned int category = m_initial_search_radius;
                         while ((distance / category) > 0)
                                 category <<= 1; // equivalent to multiplying by 2
-                        for( auto type : CommunityTypes ) {
+                        for( auto type : CommunityType::IdList) {
                             if( cityB.second.HasCommunityType(type) )
                                 m_neighbours_in_radius[cityA.first][category][type].emplace_back(&cityB.second);
                         }
@@ -306,7 +306,7 @@ void GeoGrid::GenerateSchools()
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
                 City&      chosen_city = *c_vec[rndm_vec[i]];
-                Community& nw_school   = chosen_city.AddCommunity(CommunityType::School);
+                Community& nw_school   = chosen_city.AddCommunity(CommunityType::Id::School);
 
                 // Add contactpools
                 for (auto j = 0; j < cps; j++)
@@ -369,7 +369,7 @@ void GeoGrid::GenerateColleges()
         for (unsigned int i = 0; i < nrcolleges; i++){
             auto cty = m_cities_with_college[lottery_vec[i]];
 
-            Community& college = cty->AddCommunity(CommunityType::College);
+            Community& college = cty->AddCommunity(CommunityType::Id::College);
             for (auto j = 0; j < cps; j++){
                 college.AddContactPool(m_population->GetContactPoolSys());
             }
@@ -420,7 +420,7 @@ void GeoGrid::GenerateWorkplaces()
         // Now we will place each workplace randomly in our city, making use of our lottery vec.
         for (unsigned int i = 0; i < number_of_workplaces; i++) {
                 City*      chosen_city  = c_vec[rndm_vec[i]];
-                Community& nw_workplace = chosen_city->AddCommunity(CommunityType::Work);
+                Community& nw_workplace = chosen_city->AddCommunity(CommunityType::Id::Work);
                 // A workplace has a contactpool.
                 for (auto j = 0; j < cps; j++) {
                     nw_workplace.AddContactPool(m_population->GetContactPoolSys());
@@ -451,8 +451,8 @@ void GeoGrid::GenerateCommunities()
         for (unsigned int i = 0; i < 2*total_communities; i++) {
                 City&      chosen_city1  = *c_vec[rndm_vec[i++]];
                 City&      chosen_city2  = *c_vec[rndm_vec[i]];
-                Community& nw_pcommunity = chosen_city1.AddCommunity(CommunityType::Primary);
-                Community& nw_scommunity = chosen_city2.AddCommunity(CommunityType::Secondary);
+                Community& nw_pcommunity = chosen_city1.AddCommunity(CommunityType::Id::Primary);
+                Community& nw_scommunity = chosen_city2.AddCommunity(CommunityType::Id::Secondary);
                 // Add contactpools for secondary community...
                 for (auto j = 0; j < cps; j++) {
                         nw_pcommunity.AddContactPool(m_population->GetContactPoolSys());
@@ -546,7 +546,8 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         // cout << m_cities.size() << endl;
 }
 
-const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City& origin, unsigned int radius, CommunityType type)
+const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City& origin, unsigned int radius,
+                                                                     CommunityType::Id type)
 {
         if (!m_neighbours_in_radius[origin.GetId()].count(radius)) {
                 unsigned int next_smaller = m_initial_search_radius;
@@ -719,9 +720,9 @@ void GeoGrid::WriteCommunitiesToFile(const string &fname) const
             {
                 const ContactPool& cp = cps[id][i];
                 file << cp.GetCommunity()->GetID()
-                     << "," << community_type_to_string(cp.GetCommunity()->GetCommunityType())
+                     << "," << CommunityType::ToString(cp.GetCommunity()->GetCommunityType())
                      << "," << cp.GetCommunity()->GetCity().GetId() << endl;
-                Sizes size = community_type_to_size(cp.GetCommunity()->GetCommunityType());
+                Sizes size = CommunityType::ToSizes(cp.GetCommunity()->GetCommunityType());
                 i += (unsigned int)ceil((double)m_sizes_map.at(size) / m_sizes_map.at(Sizes::AVERAGE_CP));
             }
         }

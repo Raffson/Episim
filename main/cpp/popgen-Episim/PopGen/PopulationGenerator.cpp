@@ -176,9 +176,9 @@ ContactPool* PopulationGenerator::AssignWorkerAtRandom(City& origin)
         vector<Community*> workplaces;
         if (IsWorkingCommuter()) {
                 City& commuter_city = GetRandomCommutingCity(origin);
-                workplaces          = commuter_city.GetCommunitiesOfType(CommunityType::Work);
+                workplaces          = commuter_city.GetCommunitiesOfType(CommunityType::Id::Work);
         } else
-                workplaces = GetCommunitiesOfRandomNearbyCity(origin, CommunityType::Work);
+                workplaces = GetCommunitiesOfRandomNearbyCity(origin, CommunityType::Id::Work);
         return GetRandomCommunityContactPool(workplaces);
 }
 
@@ -188,10 +188,10 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
         Fractions          category  = get_category(age);
         ContactPool*       school    = nullptr;
         ContactPool*       workplace = nullptr;
-        vector<Community*> primcomms = GetCommunitiesOfRandomNearbyCity(city, CommunityType::Primary);
+        vector<Community*> primcomms = GetCommunitiesOfRandomNearbyCity(city, CommunityType::Id::Primary);
         ContactPool* primcomm = GetRandomCommunityContactPool(primcomms);
         if (category == Fractions::SCHOOLED) { // [3, 18)
-                vector<Community*> schools = GetCommunitiesOfRandomNearbyCity(city, CommunityType::School);
+                vector<Community*> schools = GetCommunitiesOfRandomNearbyCity(city, CommunityType::Id::School);
                 school = GetRandomCommunityContactPool(schools);
         } else if (category == Fractions::YOUNG) { // [18, 26)
                 // first check if we have a student or not...
@@ -199,7 +199,7 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
                         vector<Community*> colleges;
                         if (IsStudentCommuter()) {
                                 City& commuter_city = GetRandomCommutingCity(city, true);
-                                colleges            = commuter_city.GetCommunitiesOfType(CommunityType::College);
+                                colleges            = commuter_city.GetCommunitiesOfType(CommunityType::Id::College);
                         } else
                                 GetNearestColleges(city, colleges);
                         school = GetRandomCommunityContactPool(colleges);
@@ -230,7 +230,7 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         auto&        the_household = city.AddHousehold(pool_sys); // Returns a reference to the new household...
         unsigned int hid           = the_household.GetID();
 
-        vector<Community*> seccomms = GetCommunitiesOfRandomNearbyCity(city, CommunityType::Secondary);
+        vector<Community*> seccomms = GetCommunitiesOfRandomNearbyCity(city, CommunityType::Id::Secondary);
         ContactPool* seccomm = GetRandomCommunityContactPool(seccomms);
         // Meaning you always get assigned to a community?
         unsigned int scid = (seccomm) ? seccomm->GetID() : 0;
@@ -278,7 +278,8 @@ void PopulationGenerator::GeneratePopulation()
         SurveySeeder(m_geogrid.GetConfigPtree(), m_rng).Seed(m_geogrid.GetPopulation());
 }
 
-vector<Community*> PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const City& city, const CommunityType& community_type)
+vector<Community*> PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const City& city,
+                                                                         const CommunityType::Id& community_type)
 {
         unsigned int search_radius = m_geogrid.GetInitialSearchRadius();
         REQUIRE(search_radius > 0, "Initial search radius of the GeoGrid must be bigger than 0.");
@@ -292,10 +293,6 @@ vector<Community*> PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const C
                 }
                 /*for (auto& a_city : near_cities) {
                         for (auto& a_community : a_city->GetCommunitiesOfType(community_type)) {
-                                if( (community_type == CommunityType::Primary
-                                    or community_type == CommunityType::Secondary)
-                                    and a_community->GetSize() > avgcommsize )
-                                        continue;
                                 result.emplace_back(a_community);
                         }
                 }*/
@@ -317,7 +314,7 @@ void PopulationGenerator::GetNearestColleges(const City& origin, std::vector<Com
                         nindex  = i;
                 }
         }
-        for (auto college : cities[nindex]->GetCommunitiesOfType(CommunityType::College))
+        for (auto college : cities[nindex]->GetCommunitiesOfType(CommunityType::Id::College))
                 result.emplace_back(college);
 }
 

@@ -30,20 +30,15 @@ map<ContactPoolType::Id, unsigned int> Community::m_pool_ids = {{ContactPoolType
                                                                 {ContactPoolType::Id::PrimaryCommunity, 1},
                                                                 {ContactPoolType::Id::SecondaryCommunity, 1}};
 
-map<CommunityType, ContactPoolType::Id> Community::m_type_mapper = {{CommunityType::School, ContactPoolType::Id::School},
-                                                                    {CommunityType::College, ContactPoolType::Id::School},
-                                                                    {CommunityType::Work, ContactPoolType::Id::Work},
-                                                                    {CommunityType::Primary, ContactPoolType::Id::PrimaryCommunity},
-                                                                    {CommunityType::Secondary, ContactPoolType::Id::SecondaryCommunity}};
 
-Community::Community(CommunityType communityType, City* city)
+Community::Community(CommunityType::Id communityType, City* city)
     : m_community_id(m_id_generator++), m_community_type(communityType), m_city(city)
 {
 }
 
 stride::ContactPool& Community::AddContactPool(ContactPoolSys& poolSys)
 {
-        ContactPoolType::Id type = m_type_mapper[m_community_type];
+        ContactPoolType::Id type = CommunityType::ToContactPoolType(m_community_type);
         unsigned int id = m_pool_ids.at(type)++;
         poolSys[type].emplace_back(ContactPool(id, type, this));
         m_contact_pools.emplace_back(&poolSys[type].back());

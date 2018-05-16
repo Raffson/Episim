@@ -19,28 +19,12 @@
 
 #include "pool/ContactPool.h"
 #include "pool/ContactPoolSys.h"
-#include <cstddef>
-#include <map>
-#include <memory>
+#include "popgen-Episim/GeoGen/CommunityType.h"
 
 namespace stride {
 
 /// Forward declaration to avoid problems with includes...
 class City;
-
-enum class CommunityType
-{
-        School,
-        College,
-        Work,
-        Primary,
-        Secondary
-};
-
-/// To allow iteration over the community types.
-constexpr std::array<CommunityType, 5> CommunityTypes{{CommunityType::School, CommunityType::College,
-                                                       CommunityType::Work, CommunityType::Primary,
-                                                       CommunityType::Secondary}};
 
 class Community
 {
@@ -51,13 +35,13 @@ public:
         /// Constructor
         /// @param communityType The type of the community to be constructed
         /// @param city A pointer to the city in which this community is located
-        Community(CommunityType communityType, City* city);
+        Community(CommunityType::Id communityType, City* city);
 
         /// Return the community's ID
         const unsigned int GetID() const { return m_community_id; }
 
         /// Return the community's type
-        const CommunityType& GetCommunityType() const { return m_community_type; }
+        const CommunityType::Id& GetCommunityType() const { return m_community_type; }
 
         /// Return a const reference of the city,
         const City& GetCity() const { return *m_city; }
@@ -81,14 +65,11 @@ private:
 
         const unsigned int m_community_id; ///< A unique ID for the community
 
-        CommunityType m_community_type; ///< The type of community
+        CommunityType::Id m_community_type; ///< The type of community
 
         City* m_city; ///< Pointer to City of this community
 
         static std::map<ContactPoolType::Id, unsigned int> m_pool_ids; ///< Helps to create an unique id for contactpools
-
-        ///< Helps to figure out the ContactPoolType depending on the community's type.
-        static std::map<CommunityType, ContactPoolType::Id> m_type_mapper;
 
         std::vector<ContactPool*> m_contact_pools; ///< Contains contactpools
 };

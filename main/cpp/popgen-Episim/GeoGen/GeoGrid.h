@@ -183,7 +183,7 @@ public:
         /// exceeds the maximum range between cities, the largest possible radius is chosen.
         /// @param type The type of the communities we're looking for.
         const vector<City*>& GetCitiesWithinRadiusWithCommunityType(const City& origin, unsigned int radius,
-                                                                    CommunityType type);
+                                                                    CommunityType::Id type);
 
         /// Getter
         /// @retval <const bool> Returns whether or not the GeoGrid is initialized.
@@ -295,7 +295,7 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         ///< Contains cityIDs that are mapped to a map which holds a vector with pointers to cities
         ///< for each of the radius distance-categories (10km, 20km, 40km, ...) in relation to the city with ID
-        map<unsigned int, map<unsigned int, map<CommunityType, vector<City*>>>> m_neighbours_in_radius;
+        map<unsigned int, map<unsigned int, map<CommunityType::Id, vector<City*>>>> m_neighbours_in_radius;
 
         ///< The initial search-radius for getting nearby cities
         unsigned int m_initial_search_radius;

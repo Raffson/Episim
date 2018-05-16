@@ -23,11 +23,11 @@ City::City(const unsigned int city_id, const unsigned int province, unsigned int
     : m_city_id(city_id), m_province(province), m_population(population), m_coordinates(coordinates), m_name(name),
       m_in_commuter_count(0), m_out_commuter_count(0), m_in_commuting_changed(false), m_out_commuting_changed(false)
 {
-        for( auto type : CommunityTypes )
+        for( auto type : CommunityType::IdList )
                 m_types_present[type] = false;
 }
 
-Community& City::AddCommunity(CommunityType community_type)
+Community& City::AddCommunity(CommunityType::Id community_type)
 {
         m_communities.emplace_back(Community(community_type, this));
         m_types_present[community_type] = true;

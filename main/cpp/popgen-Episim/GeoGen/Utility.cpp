@@ -85,38 +85,4 @@ void ptreeToFile(const boost::property_tree::ptree& pt, const string& fname)
         file.close();
 }
 
-string community_type_to_string (CommunityType ct){
-        switch(ct){
-                case CommunityType::School:
-                        return "School";
-                case CommunityType::College:
-                        return "College";
-                case CommunityType ::Work:
-                        return "Work";
-                case CommunityType ::Primary:
-                        return "Primary";
-                case CommunityType ::Secondary:
-                        return "Secondary";
-                default:
-                        return "Null";
-        }
-}
-
-Sizes community_type_to_size (CommunityType ct){
-    switch(ct){
-            case CommunityType::School:
-                    return Sizes::SCHOOLS;
-            case CommunityType::College:
-                    return Sizes::COLLEGES;
-            case CommunityType ::Work:
-                    return Sizes::WORKPLACES;
-            case CommunityType ::Primary:
-                    return Sizes::COMMUNITIES;
-            case CommunityType ::Secondary:
-                    return Sizes::COMMUNITIES;
-            default:
-                    return Sizes::AVERAGE_CP;
-    }
-}
-
 } // namespace stride

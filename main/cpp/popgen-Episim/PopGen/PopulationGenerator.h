@@ -47,7 +47,8 @@ private:
         /// @param city The city for which we need to look for nearby communities.
         /// @param community_type The type of the communities we're looking for
         /// @retval <vector<Community*>> A vector of pointers containing the resulting communities.
-        std::vector<Community*> GetCommunitiesOfRandomNearbyCity(const City& city, const CommunityType& community_type);
+        std::vector<Community*> GetCommunitiesOfRandomNearbyCity(const City& city,
+                                                                 const CommunityType::Id& community_type);
 
         /// Selects the nearest college relative to the position of 'origin'.
         /// @param origin The city for which we need to find the nearst college.
