@@ -36,22 +36,22 @@ public:
         City(unsigned int city_id, unsigned int province, unsigned int population, Coordinate coordinates, string name);
 
         /// Get the id of the city.
-        const unsigned int GetId() const { return m_city_id; };
+        const unsigned int GetId() const { return m_city_id; }
 
         /// Get the province.
-        const unsigned int GetProvince() const { return m_province; };
+        const unsigned int GetProvince() const { return m_province; }
 
         /// Get the population of this city
-        unsigned int GetPopulation() const { return m_population; };
+        unsigned int GetPopulation() const { return m_population; }
 
         /// Get the coordinates of the city
-        const Coordinate& GetCoordinates() const { return m_coordinates; };
+        const Coordinate& GetCoordinates() const { return m_coordinates; }
 
         /// Get the name of the city
         const string GetName() const { return m_name; };
 
         /// Get the number of all the communities
-        unsigned int GetNrOfCommunities() const { return m_communities.size(); };
+        unsigned int GetNrOfCommunities() const { return m_communities.size(); }
 
         /// Get the number of total commuters to the city
         double GetTotalInCommutersCount();
@@ -62,8 +62,10 @@ public:
         bool HasCollege(){ return m_types_present[CommunityType::College]; }
 
         /// Returns all the communities
-        util::SegmentedVector<Community> GetAllCommunities() const { return m_communities; };
+        util::SegmentedVector<Community>& GetAllCommunities() { return m_communities; }
 
+        /// Returns all the communities as a const reference.
+        const util::SegmentedVector<Community>& GetAllCommunities() const { return m_communities; }
 
         /// Returns all the colleges in the city
         vector<Community*> GetColleges() { return m_moc[CommunityType::College]; }
@@ -112,7 +114,7 @@ public:
         Household& AddHousehold(ContactPoolSys& pool_sys);
 
         /// Gets the households of the city
-        vector<Household>& GetHouseholds() { return m_households; }
+        util::SegmentedVector<Household>& GetHouseholds() { return m_households; }
 
         /// Returns whether or not the given type of community is present in this city.
         const bool HasCommunityType(CommunityType type) { return m_types_present[type]; }
@@ -127,15 +129,15 @@ private:
         Coordinate m_coordinates;       ///< Coordinate, smart coordinate container
         const string m_name;            ///< Name of the city.
 
-        util::SegmentedVector<Community>       m_communities;  ///< Vector of Communities in the city
+        util::SegmentedVector<Community>       m_communities;  ///< Contains communities of the city
         map<CommunityType, vector<Community*>> m_moc;          ///< Map of communities for faster retrieval
+        util::SegmentedVector<Household>       m_households;   ///< Contains households of the city
 
         map<unsigned int, double> m_in_commuting;  ///< Contains number of commuters from other cities to this city
         map<unsigned int, double> m_out_commuting; ///< Contains number of commuters from this city to other cities
-        vector<Household> m_households;            ///< contains households of the city
 
-        double m_in_commuter_count;     ///< Number of incomming commuters to the city
-        double m_out_commuter_count;    ///< Number of outgoing commuters from the city
+        double m_in_commuter_count;  ///< Number of incomming commuters to the city
+        double m_out_commuter_count; ///< Number of outgoing commuters from the city
 
         ///< These booleans will improve efficiency as they will indicate whether the commuters count has changed.
         ///< If it didn't, we can return the commuters count straight away, else we'll recalculate.

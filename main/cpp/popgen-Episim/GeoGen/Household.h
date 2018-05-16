@@ -37,8 +37,11 @@ public:
         /// @param: member the person to be added to the household
         void AddMember(const Person* member);
 
-        /// City where housholds is located.
-        City& GetCity() const { return *m_city; }
+        /// A const reference to the city where this household is located.
+        const City& GetCity() const { return *m_city; }
+
+        /// A reference to the city where this household is located.
+        City& GetCity() { return *m_city; }
 
         /// Household Id.
         unsigned int GetID() const { return m_id; }

@@ -565,11 +565,20 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
 
 void GeoGrid::WritePopToFile(const string &fname) const
 { //TODO: refactor to a better location perhaps...
-    std::ofstream file;
-    file.open(fname.c_str(), std::ofstream::out);
-    file << R"("age","household_id","school_id","work_id","primary_community","secundary_community")" << endl;
-    file << *m_population << endl;
-    file.close();
+    if( m_population ) {
+        std::ofstream file;
+        file.open(fname.c_str(), std::ofstream::out);
+        file << R"("age","household_id","school_id","work_id","primary_community","secundary_community","city_id")" << endl;
+        for( const auto& pool : m_population->GetContactPoolSys()[ContactPoolType::Id::Household] )
+        {
+            unsigned int cid = pool.GetHousehold()->GetCity().GetId();
+            for (const auto &p : pool.GetPool())
+                file << *p << "," << cid << endl;
+        }
+        file.close();
+    } else{
+        cerr << "GeoGrid::WritePopToFile> Can't write uninitialized population." << endl;
+    }
 }
 
 void GeoGrid::WriteToFile() const
@@ -584,14 +593,14 @@ void GeoGrid::WriteToFile() const
 
     WriteModelsToFiles(dir.string());
     WritePopToFile(dir.string() + "population.csv");
-    WriteContactPoolSysToFile(dir.string() + "poolsys.csv");
+    WriteCommunitiesToFile(dir.string() + "communities.csv");
     WriteRNGstateToFile(dir.string() + "RNG-state.xml");
 
     boost::property_tree::ptree pt = m_config_pt;
     pt.get_child("run").erase("popgen");
     pt.put("run.geopop_file", dir.string()+"geogen.xml");
     pt.put("run.population_file", dir.string()+"population.csv");
-    pt.put("run.poolsys_file", dir.string()+"poolsys.csv");
+    pt.put("run.communities_file", dir.string()+"communities.csv");
     pt.put("run.rng_state_file", dir.string()+"RNG-state.xml");
     pt.put("run.prebuilt_geopop", true);
     pt.get_child("run").sort();
@@ -695,23 +704,31 @@ void GeoGrid::WriteCommutingToFile(const string &fname) const
     file.close();
 }
 
-void GeoGrid::WriteContactPoolSysToFile(const string &fname) const
+void GeoGrid::WriteCommunitiesToFile(const string &fname) const
 {
-    std::ofstream file;
-    file.open(fname.c_str(), std::ofstream::out);
-    file << R"("pool_id","pool_type","community_id","community_type","city_id")" << endl;
-
-    for(const auto& it:m_cities ){
-        const City& a_city = it.second;
-        for(auto& a_community: a_city.GetAllCommunities()){
-            for(auto& cp: a_community.GetContactPools()){
-                file << cp->GetID() << "," <<cp->GetPoolType() <<","<< a_community.GetID() << ","
-                     << community_type_to_string(a_community.GetCommunityType()) <<","<< a_city.GetId() << endl;
+    if( m_population ) {
+        std::ofstream file;
+        file.open(fname.c_str(), std::ofstream::out);
+        file << R"("community_id","community_type","city_id")" << endl;
+        const ContactPoolSys& cps = m_population->GetContactPoolSys();
+        for(const auto& id : ContactPoolType::IdList)
+        {
+            if( id == ContactPoolType::Id::Household )
+                continue; //cause we'll build households when reading the population
+            for(unsigned int i=0; i < cps[id].size(); )
+            {
+                const ContactPool& cp = cps[id][i];
+                file << cp.GetCommunity()->GetID()
+                     << "," << community_type_to_string(cp.GetCommunity()->GetCommunityType())
+                     << "," << cp.GetCommunity()->GetCity().GetId() << endl;
+                Sizes size = community_type_to_size(cp.GetCommunity()->GetCommunityType());
+                i += (unsigned int)ceil((double)m_sizes_map.at(size) / m_sizes_map.at(Sizes::AVERAGE_CP));
             }
         }
+        file.close();
+    } else{
+        cerr << "GeoGrid::WritePopToFile> Can't write contact pool system with an uninitialized population." << endl;
     }
-
-    file.close();
 }
 
 void GeoGrid::WriteModelHouseholdsToFile(const string &fname) const
@@ -724,7 +741,6 @@ void GeoGrid::WriteModelHouseholdsToFile(const string &fname) const
                 t2.add("age",age);
             }
             tree.add_child("HouseholdProfile.hh",t2);
-
         }
     }
     ptreeToFile(tree, fname);

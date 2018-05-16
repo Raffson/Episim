@@ -60,11 +60,11 @@ void Person::Update(Person*)
 
 std::ostream& operator<<(std::ostream& os, const stride::Person& person)
 {
-        os << person.GetAge() << ",";
-        os << person.GetPoolId(stride::ContactPoolType::Id::Household) << ",";
-        os << person.GetPoolId(stride::ContactPoolType::Id::School) << ",";
-        os << person.GetPoolId(stride::ContactPoolType::Id::Work) << ",";
-        os << person.GetPoolId(stride::ContactPoolType::Id::PrimaryCommunity) << ",";
-        os << person.GetPoolId(stride::ContactPoolType::Id::SecondaryCommunity);
+        os << person.GetAge() << ","
+           << person.GetPoolId(stride::ContactPoolType::Id::Household) << ","
+           << person.GetPoolId(stride::ContactPoolType::Id::School) << ","
+           << person.GetPoolId(stride::ContactPoolType::Id::Work) << ","
+           << person.GetPoolId(stride::ContactPoolType::Id::PrimaryCommunity) << ","
+           << person.GetPoolId(stride::ContactPoolType::Id::SecondaryCommunity);
         return os;
 }

@@ -110,7 +110,7 @@ void Population::CreatePerson(unsigned int id, double age, unsigned int househol
 
 std::ostream& operator<<(std::ostream& os, const stride::Population& pop)
 {
-        for( auto& p : pop )
+        for( const auto& p : pop )
                 os << p << endl;
         return os;
 }

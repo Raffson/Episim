@@ -235,7 +235,7 @@ public:
 
         /// Writes the current contact pool system to a file.
         /// @param fname The name of the file to be written.
-        void WriteContactPoolSysToFile(const string& fname = "contactpoolsys.csv") const;
+        void WriteCommunitiesToFile(const string& fname = "communities.csv") const;
 
         /// Writes the current RNG's state to a file.
         /// @param fname The name of the file to be written.
@@ -244,8 +244,6 @@ public:
         /// Reads an RNG's state from a file.
         /// @param fname The name of the file to be read from.
         void ReadRNGstateFromFile(const string& fname = "RNG-state.xml");
-
-
 
 private:
         /// Returns index of city with smallest population from 'lc'

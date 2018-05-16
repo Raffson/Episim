@@ -102,5 +102,21 @@ string community_type_to_string (CommunityType ct){
         }
 }
 
+Sizes community_type_to_size (CommunityType ct){
+    switch(ct){
+            case CommunityType::School:
+                    return Sizes::SCHOOLS;
+            case CommunityType::College:
+                    return Sizes::COLLEGES;
+            case CommunityType ::Work:
+                    return Sizes::WORKPLACES;
+            case CommunityType ::Primary:
+                    return Sizes::COMMUNITIES;
+            case CommunityType ::Secondary:
+                    return Sizes::COMMUNITIES;
+            default:
+                    return Sizes::AVERAGE_CP;
+    }
+}
 
 } // namespace stride

@@ -112,6 +112,11 @@ void ptreeToFile(const boost::property_tree::ptree& pt, const string& fname);
 /// @retval <string> communityType in string
 string community_type_to_string(CommunityType ct);
 
+/// Converts the communityType to a value of Sizes
+/// @param ct The community that has to be converted
+/// @retval <Sizes> Size that corresponds with 'ct'
+Sizes community_type_to_size(CommunityType ct);
+
 namespace constants {
 
 /// Own defined EPSILON, to determine correctness of doubles

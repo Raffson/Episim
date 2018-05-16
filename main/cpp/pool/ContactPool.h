@@ -50,10 +50,10 @@ public:
         std::size_t GetID() const { return m_pool_id; }
 
         /// Get the community to which this pool belongs
-        Community* GetCommunity() { return m_community; }
+        const Community* GetCommunity() const { return m_community; }
 
         /// Get the household to which this pool belongs
-        Household* GetHousehold() { return m_household; }
+        const Household* GetHousehold() const { return m_household; }
 
             /// Add the given Person.
         void AddMember(const Person* p);
@@ -66,8 +66,6 @@ public:
 
         /// Get size (number of members).
         std::size_t GetSize() const { return m_members.size(); }
-
-        std::string GetPoolType() const { return ContactPoolType::ToString(m_pool_type); }
 
 private:
         /// Sort w.r.t. health status: order: exposed/infected/recovered, susceptible, immune.

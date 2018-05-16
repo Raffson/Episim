@@ -34,11 +34,10 @@ enum class CommunityType
         College,
         Work,
         Primary,
-        Secondary,
-        Null
+        Secondary
 };
 
-/// To allow iteration over the community types, leaving out Null.
+/// To allow iteration over the community types.
 constexpr std::array<CommunityType, 5> CommunityTypes{{CommunityType::School, CommunityType::College,
                                                        CommunityType::Work, CommunityType::Primary,
                                                        CommunityType::Secondary}};
@@ -58,7 +57,10 @@ public:
         /// Return the community's type
         const CommunityType& GetCommunityType() const { return m_community_type; }
 
-        /// Return reference of the city,
+        /// Return a const reference of the city,
+        const City& GetCity() const { return *m_city; }
+
+        /// Return a reference of the city,
         City& GetCity() { return *m_city; }
 
         /// Adds a new contact pool to the community
@@ -79,7 +81,7 @@ private:
 
         CommunityType m_community_type; ///< The type of community
 
-        City* m_city; ///< Shared pointer to City
+        City* m_city; ///< Pointer to City of this community
 
         static std::map<ContactPoolType::Id, unsigned int> m_pool_ids; ///< Helps to create an unique id for contactpools
 
