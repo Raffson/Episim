@@ -21,6 +21,8 @@
 #include "pool/ContactPoolSys.h"
 #include "CommunityType.h"
 
+#include <map>
+
 namespace stride {
 
 /// Forward declaration to avoid problems with includes...
