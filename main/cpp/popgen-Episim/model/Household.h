@@ -55,9 +55,7 @@ public:
         /// Number of members of the household.
         size_t GetSize() const { return m_pool->GetSize(); }
 
-        // Next 3 functions could be made private while declaring PopulationGenerator as a friend class...
-        // second thought, after fixing PopulationGenerator I wonder if we need these at all...
-        // if we do, they'll need to be slightly reworked...
+        // do we need this?
         void GetSchoolAttendants(vector<Person*>&) const;
 
         void GetPossibleStudents(vector<Person*>&) const;

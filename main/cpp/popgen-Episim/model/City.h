@@ -76,38 +76,38 @@ public:
         const util::SegmentedVector<Community>& GetAllCommunities() const { return m_communities; }
 
         /// Returns all the colleges in the city
-        vector<Community*> GetColleges() { return m_moc[CommunityType::Id::College]; }
+        const vector<Community*>& GetColleges() { return m_moc[CommunityType::Id::College]; }
 
         /// Returns all the schools in the city
-        vector<Community*> GetSchools() { return m_moc[CommunityType::Id::School]; }
+        const vector<Community*>& GetSchools() { return m_moc[CommunityType::Id::School]; }
 
         /// Returns all the workplaces in the city
-        vector<Community*> GetWorkplaces() { return m_moc[CommunityType::Id::Work]; }
+        const vector<Community*>& GetWorkplaces() { return m_moc[CommunityType::Id::Work]; }
 
         /// Returns all the communities
         //vector<Community*> GetCommunities(); //deprecated?
 
         /// Returns the primary communities
-        vector<Community*> GetPrimaryCommunities() { return m_moc[CommunityType::Id::Primary]; }
+        const vector<Community*>& GetPrimaryCommunities() { return m_moc[CommunityType::Id::Primary]; }
 
         /// Returns the secondary communities
-        vector<Community*> GetSecondaryCommunities() { return m_moc[CommunityType::Id::Secondary]; }
+        const vector<Community*>& GetSecondaryCommunities() { return m_moc[CommunityType::Id::Secondary]; }
 
         /// Returns the communities of the given type
         /// @param: ct type of the community
-        vector<Community*> GetCommunitiesOfType(CommunityType::Id ct) { return m_moc[ct]; }
+        const vector<Community*>& GetCommunitiesOfType(CommunityType::Id ct) { return m_moc[ct]; }
 
         /// Adds a new community of the given type to the city.
         /// @param: community_type the type of community that is to be added
         /// @retval: <Community> the recently added community
         Community& AddCommunity(CommunityType::Id community_type);
 
-        /// Set the number of in-coming commuters from the city with the given id
+        /// Set the number of incoming commuters from the city with the given id
         /// @param: id the id of the city that the commuters come from
         /// @param: number_of_commuters the number of commuters entering to this city
         void SetInCommuters(unsigned int id, double number_of_commuters);
 
-        /// Set the number of out-going commuters from the city with the given id
+        /// Set the number of outgoing commuters from the city with the given id
         /// @param: id the id of the city that the commuters from this city goes to
         /// @param: number_of_commuters the number of commuters leaving this city
         void SetOutCommuters(unsigned int id, double number_of_commuters);

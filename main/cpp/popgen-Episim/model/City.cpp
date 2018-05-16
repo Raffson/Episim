@@ -51,6 +51,7 @@ double City::GetTotalInCommutersCount()
 {
         if (m_in_commuting_changed) {
                 m_in_commuting_changed = false;
+                m_in_commuter_count    = 0;
                 for (auto& it : m_in_commuting)
                         m_in_commuter_count += it.second;
         }

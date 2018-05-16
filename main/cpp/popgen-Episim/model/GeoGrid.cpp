@@ -392,11 +392,9 @@ void GeoGrid::GenerateWorkplaces()
         vector<double> lottery_vec; // vector of relative probabillitys
         vector<City*>  c_vec;       // we will use this to vec to map the city to a set of sequential numbers 0...n
         for (auto& it : m_cities) {
-
-                // Colleges are the only communities that should be present at this time...
-                const bool no_colleges = it.second.GetAllCommunities().empty();
-                // I believe possible_workers_frac is all we need because in-commuters are definitely active...
-                double in_commuters_modifier = (no_colleges) ? 1 : possible_workers_frac;
+                const bool has_college = it.second.HasCommunityType(CommunityType::Id::College);
+                double in_commuters_modifier = (has_college) ? possible_workers_frac : 1;
+                // if there's no college in this city, all incoming commuters are workers
 
                 auto work_pop = (it.second.GetPopulation() * active_workers_frac +
                                  it.second.GetTotalInCommutersCount() * in_commuters_modifier -
