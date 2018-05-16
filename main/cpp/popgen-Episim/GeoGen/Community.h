@@ -44,10 +44,10 @@ public:
         const CommunityType::Id& GetCommunityType() const { return m_community_type; }
 
         /// Return a const reference of the city,
-        const City& GetCity() const { return *m_city; }
+        const City* GetCity() const { return m_city; }
 
         /// Return a reference of the city,
-        City& GetCity() { return *m_city; }
+        City* GetCity() { return m_city; }
 
         /// Adds a new contact pool to the community
         /// @param: poolSys A reference to the ContactPoolSys needed for stride, passed from GeoGrid.

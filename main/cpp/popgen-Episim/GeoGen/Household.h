@@ -41,10 +41,10 @@ public:
         void AddMember(const Person* member);
 
         /// A const reference to the city where this household is located.
-        const City& GetCity() const { return *m_city; }
+        const City* GetCity() const { return m_city; }
 
         /// A reference to the city where this household is located.
-        City& GetCity() { return *m_city; }
+        City* GetCity() { return m_city; }
 
         /// Household Id.
         unsigned int GetID() const { return m_id; }

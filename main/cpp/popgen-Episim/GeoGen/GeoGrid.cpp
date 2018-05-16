@@ -572,7 +572,7 @@ void GeoGrid::WritePopToFile(const string &fname) const
         file << R"("age","household_id","school_id","work_id","primary_community","secundary_community","city_id")" << endl;
         for( const auto& pool : m_population->GetContactPoolSys()[ContactPoolType::Id::Household] )
         {
-            unsigned int cid = pool.GetHousehold()->GetCity().GetId();
+            unsigned int cid = pool.GetHousehold()->GetCity()->GetId();
             for (const auto &p : pool.GetPool())
                 file << *p << "," << cid << endl;
         }
@@ -721,7 +721,7 @@ void GeoGrid::WriteCommunitiesToFile(const string &fname) const
                 const ContactPool& cp = cps[id][i];
                 file << cp.GetCommunity()->GetID()
                      << "," << CommunityType::ToString(cp.GetCommunity()->GetCommunityType())
-                     << "," << cp.GetCommunity()->GetCity().GetId() << endl;
+                     << "," << cp.GetCommunity()->GetCity()->GetId() << endl;
                 Sizes size = CommunityType::ToSizes(cp.GetCommunity()->GetCommunityType());
                 i += (unsigned int)ceil((double)m_sizes_map.at(size) / m_sizes_map.at(Sizes::AVERAGE_CP));
             }
