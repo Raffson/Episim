@@ -8,8 +8,5 @@ MapPolyline {
         property double longi2: 0
         property double lati1:  0
         property double lati2: 0
-        path: [
-            { latitude: lati1, longitude: longi1 },
-            { latitude: lati2, longitude: longi2 }
-        ]
+        path: []
     }
