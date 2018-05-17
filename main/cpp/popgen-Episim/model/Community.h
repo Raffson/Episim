@@ -17,15 +17,13 @@
  *  Modified by EpiSim
  */
 
-#include "pool/ContactPool.h"
-#include "pool/ContactPoolSys.h"
 #include "CommunityType.h"
+#include "pool/ContactPoolSys.h"
 
 #include <map>
 
 namespace stride {
 
-/// Forward declaration to avoid problems with includes...
 class City;
 
 class Community

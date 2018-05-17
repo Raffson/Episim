@@ -4,6 +4,9 @@
 
 #include "GeoGridFileWriter.h"
 #include "popgen-Episim/model/GeoGrid.h"
+#include "util/FileSys.h"
+
+#include <fstream>
 
 using namespace std;
 

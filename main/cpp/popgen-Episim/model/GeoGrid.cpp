@@ -3,9 +3,18 @@
 //
 
 #include "GeoGrid.h"
+#include "popgen-Episim/util/DesignByContract.h"
+#include "util/ConfigInfo.h"
+#include "util/FileSys.h"
+#include "util/TimeStamp.h"
 
+#include "trng/discrete_dist.hpp"
+#include "trng/uniform_int_dist.hpp"
 #include <boost/geometry/algorithms/distance.hpp>
 #include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
+
+#include <cmath>
+#include <iostream>
 
 using namespace std;
 
@@ -18,9 +27,9 @@ void GeoGrid::GetMainFractions()
         unsigned int workers2 = 0;
         unsigned int toddlers = 0;
         unsigned int oldies   = 0;
-        for (auto& houses : m_model_households) {
-            for (auto &house : houses.second) {
-                for (auto &age : house) {
+        for (const auto& houses : m_model_households) {
+            for (const auto &house : houses.second) {
+                for (const auto &age : house) {
                     // Ordered these if-else if construction to fall as quickly as possible
                     // in the (statistically) most likely age-category...
                     if (age >= 26 and age < 65)

@@ -3,38 +3,21 @@
 // Created by beau on 3/5/18.
 //
 
-#include <cmath>
-#include <iostream>
 #include <map>
 #include <memory>
-#include <random>
 #include <vector>
-#include <fstream>
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "pop/Population.h"
-#include "util/ConfigInfo.h"
-#include "util/FileSys.h"
 #include "util/RNManager.h"
-#include "util/TimeStamp.h"
-
 
 #include "City.h"
-#include "Community.h"
-#include "Household.h"
 #include "popgen-Episim/util/Parser.h"
 #include "popgen-Episim/util/Utility.h"
 
-#include "popgen-Episim/util/DesignByContract.h"
-
-#include "trng/discrete_dist.hpp"
-#include "trng/lcg64.hpp"
-#include "trng/uniform_int_dist.hpp"
-#include <boost/range/adaptor/map.hpp>
-#include <boost/range/algorithm/copy.hpp>
 
 using namespace std;
 

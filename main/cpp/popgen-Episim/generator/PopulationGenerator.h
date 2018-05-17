@@ -3,21 +3,7 @@
 // Created by Nishchal Shrestha on 20/03/2018.
 //
 
-#include "pop/SurveySeeder.h"
 #include "popgen-Episim/model/GeoGrid.h"
-#include "popgen-Episim/model/Household.h"
-
-#include <boost/assign.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/range/adaptor/map.hpp>
-#include <boost/range/algorithm/copy.hpp>
-
-#include "trng/discrete_dist.hpp"
-#include "trng/uniform_dist.hpp"
-
-#include <cmath>
-#include <ctime>
-#include <iterator>
 #include <vector>
 
 namespace stride {
@@ -27,7 +13,7 @@ class PopulationGenerator
 public:
         explicit PopulationGenerator(GeoGrid&);
 
-        /// Generates a random population according to all relevant fractions.
+        /// Generates a random population according to the GeoGrid's model.
         void GeneratePopulation();
 
 private:

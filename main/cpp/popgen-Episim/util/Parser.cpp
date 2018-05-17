@@ -3,7 +3,6 @@
 //
 
 #include "Parser.h"
-
 #include "util/CSV.h"
 
 #include "trng/discrete_dist.hpp"

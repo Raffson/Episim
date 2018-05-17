@@ -3,6 +3,17 @@
 //
 
 #include "PopulationGenerator.h"
+#include "pop/SurveySeeder.h"
+#include "popgen-Episim/model/Household.h"
+#include "popgen-Episim/util/DesignByContract.h"
+
+#include "trng/discrete_dist.hpp"
+#include "trng/uniform_dist.hpp"
+#include "trng/uniform_int_dist.hpp"
+
+#include <cmath>
+#include <ctime>
+#include <iterator>
 
 using namespace std;
 
