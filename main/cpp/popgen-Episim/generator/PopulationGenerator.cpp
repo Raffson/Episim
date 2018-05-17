@@ -212,7 +212,7 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
                                 City& commuter_city = GetRandomCommutingCity(city, true);
                                 colleges            = commuter_city.GetCommunitiesOfType(CommunityType::Id::College);
                         } else
-                                GetNearestColleges(city, colleges);
+                                colleges = GetNearestColleges(city);
                         school = GetRandomCommunityContactPool(colleges);
                 } else if (IsActive())
                         workplace = AssignWorkerAtRandom(city);
@@ -313,8 +313,9 @@ vector<Community*> PopulationGenerator::GetCommunitiesOfRandomNearbyCity(const C
         return result;
 }
 
-void PopulationGenerator::GetNearestColleges(const City& origin, std::vector<Community*>& result)
+std::vector<Community*> PopulationGenerator::GetNearestColleges(const City& origin)
 {
+        vector<Community*>   result;
         const vector<City*>& cities(m_geogrid.GetCitiesWithCollege());
         double               nearest = numeric_limits<double>::max();
         unsigned int         nindex  = 0;
@@ -327,6 +328,7 @@ void PopulationGenerator::GetNearestColleges(const City& origin, std::vector<Com
         }
         for (auto college : cities[nindex]->GetCommunitiesOfType(CommunityType::Id::College))
                 result.emplace_back(college);
+        return result;
 }
 
 City& PopulationGenerator::GetRandomCommutingCity(City& origin, const bool student)

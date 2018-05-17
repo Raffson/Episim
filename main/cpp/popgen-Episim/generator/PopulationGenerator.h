@@ -38,8 +38,8 @@ private:
 
         /// Selects the nearest college relative to the position of 'origin'.
         /// @param origin The city for which we need to find the nearst college.
-        /// @param result A reference the vector where we store the resulting colleges.
-        void GetNearestColleges(const City& origin, std::vector<Community*>& result);
+        /// @retval <vector<Community*>> The vector with the resulting colleges.
+        std::vector<Community*> GetNearestColleges(const City& origin);
 
         /// Generates a household of a given size for the given city.
         /// @param size The size of the household that will be generated, determined by GetRandomHouseholdSize.
@@ -72,11 +72,8 @@ private:
 
         /// Returns a pointer to a contact pool chosen at random. This is done by first choosing a random
         /// community from 'comms', followed by choosing a random contact pool from the chosen community.
-        /// @param type The community type for which we want to find a random contact pool
-        /// @param comms The communities from which we will choose 1 at random to then choose a random contact pool.
-        /// @param commuting Indicates whether the person for which we're looking to find a random contact pool
-        /// is a commuter.
-        /// @retval <ContactPool*>
+        /// @param comms The communities from which we will choose 1 at random to then choose 1 random contact pool.
+        /// @retval <ContactPool*> The randomly selected contact pool.
         ContactPool* GetRandomCommunityContactPool(vector<Community*>& comms);
 
         /// A random functions which flips an unfair coin, unless you pass 'frac' = 0.5
