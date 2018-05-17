@@ -103,6 +103,7 @@ ApplicationWindow {
 
      Drawer {
         id: drawer
+        edge: Qt.RightEdge
         y: overlayHeader.height
         width: appWindow.width / 5
         height: appWindow.height - overlayHeader.height
@@ -179,20 +180,17 @@ ApplicationWindow {
         for (var i = 0; i < number; i++){
             if(map.children[i].objectName === "mqi"){
                 var circle = map.children[i];
-                var startCoordinate = QtPositioning.coordinate(circle.sourceItem.lati, circle.sourceItem.longi);
-
                 for (var j = 0; j < circle.sourceItem.out_commuting.length; j++){
                     var out_id = circle.sourceItem.out_commuting[j];
                     for (var k = 0; k < map.children.length; k++){
                         if(map.children[k].objectName === "mqi"){
                             if(map.children[k].sourceItem.city_id === out_id){
-                                var endCoordinate = QtPositioning.coordinate(map.children[k].sourceItem.lati, map.children[k].sourceItem.longi);
                                 var path = Qt.createQmlObject('import "custom"; PathDraw{}', page);
-                                path.point1x = circle.sourceItem.lati;
-                                path.point1y = circle.sourceItem.longi;
-                                path.point2x = map.children[k].sourceItem.lati;
-                                path.point2y = map.children[k].sourceItem.longi;
-                                stride_paths.push(path);
+                                path.lati1 = circle.sourceItem.lati;
+                                path.longi1 = circle.sourceItem.longi;
+                                path.lati2 = map.children[k].sourceItem.lati;
+                                path.longi2 = map.children[k].sourceItem.longi;
+                                map.addMapItem(path);
                             }
                         }
                     }
