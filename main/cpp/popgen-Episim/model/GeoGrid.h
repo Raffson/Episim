@@ -206,43 +206,13 @@ public:
         /// representing the configuration.
         const boost::property_tree::ptree& GetConfigPtree() const { return m_config_pt; }
 
-        /// Write the entire GeoGrid to files. The configuration will be written along with the cities,
-        /// household model, commuting model, contact pool system and population.
-        void WriteToFile() const;
-
-        /// Writes the current models to files. All cities, commuting data and households will be written.
-        /// @param path The working directory in which the files should be written. Default is the path of execution.
-        void WriteModelsToFiles(const string& path = "") const;
-
-        /// Writes the current cities to a file.
-        /// @param fname The name of the file to be written.
-        void WriteCitiesToFile(const string& fname = "cities.csv") const;
-
-        /// Writes the current commuting data to a file.
-        /// @param fname The name of the file to be written.
-        void WriteCommutingToFile(const string& fname = "commuting.csv") const;
-
-        /// Writes the current model of households to a file.
-        /// @param fname The name of the file to be written.
-        void WriteModelHouseholdsToFile(const string& fname = "households.xml") const;
-
-        /// Writes the current population to a file.
-        /// @param fname The name of the file to be written.
-        void WritePopToFile(const string& fname = "population.csv") const;
-
-        /// Writes the current contact pool system to a file.
-        /// @param fname The name of the file to be written.
-        void WriteCommunitiesToFile(const string& fname = "communities.csv") const;
-
-        /// Writes the current RNG's state to a file.
-        /// @param fname The name of the file to be written.
-        void WriteRNGstateToFile(const string& fname = "RNG-state.xml") const;
-
         /// Reads an RNG's state from a file.
         /// @param fname The name of the file to be read from.
-        void ReadRNGstateFromFile(const string& fname = "RNG-state.xml");
+        void ReadRNGstateFromFile(const std::string& fname = "RNG-state.xml");
 
 private:
+        friend class GeoGridFileWriter;
+
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
         unsigned int FindSmallest(const vector<City*>& lc);

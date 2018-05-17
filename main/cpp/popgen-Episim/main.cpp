@@ -16,6 +16,7 @@
 
 #include "popgen-Episim/model/GeoGrid.h"
 #include "popgen-Episim/generator/PopulationGenerator.h"
+#include "popgen-Episim/util/GeoGridFileWriter.h"
 
 using namespace std;
 
@@ -152,10 +153,9 @@ int main(int argc, char** argv)
         grid.Initialize("run_default.xml", true);
         //grid.ReadRNGstateFromFile();
         grid.GenerateAll();
-        grid.WriteToFile();
+        stride::GeoGridFileWriter::WriteAll(grid);
 
-        stride::PopulationGenerator pop_generator(grid);
-        pop_generator.GeneratePopulation();
+        stride::PopulationGenerator(grid).GeneratePopulation();
 
         //grid.WritePopToFile("Test-pop.txt");
         //grid.WriteRNGstateToFile();
