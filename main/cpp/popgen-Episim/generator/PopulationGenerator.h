@@ -26,15 +26,14 @@ private:
         void GeneratePerson(const double& age, const unsigned int hid, const unsigned int scid, Population& pop,
                             City& city);
 
-        /// Selects a random nearby city and puts the communities into 'result', this may be refactored so that
-        /// the result is returned instead of given by reference. This is done by selecting a random city
-        /// from the nearby cities found, followed by getting the communities of the given type and putting them into
-        /// result.
+        /// Selects a random nearby city and returns the communities of the given type.
+        /// This is done by selecting a random city from the nearby cities found,
+        /// followed by getting the communities of the given type and returning them.
         /// @param city The city for which we need to look for nearby communities.
         /// @param community_type The type of the communities we're looking for
-        /// @retval <vector<Community*>> A vector of pointers containing the resulting communities.
-        std::vector<Community*> GetCommunitiesOfRandomNearbyCity(const City& city,
-                                                                 const CommunityType::Id& community_type);
+        /// @retval <const vector<Community*>&> A const reference to the vector of pointers containing
+        /// the resulting communities.
+        const std::vector<Community*>& GetRandomCommunities(const City& city, const CommunityType::Id& community_type);
 
         /// Selects the nearest college relative to the position of 'origin'.
         /// @param origin The city for which we need to find the nearst college.
@@ -74,7 +73,7 @@ private:
         /// community from 'comms', followed by choosing a random contact pool from the chosen community.
         /// @param comms The communities from which we will choose 1 at random to then choose 1 random contact pool.
         /// @retval <ContactPool*> The randomly selected contact pool.
-        ContactPool* GetRandomCommunityContactPool(vector<Community*>& comms);
+        ContactPool* GetRandomContactPool(const vector<Community*>& comms);
 
         /// A random functions which flips an unfair coin, unless you pass 'frac' = 0.5
         /// @param frac The fraction of chance that you will get 'true' as a result.
@@ -107,8 +106,8 @@ private:
 
         /// Retrieves a random household of the given 'size' from GeoGrid's model.
         /// @param size The size of the household which we need.
-        /// @retval <std::vector<double>> The randomly chosen household of the given size.
-        std::vector<double> GetRandomModelHouseholdOfSize(unsigned int size);
+        /// @retval <const std::vector<double>&> The randomly chosen household of the given size.
+        const std::vector<double>& GetRandomModelHouseholdOfSize(unsigned int size);
 
 private:
         ///< ID generator for creating persons, starting from 0 which in this case doesn't matter...

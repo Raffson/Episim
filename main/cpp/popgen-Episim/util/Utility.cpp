@@ -51,7 +51,7 @@ vector<unsigned int> generate_random(unsigned int begin, unsigned int end, util:
 void check_distribution(vector<double>& p_vec)
 {
         bool allzero = true;
-        for (auto& elem : p_vec) {
+        for (const auto& elem : p_vec) {
                 if (elem != 0) {
                         allzero = false;
                         break;

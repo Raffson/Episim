@@ -125,8 +125,9 @@ public:
         City& operator[](unsigned int i) { return m_cities.at(i); }
 
         /// Getter
-        /// @retval <const map<unsigned int, vector<vector<double>>>&> Returns the households as a 2D vector,
-        ///                             with every vector representing a household.
+        /// @retval <const map<unsigned int, vector<vector<double>>>&> Returns a map which takes
+        /// a size and maps this to the households of that size as a 2D vector,
+        /// with every vector in the 2D vector representing a household.
         const map<unsigned int, vector<vector<double>>>& GetModelHouseholds() const { return m_model_households; }
 
         /// Getter
