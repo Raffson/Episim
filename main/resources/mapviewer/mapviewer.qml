@@ -103,6 +103,7 @@ ApplicationWindow {
 
      Drawer {
         id: drawer
+        edge: Qt.RightEdge
         y: overlayHeader.height
         width: appWindow.width / 5
         height: appWindow.height - overlayHeader.height
@@ -176,23 +177,23 @@ ApplicationWindow {
     function showCommutes(number){
         console.warn("start commuting");
         if(number === undefined) number = 10
-        for (var i = 0; i < number; i++){
-            if(map.children[i].objectName === "mqi"){
+        var count = 0;
+        for (var i = 0; i < map.children.length; i++){
+            if(map.children[i].objectName === "mqi" && count < number){
+                count ++;
                 var circle = map.children[i];
                 var startCoordinate = QtPositioning.coordinate(circle.sourceItem.lati, circle.sourceItem.longi);
 
-                for (var j = 0; j < circle.sourceItem.out_commuting.length; j++){
+                for (var j = 0; j < number; j++){
                     var out_id = circle.sourceItem.out_commuting[j];
                     for (var k = 0; k < map.children.length; k++){
                         if(map.children[k].objectName === "mqi"){
                             if(map.children[k].sourceItem.city_id === out_id){
                                 var endCoordinate = QtPositioning.coordinate(map.children[k].sourceItem.lati, map.children[k].sourceItem.longi);
                                 var path = Qt.createQmlObject('import "custom"; PathDraw{}', page);
-                                path.point1x = circle.sourceItem.lati;
-                                path.point1y = circle.sourceItem.longi;
-                                path.point2x = map.children[k].sourceItem.lati;
-                                path.point2y = map.children[k].sourceItem.longi;
-                                stride_paths.push(path);
+                                path.addCoordinate(startCoordinate);
+                                path.addCoordinate(endCoordinate);
+                                map.addMapItem(path);
                             }
                         }
                     }

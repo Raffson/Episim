@@ -101,15 +101,16 @@ set(LIB_SRC
 	viewers/SummaryViewer.cpp
 #---
     popgen-Episim/main.cpp
+    popgen-Episim/generator/PopulationGenerator.cpp
     popgen-Episim/model/Coordinate.cpp
     popgen-Episim/model/GeoGrid.cpp
     popgen-Episim/model/Community.cpp
     popgen-Episim/model/CommunityType.cpp
     popgen-Episim/model/Household.cpp
     popgen-Episim/model/City.cpp
+    popgen-Episim/util/GeoGridFileWriter.cpp
     popgen-Episim/util/Parser.cpp
     popgen-Episim/util/Utility.cpp
-    popgen-Episim/generator/PopulationGenerator.cpp
 )
 
 #============================================================================

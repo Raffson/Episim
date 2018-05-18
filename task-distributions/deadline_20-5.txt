@@ -1,0 +1,17 @@
+Robbe:
+- Finish openMP
+- Finsh paper
+- Update test plan
+- Draft performance plan with Nischal
+Nishchal:
+- Summary for tests
+- Effective counts for in/out commuters
+- Draft performance plan with Robbe
+Beau:
+- MapViewer: color codes, commutes, rectangle select
+- CliController
+Raphael:
+- Refactor CommunityType
+- Refactor file-writer to geogrid-writer
+- Refactor generator to geogrid-factory
+- Add 'build from file' to geogrid-factory

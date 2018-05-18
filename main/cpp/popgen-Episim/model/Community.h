@@ -17,15 +17,13 @@
  *  Modified by EpiSim
  */
 
-#include "pool/ContactPool.h"
-#include "pool/ContactPoolSys.h"
 #include "CommunityType.h"
+#include "pool/ContactPoolSys.h"
 
 #include <map>
 
 namespace stride {
 
-/// Forward declaration to avoid problems with includes...
 class City;
 
 class Community
@@ -57,7 +55,7 @@ public:
         ContactPool& AddContactPool(ContactPoolSys& poolSys);
 
         /// Get all the contactpools
-        std::vector<ContactPool*>& GetContactPools() { return m_contact_pools; }
+        const std::vector<ContactPool*>& GetContactPools() const { return m_contact_pools; }
 
         /// Get the total number members of all contactpools for this community
         unsigned int GetSize() const;

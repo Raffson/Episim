@@ -47,23 +47,23 @@ void City::SetOutCommuters(unsigned int id, double number_of_commuters)
         m_out_commuting[id]     = number_of_commuters;
 }
 
-double City::GetTotalInCommutersCount()
+const double& City::GetTotalInCommutersCount() const
 {
         if (m_in_commuting_changed) {
                 m_in_commuting_changed = false;
                 m_in_commuter_count    = 0;
-                for (auto& it : m_in_commuting)
+                for (const auto& it : m_in_commuting)
                         m_in_commuter_count += it.second;
         }
         return m_in_commuter_count;
 }
 
-double City::GetTotalOutCommutersCount()
+const double& City::GetTotalOutCommutersCount() const
 {
         if (m_out_commuting_changed) {
                 m_out_commuting_changed = false;
                 m_out_commuter_count    = 0;
-                for (auto& it : m_out_commuting)
+                for (const auto& it : m_out_commuting)
                         m_out_commuter_count += it.second;
         }
         return m_out_commuter_count;
