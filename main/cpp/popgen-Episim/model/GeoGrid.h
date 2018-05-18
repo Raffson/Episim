@@ -19,6 +19,8 @@
 #include "popgen-Episim/util/Utility.h"
 
 
+#include <omp.h>
+
 using namespace std;
 
 namespace stride {
