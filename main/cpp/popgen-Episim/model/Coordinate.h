@@ -18,6 +18,9 @@
 
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/geometries/point.hpp>
+#include <boost/geometry/algorithms/distance.hpp>
+#include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
+#include <boost/geometry/strategies/cartesian/distance_pythagoras.hpp>
 
 namespace bg = boost::geometry;
 typedef bg::model::point<double, 2, bg::cs::cartesian>  cPoint;             //carthesian point (x, y)

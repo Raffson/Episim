@@ -4,8 +4,8 @@
 
 #include "GeoGrid.h"
 
-#include <boost/geometry/algorithms/distance.hpp>
-#include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
+//#include <boost/geometry/algorithms/distance.hpp>
+//#include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
 
 using namespace std;
 
