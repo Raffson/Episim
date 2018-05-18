@@ -3,38 +3,21 @@
 // Created by beau on 3/5/18.
 //
 
-#include <cmath>
-#include <iostream>
 #include <map>
 #include <memory>
-#include <random>
 #include <vector>
-#include <fstream>
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "pop/Population.h"
-#include "util/ConfigInfo.h"
-#include "util/FileSys.h"
 #include "util/RNManager.h"
-#include "util/TimeStamp.h"
-
 
 #include "City.h"
-#include "Community.h"
-#include "Household.h"
 #include "popgen-Episim/util/Parser.h"
 #include "popgen-Episim/util/Utility.h"
 
-#include "popgen-Episim/util/DesignByContract.h"
-
-#include "trng/discrete_dist.hpp"
-#include "trng/lcg64.hpp"
-#include "trng/uniform_int_dist.hpp"
-#include <boost/range/adaptor/map.hpp>
-#include <boost/range/algorithm/copy.hpp>
 
 using namespace std;
 
@@ -142,8 +125,9 @@ public:
         City& operator[](unsigned int i) { return m_cities.at(i); }
 
         /// Getter
-        /// @retval <const map<unsigned int, vector<vector<double>>>&> Returns the households as a 2D vector,
-        ///                             with every vector representing a household.
+        /// @retval <const map<unsigned int, vector<vector<double>>>&> Returns a map which takes
+        /// a size and maps this to the households of that size as a 2D vector,
+        /// with every vector in the 2D vector representing a household.
         const map<unsigned int, vector<vector<double>>>& GetModelHouseholds() const { return m_model_households; }
 
         /// Getter
@@ -206,43 +190,13 @@ public:
         /// representing the configuration.
         const boost::property_tree::ptree& GetConfigPtree() const { return m_config_pt; }
 
-        /// Write the entire GeoGrid to files. The configuration will be written along with the cities,
-        /// household model, commuting model, contact pool system and population.
-        void WriteToFile() const;
-
-        /// Writes the current models to files. All cities, commuting data and households will be written.
-        /// @param path The working directory in which the files should be written. Default is the path of execution.
-        void WriteModelsToFiles(const string& path = "") const;
-
-        /// Writes the current cities to a file.
-        /// @param fname The name of the file to be written.
-        void WriteCitiesToFile(const string& fname = "cities.csv") const;
-
-        /// Writes the current commuting data to a file.
-        /// @param fname The name of the file to be written.
-        void WriteCommutingToFile(const string& fname = "commuting.csv") const;
-
-        /// Writes the current model of households to a file.
-        /// @param fname The name of the file to be written.
-        void WriteModelHouseholdsToFile(const string& fname = "households.xml") const;
-
-        /// Writes the current population to a file.
-        /// @param fname The name of the file to be written.
-        void WritePopToFile(const string& fname = "population.csv") const;
-
-        /// Writes the current contact pool system to a file.
-        /// @param fname The name of the file to be written.
-        void WriteCommunitiesToFile(const string& fname = "communities.csv") const;
-
-        /// Writes the current RNG's state to a file.
-        /// @param fname The name of the file to be written.
-        void WriteRNGstateToFile(const string& fname = "RNG-state.xml") const;
-
         /// Reads an RNG's state from a file.
         /// @param fname The name of the file to be read from.
-        void ReadRNGstateFromFile(const string& fname = "RNG-state.xml");
+        void ReadRNGstateFromFile(const std::string& fname = "RNG-state.xml");
 
 private:
+        friend class GeoGridFileWriter;
+
         /// Returns index of city with smallest population from 'lc'
         /// used by adjustLargestCities(lc, city)
         unsigned int FindSmallest(const vector<City*>& lc);

@@ -14,8 +14,6 @@
  *
  */
 
-#include "popgen-Episim/util/Utility.h"
-
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/geometries/point.hpp>
 

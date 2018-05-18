@@ -13,11 +13,8 @@
  *
  */
 
-#include <cstddef>
 #include <map>
-#include <memory>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "Community.h"
@@ -62,10 +59,10 @@ public:
         unsigned int GetNrOfCommunities() const { return m_communities.size(); }
 
         /// Get the number of total commuters to the city
-        double GetTotalInCommutersCount();
+        const double& GetTotalInCommutersCount() const;
 
         /// Get the number of total commuters leaving the city
-        double GetTotalOutCommutersCount();
+        const double& GetTotalOutCommutersCount() const;
 
         bool HasCollege(){ return m_types_present[CommunityType::Id::College]; }
 
@@ -125,7 +122,7 @@ public:
         util::SegmentedVector<Household>& GetHouseholds() { return m_households; }
 
         /// Returns whether or not the given type of community is present in this city.
-        const bool HasCommunityType(CommunityType::Id type) { return m_types_present[type]; }
+        const bool HasCommunityType(CommunityType::Id type) const { return m_types_present.at(type); }
 
         unsigned int GetEffectivePopulation() const;
         unsigned int GetInfectedCount() const;
@@ -144,13 +141,13 @@ private:
         map<unsigned int, double> m_in_commuting;  ///< Contains number of commuters from other cities to this city
         map<unsigned int, double> m_out_commuting; ///< Contains number of commuters from this city to other cities
 
-        double m_in_commuter_count;  ///< Number of incomming commuters to the city
-        double m_out_commuter_count; ///< Number of outgoing commuters from the city
+        mutable double m_in_commuter_count;  ///< Number of incomming commuters to the city
+        mutable double m_out_commuter_count; ///< Number of outgoing commuters from the city
 
         ///< These booleans will improve efficiency as they will indicate whether the commuters count has changed.
         ///< If it didn't, we can return the commuters count straight away, else we'll recalculate.
-        bool m_in_commuting_changed;
-        bool m_out_commuting_changed;
+        mutable bool m_in_commuting_changed;
+        mutable bool m_out_commuting_changed;
 
         map<CommunityType::Id, bool> m_types_present; ///< This map keeps track of the community types present.
 };

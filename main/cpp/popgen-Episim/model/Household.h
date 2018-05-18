@@ -3,27 +3,16 @@
 // Created by beau on 3/5/18.
 //
 
-#include <cstddef>
-#include <memory>
+#include "pop/Person.h"
+#include "pool/ContactPoolSys.h"
 #include <vector>
 
-#include "pool/ContactPoolSys.h"
-#include "pop/Person.h"
-
 using namespace std;
-
-
-// Regarding the choice to use raw pointers,
-// this should be better for performance,
-// and looking at the way this is handled in the Population class,
-// there shouldn't be any real dangers...
-
-// I have a backup where I converted everything related to Person
-// so that it uses shared pointers, just in case...
 
 namespace stride {
 
 class City;
+class Person;
 
 class Household
 {
