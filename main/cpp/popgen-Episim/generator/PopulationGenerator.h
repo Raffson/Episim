@@ -23,8 +23,7 @@ private:
         /// @param scid Represents the ID of the secondary community to which this person will belong
         /// @param pop The population to which this person will be added
         /// @param city The city in which this person will live
-        void GeneratePerson(const double& age, const unsigned int hid, const unsigned int scid, Population& pop,
-                            City& city);
+        void GeneratePerson(const double& age, const size_t& hid, const size_t& scid, Population& pop, City& city);
 
         /// Selects a random nearby city and returns the communities of the given type.
         /// This is done by selecting a random city from the nearby cities found,
@@ -110,9 +109,6 @@ private:
         const std::vector<double>& GetRandomModelHouseholdOfSize(unsigned int size);
 
 private:
-        ///< ID generator for creating persons, starting from 0 which in this case doesn't matter...
-        static unsigned int m_id_generator;
-
         ///< Reference to the GeoGrid so we can access relevant information.
         GeoGrid& m_geogrid;
 

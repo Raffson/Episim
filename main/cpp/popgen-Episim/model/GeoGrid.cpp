@@ -115,7 +115,7 @@ void GeoGrid::ClassifyNeighbours()
 
 GeoGrid::GeoGrid(const util::RNManager::Info& info)
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
-          m_population(nullptr), m_initialized(false), m_rng(info), m_random_ages(false)
+          m_population(nullptr), m_initialized(false), m_rng(info), m_random_ages(false), m_cid_generator(1)
 {
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
@@ -277,6 +277,7 @@ void GeoGrid::Reset()
         m_random_ages = false;
         m_config_pt.clear();
         m_rng.Initialize();
+        m_cid_generator = 1;
 }
 
 void GeoGrid::GenerateAll()
@@ -315,7 +316,7 @@ void GeoGrid::GenerateSchools()
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
                 City&      chosen_city = *c_vec[rndm_vec[i]];
-                Community& nw_school   = chosen_city.AddCommunity(CommunityType::Id::School);
+                Community& nw_school   = chosen_city.AddCommunity(m_cid_generator++, CommunityType::Id::School);
 
                 // Add contactpools
                 for (auto j = 0; j < cps; j++)
@@ -378,7 +379,7 @@ void GeoGrid::GenerateColleges()
         for (unsigned int i = 0; i < nrcolleges; i++){
             auto cty = m_cities_with_college[lottery_vec[i]];
 
-            Community& college = cty->AddCommunity(CommunityType::Id::College);
+            Community& college = cty->AddCommunity(m_cid_generator++, CommunityType::Id::College);
             for (auto j = 0; j < cps; j++){
                 college.AddContactPool(m_population->GetContactPoolSys());
             }
@@ -427,7 +428,7 @@ void GeoGrid::GenerateWorkplaces()
         // Now we will place each workplace randomly in our city, making use of our lottery vec.
         for (unsigned int i = 0; i < number_of_workplaces; i++) {
                 City*      chosen_city  = c_vec[rndm_vec[i]];
-                Community& nw_workplace = chosen_city->AddCommunity(CommunityType::Id::Work);
+                Community& nw_workplace = chosen_city->AddCommunity(m_cid_generator++, CommunityType::Id::Work);
                 // A workplace has a contactpool.
                 for (auto j = 0; j < cps; j++) {
                     nw_workplace.AddContactPool(m_population->GetContactPoolSys());
@@ -458,8 +459,8 @@ void GeoGrid::GenerateCommunities()
         for (unsigned int i = 0; i < 2*total_communities; i++) {
                 City&      chosen_city1  = *c_vec[rndm_vec[i++]];
                 City&      chosen_city2  = *c_vec[rndm_vec[i]];
-                Community& nw_pcommunity = chosen_city1.AddCommunity(CommunityType::Id::Primary);
-                Community& nw_scommunity = chosen_city2.AddCommunity(CommunityType::Id::Secondary);
+                Community& nw_pcommunity = chosen_city1.AddCommunity(m_cid_generator++, CommunityType::Id::Primary);
+                Community& nw_scommunity = chosen_city2.AddCommunity(m_cid_generator++, CommunityType::Id::Secondary);
                 // Add contactpools for secondary community...
                 for (auto j = 0; j < cps; j++) {
                         nw_pcommunity.AddContactPool(m_population->GetContactPoolSys());

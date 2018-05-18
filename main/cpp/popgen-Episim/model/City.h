@@ -95,9 +95,10 @@ public:
         const vector<Community*>& GetCommunitiesOfType(CommunityType::Id ct) { return m_moc[ct]; }
 
         /// Adds a new community of the given type to the city.
-        /// @param: community_type the type of community that is to be added
-        /// @retval: <Community> the recently added community
-        Community& AddCommunity(CommunityType::Id community_type);
+        /// @param: id The ID of the community to be added
+        /// @param: type The type of community to be added
+        /// @retval: <Community&> A reference to the recently added community
+        Community& AddCommunity(const size_t& id, CommunityType::Id type);
 
         /// Set the number of incoming commuters from the city with the given id
         /// @param: id the id of the city that the commuters come from
@@ -116,6 +117,7 @@ public:
         const map<unsigned int, double>& GetOutCommuting() const { return m_out_commuting; };
 
         /// Adds a new household to the city
+        /// @param pool_sys The contact pool system.
         Household& AddHousehold(ContactPoolSys& pool_sys);
 
         /// Gets the households of the city

@@ -62,9 +62,6 @@ shared_ptr<Sim> SimBuilder::Build(shared_ptr<Sim> sim, shared_ptr<Population> po
                                                              m_config_pt.get<unsigned long>("run.rng_seed", 1UL), "",
                                                              sim->m_num_threads});
 
-        //still gotta check if we're using file-based geopop,
-        // in which case we'd need to read the RNG's state from a file...
-
         // --------------------------------------------------------------
         // Contact handlers, each with generator bound to different
         // random engine stream) and infector.

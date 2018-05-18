@@ -280,6 +280,9 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         ///< A boost R-tree used for neighbour classification
         bgi::rtree<rtElem, bgi::quadratic<16>> m_rtree;
+
+        ///< ID generator for communities
+        size_t m_cid_generator;
 };
 
 } // namespace stride

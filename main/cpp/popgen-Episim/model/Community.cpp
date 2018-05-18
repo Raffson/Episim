@@ -22,25 +22,15 @@ using namespace std;
 
 namespace stride {
 
-unsigned int Community::m_id_generator = 1;
-
-map<ContactPoolType::Id, unsigned int> Community::m_pool_ids = {{ContactPoolType::Id::Household, 1},
-                                                                {ContactPoolType::Id::School, 1},
-                                                                {ContactPoolType::Id::Work, 1},
-                                                                {ContactPoolType::Id::PrimaryCommunity, 1},
-                                                                {ContactPoolType::Id::SecondaryCommunity, 1}};
-
-
-Community::Community(CommunityType::Id communityType, City* city)
-    : m_community_id(m_id_generator++), m_community_type(communityType), m_city(city)
+Community::Community(const size_t& id, CommunityType::Id type, City* city)
+    : m_id(id), m_type(type), m_city(city)
 {
 }
 
 stride::ContactPool& Community::AddContactPool(ContactPoolSys& poolSys)
 {
-        ContactPoolType::Id type = CommunityType::ToContactPoolType(m_community_type);
-        unsigned int id = m_pool_ids.at(type)++;
-        poolSys[type].emplace_back(ContactPool(id, type, this));
+        ContactPoolType::Id type = CommunityType::ToContactPoolType(m_type);
+        poolSys[type].emplace_back((poolSys[type].size()+1), type, this);
         m_contact_pools.emplace_back(&poolSys[type].back());
         return (*m_contact_pools.back());
 }

@@ -19,9 +19,8 @@ using namespace std;
 
 namespace stride {
 
-unsigned int PopulationGenerator::m_id_generator = 1;
-
-PopulationGenerator::PopulationGenerator(GeoGrid& geogrid) : m_geogrid(geogrid), m_rng(geogrid.GetRNG())
+PopulationGenerator::PopulationGenerator(GeoGrid& geogrid) :
+        m_geogrid(geogrid), m_rng(geogrid.GetRNG())
 {
         InitializeHouseholdFractions();
         InitializeCommutingFractions();
@@ -176,7 +175,7 @@ ContactPool* PopulationGenerator::AssignWorkerAtRandom(City& origin)
                 return GetRandomContactPool(GetRandomCommunities(origin, CommunityType::Id::Work));
 }
 
-void PopulationGenerator::GeneratePerson(const double& age, const unsigned int hid, const unsigned int scid,
+void PopulationGenerator::GeneratePerson(const double& age, const size_t& hid, const size_t& scid,
                                          Population& pop, City& city)
 {
         Fractions    category  = get_category(age);
@@ -198,10 +197,10 @@ void PopulationGenerator::GeneratePerson(const double& age, const unsigned int h
         } else if (category == Fractions::MIDDLE_AGED and IsActive()) { // [26, 65)
                 workplace = AssignWorkerAtRandom(city);
         }
-        unsigned int schoolid = (school) ? school->GetID() : 0;
-        unsigned int workid   = (workplace) ? workplace->GetID() : 0;
-        unsigned int pcid     = (primcomm) ? primcomm->GetID() : 0;
-        pop.CreatePerson(m_id_generator++, age, hid, schoolid, workid, pcid, scid);
+        size_t schoolid = (school) ? school->GetID() : 0;
+        size_t workid   = (workplace) ? workplace->GetID() : 0;
+        size_t pcid     = (primcomm) ? primcomm->GetID() : 0;
+        pop.CreatePerson(pop.size(), age, hid, schoolid, workid, pcid, scid);
         Person* person = &pop.back();
         // Add the person to the contactpools, if any...
         if (school)
@@ -216,12 +215,12 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
 {
         auto&        pop           = *m_geogrid.GetPopulation();
         auto&        pool_sys      = pop.GetContactPoolSys();
-        auto&        the_household = city.AddHousehold(pool_sys); // Returns a reference to the new household...
-        unsigned int hid           = the_household.GetID();
+        auto&        the_household = city.AddHousehold(pool_sys);
+        size_t       hid           = the_household.GetID();
 
         ContactPool* seccomm = GetRandomContactPool(GetRandomCommunities(city, CommunityType::Id::Secondary));
         // Meaning you always get assigned to a community?
-        unsigned int scid = (seccomm) ? seccomm->GetID() : 0;
+        size_t scid = (seccomm) ? seccomm->GetID() : 0;
 
         for (auto age : GetRandomModelHouseholdOfSize(size))
         {
@@ -244,21 +243,16 @@ void PopulationGenerator::GeneratePopulation()
         // TODO: this should be improved even more if possible...
 
         cout << "Starting population generation..." << endl;
-        const clock_t      begin_time     = clock();
-        const unsigned int max_population = m_geogrid.GetTotalPop();
-        long long int      remaining_population = max_population; // long long to make sure the unsigned int fits...
+        const clock_t begin_time     = clock();
+        long long int remaining_pop  = m_geogrid.GetTotalPop(); // long long to make sure the unsigned int fits...
 
-        while (remaining_population > 0) {
+        while (remaining_pop > 0) {
                 City& city           = GetRandomCity();
                 auto  household_size = GetRandomHouseholdSize();
-
-                // if the population has to be exact according to the one that we read on the file about cities
-                // but this will effect our discrete distribution
-                // Raphael@everyone, true, but the effect is insignificant given we have enough households...
-                if (remaining_population - household_size < 0)
-                        household_size = remaining_population;
+                if (remaining_pop - household_size < 0)
+                        household_size = remaining_pop;
                 GenerateHousehold(household_size, city);
-                remaining_population -= household_size;
+                remaining_pop -= household_size;
         }
         cout << "Done generating population, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
         SurveySeeder(m_geogrid.GetConfigPtree(), m_rng).Seed(m_geogrid.GetPopulation());

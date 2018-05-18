@@ -33,15 +33,16 @@ public:
         Community() = delete;
 
         /// Constructor
-        /// @param communityType The type of the community to be constructed
+        /// @param id The ID to be used for this community
+        /// @param type The type of the community to be constructed
         /// @param city A pointer to the city in which this community is located
-        Community(CommunityType::Id communityType, City* city);
+        Community(const size_t& id, CommunityType::Id type, City* city);
 
         /// Return the community's ID
-        const unsigned int GetID() const { return m_community_id; }
+        const unsigned int GetID() const { return m_id; }
 
         /// Return the community's type
-        const CommunityType::Id& GetCommunityType() const { return m_community_type; }
+        const CommunityType::Id& GetCommunityType() const { return m_type; }
 
         /// Return a const reference of the city,
         const City* GetCity() const { return m_city; }
@@ -61,15 +62,11 @@ public:
         unsigned int GetSize() const;
 
 private:
-        static unsigned int m_id_generator; ///< Used to generate unique id automatically
+        const size_t m_id; ///< A unique ID for the community
 
-        const unsigned int m_community_id; ///< A unique ID for the community
-
-        CommunityType::Id m_community_type; ///< The type of community
+        CommunityType::Id m_type; ///< The type of community
 
         City* m_city; ///< Pointer to City of this community
-
-        static std::map<ContactPoolType::Id, unsigned int> m_pool_ids; ///< Helps to create an unique id for contactpools
 
         std::vector<ContactPool*> m_contact_pools; ///< Contains contactpools
 };

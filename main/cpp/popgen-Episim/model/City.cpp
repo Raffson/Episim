@@ -27,11 +27,11 @@ City::City(const unsigned int city_id, const unsigned int province, unsigned int
                 m_types_present[type] = false;
 }
 
-Community& City::AddCommunity(CommunityType::Id community_type)
+Community& City::AddCommunity(const size_t& id, CommunityType::Id type)
 {
-        m_communities.emplace_back(Community(community_type, this));
-        m_types_present[community_type] = true;
-        m_moc[community_type].emplace_back(&m_communities.back());
+        m_communities.emplace_back(id, type, this);
+        m_types_present[type] = true;
+        m_moc[type].emplace_back(&m_communities.back());
         return m_communities.back();
 }
 
@@ -71,7 +71,7 @@ const double& City::GetTotalOutCommutersCount() const
 
 Household& City::AddHousehold(ContactPoolSys& pool_sys)
 {
-        m_households.emplace_back(Household(this, pool_sys));
+        m_households.emplace_back(this, pool_sys);
         return m_households.back();
 }
 
