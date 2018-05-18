@@ -155,7 +155,7 @@ int main(int argc, char** argv)
         grid.GenerateAll();
         stride::GeoGridFileWriter::WriteAll(grid);
 
-        stride::PopulationGenerator(grid).GeneratePopulation();
+        stride::PopulationGenerator(grid).Generate();
 
         //grid.WritePopToFile("Test-pop.txt");
         //grid.WriteRNGstateToFile();

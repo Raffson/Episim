@@ -34,7 +34,7 @@ public:
     GenPopTest(){
         grid.Initialize("run_default.xml");
         grid.GenerateAll();
-        stride::PopulationGenerator(grid).GeneratePopulation();
+        stride::PopulationGenerator(grid).Generate();
     }
 
 protected:

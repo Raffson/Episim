@@ -20,7 +20,7 @@ using namespace std;
 namespace stride {
 
 PopulationGenerator::PopulationGenerator(GeoGrid& geogrid) :
-        m_geogrid(geogrid), m_rng(geogrid.GetRNG())
+        m_grid(geogrid), m_rng(geogrid.GetRNG())
 {
         InitializeHouseholdFractions();
         InitializeCommutingFractions();
@@ -29,18 +29,18 @@ PopulationGenerator::PopulationGenerator(GeoGrid& geogrid) :
 
 void PopulationGenerator::InitializeHouseholdFractions()
 {
-        const auto& households = m_geogrid.GetModelHouseholds();
+        const auto& households = m_grid.GetModelHouseholds();
         for (const auto& elem : households)
                 m_household_size_fracs.emplace_back(elem.second.size());
 }
 
 void PopulationGenerator::InitializeCommutingFractions()
 {
-        const double commuting_students_frac = m_geogrid.GetFraction(Fractions::COMMUTING_STUDENTS);
-        const double student_frac            = m_geogrid.GetFraction(Fractions::STUDENTS);
-        const double young_workers_frac      = m_geogrid.GetFraction(Fractions::YOUNG);
+        const double commuting_students_frac = m_grid.GetFraction(Fractions::COMMUTING_STUDENTS);
+        const double student_frac            = m_grid.GetFraction(Fractions::STUDENTS);
+        const double young_workers_frac      = m_grid.GetFraction(Fractions::YOUNG);
         const double student_commuters_frac  = commuting_students_frac * student_frac * young_workers_frac;
-        for (const auto& cityA : m_geogrid.GetCities()) // for each cityA...
+        for (const auto& cityA : m_grid.GetCities()) // for each cityA...
         {
                 m_city_ids.emplace_back(cityA.first);
                 if (cityA.second.HasCommunityType(CommunityType::Id::College))
@@ -48,7 +48,7 @@ void PopulationGenerator::InitializeCommutingFractions()
                 vector<double> worker_dist;
                 vector<double> student_dist;
                 double         commutersA = cityA.second.GetTotalOutCommutersCount();
-                for (const auto& cityB : m_geogrid.GetCities()) // calculate the chance to commute from cityA to cityB
+                for (const auto& cityB : m_grid.GetCities()) // calculate the chance to commute from cityA to cityB
                 {
                         const bool has_college = cityB.second.HasCommunityType(CommunityType::Id::College);
                         // We don't want local commuting
@@ -79,8 +79,8 @@ void PopulationGenerator::InitializeCommutingFractions()
 
 void PopulationGenerator::InitializeCityPopFractions()
 {
-        double totalpop = m_geogrid.GetTotalPop();
-        for (const auto& city : m_geogrid.GetCities())
+        double totalpop = m_grid.GetTotalPop();
+        for (const auto& city : m_grid.GetCities())
                 m_city_pop_fracs.emplace_back(city.second.GetPopulation() / totalpop);
 }
 
@@ -94,7 +94,7 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
 
 const vector<double>& PopulationGenerator::GetRandomModelHouseholdOfSize(unsigned int size)
 {
-    const auto& households = m_geogrid.GetModelHouseholds().at(size);
+    const auto& households = m_grid.GetModelHouseholds().at(size);
     trng::uniform_int_dist distr(0, households.size());
     return households[m_rng.GetGenerator(distr)()];
 }
@@ -123,7 +123,7 @@ double PopulationGenerator::GetRandomAge(Fractions category)
 City& PopulationGenerator::GetRandomCity()
 {
         trng::discrete_dist distr(m_city_pop_fracs.begin(), m_city_pop_fracs.end());
-        return m_geogrid[m_city_ids[(unsigned int)m_rng.GetGenerator(distr)()]];
+        return m_grid[m_city_ids[(unsigned int)m_rng.GetGenerator(distr)()]];
 }
 
 ContactPool* PopulationGenerator::GetRandomContactPool(const vector<Community*>& comms)
@@ -154,17 +154,17 @@ const bool PopulationGenerator::FlipUnfairCoin(const double& frac)
 
 const bool PopulationGenerator::IsWorkingCommuter()
 {
-        return FlipUnfairCoin(m_geogrid.GetFraction(Fractions::COMMUTING_WORKERS));
+        return FlipUnfairCoin(m_grid.GetFraction(Fractions::COMMUTING_WORKERS));
 }
 
 const bool PopulationGenerator::IsStudentCommuter()
 {
-        return FlipUnfairCoin(m_geogrid.GetFraction(Fractions::COMMUTING_STUDENTS));
+        return FlipUnfairCoin(m_grid.GetFraction(Fractions::COMMUTING_STUDENTS));
 }
 
-const bool PopulationGenerator::IsStudent() { return FlipUnfairCoin(m_geogrid.GetFraction(Fractions::STUDENTS)); }
+const bool PopulationGenerator::IsStudent() { return FlipUnfairCoin(m_grid.GetFraction(Fractions::STUDENTS)); }
 
-const bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_geogrid.GetFraction(Fractions::ACTIVE)); }
+const bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_grid.GetFraction(Fractions::ACTIVE)); }
 
 ContactPool* PopulationGenerator::AssignWorkerAtRandom(City& origin)
 {
@@ -213,7 +213,7 @@ void PopulationGenerator::GeneratePerson(const double& age, const size_t& hid, c
 
 void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
 {
-        auto&        pop           = *m_geogrid.GetPopulation();
+        auto&        pop           = *m_grid.GetPopulation();
         auto&        pool_sys      = pop.GetContactPoolSys();
         auto&        the_household = city.AddHousehold(pool_sys);
         size_t       hid           = the_household.GetID();
@@ -224,7 +224,7 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
 
         for (auto age : GetRandomModelHouseholdOfSize(size))
         {
-                if( m_geogrid.UsingRandomAges() ) {
+                if( m_grid.UsingRandomAges() ) {
                     Fractions category = get_category(age);
                     age = GetRandomAge(category);
                 }
@@ -237,14 +237,14 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         }
 }
 
-void PopulationGenerator::GeneratePopulation()
+void PopulationGenerator::Generate()
 {
         // TODO: currently it takes about 20sec to generate 4.3 million people,
         // TODO: this should be improved even more if possible...
 
         cout << "Starting population generation..." << endl;
         const clock_t begin_time     = clock();
-        long long int remaining_pop  = m_geogrid.GetTotalPop(); // long long to make sure the unsigned int fits...
+        long long int remaining_pop  = m_grid.GetTotalPop(); // long long to make sure the unsigned int fits...
 
         while (remaining_pop > 0) {
                 City& city           = GetRandomCity();
@@ -255,29 +255,29 @@ void PopulationGenerator::GeneratePopulation()
                 remaining_pop -= household_size;
         }
         cout << "Done generating population, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
-        SurveySeeder(m_geogrid.GetConfigPtree(), m_rng).Seed(m_geogrid.GetPopulation());
+        SurveySeeder(m_grid.GetConfigPtree(), m_rng).Seed(m_grid.GetPopulation());
 }
 
-const vector<Community*>& PopulationGenerator::GetRandomCommunities(const City& city, const CommunityType::Id& community_type)
+const vector<Community*>& PopulationGenerator::GetRandomCommunities(const City& city, const CommunityType::Id& type)
 {
-        unsigned int search_radius = m_geogrid.GetInitialSearchRadius();
-        REQUIRE(search_radius > 0, "Initial search radius of the GeoGrid must be bigger than 0.");
-        while (search_radius != 0) {
-                const vector<City*>& near_cities = m_geogrid.GetCitiesWithinRadiusWithCommunityType(city, search_radius, community_type);
-                if (!near_cities.empty()) {
-                        auto index = (unsigned int)m_rng.GetGenerator(trng::uniform_int_dist(0, near_cities.size()))();
-                        return near_cities[index]->GetCommunitiesOfType(community_type);
+        unsigned int radius = m_grid.GetInitialSearchRadius();
+        REQUIRE(radius > 0, "Initial search radius of the GeoGrid must be bigger than 0.");
+        while (radius != 0) {
+                const vector<City*>& cities = m_grid.GetCitiesWithinRadiusWithCommunityType(city, radius, type);
+                if (!cities.empty()) {
+                        auto index = (unsigned int)m_rng.GetGenerator(trng::uniform_int_dist(0, cities.size()))();
+                        return cities[index]->GetCommunitiesOfType(type);
                 }
-                search_radius <<= 1; // equivalent to multiplying by 2
+                radius <<= 1; // equivalent to multiplying by 2
         }
         // throw exception here instead?
-        return const_cast<City&>(city).GetCommunitiesOfType(community_type);
+        return const_cast<City&>(city).GetCommunitiesOfType(type);
 }
 
 std::vector<Community*> PopulationGenerator::GetNearestColleges(const City& origin)
 {
         vector<Community*>   result;
-        const vector<City*>& cities(m_geogrid.GetCitiesWithCollege());
+        const vector<City*>& cities(m_grid.GetCitiesWithCollege());
         double               nearest = numeric_limits<double>::max();
         unsigned int         nindex  = 0;
         for (unsigned int i = 0; i < cities.size(); i++) {
@@ -294,12 +294,11 @@ std::vector<Community*> PopulationGenerator::GetNearestColleges(const City& orig
 
 City& PopulationGenerator::GetRandomCommutingCity(City& origin, const bool student)
 {
-        const vector<double>& distribution =
-            student ? m_student_commuting_fracs[origin.GetId()] : m_worker_commuting_fracs[origin.GetId()];
+        const vector<double>& distribution = student ? m_student_commuting_fracs[origin.GetId()]
+                                                     : m_worker_commuting_fracs[origin.GetId()];
         trng::discrete_dist distr(distribution.begin(), distribution.end());
         auto                index = (const unsigned int)m_rng.GetGenerator(distr)();
-        const unsigned int  id    = student ? m_college_ids.at(index) : m_city_ids.at(index);
-        return m_geogrid.GetCities().at(id);
+        return m_grid.GetCities().at(student ? m_college_ids.at(index) : m_city_ids.at(index));
 }
 
 } // namespace stride
