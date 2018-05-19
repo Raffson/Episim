@@ -19,8 +19,6 @@
  * Header for the command line controller.
  */
 
-#include "popgen-Episim/model/GeoGrid.h"
-#include "popgen-Episim/generator/PopulationGenerator.h"
 #include "util/Stopwatch.h"
 
 #include <boost/property_tree/ptree.hpp>
@@ -31,6 +29,7 @@
 namespace stride {
 
 class SimRunner;
+class GeoGrid;
 
 /**
  * Controls a simulation run initiated with the command line interface (cli).

@@ -33,6 +33,8 @@ void GeoGridFileWriter::WriteAll(const GeoGrid &grid) {
     pt.put("run.communities_file", dir.string() + "communities.csv");
     pt.put("run.rng_state_file", dir.string() + "RNG-state.xml");
     pt.put("run.prebuilt_geopop", true);
+    pt.put("run.use_install_dirs", false);
+    pt.put("run.output_prefix", "");
     pt.get_child("run").sort();
     ptreeToFile(pt, dir.string() + "config.xml");
 

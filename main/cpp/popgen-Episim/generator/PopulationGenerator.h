@@ -8,6 +8,8 @@
 
 namespace stride {
 
+class Population;
+
 class PopulationGenerator
 {
 public:

@@ -3,6 +3,7 @@
 //
 
 #include "PopulationGenerator.h"
+#include "pop/Population.h"
 #include "pop/SurveySeeder.h"
 #include "popgen-Episim/model/Household.h"
 #include "popgen-Episim/util/DesignByContract.h"

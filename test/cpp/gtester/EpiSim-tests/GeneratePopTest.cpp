@@ -13,7 +13,7 @@
 #include <omp.h>
 #include <spdlog/spdlog.h>
 
-#include "popgen-Episim/model/GeoGrid.h"
+#include "popgen-Episim/generator/GeoGridGenerator.h"
 #include "popgen-Episim/generator/PopulationGenerator.h"
 
 namespace Tests{
@@ -31,20 +31,18 @@ public:
     /// Tearing down TestCase
     static void TearDownTestCase() {}
 
-    GenPopTest(){
-        grid.Initialize("run_default.xml");
-        grid.GenerateAll();
-        stride::PopulationGenerator(grid).Generate();
-    }
-
 protected:
-    stride::GeoGrid grid;
+    shared_ptr<GeoGrid> grid;
 
     /// Destructor has to be virtual.
     ~GenPopTest() override {}
 
     /// Set up for the test fixture
-    void SetUp() override {}
+    void SetUp() override
+    {
+        grid = GeoGridGenerator().Generate("run_default.xml");
+        PopulationGenerator(*grid).Generate();
+    }
 
     /// Tearing down the test fixture
     void TearDown() override {}
@@ -54,14 +52,14 @@ TEST_P(GenPopTest, CityPopulationTest)
 {
     double margin = 0.01;
     unsigned int pop_counter = 0;
-    for(auto& it: grid.GetCities()){
+    for(auto& it: grid->GetCities()){
         City* a_city = &it.second;
-        double target =  ((double)a_city->GetPopulation() / (double)grid.GetTotalPopOfModel());
-        double actual = ((double)a_city->GetEffectivePopulation() / (double)grid.GetTotalPop());
+        double target =  ((double)a_city->GetPopulation() / (double)grid->GetTotalPopOfModel());
+        double actual = ((double)a_city->GetEffectivePopulation() / (double)grid->GetTotalPop());
         pop_counter += a_city->GetEffectivePopulation();
         EXPECT_NEAR(actual, target, margin);
     }
-    EXPECT_EQ(grid.GetPopulation()->size(), pop_counter);
+    EXPECT_EQ(grid->GetPopulation()->size(), pop_counter);
 }
 
 
@@ -75,10 +73,10 @@ TEST_P(GenPopTest, AgeDistributionTest)
     unsigned int oldies = 0;
     unsigned int active = 0;
 
-    unsigned int pop_count = grid.GetPopulation()->size();
+    unsigned int pop_count = grid->GetPopulation()->size();
 
-    for(unsigned int i=0; i<grid.GetPopulation()->size(); i++){
-        auto a_person = grid.GetPopulation()->at(i);
+    for(unsigned int i=0; i<grid->GetPopulation()->size(); i++){
+        auto a_person = grid->GetPopulation()->at(i);
 
         switch(get_category(a_person.GetAge())) {
             case Fractions::SCHOOLED : {
@@ -112,19 +110,19 @@ TEST_P(GenPopTest, AgeDistributionTest)
 
     double margin = 0.01;
 
-    EXPECT_NEAR((double)schooled/pop_count, grid.GetFraction(Fractions::SCHOOLED),
-                margin*grid.GetFraction(Fractions::SCHOOLED));
-    EXPECT_NEAR((double)youngsters/pop_count, grid.GetFraction(Fractions::YOUNG),
-                margin*grid.GetFraction(Fractions::YOUNG));
-    EXPECT_NEAR((double)middle_aged/pop_count, grid.GetFraction(Fractions::MIDDLE_AGED),
-                margin*grid.GetFraction(Fractions::MIDDLE_AGED));
-    EXPECT_NEAR((double)oldies/pop_count, grid.GetFraction(Fractions::OLDIES),
-                margin*grid.GetFraction(Fractions::OLDIES));
+    EXPECT_NEAR((double)schooled/pop_count, grid->GetFraction(Fractions::SCHOOLED),
+                margin*grid->GetFraction(Fractions::SCHOOLED));
+    EXPECT_NEAR((double)youngsters/pop_count, grid->GetFraction(Fractions::YOUNG),
+                margin*grid->GetFraction(Fractions::YOUNG));
+    EXPECT_NEAR((double)middle_aged/pop_count, grid->GetFraction(Fractions::MIDDLE_AGED),
+                margin*grid->GetFraction(Fractions::MIDDLE_AGED));
+    EXPECT_NEAR((double)oldies/pop_count, grid->GetFraction(Fractions::OLDIES),
+                margin*grid->GetFraction(Fractions::OLDIES));
 
     double actual_active = (double) active / (middle_aged + youngsters);
     //we have approx. 46% active from the people of the working age 4% less than we are supposed to have
     margin = 0.1;
-    EXPECT_NEAR(actual_active, grid.GetFraction(Fractions::ACTIVE), margin * grid.GetFraction(Fractions::ACTIVE));
+    EXPECT_NEAR(actual_active, grid->GetFraction(Fractions::ACTIVE), margin * grid->GetFraction(Fractions::ACTIVE));
 
 }
 

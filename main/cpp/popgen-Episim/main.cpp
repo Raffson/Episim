@@ -12,9 +12,11 @@
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickItem>
+#include <popgen-Episim/generator/GeoGridGenerator.h>
+
 #endif
 
-#include "popgen-Episim/model/GeoGrid.h"
+#include "popgen-Episim/generator/GeoGridGenerator.h"
 #include "popgen-Episim/generator/PopulationGenerator.h"
 #include "popgen-Episim/util/GeoGridFileWriter.h"
 
@@ -148,20 +150,12 @@ int startMap(stride::GeoGrid& grid)
 
 int main(int argc, char** argv)
 {
-        stride::GeoGrid grid;
-        //grid.Initialize("run_default.xml");
-        grid.Initialize("run_default.xml", true);
-        //grid.ReadRNGstateFromFile();
-        grid.GenerateAll();
-        stride::GeoGridFileWriter::WriteAll(grid);
-
-        stride::PopulationGenerator(grid).Generate();
-
-        //grid.WritePopToFile("Test-pop.txt");
-        //grid.WriteRNGstateToFile();
+        std::shared_ptr<stride::GeoGrid> grid = stride::GeoGridGenerator().Generate("run_default.xml", true);
+        stride::GeoGridFileWriter::WriteAll(*grid);
+        stride::PopulationGenerator(*grid).Generate();
 
 #ifdef USING_QT
         // startMap(argc, argv);
-        startMap(grid);
+        startMap(*grid);
 #endif
 }

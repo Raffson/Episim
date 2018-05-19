@@ -7,7 +7,7 @@
  * Implementation of tests to check the generation of communities.
  */
 
-#include "popgen-Episim/model/GeoGrid.h"
+#include "popgen-Episim/generator/GeoGridGenerator.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <gtest/gtest.h>
@@ -49,8 +49,7 @@ TEST_P(CollegeTest, HappyDayScenario)
         // Initialise the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid;
-        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default.xml"));
+        shared_ptr<GeoGrid> grid = GeoGridGenerator().Generate("run_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
@@ -70,60 +69,36 @@ TEST_P(CollegeTest, HappyDayScenario)
          * 11002,1,269954,153104.586,212271.7101,51.2165845,4.413545489,ANTWERPEN
          *
          */
-        ASSERT_NO_FATAL_FAILURE(grid.GenerateColleges());
 
         // Expected nr of colleges
-        double       stufrac       = grid.GetFraction(Fractions::STUDENTS);
-        double       ywfrac        = grid.GetFraction(Fractions::YOUNG);
-        unsigned int colsize       = grid.GetAvgSize(Sizes::COLLEGES);
+        double       stufrac       = grid->GetFraction(Fractions::STUDENTS);
+        double       ywfrac        = grid->GetFraction(Fractions::YOUNG);
+        unsigned int colsize       = grid->GetAvgSize(Sizes::COLLEGES);
 
-        double nrcolleges = ceil(grid.GetTotalPop() * stufrac * ywfrac / colsize);
+        double nrcolleges = ceil(grid->GetTotalPop() * stufrac * ywfrac / colsize);
         double total_pop_biggest = 0;
-        for (auto& it: grid.GetCitiesWithCollege()){
+        for (auto& it: grid->GetCitiesWithCollege()){
             total_pop_biggest += it->GetPopulation() ;
         }
 
         double margin = 0.075;
 
-        for(auto& a_city:grid.GetCitiesWithCollege()){
+        for(auto& a_city:grid->GetCitiesWithCollege()){
             double target = a_city->GetPopulation() / total_pop_biggest;
             double actual = a_city->GetColleges().size() / nrcolleges;
             EXPECT_NEAR(actual, target, margin);
         }
 
-        auto cities = grid.GetCities();
+        auto cities = grid->GetCities();
 
         // Now remove these cities with colleges and check that all other cities have 0 colleges...
-        for(auto& a_city:grid.GetCitiesWithCollege()){
+        for(auto& a_city:grid->GetCitiesWithCollege()){
             cities.erase(a_city->GetId());
         }
 
         for (auto& it : cities) {
                 ASSERT_EQ(it.second.GetColleges().size(), 0);
         }
-}
-
-TEST_P(CollegeTest, WrongInput)
-{
-        // -----------------------------------------------------------------------------------------
-        // Initialize the GeoGrid.
-        // -----------------------------------------------------------------------------------------
-
-        /* After reworking the fractions (deduced from households) these death tests won't die anymore...
-         * need some new relevant tests here...
-         * currently i'm leaving this in comments, as well as leaving the xml files in place
-         * this (code below + files) should be deleted in the future (or reworked)
-         *
-        // Bad input file with fractions that are FUBAR
-        auto grid = GeoGrid("config/schools&colleges_bad_frac_0.xml");
-        ASSERT_DEATHa_IF_SUPPORTED(grid.GenerateColleges(), "");
-        grid = GeoGrid("config/schools&colleges_bad_frac_1.xml");
-        ASSERT_DEATH_IF_SUPPORTED(grid.GenerateColleges(), "");
-        */
-
-        // uncomment the next 2 lines once the "unsigned int refractor" has happened...
-        // grid = GeoGrid("config/bad_community_sizes.xml");
-        // ASSERT_DEATH_IF_SUPPORTED(grid.GenerateColleges(), "");
 }
 
 // Copy of the code since it is a private function and it is used by AdjustLargestCities
