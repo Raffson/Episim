@@ -64,7 +64,6 @@ void check_distribution(vector<double>& p_vec)
 
 Fractions get_category(const double& age)
 {
-        // Same ordering of if-else if as in GeoGrid::GetMainFractions, for the same reasons...
         if (age >= 26 and age < 65)
                 return Fractions::MIDDLE_AGED;
         else if (age >= 3 and age < 18)

@@ -31,6 +31,7 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::filesystem::path &co
 
 shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree &pTree)
 {
+    m_cid_generator = 1;
     struct make_shared_enabler : public GeoGrid
     {
     };
@@ -72,36 +73,16 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree
 
 void GeoGridGenerator::GetMainFractions()
 {
-    unsigned int schooled = 0;
-    unsigned int workers1 = 0;
-    unsigned int workers2 = 0;
-    unsigned int toddlers = 0;
-    unsigned int oldies   = 0;
-    for (const auto& houses : m_grid->m_model_households) {
-        for (const auto &house : houses.second) {
-            for (const auto &age : house) {
-                // Ordered these if-else if construction to fall as quickly as possible
-                // in the (statistically) most likely age-category...
-                if (age >= 26 and age < 65)
-                    workers2 += 1;
-                else if (age >= 3 and age < 18)
-                    schooled += 1;
-                else if (age >= 18 and age < 26)
-                    workers1 += 1;
-                else if (age >= 65)
-                    oldies += 1;
-                else
-                    toddlers += 1;
-            }
-        }
-    }
-    auto&  fmap                  = m_grid->m_fract_map;
-    double total                 = schooled + workers1 + workers2 + toddlers + oldies;
-    fmap[Fractions::SCHOOLED]    = schooled / total;
-    fmap[Fractions::YOUNG]       = workers1 / total;
-    fmap[Fractions::MIDDLE_AGED] = workers2 / total;
-    fmap[Fractions::TODDLERS]    = toddlers / total;
-    fmap[Fractions::OLDIES]      = oldies / total;
+    auto&  fmap = m_grid->m_fract_map;
+    for (const auto& houses : m_grid->m_model_households)
+        for (const auto &house : houses.second)
+            for (const auto &age : house)
+                fmap[get_category(age)] += 1;
+    double total = 0;
+    for( auto category : AgeList )
+        total += fmap[category];
+    for( auto category : AgeList )
+        fmap[category] /= total;
 }
 
 void GeoGridGenerator::InitOutputStuff()
@@ -145,12 +126,12 @@ void GeoGridGenerator::ReadFractionsAndSizes()
     fmap[Fractions::ACTIVE] = abs(pt.get<double>("run.popgen.pop_info.fraction_active_workers", 0.5));
     fmap[Fractions::COMMUTING_WORKERS] = abs(pt.get<double>("run.popgen.pop_info.fraction_commuting_workers", 0.5));
 
-    smap[Sizes::AVERAGE_CP]  = (unsigned int)abs(pt.get<long>("run.popgen.contactpool_info.average_size", 20));
-    smap[Sizes::SCHOOLS]     = (unsigned int)abs(pt.get<long>("run.popgen.contactpool_info.school.size", 500));
-    smap[Sizes::COLLEGES]    = (unsigned int)abs(pt.get<long>("run.popgen.contactpool_info.college.size", 3000));
-    smap[Sizes::MAXLC]       = (unsigned int)abs(pt.get<long>("run.popgen.contactpool_info.college.cities", 10));
-    smap[Sizes::COMMUNITIES] = (unsigned int)abs(pt.get<long>("run.popgen.contactpool_info.community.size", 2000));
-    smap[Sizes::WORKPLACES]  = (unsigned int)abs(pt.get<long>("run.popgen.contactpool_info.workplace.size", 20));
+    smap[Sizes::AVERAGE_CP]  = (unsigned int)abs(pt.get<int>("run.popgen.contactpool_info.average_size", 20));
+    smap[Sizes::SCHOOLS]     = (unsigned int)abs(pt.get<int>("run.popgen.contactpool_info.school.size", 500));
+    smap[Sizes::COLLEGES]    = (unsigned int)abs(pt.get<int>("run.popgen.contactpool_info.college.size", 3000));
+    smap[Sizes::MAXLC]       = (unsigned int)abs(pt.get<int>("run.popgen.contactpool_info.college.cities", 10));
+    smap[Sizes::COMMUNITIES] = (unsigned int)abs(pt.get<int>("run.popgen.contactpool_info.community.size", 2000));
+    smap[Sizes::WORKPLACES]  = (unsigned int)abs(pt.get<int>("run.popgen.contactpool_info.workplace.size", 20));
 }
 
 void GeoGridGenerator::ReadDataFiles()
@@ -167,7 +148,6 @@ void GeoGridGenerator::ReadDataFiles()
 
     parser::ParseCities(base_path / city_file, m_grid->m_cities, m_grid->m_model_pop, m_grid->m_rtree);
     parser::ParseCommuting(base_path / commuting_file, m_grid->m_cities, m_grid->m_fract_map);
-
 }
 
 void GeoGridGenerator::EnsureConsistency()
@@ -221,7 +201,7 @@ void GeoGridGenerator::PopulationFromFile(const string &fname)
     util::CSV csv(fname);
     for (const auto &row : csv)
     {
-        const auto age  = row.GetValue<size_t>("age");
+        const auto age  = row.GetValue<double>("age");
         const auto hid  = row.GetValue<size_t>("household_id");
         const auto sid  = row.GetValue<size_t>("school_id");
         const auto wid  = row.GetValue<size_t>("work_id");
@@ -253,12 +233,6 @@ void GeoGridGenerator::GenerateSchools()
 {
     const auto& fmap = m_grid->m_fract_map;
     const auto& smap = m_grid->m_sizes_map;
-    // Calculating extra data
-    const double amount_schooled = m_grid->m_total_pop * fmap.at(Fractions::SCHOOLED);
-    // ceil because we want to at least build 1 school
-    auto amount_of_schools = (const unsigned int)ceil(amount_schooled / smap.at(Sizes::SCHOOLS));
-    // Determine number of contactpools
-    auto cps = ceil((double)smap.at(Sizes::SCHOOLS) / smap.at(Sizes::AVERAGE_CP));
 
     // Setting up to divide the schools to cities
     vector<double> p_vec;
@@ -268,19 +242,11 @@ void GeoGridGenerator::GenerateSchools()
         p_vec.emplace_back(it.second.GetPopulation());
     }
 
-    auto rndm_vec = generate_random(p_vec, m_grid->m_rng, amount_of_schools);
-    // assign schools to cities according to our normal distribution
-    for (unsigned int i = 0; i < amount_of_schools; i++) {
-        m_grid->m_school_count++;
-        City&      chosen_city = *c_vec[rndm_vec[i]];
-        Community& nw_school   = chosen_city.AddCommunity(m_grid->m_cid_generator++, CommunityType::Id::School);
-
-        // Add contactpools
-        for (auto j = 0; j < cps; j++)
-            nw_school.AddContactPool(m_grid->m_population->GetContactPoolSys());
-    }
-    // We should ENSURE schools are effectively placed in cities.
-    // The OO nature makes this assertion rather complex -> found in tests
+    auto amountSchooled  = m_grid->m_total_pop * fmap.at(Fractions::SCHOOLED);
+    auto amountOfSchools = (const unsigned int)ceil(amountSchooled / smap.at(Sizes::SCHOOLS));
+    m_grid->m_school_count += amountOfSchools;
+    auto rndm_vec = generate_random(p_vec, m_grid->m_rng, amountOfSchools);
+    AddCommunities(c_vec, rndm_vec, CommunityType::Id::School);
 }
 
 unsigned int GeoGridGenerator::FindSmallest(const vector<City*>& lc)
@@ -307,34 +273,21 @@ void GeoGridGenerator::AdjustLargestCities(vector<City*>& lc, City& city)
 
 void GeoGridGenerator::GenerateColleges()
 {
-    const auto& fmap = m_grid->m_fract_map;
-    const auto& smap = m_grid->m_sizes_map;
-    for (auto& it : m_grid->m_cities) {
-        AdjustLargestCities(m_grid->m_cities_with_college, it.second);
-    }
+    const auto&    fmap   = m_grid->m_fract_map;
+    const auto&    smap   = m_grid->m_sizes_map;
+    vector<City*>& cities = m_grid->m_cities_with_college;
+    for (auto& it : m_grid->m_cities)
+        AdjustLargestCities(cities, it.second);
 
-    // Determine number of contactpools
-    auto cps = ceil((double)smap.at(Sizes::COLLEGES) / smap.at(Sizes::AVERAGE_CP));
+    vector <double> p_vec;
+    for (auto it : cities)
+        p_vec.emplace_back(it->GetPopulation());
 
     double students = m_grid->m_total_pop * fmap.at(Fractions::YOUNG) * fmap.at(Fractions::STUDENTS);
     auto nrcolleges = (unsigned int)ceil(students / smap.at(Sizes::COLLEGES));
-    vector <double> p_vec;
-    for (auto& it : m_grid->m_cities_with_college) {
-        p_vec.emplace_back(it->GetPopulation());
-    }
-
-    vector <unsigned int> lottery_vec = generate_random(p_vec, m_grid->m_rng, nrcolleges);
-
-    for (unsigned int i = 0; i < nrcolleges; i++){
-        auto cty = m_grid->m_cities_with_college[lottery_vec[i]];
-
-        Community& college = cty->AddCommunity(m_grid->m_cid_generator++, CommunityType::Id::College);
-        for (auto j = 0; j < cps; j++){
-            college.AddContactPool(m_grid->m_population->GetContactPoolSys());
-        }
-    }
+    auto lottery_vec = generate_random(p_vec, m_grid->m_rng, nrcolleges);
+    AddCommunities(cities, lottery_vec, CommunityType::Id::College);
     // filter out the cities that eventually haven't received colleges
-    vector<City*>& cities = m_grid->m_cities_with_college;
     for( unsigned int i=0; i < cities.size(); i++ )
         if( !cities[i]->HasCommunityType(CommunityType::Id::College) )
             cities.erase(cities.begin()+i--);
@@ -342,11 +295,6 @@ void GeoGridGenerator::GenerateColleges()
 
 void GeoGridGenerator::GenerateWorkplaces()
 {
-    // We create the vec we will choose our city_id's out of.
-    // Meaning a citiy has a probality to get assigned a workplace equal to the fraction
-    // of people working IN the city (not the active working pop in the city).
-    // We have to account for the commuters in the city.
-
     const auto& fmap = m_grid->m_fract_map;
     const auto& smap = m_grid->m_sizes_map;
     double possible_workers_frac = (fmap.at(Fractions::MIDDLE_AGED) +
@@ -376,27 +324,13 @@ void GeoGridGenerator::GenerateWorkplaces()
     double allworkers           = active_workers_frac * m_grid->m_total_pop;
     auto   number_of_workplaces = (unsigned int)ceil(allworkers / smap.at(Sizes::WORKPLACES));
     auto   rndm_vec             = generate_random(lottery_vec, m_grid->m_rng, number_of_workplaces);
-
-    auto cps = ceil((double)smap.at(Sizes::WORKPLACES) / smap.at(Sizes::AVERAGE_CP));
-
-    // Now we will place each workplace randomly in our city, making use of our lottery vec.
-    for (unsigned int i = 0; i < number_of_workplaces; i++) {
-        City*      chosen_city  = c_vec[rndm_vec[i]];
-        Community& nw_workplace = chosen_city->AddCommunity(m_grid->m_cid_generator++, CommunityType::Id::Work);
-        // A workplace has a contactpool.
-        for (auto j = 0; j < cps; j++) {
-            nw_workplace.AddContactPool(m_grid->m_population->GetContactPoolSys());
-        }
-    }
+    AddCommunities(c_vec, rndm_vec, CommunityType::Id::Work);
 }
 
 // Communities need to be distributed according to the relative population size.
 void GeoGridGenerator::GenerateCommunities()
 {
     const auto& smap = m_grid->m_sizes_map;
-    // Determine number of contactpools
-    auto cps = ceil((double)smap.at(Sizes::COMMUNITIES) / smap.at(Sizes::AVERAGE_CP));
-
     // First we need to determine the total number of communities to be used.
     auto total_communities = (unsigned int)ceil((double)m_grid->m_total_pop / smap.at(Sizes::COMMUNITIES));
 
@@ -407,19 +341,10 @@ void GeoGridGenerator::GenerateCommunities()
         p_vec.emplace_back(it.second.GetPopulation());
     }
 
-    auto rndm_vec = generate_random(p_vec, m_grid->m_rng, 2*total_communities);
-
-    for (unsigned int i = 0; i < 2*total_communities; i++) {
-        City&      chosen_city1  = *c_vec[rndm_vec[i++]];
-        City&      chosen_city2  = *c_vec[rndm_vec[i]];
-        Community& nw_pcommunity = chosen_city1.AddCommunity(m_grid->m_cid_generator++, CommunityType::Id::Primary);
-        Community& nw_scommunity = chosen_city2.AddCommunity(m_grid->m_cid_generator++, CommunityType::Id::Secondary);
-        // Add contactpools for secondary community...
-        for (auto j = 0; j < cps; j++) {
-            nw_pcommunity.AddContactPool(m_grid->m_population->GetContactPoolSys());
-            nw_scommunity.AddContactPool(m_grid->m_population->GetContactPoolSys());
-        }
-    }
+    auto rndm_vec = generate_random(p_vec, m_grid->m_rng, total_communities);
+    AddCommunities(c_vec, rndm_vec, CommunityType::Id::Primary);
+    rndm_vec = generate_random(p_vec, m_grid->m_rng, total_communities);
+    AddCommunities(c_vec, rndm_vec, CommunityType::Id::Secondary);
 }
 
 void GeoGridGenerator::ClassifyNeighbours()
@@ -477,6 +402,21 @@ void GeoGridGenerator::ClassifyNeighbours2()
         }
     }
     //cout << "Done classifying, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
+}
+
+void GeoGridGenerator::AddCommunities(const vector<City *>& cities, const vector<unsigned int>& indices,
+                                      CommunityType::Id type)
+{
+    const auto& smap = m_grid->m_sizes_map;
+    auto cps = ceil((double)smap.at(CommunityType::ToSizes(type)) / smap.at(Sizes::AVERAGE_CP));
+    for (unsigned int i = 0; i < indices.size(); i++) {
+        City&      chosen_city = *cities[indices[i]];
+        Community& nw_school   = chosen_city.AddCommunity(m_cid_generator++, type);
+
+        // Add contactpools
+        for (auto j = 0; j < cps; j++)
+            nw_school.AddContactPool(m_grid->m_population->GetContactPoolSys());
+    }
 }
 
 } //namespace stride

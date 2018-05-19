@@ -15,7 +15,7 @@ class GeoGridGenerator
 
 public:
         /// Default constructor
-        GeoGridGenerator() = default;
+        GeoGridGenerator() : m_grid(nullptr), m_cid_generator(1) {};
 
         /// Generates a GeoGrid according to the given configuration file.
         /// If the file is not found, 'run_default.xml' will be chosen loaded by default.
@@ -108,8 +108,16 @@ private:
         void ClassifyNeighbours();
         void ClassifyNeighbours2(); //for benchmarking purposes...
 
+        /// Adds communities of the given type and their contact pools.
+        /// @param cities A vector with pointers to all the cities in the GeoGrid.
+        /// @param indices A vector with random indices for 'cities'.
+        /// @param type The type of the communities to be added.
+        void AddCommunities(const vector<City*>& cities, const vector<unsigned int>& indices, CommunityType::Id type);
+
 private:
-        std::shared_ptr<GeoGrid> m_grid; ///< The GeoGrid object.
+        std::shared_ptr<GeoGrid> m_grid;          ///< The GeoGrid object.
+        size_t                   m_cid_generator; ///< ID generator for communities
+
 };
 
 } //namespace stride

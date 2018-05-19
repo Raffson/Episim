@@ -24,7 +24,7 @@ namespace stride {
 
 GeoGrid::GeoGrid()
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
-          m_population(nullptr), m_rng(), m_random_ages(false), m_cid_generator(1)
+          m_population(nullptr), m_rng(), m_random_ages(false)
 {
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
@@ -53,7 +53,6 @@ void GeoGrid::Reset()
         m_random_ages = false;
         m_config_pt.clear();
         m_rng.Initialize();
-        m_cid_generator = 1;
 }
 
 Coordinate GeoGrid::GetCenterOfGrid()

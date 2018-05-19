@@ -24,14 +24,14 @@ void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, Cit
         for (auto& it : read_in) {
                 counter++;
                 try {
-                        auto id         = it.GetValue<unsigned int>("id");
-                        auto province   = it.GetValue<unsigned int>("province");
-                        auto population = it.GetValue<unsigned int>("population");
-                        auto x_coord    = it.GetValue<double>("x_coord");
-                        auto y_coord    = it.GetValue<double>("y_coord");
-                        auto longitude  = it.GetValue<double>("longitude");
-                        auto latitude   = it.GetValue<double>("latitude");
-                        auto name       = it.GetValue<string>("name");
+                        auto id         = (const unsigned int)abs(stoi(it.GetValue("id")));
+                        auto province   = (const unsigned int)abs(stoi(it.GetValue("province")));
+                        auto population = (const unsigned int)abs(stoi(it.GetValue("population")));
+                        auto x_coord    = stod(it.GetValue("x_coord"));
+                        auto y_coord    = stod(it.GetValue("y_coord"));
+                        auto longitude  = stod(it.GetValue("longitude"));
+                        auto latitude   = stod(it.GetValue("latitude"));
+                        auto name       = it.GetValue("name");
                         total_pop += population;
 
                         rtree.insert(make_pair(gPoint(longitude, latitude), id));
