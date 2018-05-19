@@ -201,7 +201,7 @@ void PopulationGenerator::GeneratePerson(const double& age, const size_t& hid, c
         size_t schoolid = (school) ? school->GetID() : 0;
         size_t workid   = (workplace) ? workplace->GetID() : 0;
         size_t pcid     = (primcomm) ? primcomm->GetID() : 0;
-        pop.CreatePerson(pop.size(), age, hid, schoolid, workid, pcid, scid);
+        pop.emplace_back(pop.size(), age, hid, schoolid, workid, pcid, scid);
         Person* person = &pop.back();
         // Add the person to the contactpools, if any...
         if (school)

@@ -53,6 +53,14 @@ private:
         /// communities and their contact pools.
         void EnsureConsistency();
 
+        /// Reads and builds communities from a file.
+        /// @param fname The name of the file to be read.
+        void CommunitiesFromFile(const string& fname = "communities.csv");
+
+        /// Reads and builds a population for the GeoGrid from a file.
+        /// @param fname The name of the file to be read.
+        void PopulationFromFile(const string& fname = "population.csv");
+
         /// Calls all functions relating to community/contactpool generation and neighbour-classification.
         void GenerateAll();
 

@@ -133,7 +133,7 @@ void RNManager::StateFromFile(const string& fname)
         Initialize(util::RNManager::Info{type, seed, state, numThreads});
 }
 
-void RNManager::StateToFile(const string &fname)
+void RNManager::StateToFile(const string &fname) const
 {
         boost::property_tree::ptree pt;
         pt.put("rng_state.seed", m_seed);

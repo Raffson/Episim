@@ -35,6 +35,11 @@ void GeoGridFileWriter::WriteAll(const GeoGrid &grid) {
     pt.put("run.prebuilt_geopop", true);
     pt.put("run.use_install_dirs", false);
     pt.put("run.output_prefix", "");
+    pt.put("run.age_contact_matrix_file",
+           "data/"+pt.get<string>("run.age_contact_matrix_file", "contact_matrix_flanders_subpop.xml"));
+    pt.put("run.disease_config_file",
+           "data/"+pt.get<string>("run.disease_config_file", "disease_measles.xml"));
+
     pt.get_child("run").sort();
     ptreeToFile(pt, dir.string() + "config.xml");
 
@@ -71,7 +76,7 @@ void GeoGridFileWriter::WriteModels(const GeoGrid &grid, const string &path) {
 void GeoGridFileWriter::WriteCities(const GeoGrid &grid, const string &fname) {
     std::ofstream file;
     file.open(fname.c_str(), std::ofstream::out);
-    file << R"("id","province","population","x_coord","y_coord","latitude","longitude", "name")" << endl;
+    file << R"("id","province","population","x_coord","y_coord","latitude","longitude","name")" << endl;
     for (const auto &city : grid.m_cities) {
         const City &c = city.second;
         const Coordinate &co = c.GetCoordinates();

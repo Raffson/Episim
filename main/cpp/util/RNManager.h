@@ -117,7 +117,7 @@ public:
 
         /// Writes the current RNG's state to a file.
         /// @param fname The name of the file to be written.
-        void StateToFile(const std::string &fname = "RNG-state.xml");
+        void StateToFile(const std::string &fname = "RNG-state.xml") const;
 
 private:
         unsigned long    m_seed;         ///< Actual seed used with random engine.

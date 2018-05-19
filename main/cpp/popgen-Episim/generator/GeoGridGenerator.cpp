@@ -6,6 +6,7 @@
 #include "pop/Population.h"
 #include "popgen-Episim/model/GeoGrid.h"
 #include "popgen-Episim/util/DesignByContract.h"
+#include "util/CSV.h"
 #include "util/FileSys.h"
 #include "util/TimeStamp.h"
 
@@ -50,19 +51,21 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree
     m_grid->m_initial_search_radius =
             pt.get<unsigned int>("run.popgen.neighbour_classification.initial_search_radius", 10U);
 
+    unsigned long seed = pt.get<unsigned long>("run.rng_seed", 1UL);
+    string type = pt.get("run.rng_type", "mrg2");
+    unsigned int numThreads = pt.get<unsigned int>("run.num_threads", 1U);
+    m_grid->m_rng.Initialize(util::RNManager::Info{type, seed, "", numThreads});
     EnsureConsistency();
 
-    if( pt.get<bool>("prebuilt_geopop", false) )
+    if( pt.get<bool>("run.prebuilt_geopop", false) )
     {
-        //prebuilt geopop
+        m_grid->m_rng.StateFromFile(pt.get<string>("run.rng_state_file", "RNG-state.xml"));
+        CommunitiesFromFile(pt.get<string>("run.communities_file", "communities.csv"));
+        PopulationFromFile(pt.get<string>("run.population_file", "population.csv"));
+        ClassifyNeighbours();
     }
-    else {
-        unsigned long seed = pt.get<unsigned long>("run.rng_seed", 1UL);
-        string type = pt.get("run.rng_type", "mrg2");
-        unsigned int numThreads = pt.get<unsigned int>("run.num_threads", 1U);
-        m_grid->m_rng.Initialize(util::RNManager::Info{type, seed, "", numThreads});
+    else
         GenerateAll();
-    }
 
     return m_grid;
 }
@@ -194,6 +197,49 @@ void GeoGridGenerator::EnsureConsistency()
     ENSURE(m_grid->m_initial_search_radius > 0, "Initial search radius must be strictly positive.");
 }
 
+void GeoGridGenerator::CommunitiesFromFile(const string &fname)
+{
+    const auto& smap = m_grid->m_sizes_map;
+    util::CSV csv(fname);
+    for (const auto &row : csv)
+    {
+        auto  id   = row.GetValue<size_t>("community_id");
+        auto  type = row.GetValue<string>("community_type");
+        auto  cid  = row.GetValue<unsigned int>("city_id");
+        auto& c    = m_grid->m_cities.at(cid).AddCommunity(id, CommunityType::ToType(type));
+        Sizes size = CommunityType::ToSizes(CommunityType::ToType(type));
+        for( unsigned int i=0; i < ceil((double)smap.at(size) / smap.at(Sizes::AVERAGE_CP)); i++ )
+            c.AddContactPool(m_grid->m_population->GetContactPoolSys());
+        if( type == "school" ) m_grid->m_school_count++;
+        if( type == "college" ) m_grid->m_cities_with_college.emplace_back(&m_grid->m_cities.at(cid));
+    }
+}
+void GeoGridGenerator::PopulationFromFile(const string &fname)
+{
+    ContactPoolSys& poolSys = m_grid->m_population->GetContactPoolSys();
+    unsigned int pid = 0U;
+    util::CSV csv(fname);
+    for (const auto &row : csv)
+    {
+        const auto age  = row.GetValue<size_t>("age");
+        const auto hid  = row.GetValue<size_t>("household_id");
+        const auto sid  = row.GetValue<size_t>("school_id");
+        const auto wid  = row.GetValue<size_t>("work_id");
+        const auto pcid = row.GetValue<size_t>("primary_community");
+        const auto scid = row.GetValue<size_t>("secundary_community");
+        m_grid->m_population->emplace_back(pid++, age, hid, sid, wid, pcid, scid);
+        if( hid > poolSys[ContactPoolType::Id::Household].size() )
+        {
+            const auto cid  = row.GetValue<unsigned int>("city_id");
+            m_grid->m_cities.at(cid).AddHousehold(poolSys);
+        }
+        const Person* p = &m_grid->m_population->back();
+        for( auto type : ContactPoolType::IdList )
+            if( p->GetPoolId(type) != 0 )
+                poolSys[type][p->GetPoolId(type)-1].AddMember(p);
+    }
+}
+
 void GeoGridGenerator::GenerateAll()
 {
     GenerateColleges();
@@ -287,6 +333,11 @@ void GeoGridGenerator::GenerateColleges()
             college.AddContactPool(m_grid->m_population->GetContactPoolSys());
         }
     }
+    // filter out the cities that eventually haven't received colleges
+    vector<City*>& cities = m_grid->m_cities_with_college;
+    for( unsigned int i=0; i < cities.size(); i++ )
+        if( !cities[i]->HasCommunityType(CommunityType::Id::College) )
+            cities.erase(cities.begin()+i--);
 }
 
 void GeoGridGenerator::GenerateWorkplaces()
