@@ -24,7 +24,7 @@ void GeoGridFileWriter::WriteAll(const GeoGrid &grid) {
     WriteModels(grid, dir.string());
     WritePopulation(grid, dir.string() + "population.csv");
     WriteCommunities(grid, dir.string() + "communities.csv");
-    WriteRNGstate(grid, dir.string() + "RNG-state.xml");
+    grid.m_rng.StateToFile(dir.string() + "RNG-state.xml");
 
     boost::property_tree::ptree pt = grid.m_config_pt;
     pt.get_child("run").erase("popgen");
@@ -154,16 +154,6 @@ void GeoGridFileWriter::WriteCommunities(const GeoGrid &grid, const string &fnam
         cerr << "GeoGridFileWriter::WriteCommunities> Can't write with an uninitialized contact pool system."
              << endl;
     }
-}
-
-void GeoGridFileWriter::WriteRNGstate(const GeoGrid &grid, const string &fname) {
-    boost::property_tree::ptree pt;
-    pt.put("rng_state.seed", grid.m_rng.GetInfo().m_seed);
-    pt.put("rng_state.state", grid.m_rng.GetInfo().m_state);
-    pt.put("rng_state.stream_count", grid.m_rng.GetInfo().m_stream_count);
-    pt.put("rng_state.type", grid.m_rng.GetInfo().m_type);
-
-    ptreeToFile(pt, fname);
 }
 
 }

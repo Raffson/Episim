@@ -159,22 +159,4 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
         return m_neighbours_in_radius[origin.GetId()][radius][type];
 }
 
-void GeoGrid::ReadRNGstateFromFile(const string& fname)
-{ //TODO: refactor to a better location perhaps...
-    boost::property_tree::ptree pt;
-    boost::filesystem::path filePath;
-    filePath = file_exists(fname) ? fname : m_config_pt.get<string>("run.output_prefix") + fname;
-    if( file_exists(filePath) )
-        boost::property_tree::read_xml(filePath.string(), pt);
-    else
-        cerr << "GeoGrid::ReadRNGstateFromFile> Could not find given file:  "
-             << filePath.string() << endl << "Initializing to default state..." << endl;
-
-    unsigned long seed       = pt.get<unsigned long>("rng_state.seed", 1UL);
-    string        type       = pt.get("rng_state.type", "mrg2");
-    string        state      = pt.get("rng_state.state", "");
-    unsigned int  numThreads = pt.get<unsigned int>("rng_state.stream_count", 1U);
-    m_rng.Initialize(util::RNManager::Info{type, seed, state, numThreads});
-}
-
 } // namespace stride

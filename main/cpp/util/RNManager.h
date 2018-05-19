@@ -110,6 +110,15 @@ public:
         /// Initalize with data in Info.
         void Initialize(const Info& info = Info());
 
+        /// Reads an RNG's state from a file. If an attribute in the file has a wrong format or is missing something,
+        /// the RNG's corresponding attribute is left unchanged.
+        /// @param fname The name of the file to be read from.
+        void StateFromFile(const std::string& fname = "RNG-state.xml");
+
+        /// Writes the current RNG's state to a file.
+        /// @param fname The name of the file to be written.
+        void StateToFile(const std::string &fname = "RNG-state.xml");
+
 private:
         unsigned long    m_seed;         ///< Actual seed used with random engine.
         unsigned int     m_stream_count; ///< Number of streams set up with the engine.

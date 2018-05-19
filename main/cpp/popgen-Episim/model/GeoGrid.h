@@ -119,9 +119,6 @@ public:
         /// representing the configuration.
         const boost::property_tree::ptree& GetConfigPtree() const { return m_config_pt; }
 
-        /// Reads an RNG's state from a file.
-        /// @param fname The name of the file to be read from.
-        void ReadRNGstateFromFile(const std::string& fname = "RNG-state.xml");
 
 private:
         friend class GeoGridGenerator;

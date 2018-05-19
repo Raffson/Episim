@@ -50,14 +50,20 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree
     m_grid->m_initial_search_radius =
             pt.get<unsigned int>("run.popgen.neighbour_classification.initial_search_radius", 10U);
 
-    // Setting up RNG (check if pre-built)
-    unsigned long seed       = pt.get<unsigned long>("run.rng_seed", 1UL);
-    string        type       = pt.get("run.rng_type", "mrg2");
-    unsigned int  numThreads = pt.get<unsigned int>("run.num_threads", 1U);
-    m_grid->m_rng.Initialize(util::RNManager::Info{type, seed, "", numThreads});
-
     EnsureConsistency();
-    GenerateAll();
+
+    if( pt.get<bool>("prebuilt_geopop", false) )
+    {
+        //prebuilt geopop
+    }
+    else {
+        unsigned long seed = pt.get<unsigned long>("run.rng_seed", 1UL);
+        string type = pt.get("run.rng_type", "mrg2");
+        unsigned int numThreads = pt.get<unsigned int>("run.num_threads", 1U);
+        m_grid->m_rng.Initialize(util::RNManager::Info{type, seed, "", numThreads});
+        GenerateAll();
+    }
+
     return m_grid;
 }
 
