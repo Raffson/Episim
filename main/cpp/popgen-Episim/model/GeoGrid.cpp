@@ -27,8 +27,11 @@ void GeoGrid::GetMainFractions()
         unsigned int workers2 = 0;
         unsigned int toddlers = 0;
         unsigned int oldies   = 0;
-        for (const auto& houses : m_model_households) {
-            for (const auto &house : houses.second) {
+#pragma omp parallel for reduction (+: schooled, workers1, workers2, toddlers, oldies)
+        for (size_t i = 0; i < m_model_households.size(); i++) {
+            auto houses = m_model_households.begin();
+            advance(houses, i);
+            for (const auto &house : houses->second) {
                 for (const auto &age : house) {
                     // Ordered these if-else if construction to fall as quickly as possible
                     // in the (statistically) most likely age-category...
@@ -94,22 +97,28 @@ void GeoGrid::ClassifyNeighbours()
         //const clock_t begin_time = clock();
         //this approach without boost's rtree queries is much faster for flanders_cities (327 cities)
         // could be different if we had more cities though, but can we test that?
-        for (auto& cityA : m_cities) {
-                for (auto& cityB : m_cities) {
-                        // truncating distance on purpose to avoid using floor-function
-                        unsigned int distance =
-                            cityB.second.GetCoordinates().GetDistance(cityA.second.GetCoordinates());
-                        // mind that the categories go as follows [0, initial_radius), [initial_radius,
-                        // 2*initial_radius), etc.
-                        unsigned int category = m_initial_search_radius;
-                        while ((distance / category) > 0)
-                                category <<= 1; // equivalent to multiplying by 2
-                        for( auto type : CommunityType::IdList) {
-                            if( cityB.second.HasCommunityType(type) )
-                                m_neighbours_in_radius[cityA.first][category][type].emplace_back(&cityB.second);
-                        }
+#pragma omp parallel for
+        for (unsigned int i = 0; i < m_cities.size();i++) {
+            auto cityA = m_cities.begin();
+            advance(cityA, i);
+            for (auto &cityB : m_cities) {
+                // truncating distance on purpose to avoid using floor-function
+                auto distance = (unsigned int)
+                        cityB.second.GetCoordinates().GetDistance(cityA->second.GetCoordinates());
+                // mind that the categories go as follows [0, initial_radius), [initial_radius,
+                // 2*initial_radius), etc.
+                unsigned int category = m_initial_search_radius;
+                while ((distance / category) > 0)
+                    category <<= 1; // equivalent to multiplying by 2
+                for (auto type : CommunityType::IdList) {
+                    if (cityB.second.HasCommunityType(type)) {
+                        m_neighbours_in_radius[cityA->first][category][type].emplace_back(&cityB.second);
+                    }
+
                 }
+            }
         }
+
         //cout << "Done classifying, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
 }
 
@@ -117,6 +126,7 @@ GeoGrid::GeoGrid(const util::RNManager::Info& info)
         : m_initial_search_radius(0), m_total_pop(0), m_model_pop(0), m_school_count(0),
           m_population(nullptr), m_initialized(false), m_rng(info), m_random_ages(false)
 {
+
         for( auto frac : FractionList )
             m_fract_map[frac] = 0;
 
@@ -198,9 +208,18 @@ void GeoGrid::ReadDataFiles()
 
     m_model_households = parser::ParseHouseholds(base_path / household_file);
     GetMainFractions();
+#pragma omp parallel sections
+{
 
-    parser::ParseCities(base_path / city_file, m_cities, m_model_pop, m_rtree);
-    parser::ParseCommuting(base_path / commuting_file, m_cities, m_fract_map);
+#pragma omp section
+    {parser::ParseCities(base_path / city_file, m_cities, m_model_pop, m_rtree);}
+
+#pragma omp section
+{parser::ParseCommuting(base_path / commuting_file, m_cities, m_fract_map);}
+}
+
+
+
 
 }
 
