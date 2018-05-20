@@ -7,7 +7,7 @@
  * Implementation of tests to check the generation of communities.
  */
 
-#include "popgen-Episim/model/GeoGrid.h"
+#include "popgen-Episim/generator/GeoGridGenerator.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <exception>
@@ -49,8 +49,7 @@ protected:
             // Initialize the GeoGrid.
             // -----------------------------------------------------------------------------------------
             cout << "Building the GeoGrid." << endl;
-            GeoGrid grid;
-            ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default.xml"));
+            shared_ptr<GeoGrid> grid = GeoGridGenerator().Generate("run_default.xml");
             cout << "Done building the GeoGrid." << endl;
 
             // -----------------------------------------------------------------------------------------
@@ -58,18 +57,14 @@ protected:
             // -----------------------------------------------------------------------------------------
 
             // Do the test...
-            ASSERT_NO_FATAL_FAILURE(grid.GenerateColleges());
-            ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
-            ASSERT_NO_FATAL_FAILURE(grid.GenerateSchools());
-            ASSERT_NO_FATAL_FAILURE(grid.GenerateCommunities());
 
             //times 2 because we have to count both Primary and Secondary communities
-            double total_communities = 2 * ceil((double)grid.GetTotalPop() / grid.GetAvgSize(Sizes::COMMUNITIES));
+            double total_communities = 2 * ceil((double)grid->GetTotalPop() / grid->GetAvgSize(Sizes::COMMUNITIES));
             double margin = 0.01;
 
-            for(auto& it: grid.GetCities()){
+            for(auto& it: grid->GetCities()){
                     City* a_city = &it.second;
-                    double target = (double)a_city->GetPopulation() / grid.GetTotalPopOfModel();
+                    double target = (double)a_city->GetPopulation() / grid->GetTotalPopOfModel();
                     double actual = (a_city->GetPrimaryCommunities().size() + a_city->GetSecondaryCommunities().size())
                                     / total_communities;
 
@@ -84,15 +79,14 @@ TEST_P(CommunityTest, Run)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid;
-        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default.xml"));
+        shared_ptr<GeoGrid> grid = GeoGridGenerator().Generate("run_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        auto                              cities = grid.GetCities();
+        auto                              cities = grid->GetCities();
         map<unsigned int, City>::iterator c_it2  = cities.begin();
         /// Check if the communities are ditributed correctly.
         for (map<unsigned int, City>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {

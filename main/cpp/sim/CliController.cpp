@@ -21,6 +21,8 @@
 #include "sim/CliController.h"
 
 #include "pop/Population.h"
+#include "popgen-Episim/generator/GeoGridGenerator.h"
+#include "popgen-Episim/generator/PopulationGenerator.h"
 #include "sim/SimRunner.h"
 #include "util/ConfigInfo.h"
 #include "util/FileSys.h"
@@ -94,8 +96,8 @@ void CliController::Control()
         // -----------------------------------------------------------------------------------------
         std::shared_ptr<Population> pop;
         if( m_config_pt.get<bool>("run.random_geopop", false) ) {
-            m_geogrid = make_shared<GeoGrid>(m_config_pt);
-            PopulationGenerator(*m_geogrid).GeneratePopulation();
+            m_geogrid = GeoGridGenerator().Generate(m_config_pt);
+            PopulationGenerator(*m_geogrid).Generate();
             pop = m_geogrid->GetPopulation();
         }
         else pop = Population::Create(m_config_pt);

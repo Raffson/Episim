@@ -24,14 +24,14 @@ void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, Cit
         for (auto& it : read_in) {
                 counter++;
                 try {
-                        unsigned int id         = (unsigned int)(stoi(it.GetValue("id")));
-                        unsigned int province   = (unsigned int)(stoi(it.GetValue("province")));
-                        unsigned int population = (unsigned int)(stoi(it.GetValue("population")));
-                        double       x_coord    = stod(it.GetValue("x_coord"));
-                        double       y_coord    = stod(it.GetValue("y_coord"));
-                        double       longitude  = stod(it.GetValue("longitude"));
-                        double       latitude   = stod(it.GetValue("latitude"));
-                        string       name       = it.GetValue("name");
+                        auto id         = (const unsigned int)abs(stoi(it.GetValue("id")));
+                        auto province   = (const unsigned int)abs(stoi(it.GetValue("province")));
+                        auto population = (const unsigned int)abs(stoi(it.GetValue("population")));
+                        auto x_coord    = stod(it.GetValue("x_coord"));
+                        auto y_coord    = stod(it.GetValue("y_coord"));
+                        auto longitude  = stod(it.GetValue("longitude"));
+                        auto latitude   = stod(it.GetValue("latitude"));
+                        auto name       = it.GetValue("name");
                         total_pop += population;
 
                         rtree.insert(make_pair(gPoint(longitude, latitude), id));
@@ -118,6 +118,7 @@ map<unsigned int, vector<vector<double>>> ParseHouseholds(const boost::filesyste
         return result;
 }
 
+//What is this function???
 vector<City> DefragmentCity(const City& city, vector<double> distr, util::RNManager& rndm)
 {
 
@@ -135,5 +136,6 @@ vector<City> DefragmentCity(const City& city, vector<double> distr, util::RNMana
         }
         return vector<City>();
 }
+
 } // namespace parser
 } // namespace stride

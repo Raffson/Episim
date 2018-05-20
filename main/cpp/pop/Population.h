@@ -93,7 +93,6 @@ private:
         }
 
         friend class PopBuilder;
-        friend class PopulationGenerator;
         friend class BeliefSeeder;
 
 private:

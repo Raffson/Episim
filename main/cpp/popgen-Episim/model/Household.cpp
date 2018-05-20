@@ -5,17 +5,14 @@
 #include "Household.h"
 
 using namespace std;
-using namespace stride;
 
 namespace stride {
 
-unsigned int Household::m_id_generator = 1;
-
-Household::Household(City* city, ContactPoolSys& pool_sys)
-    : m_id(m_id_generator++), m_city(city)
+Household::Household(City* city, ContactPoolSys& pool_sys) :
+        m_id(pool_sys[ContactPoolType::Id::Household].size()+1), m_city(city)
 {
         ContactPoolType::Id type = ContactPoolType::Id::Household;
-        pool_sys[type].emplace_back(ContactPool(m_id, type, this));
+        pool_sys[type].emplace_back(m_id, type, this);
         m_pool = &pool_sys[type].back();
 }
 

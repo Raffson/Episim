@@ -2,7 +2,7 @@
 // Created by robbe on 12/04/18.
 //
 
-#include "popgen-Episim/model/GeoGrid.h"
+#include "popgen-Episim/generator/GeoGridGenerator.h"
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -21,19 +21,18 @@ public:
         DefragCityTest() = default;
 
 protected:
-        GeoGrid* geo{};
+        shared_ptr<GeoGrid> geo;
         /// Destructor has to be virtual.
         ~DefragCityTest() override = default;
 
         /// Set up for the test fixture
         void SetUp() override
         {
-                geo = new GeoGrid();
-                geo->Initialize("run_default.xml");
+                geo = GeoGridGenerator().Generate("run_default.xml");
         }
 
         /// Tearing down the test fixture
-        void TearDown() override { delete geo; }
+        void TearDown() override { }
 };
 
 TEST_P(DefragCityTest, happy_defrag)
