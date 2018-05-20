@@ -46,7 +46,7 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree
     const auto& pt = m_grid->m_config_pt;
     m_grid->m_total_pop = pt.get<unsigned int>("run.popgen.pop_info.pop_total", 4341923);
     m_grid->m_population = Population::Create(pt);
-    m_grid->m_population->reserve(m_grid->m_total_pop);
+    m_grid->m_population->resize(m_grid->m_total_pop);
 
     m_grid->m_random_ages = pt.get<bool>("run.popgen.pop_info.random_ages", false);
     m_grid->m_initial_search_radius =
