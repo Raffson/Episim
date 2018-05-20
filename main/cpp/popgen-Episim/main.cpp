@@ -17,6 +17,7 @@
 #include "popgen-Episim/model/GeoGrid.h"
 #include "popgen-Episim/generator/PopulationGenerator.h"
 #include "popgen-Episim/util/GeoGridFileWriter.h"
+#include "popgen-Episim/util/TestSummarizer.h"
 
 using namespace std;
 
@@ -155,13 +156,16 @@ int main(int argc, char** argv)
         grid.GenerateAll();
         stride::GeoGridFileWriter::WriteAll(grid);
 
-        stride::PopulationGenerator(grid).GeneratePopulation();
+        //stride::PopulationGenerator(grid).GeneratePopulation();
 
         //grid.WritePopToFile("Test-pop.txt");
         //grid.WriteRNGstateToFile();
 
+        stride::TestSummarizer summarizer;
+        summarizer.GenerateHtml("all_tests_episim.xml", "../../testsummary.html");
+
 #ifdef USING_QT
         // startMap(argc, argv);
-        startMap(grid);
+        //startMap(grid);
 #endif
 }

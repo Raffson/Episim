@@ -111,6 +111,7 @@ set(LIB_SRC
     popgen-Episim/util/GeoGridFileWriter.cpp
     popgen-Episim/util/Parser.cpp
     popgen-Episim/util/Utility.cpp
+	popgen-Episim/util/TestSummarizer.cpp
 )
 
 #============================================================================
