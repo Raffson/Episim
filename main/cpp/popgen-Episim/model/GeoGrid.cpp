@@ -112,7 +112,9 @@ void GeoGrid::ClassifyNeighbours()
                     category <<= 1; // equivalent to multiplying by 2
                 for (auto type : CommunityType::IdList) {
                     if (cityB.second.HasCommunityType(type)) {
-                        m_neighbours_in_radius[cityA->first][category][type].emplace_back(&cityB.second);
+#pragma omp critical
+                        {m_neighbours_in_radius[cityA->first][category][type].
+                                    emplace_back(&cityB.second);}
                     }
 
                 }
@@ -208,19 +210,9 @@ void GeoGrid::ReadDataFiles()
 
     m_model_households = parser::ParseHouseholds(base_path / household_file);
     GetMainFractions();
-#pragma omp parallel sections
-{
 
-#pragma omp section
-    {parser::ParseCities(base_path / city_file, m_cities, m_model_pop, m_rtree);}
-
-#pragma omp section
-{parser::ParseCommuting(base_path / commuting_file, m_cities, m_fract_map);}
-}
-
-
-
-
+    parser::ParseCities(base_path / city_file, m_cities, m_model_pop, m_rtree);
+    parser::ParseCommuting(base_path / commuting_file, m_cities, m_fract_map);
 }
 
 void GeoGrid::EnforceEnsures()
@@ -331,6 +323,7 @@ void GeoGrid::GenerateSchools()
 
         auto rndm_vec = generate_random(p_vec, m_rng, amount_of_schools);
         // assign schools to cities according to our normal distribution
+#pragma omp parallel for
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
                 City&      chosen_city = *c_vec[rndm_vec[i]];
@@ -338,7 +331,8 @@ void GeoGrid::GenerateSchools()
 
                 // Add contactpools
                 for (auto j = 0; j < cps; j++)
-                        nw_school.AddContactPool(m_population->GetContactPoolSys());
+#pragma omp critical
+            {nw_school.AddContactPool(m_population->GetContactPoolSys());}
         }
         // We should ENSURE schools are effectively placed in cities.
         // The OO nature makes this assertion rather complex -> found in tests
@@ -394,12 +388,16 @@ void GeoGrid::GenerateColleges()
 
         vector <unsigned int> lottery_vec = generate_random(p_vec, m_rng, nrcolleges);
 
-        for (unsigned int i = 0; i < nrcolleges; i++){
+#pragma omp parallel for
+        for (unsigned int i = 0; i < nrcolleges; i++) {
             auto cty = m_cities_with_college[lottery_vec[i]];
+#pragma omp critical
+            {
+                Community &college = cty->AddCommunity(CommunityType::Id::College);
+                for (auto j = 0; j < cps; j++) {
 
-            Community& college = cty->AddCommunity(CommunityType::Id::College);
-            for (auto j = 0; j < cps; j++){
-                college.AddContactPool(m_population->GetContactPoolSys());
+                    { college.AddContactPool(m_population->GetContactPoolSys()); }
+                }
             }
         }
 }
@@ -419,21 +417,27 @@ void GeoGrid::GenerateWorkplaces()
 
         vector<double> lottery_vec; // vector of relative probabillitys
         vector<City*>  c_vec;       // we will use this to vec to map the city to a set of sequential numbers 0...n
-        for (auto& it : m_cities) {
-                const bool has_college = it.second.HasCommunityType(CommunityType::Id::College);
+#pragma omp parallel for
+        for (unsigned int i = 0 ; i < m_cities.size(); i++) {
+                auto it = m_cities.begin();
+                advance(it, i);
+                const bool has_college = it->second.HasCommunityType(CommunityType::Id::College);
                 double in_commuters_modifier = (has_college) ? possible_workers_frac : 1;
                 // if there's no college in this city, all incoming commuters are workers
 
-                auto work_pop = (it.second.GetPopulation() * active_workers_frac +
-                                 it.second.GetTotalInCommutersCount() * in_commuters_modifier -
-                                 it.second.GetTotalOutCommutersCount() * possible_workers_frac);
+                auto work_pop = (it->second.GetPopulation() * active_workers_frac +
+                                 it->second.GetTotalInCommutersCount() * in_commuters_modifier -
+                                 it->second.GetTotalOutCommutersCount() * possible_workers_frac);
                 // out-commuters should allways be modified because there can always be students present
                 // for in-commuters this is only true if this city contains colleges
                 // note that commuters should always be active workers or students
 
                 // Inserting the amount of id's of the city equal to the pop working in the city
-                c_vec.emplace_back(&it.second);
+#pragma omp critical
+            {
+                c_vec.emplace_back(&it->second);
                 lottery_vec.emplace_back(work_pop);
+            }
         }
 
         // Now we calculate how many workplaces we have to create.
@@ -444,12 +448,20 @@ void GeoGrid::GenerateWorkplaces()
         auto cps = ceil((double)m_sizes_map[Sizes::WORKPLACES] / m_sizes_map[Sizes::AVERAGE_CP]);
 
         // Now we will place each workplace randomly in our city, making use of our lottery vec.
+#pragma omp parallel for
         for (unsigned int i = 0; i < number_of_workplaces; i++) {
                 City*      chosen_city  = c_vec[rndm_vec[i]];
-                Community& nw_workplace = chosen_city->AddCommunity(CommunityType::Id::Work);
+                Community* nw_workplace;
+#pragma omp critical
+                {
+                nw_workplace = &chosen_city->AddCommunity(CommunityType::Id::Work);
                 // A workplace has a contactpool.
+                }
                 for (auto j = 0; j < cps; j++) {
-                    nw_workplace.AddContactPool(m_population->GetContactPoolSys());
+#pragma omp critical
+                    {
+                        nw_workplace->AddContactPool(m_population->GetContactPoolSys());
+                    }
                 }
         }
 }

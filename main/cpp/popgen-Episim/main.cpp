@@ -24,11 +24,11 @@ using namespace std;
 
 int startMap(stride::GeoGrid& grid)
 {
-#if QT_CONFIG(library)
+//#if QT_CONFIG(library)
         const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
         for (const QByteArray& p : additionalLibraryPaths.split(':'))
                 QCoreApplication::addLibraryPath(QString(p));
-#endif
+//#endif
         QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
         int             dummyargc = 0;
         QGuiApplication application(dummyargc, 0);
