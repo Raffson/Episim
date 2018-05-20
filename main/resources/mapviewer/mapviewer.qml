@@ -304,6 +304,7 @@ ApplicationWindow {
         circle.yco = values["y"]
         circle.opacity = 0.25
         circle.area_text = values["info"]
+        circle.infected = values["infected"]
         circle.population = values["population"]
         item.sourceItem = circle
         item.anchorPoint = Qt.point(item.sourceItem.width/2, item.sourceItem.height/2)
