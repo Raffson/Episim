@@ -323,7 +323,7 @@ void GeoGrid::GenerateSchools()
 
         auto rndm_vec = generate_random(p_vec, m_rng, amount_of_schools);
         // assign schools to cities according to our normal distribution
-#pragma omp parallel for
+#pragma omp parallel for reduction(+: m_school_count)
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
                 City&      chosen_city = *c_vec[rndm_vec[i]];
@@ -485,16 +485,25 @@ void GeoGrid::GenerateCommunities()
         }
 
         auto rndm_vec = generate_random(p_vec, m_rng, 2*total_communities);
-
+#pragma omp for
         for (unsigned int i = 0; i < 2*total_communities; i++) {
                 City&      chosen_city1  = *c_vec[rndm_vec[i++]];
                 City&      chosen_city2  = *c_vec[rndm_vec[i]];
-                Community& nw_pcommunity = chosen_city1.AddCommunity(CommunityType::Id::Primary);
-                Community& nw_scommunity = chosen_city2.AddCommunity(CommunityType::Id::Secondary);
+
+                Community* nw_pcommunity;
+                Community* nw_scommunity;
+#pragma omp critical
+            {
+                nw_pcommunity = &chosen_city1.AddCommunity(CommunityType::Id::Primary);
+                nw_scommunity = &chosen_city2.AddCommunity(CommunityType::Id::Secondary);
                 // Add contactpools for secondary community...
+            }
                 for (auto j = 0; j < cps; j++) {
-                        nw_pcommunity.AddContactPool(m_population->GetContactPoolSys());
-                        nw_scommunity.AddContactPool(m_population->GetContactPoolSys());
+#pragma omp critical
+                    {
+                        nw_pcommunity->AddContactPool(m_population->GetContactPoolSys());
+                        nw_scommunity->AddContactPool(m_population->GetContactPoolSys());
+                    }
                 }
         }
 }
@@ -561,25 +570,27 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         // Step 3: replace X% of these cities
         vector<unsigned int> amount_to_frag = generate_random(p_vec, m_rng, (unsigned int)defrag_cty.size());
         defrag_cty.shrink_to_fit();
-        unsigned int counter = 0;
-        for (auto& it : defrag_cty) {
+        for (unsigned int i = 0 ; i < defrag_cty.size(); i++) {
                 // We add 2 to the amount to defrag, bcs we want to defrag in atleast 2 parts
-                for (unsigned int i = 0; i < amount_to_frag[counter] + 2; i++) {
-
+                for (unsigned int k = 0; k < amount_to_frag[i] + 2; k++) {
+                        auto it = defrag_cty[i];
                         auto new_id    = m_cities.rbegin()->first + 1;
                         auto coords    = it->GetCoordinates();
-                        double newLat  = coords.GetLatitude() + pow(-1, i) * (0.1 * i);
-                        double newLong = coords.GetLongitude() + pow(-1, i) * (0.1 * i);
-                        double newX    = coords.GetX() + pow(-1, i) * (0.1 * i);
-                        double newY    = coords.GetY() + pow(-1, i) * (0.1 * i);
+                        double newLat  = coords.GetLatitude() + pow(-1, k) * (0.1 * k);
+                        double newLong = coords.GetLongitude() + pow(-1, k) * (0.1 * k);
+                        double newX    = coords.GetX() + pow(-1, k) * (0.1 * k);
+                        double newY    = coords.GetY() + pow(-1, k) * (0.1 * k);
                         auto new_name = it->GetName();
-                        new_name += to_string(i);
+                        new_name += to_string(k);
+
                         m_cities.insert(pair<unsigned int, City>(
-                            new_id, City(new_id, it->GetProvince(), it->GetPopulation() / (amount_to_frag[counter] + 2),
-                                         Coordinate(newX, newY, newLong, newLat), new_name)));
+                                new_id, City(new_id, it->GetProvince(),
+                                             it->GetPopulation() / (amount_to_frag[i] + 2),
+                                             Coordinate(newX, newY, newLong, newLat), new_name)));
+                    }
                 }
-                counter++;
-                m_cities.erase(it->GetId());
+                m_cities.erase(defrag_cty[i]->GetId());
+            }
         }
         // cout << m_cities.size() << endl;
 }
