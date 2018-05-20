@@ -327,12 +327,16 @@ void GeoGrid::GenerateSchools()
         for (unsigned int i = 0; i < amount_of_schools; i++) {
                 m_school_count++;
                 City&      chosen_city = *c_vec[rndm_vec[i]];
-                Community& nw_school   = chosen_city.AddCommunity(CommunityType::Id::School);
+                Community* nw_school;
+#pragma omp critical
+            {
+                nw_school = &chosen_city.AddCommunity(CommunityType::Id::School);
+            }
 
                 // Add contactpools
                 for (auto j = 0; j < cps; j++)
 #pragma omp critical
-            {nw_school.AddContactPool(m_population->GetContactPoolSys());}
+            {nw_school->AddContactPool(m_population->GetContactPoolSys());}
         }
         // We should ENSURE schools are effectively placed in cities.
         // The OO nature makes this assertion rather complex -> found in tests

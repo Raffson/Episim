@@ -96,7 +96,7 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
 const vector<double>& PopulationGenerator::GetRandomModelHouseholdOfSize(unsigned int size)
 {
     const auto& households = m_geogrid.GetModelHouseholds().at(size);
-    trng::uniform_int_dist distr(0, households.size());
+    trng::uniform_int_dist distr(0,(int) households.size());
     return households[m_rng.GetGenerator(distr)()];
 }
 
@@ -221,20 +221,32 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
 
         ContactPool* seccomm = GetRandomContactPool(GetRandomCommunities(city, CommunityType::Id::Secondary));
         // Meaning you always get assigned to a community?
-        unsigned int scid = (seccomm) ? seccomm->GetID() : 0;
-
-        for (auto age : GetRandomModelHouseholdOfSize(size))
+        auto scid = static_cast<unsigned int>((seccomm) ? seccomm->GetID() : 0);
+        auto household = GetRandomModelHouseholdOfSize(size);
+#pragma omp parallel for
+        for (unsigned int i = 0; i < household.size(); i++)
         {
+            auto age = household.begin();
+            advance(age, i);
                 if( m_geogrid.UsingRandomAges() ) {
-                    Fractions category = get_category(age);
-                    age = GetRandomAge(category);
+                    Fractions category = get_category(*age);
+                    *age = GetRandomAge(category);
                 }
                 //if( model_household.size() == 1 and category == Fractions::SCHOOLED)
                 //    cout << "Lonely minor of model age=" << model_household[i] << " has now received age=" << age << endl;
-                GeneratePerson(age, hid, scid, pop, city);
+#pragma omp critical
+            {
+                GeneratePerson(*age, hid, scid, pop, city);
+            }
+#pragma omp critical
+            {
                 the_household.AddMember(&pop.back());
+            }
                 if (seccomm)
-                        seccomm->AddMember(&pop.back());
+#pragma omp critical
+            {
+                seccomm->AddMember(&pop.back());
+            }
         }
 }
 
