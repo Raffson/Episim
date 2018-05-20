@@ -223,9 +223,9 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         // Meaning you always get assigned to a community?
         auto scid = static_cast<unsigned int>((seccomm) ? seccomm->GetID() : 0);
         auto household = GetRandomModelHouseholdOfSize(size);
-#pragma omp parallel for
         for (unsigned int i = 0; i < household.size(); i++)
         {
+
             auto age = household.begin();
             advance(age, i);
                 if( m_geogrid.UsingRandomAges() ) {
@@ -234,19 +234,19 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
                 }
                 //if( model_household.size() == 1 and category == Fractions::SCHOOLED)
                 //    cout << "Lonely minor of model age=" << model_household[i] << " has now received age=" << age << endl;
-#pragma omp critical
-            {
+//#pragma omp critical
+            //{
                 GeneratePerson(*age, hid, scid, pop, city);
-            }
-#pragma omp critical
-            {
+//            }
+//#pragma omp critical
+//            {
                 the_household.AddMember(&pop.back());
-            }
+//            }
                 if (seccomm)
-#pragma omp critical
-            {
+//#pragma omp critical
+//            {
                 seccomm->AddMember(&pop.back());
-            }
+//            }
         }
 }
 
@@ -259,18 +259,27 @@ void PopulationGenerator::GeneratePopulation()
         const clock_t      begin_time     = clock();
         const unsigned int max_population = m_geogrid.GetTotalPop();
         long long int      remaining_population = max_population; // long long to make sure the unsigned int fits...
+        int thread_num = omp_get_max_threads(); // attempt to divide the work between threads.
 
-        while (remaining_population > 0) {
-                City& city           = GetRandomCity();
-                auto  household_size = GetRandomHouseholdSize();
+#pragma omp parallel for firstprivate(remaining_population)
+        for(unsigned int i = 0; i < thread_num; i++) {
+            auto this_thread_pop = remaining_population / thread_num;
+            while (this_thread_pop > 0) {
 
+                City &city = GetRandomCity();
+                auto household_size = GetRandomHouseholdSize();
                 // if the population has to be exact according to the one that we read on the file about cities
                 // but this will effect our discrete distribution
                 // Raphael@everyone, true, but the effect is insignificant given we have enough households...
-                if (remaining_population - household_size < 0)
-                        household_size = remaining_population;
-                GenerateHousehold(household_size, city);
-                remaining_population -= household_size;
+                if (this_thread_pop - household_size < 0)
+                    household_size = this_thread_pop;
+#pragma omp critical
+                {
+                    GenerateHousehold(household_size, city);
+
+                }
+                this_thread_pop -= household_size;
+            }
         }
         cout << "Done generating population, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
         SurveySeeder(m_geogrid.GetConfigPtree(), m_rng).Seed(m_geogrid.GetPopulation());

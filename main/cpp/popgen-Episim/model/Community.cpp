@@ -48,8 +48,9 @@ stride::ContactPool& Community::AddContactPool(ContactPoolSys& poolSys)
 unsigned int Community::GetSize() const
 {
         unsigned int result = 0;
-        for (auto& contactPool : m_contact_pools) {
-                result += contactPool->GetSize();
+#pragma omp parallel for reduction(+: result)
+        for (auto contactPool = m_contact_pools.begin() ; contactPool < m_contact_pools.end();contactPool++) {
+                result += (*contactPool)->GetSize();
         }
 
         return result;

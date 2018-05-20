@@ -61,10 +61,14 @@ const double& City::GetTotalInCommutersCount() const
 const double& City::GetTotalOutCommutersCount() const
 {
         if (m_out_commuting_changed) {
-                m_out_commuting_changed = false;
-                m_out_commuter_count    = 0;
-                for (const auto& it : m_out_commuting)
-                        m_out_commuter_count += it.second;
+            m_out_commuting_changed = false;
+            m_out_commuter_count    = 0;
+#pragma omp parallel for reduction(+: m_out_commuter_count)
+            for (unsigned int i= 0; i < m_out_commuting.size(); i++) {
+                auto it = m_out_commuting.begin();
+                advance(it, i );
+                m_out_commuter_count += it->second;
+            }
         }
         return m_out_commuter_count;
 }
@@ -78,8 +82,8 @@ Household& City::AddHousehold(ContactPoolSys& pool_sys)
 unsigned int City::GetEffectivePopulation() const
 {
         unsigned int result = 0;
-        for(auto& hh:m_households){
-                result += hh.GetSize();
+    for(auto hh =m_households.begin(); hh < m_households.end(); hh++){
+                result += hh->GetSize();
         }
         return result;
 }
@@ -88,8 +92,9 @@ unsigned int City::GetEffectivePopulation() const
 unsigned int City::GetInfectedCount() const
 {
     unsigned int result = 0;
-    for(auto& hh:m_households){
-        for(auto& a_person:hh.GetMembers()){
+#pragma omp parallel for reduction(+: result)
+    for(auto hh =m_households.begin(); hh < m_households.end(); hh++){
+        for(auto& a_person:hh->GetMembers()){
             if(a_person->GetHealth().IsInfected() || a_person->GetHealth().IsRecovered()){
                 result++;
             }
