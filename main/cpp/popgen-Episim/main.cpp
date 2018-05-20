@@ -156,7 +156,7 @@ int main(int argc, char** argv)
         grid.GenerateAll();
         stride::GeoGridFileWriter::WriteAll(grid);
 
-        //stride::PopulationGenerator(grid).GeneratePopulation();
+        stride::PopulationGenerator(grid).GeneratePopulation();
 
         //grid.WritePopToFile("Test-pop.txt");
         //grid.WriteRNGstateToFile();
@@ -165,7 +165,7 @@ int main(int argc, char** argv)
         summarizer.GenerateHtml("all_tests_episim.xml", "../../testsummary.html");
 
 #ifdef USING_QT
-        // startMap(argc, argv);
-        //startMap(grid);
+        //startMap(argc, argv);
+        startMap(grid);
 #endif
 }

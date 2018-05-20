@@ -98,4 +98,25 @@ unsigned int City::GetInfectedCount() const
     return result;
 }
 
+void City::AddEffectiveCommuterTo(const unsigned int destination)
+{
+    if(m_effective_out_commuting.find(destination) == m_effective_out_commuting.end()){
+        m_effective_out_commuting[destination] = 1;
+    }
+    else{
+        m_effective_out_commuting[destination] = m_effective_out_commuting[destination] + 1;
+    }
+}
+
+
+unsigned int City::GetEffectiveCommuterTo(const unsigned int destination)
+{
+    if(m_effective_out_commuting.find(destination) == m_effective_out_commuting.end()){
+        return 0;
+    }
+    else{
+        return m_effective_out_commuting[destination];
+    }
+}
+
 } // namespace stride

@@ -127,6 +127,14 @@ public:
         unsigned int GetEffectivePopulation() const;
         unsigned int GetInfectedCount() const;
 
+        /// Increments the number of commuters to the destination
+        /// @param destination the destination city
+        void AddEffectiveCommuterTo(const unsigned int destination);
+
+        /// Returns the number of effective commuters to the destination city from this city
+        /// @param destination the destination city of commuters
+        unsigned int GetEffectiveCommuterTo(const unsigned int destination);
+
 private:
         const unsigned int m_city_id;   ///< A unique ID of the city.
         const unsigned int m_province;  ///< Province
@@ -140,6 +148,8 @@ private:
 
         map<unsigned int, double> m_in_commuting;  ///< Contains number of commuters from other cities to this city
         map<unsigned int, double> m_out_commuting; ///< Contains number of commuters from this city to other cities
+
+        map<unsigned int, unsigned int> m_effective_out_commuting;
 
         mutable double m_in_commuter_count;  ///< Number of incomming commuters to the city
         mutable double m_out_commuter_count; ///< Number of outgoing commuters from the city

@@ -23,7 +23,7 @@ void TestSummarizer::CreateTopTags(ofstream& file)
 
 }
 
-int TestSummarizer::GenerateHtml(const boost::filesystem::path &test_path, const string &fname)
+void TestSummarizer::GenerateHtml(const boost::filesystem::path &test_path, const string &fname)
 {
     boost::property_tree::ptree p_tree;
 

@@ -305,6 +305,7 @@ City& PopulationGenerator::GetRandomCommutingCity(City& origin, const bool stude
         trng::discrete_dist distr(distribution.begin(), distribution.end());
         auto                index = (const unsigned int)m_rng.GetGenerator(distr)();
         const unsigned int  id    = student ? m_college_ids.at(index) : m_city_ids.at(index);
+        origin.AddEffectiveCommuterTo(id);
         return m_geogrid.GetCities().at(id);
 }
 
