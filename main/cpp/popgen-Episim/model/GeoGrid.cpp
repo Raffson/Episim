@@ -485,7 +485,7 @@ void GeoGrid::GenerateCommunities()
         }
 
         auto rndm_vec = generate_random(p_vec, m_rng, 2*total_communities);
-#pragma omp for
+#pragma omp parallel for
         for (unsigned int i = 0; i < 2*total_communities; i++) {
                 City&      chosen_city1  = *c_vec[rndm_vec[i++]];
                 City&      chosen_city2  = *c_vec[rndm_vec[i]];
@@ -551,49 +551,49 @@ Coordinate GeoGrid::GetCenterOfGrid()
 
 void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>& p_vec)
 {
-        // Step 1: find all cities that have less then Y% of the population
-        // pop_cap: if the population of a city are smaller or equal to this number we defragment them
-        auto          pop_cap = (unsigned int)round(m_total_pop * Y);
-        vector<City*> defrag_cty;
-        for (auto& it : m_cities) {
-                if (it.second.GetPopulation() <= pop_cap)
-                        defrag_cty.emplace_back(&it.second);
+    // Step 1: find all cities that have less then Y% of the population
+    // pop_cap: if the population of a city are smaller or equal to this number we defragment them
+    auto          pop_cap = (unsigned int)round(m_total_pop * Y);
+    vector<City*> defrag_cty;
+    for (auto& it : m_cities) {
+            if (it.second.GetPopulation() <= pop_cap)
+                    defrag_cty.emplace_back(&it.second);
+    }
+
+    // Step2: Decide which X% of cities to delete
+    auto to_defrag = (unsigned int)round(defrag_cty.size() * X);
+    while (defrag_cty.size() > to_defrag) {
+            trng::uniform_int_dist distr(0, (unsigned int)defrag_cty.size() - 1);
+            defrag_cty.erase(defrag_cty.begin() + m_rng.GetGenerator(distr)());
+    }
+
+    // Step 3: replace X% of these cities
+    vector<unsigned int> amount_to_frag = generate_random(p_vec, m_rng, (unsigned int)defrag_cty.size());
+    defrag_cty.shrink_to_fit();
+    for (unsigned int i = 0 ; i < defrag_cty.size(); i++) {
+            // We add 2 to the amount to defrag, bcs we want to defrag in atleast 2 parts
+        for (unsigned int k = 0; k < amount_to_frag[i] + 2; k++) {
+                auto it = defrag_cty[i];
+                auto new_id    = m_cities.rbegin()->first + 1;
+                auto coords    = it->GetCoordinates();
+                double newLat  = coords.GetLatitude() + pow(-1, k) * (0.1 * k);
+                double newLong = coords.GetLongitude() + pow(-1, k) * (0.1 * k);
+                double newX    = coords.GetX() + pow(-1, k) * (0.1 * k);
+                double newY    = coords.GetY() + pow(-1, k) * (0.1 * k);
+                auto new_name = it->GetName();
+                new_name += to_string(k);
+
+                m_cities.insert(pair<unsigned int, City>(
+                        new_id, City(new_id, it->GetProvince(),
+                                     it->GetPopulation() / (amount_to_frag[i] + 2),
+                                         Coordinate(newX, newY, newLong, newLat), new_name)));
         }
 
-        // Step2: Decide which X% of cities to delete
-        auto to_defrag = (unsigned int)round(defrag_cty.size() * X);
-        while (defrag_cty.size() > to_defrag) {
-                trng::uniform_int_dist distr(0, (unsigned int)defrag_cty.size() - 1);
-                defrag_cty.erase(defrag_cty.begin() + m_rng.GetGenerator(distr)());
-        }
+        m_cities.erase(defrag_cty[i]->GetId());
+    }
 
-        // Step 3: replace X% of these cities
-        vector<unsigned int> amount_to_frag = generate_random(p_vec, m_rng, (unsigned int)defrag_cty.size());
-        defrag_cty.shrink_to_fit();
-        for (unsigned int i = 0 ; i < defrag_cty.size(); i++) {
-                // We add 2 to the amount to defrag, bcs we want to defrag in atleast 2 parts
-                for (unsigned int k = 0; k < amount_to_frag[i] + 2; k++) {
-                        auto it = defrag_cty[i];
-                        auto new_id    = m_cities.rbegin()->first + 1;
-                        auto coords    = it->GetCoordinates();
-                        double newLat  = coords.GetLatitude() + pow(-1, k) * (0.1 * k);
-                        double newLong = coords.GetLongitude() + pow(-1, k) * (0.1 * k);
-                        double newX    = coords.GetX() + pow(-1, k) * (0.1 * k);
-                        double newY    = coords.GetY() + pow(-1, k) * (0.1 * k);
-                        auto new_name = it->GetName();
-                        new_name += to_string(k);
-
-                        m_cities.insert(pair<unsigned int, City>(
-                                new_id, City(new_id, it->GetProvince(),
-                                             it->GetPopulation() / (amount_to_frag[i] + 2),
-                                             Coordinate(newX, newY, newLong, newLat), new_name)));
-                    }
-                }
-                m_cities.erase(defrag_cty[i]->GetId());
-            }
-        }
-        // cout << m_cities.size() << endl;
 }
+
 
 const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City& origin, unsigned int radius,
                                                                      CommunityType::Id type)
