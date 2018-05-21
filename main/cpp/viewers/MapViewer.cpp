@@ -22,11 +22,11 @@ namespace stride {
 namespace viewers {
 
 void MapViewer::Initialize() {
-//#if QT_CONFIG(library)
+#if QT_CONFIG(library)
     const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
     for (const QByteArray &p : additionalLibraryPaths.split(':'))
         QCoreApplication::addLibraryPath(QString(p));
-//#endif
+#endif
 
     QVariantMap parameters;
 

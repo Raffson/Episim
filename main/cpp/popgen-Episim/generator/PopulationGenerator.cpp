@@ -216,8 +216,12 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
 {
         auto&        pop           = *m_geogrid.GetPopulation();
         auto&        pool_sys      = pop.GetContactPoolSys();
-        auto&        the_household = city.AddHousehold(pool_sys); // Returns a reference to the new household...
-        unsigned int hid           = the_household.GetID();
+        Household * the_household;
+#pragma omp critical
+    {
+        the_household = &city.AddHousehold(pool_sys); // Returns a reference to the new household...
+    }
+        unsigned int hid           = the_household->GetID();
 
         ContactPool* seccomm = GetRandomContactPool(GetRandomCommunities(city, CommunityType::Id::Secondary));
         // Meaning you always get assigned to a community?
@@ -234,19 +238,19 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
                 }
                 //if( model_household.size() == 1 and category == Fractions::SCHOOLED)
                 //    cout << "Lonely minor of model age=" << model_household[i] << " has now received age=" << age << endl;
-//#pragma omp critical
-            //{
+#pragma omp critical(a)
+            {
                 GeneratePerson(*age, hid, scid, pop, city);
-//            }
-//#pragma omp critical
-//            {
-                the_household.AddMember(&pop.back());
-//            }
+           }
+#pragma omp critical(b)
+            {
+                the_household->AddMember(&pop.back());
+           }
                 if (seccomm)
-//#pragma omp critical
-//            {
+#pragma omp critical(c)
+            {
                 seccomm->AddMember(&pop.back());
-//            }
+            }
         }
 }
 
@@ -261,7 +265,8 @@ void PopulationGenerator::GeneratePopulation()
         long long int      remaining_population = max_population; // long long to make sure the unsigned int fits...
         int thread_num = omp_get_max_threads(); // attempt to divide the work between threads.
 
-#pragma omp parallel for firstprivate(remaining_population)
+// Static schedule to control the variance on our random elements -> but reduces performance
+#pragma omp parallel for firstprivate(remaining_population) schedule(static)
         for(unsigned int i = 0; i < thread_num; i++) {
             auto this_thread_pop = remaining_population / thread_num;
             while (this_thread_pop > 0) {
@@ -273,11 +278,9 @@ void PopulationGenerator::GeneratePopulation()
                 // Raphael@everyone, true, but the effect is insignificant given we have enough households...
                 if (this_thread_pop - household_size < 0)
                     household_size = this_thread_pop;
-#pragma omp critical
-                {
-                    GenerateHousehold(household_size, city);
 
-                }
+                GenerateHousehold(household_size, city);
+
                 this_thread_pop -= household_size;
             }
         }

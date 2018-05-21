@@ -21,24 +21,33 @@ void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, Cit
         util::CSV    read_in(city_file);
         unsigned int counter = 0;
         total_pop            = 0;
-        for (auto& it : read_in) {
+#pragma omp parallel for
+        for (auto it = read_in.begin() ; it < read_in.end(); it++) {
                 counter++;
                 try {
-                        unsigned int id         = (unsigned int)(stoi(it.GetValue("id")));
-                        unsigned int province   = (unsigned int)(stoi(it.GetValue("province")));
-                        unsigned int population = (unsigned int)(stoi(it.GetValue("population")));
-                        double       x_coord    = stod(it.GetValue("x_coord"));
-                        double       y_coord    = stod(it.GetValue("y_coord"));
-                        double       longitude  = stod(it.GetValue("longitude"));
-                        double       latitude   = stod(it.GetValue("latitude"));
-                        string       name       = it.GetValue("name");
+                        unsigned int id         = (unsigned int)(stoi(it->GetValue("id")));
+                        unsigned int province   = (unsigned int)(stoi(it->GetValue("province")));
+                        unsigned int population = (unsigned int)(stoi(it->GetValue("population")));
+                        double       x_coord    = stod(it->GetValue("x_coord"));
+                        double       y_coord    = stod(it->GetValue("y_coord"));
+                        double       longitude  = stod(it->GetValue("longitude"));
+                        double       latitude   = stod(it->GetValue("latitude"));
+                        string       name       = it->GetValue("name");
                         total_pop += population;
-
-                        rtree.insert(make_pair(gPoint(longitude, latitude), id));
+#pragma omp critical(rtree)
+                        {
+                                rtree.insert(make_pair(gPoint(longitude, latitude), id));
+                        }
                         Coordinate coord(x_coord, y_coord, longitude, latitude);
-                        cities.emplace(id, City(id, province, population, coord, name));
+#pragma omp critical(cities)
+                        {
+                                cities.emplace(id, City(id, province, population, coord, name));
+                        }
                 } catch (exception& e) {
-                        cout << e.what() << endl << "at row: " << counter << endl;
+#pragma omp critical(error)
+                        {
+                                cout << e.what() << endl << "at row: " << counter << endl;
+                        }
                 }
         }
 }
