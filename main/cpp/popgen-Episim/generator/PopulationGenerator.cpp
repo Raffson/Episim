@@ -104,11 +104,11 @@ double PopulationGenerator::GetRandomAge(Fractions category)
 {
         switch (category) {
         case Fractions::SCHOOLED : // [3, 18)
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(3.0, 18.0))();
+                return m_rng.GetGenerator(trng::uniform_dist<double>(3.0, 18.0))();
         case Fractions::YOUNG : // [18, 26)
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(18.0, 26.0))();
+                return m_rng.GetGenerator(trng::uniform_dist<double>(18.0, 26.0))();
         case Fractions::MIDDLE_AGED : // [26, 65)
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(26.0, 65.0))();
+                return m_rng.GetGenerator(trng::uniform_dist<double>(26.0, 65.0))();
         case Fractions::TODDLERS : // [0, 3)
                 return (double)m_rng.GetGenerator(trng::uniform_dist<double>(0.0, 3.0))();
         case Fractions::OLDIES : // [65, 81), cause maximum age according to Age.h is 80...
