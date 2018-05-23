@@ -299,7 +299,11 @@ City& PopulationGenerator::GetRandomCommutingCity(City& origin, const bool stude
                                                      : m_worker_commuting_fracs[origin.GetId()];
         trng::discrete_dist distr(distribution.begin(), distribution.end());
         auto                index = (const unsigned int)m_rng.GetGenerator(distr)();
-        return m_grid.GetCities().at(student ? m_college_ids.at(index) : m_city_ids.at(index));
+
+        const unsigned int  id    = student ? m_college_ids.at(index) : m_city_ids.at(index);
+        origin.AddEffectiveCommuterTo(id);
+        return m_grid.GetCities().at(id);
+
 }
 
 } // namespace stride

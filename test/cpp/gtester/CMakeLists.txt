@@ -57,6 +57,7 @@ install(TARGETS ${EXEC2}  DESTINATION   ${BIN_INSTALL_LOCATION})
 
 add_custom_target( episim-test
 	COMMAND ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_LOCATION}/${EXEC2}
+		--gtest_output=xml:${TESTS_DIR}/all_tests_episim.xml
 	WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}
 	COMMENT "Running EpiSim's tests..."
 )
