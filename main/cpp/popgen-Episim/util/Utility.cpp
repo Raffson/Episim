@@ -11,7 +11,8 @@
 
 #include <cmath>
 #include <fstream>
-#include <sys/stat.h>
+
+#include <boost/filesystem.hpp>
 
 using namespace std;
 
@@ -19,10 +20,7 @@ namespace stride {
 
 bool file_exists(const boost::filesystem::path& path)
 {
-        struct stat buffer
-        {
-        };
-        return stat(path.string().c_str(), &buffer) == 0;
+        return boost::filesystem::exists(path);
 }
 
 double convert_to_radians(double degrees) { return degrees * M_PI / 180.0; }

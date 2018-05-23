@@ -7,8 +7,8 @@
 
 #include "trng/discrete_dist.hpp"
 
+#include <boost/filesystem.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-
 
 using namespace std;
 
@@ -55,14 +55,11 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
         for (auto& id : cityIds)
                 id.erase(0, 3);
 
-        unsigned int index = 0;
         // First calculate the total number of commuters so we can normalize on the fly...
         std::vector<double> total_commuters(read_in.GetColumnCount(), 0);
-        for (const auto& it : read_in) {
+        for (const auto& it : read_in)
                 for (unsigned int i = 0; i < read_in.GetColumnCount(); i++)
-                        total_commuters[i] += it.GetValue<unsigned int>(i);
-                index++;
-        }
+                        total_commuters[i] += it.GetValue<double>(i);
 
         double commfrac =
             (fracs.at(Fractions::MIDDLE_AGED) * fracs.at(Fractions::COMMUTING_WORKERS) +
@@ -71,7 +68,7 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
                 fracs.at(Fractions::ACTIVE) +
             fracs.at(Fractions::YOUNG) * fracs.at(Fractions::STUDENTS) * fracs.at(Fractions::COMMUTING_STUDENTS);
 
-        index = 0;
+        unsigned int index = 0;
         for (const auto& it : read_in) {
                 // for each row should represent destinations with commuting numbers...
                 // the rows are ordered the same way as the columns, which represent the origin...
@@ -86,10 +83,6 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
                         // normalize
                         double commuting_pop = cities.at(origin_id).GetPopulation() * commfrac;
                         double normalized    = commuting_pop * (commuters / total_commuters[i]);
-
-                        // don't count local commuters...
-                        if (origin_id == destination_id)
-                                normalized = 0;
 
                         if (cities.count(destination_id)) {
                                 cities.at(destination_id).SetInCommuters(origin_id, normalized);

@@ -4,6 +4,7 @@
 
 #include "GeoGridGenerator.h"
 #include "pop/Population.h"
+#include "pop/SurveySeeder.h"
 #include "popgen-Episim/model/GeoGrid.h"
 #include "popgen-Episim/util/DesignByContract.h"
 #include "util/CSV.h"
@@ -46,7 +47,6 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree
     const auto& pt = m_grid->m_config_pt;
     m_grid->m_total_pop = pt.get<unsigned int>("run.popgen.pop_info.pop_total", 4341923);
     m_grid->m_population = Population::Create(pt);
-    m_grid->m_population->resize(m_grid->m_total_pop);
 
     m_grid->m_random_ages = pt.get<bool>("run.popgen.pop_info.random_ages", false);
     m_grid->m_initial_search_radius =
@@ -60,10 +60,12 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree
 
     if( pt.get<bool>("run.prebuilt_geopop", false) )
     {
-        m_grid->m_rng.StateFromFile(pt.get<string>("run.rng_state_file", "RNG-state.xml"));
         CommunitiesFromFile(pt.get<string>("run.communities_file", "communities.csv"));
         PopulationFromFile(pt.get<string>("run.population_file", "population.csv"));
+        SurveySeeder(pt, m_grid->m_rng).Seed(m_grid->m_population);
+        //surveyseeding should be done at a more appropriate location, right now it's all over the place...
         ClassifyNeighbours();
+        m_grid->m_rng.StateFromFile(pt.get<string>("run.rng_state_file", "RNG-state.xml"));
     }
     else
         GenerateAll();
@@ -73,7 +75,7 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree
 
 void GeoGridGenerator::GetMainFractions()
 {
-    auto&  fmap = m_grid->m_fract_map;
+    auto& fmap = m_grid->m_fract_map;
     for (const auto& houses : m_grid->m_model_households)
         for (const auto &house : houses.second)
             for (const auto &age : house)

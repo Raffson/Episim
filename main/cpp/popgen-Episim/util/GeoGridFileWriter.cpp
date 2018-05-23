@@ -33,12 +33,13 @@ void GeoGridFileWriter::WriteAll(const GeoGrid &grid) {
     pt.put("run.communities_file", dir.string() + "communities.csv");
     pt.put("run.rng_state_file", dir.string() + "RNG-state.xml");
     pt.put("run.prebuilt_geopop", true);
+    std::string dataPath = pt.get<bool>("run.use_install_dirs", false) ? util::FileSys::GetDataDir().string()+"/" : "";
     pt.put("run.use_install_dirs", false);
     pt.put("run.output_prefix", "");
     pt.put("run.age_contact_matrix_file",
-           "data/"+pt.get<string>("run.age_contact_matrix_file", "contact_matrix_flanders_subpop.xml"));
+           dataPath+pt.get<string>("run.age_contact_matrix_file", "contact_matrix_flanders_subpop.xml"));
     pt.put("run.disease_config_file",
-           "data/"+pt.get<string>("run.disease_config_file", "disease_measles.xml"));
+           dataPath+pt.get<string>("run.disease_config_file", "disease_measles.xml"));
 
     pt.get_child("run").sort();
     ptreeToFile(pt, dir.string() + "config.xml");
@@ -80,8 +81,9 @@ void GeoGridFileWriter::WriteCities(const GeoGrid &grid, const string &fname) {
     for (const auto &city : grid.m_cities) {
         const City &c = city.second;
         const Coordinate &co = c.GetCoordinates();
-        file << c.GetId() << "," << c.GetProvince() << "," << c.GetPopulation() << "," << co.GetX() << ","
-             << co.GetY() << "," << co.GetLatitude() << "," << co.GetLongitude() << "," << c.GetName() << endl;
+        file << c.GetId() << "," << c.GetProvince() << "," << c.GetPopulation() << ","
+             << (unsigned int)co.GetX() << "," << (unsigned int)co.GetY() << ","
+             << std::setprecision(8) << co.GetLatitude() << "," << co.GetLongitude() << "," << c.GetName() << endl;
     }
     file.close();
 }
@@ -97,7 +99,7 @@ void GeoGridFileWriter::WriteCommuting(const GeoGrid &grid, const string &fname)
     for (const auto &city : grid.m_cities) {
         const City &c = city.second;
         for (const auto &incomm : c.GetInCommuting()) {
-            file << incomm.second;
+            file << std::setprecision(8) << incomm.second;
             if (incomm.first != c.GetInCommuting().rbegin()->first) file << ",";
         }
         file << endl;

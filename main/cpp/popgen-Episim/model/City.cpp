@@ -54,6 +54,7 @@ const double& City::GetTotalInCommutersCount() const
                 m_in_commuter_count    = 0;
                 for (const auto& it : m_in_commuting)
                         m_in_commuter_count += it.second;
+                m_in_commuter_count -= m_in_commuting.at(m_city_id);
         }
         return m_in_commuter_count;
 }
@@ -65,6 +66,7 @@ const double& City::GetTotalOutCommutersCount() const
                 m_out_commuter_count    = 0;
                 for (const auto& it : m_out_commuting)
                         m_out_commuter_count += it.second;
+                m_out_commuter_count -= m_out_commuting.at(m_city_id);
         }
         return m_out_commuter_count;
 }
