@@ -103,14 +103,16 @@ int startMap(stride::GeoGrid& grid)
             /// Y coordinate
             vals["y"] = city.GetCoordinates().GetY();
             /// Radius
-            vals["radius"] = city.GetPopulation() / (2 * M_PI);
+            vals["radius"] = city.GetEffectivePopulation() / (2 * M_PI);
             /// Percentage
-            vals["perc"] = city.GetPopulation() / (double) grid.GetTotalPop();
+            vals["perc"] = city.GetEffectivePopulation() / (double) grid.GetTotalPop();
             // cout << 50000 * (city.GetPopulation() / (double)grid.GetTotalPop()) << endl;
             /// Population
-            vals["population"] = city.GetPopulation();
+            vals["population"] = city.GetEffectivePopulation();
+            /// Infected
+            vals["infected"] = city.GetInfectedCount();
             /// Info
-            ss << city.GetPopulation();
+            ss << city.GetEffectivePopulation();
             ss >> s;
             s += "\n";
             s.append(city.GetName());

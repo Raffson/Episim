@@ -1,5 +1,6 @@
 import QtLocation 5.3
 import QtQuick 2.7
+import QtQml 2.2
 
 
 Rectangle {
@@ -8,6 +9,7 @@ Rectangle {
         property variant city_id: 0
         property variant count: 0
         property variant population:0
+        property variant infected: 0
         property variant is_clicked: false
         property variant in_commuting: 0
         property variant out_commuting: 0
@@ -16,8 +18,9 @@ Rectangle {
         property variant xco: 0
         property variant yco: 0
         property alias area_text: m_area.info_text
+        property alias area_info: m_area.city_info
 
-        color: 'green'
+        color: Qt.rgba((infected/population), 1-(infected/population), 0.5, 0.5)
         border.width: 3
 
         function isSelected(){
@@ -32,6 +35,7 @@ Rectangle {
         MouseArea {
             id: m_area
             property alias info_text: info.text
+            property alias city_info: info
             Text {
                 id: info
                 text: ""
@@ -48,13 +52,11 @@ Rectangle {
             acceptedButtons: Qt.LeftButton
             onEntered:{
                 info.font.pointSize = 16;
-                parent.color = "red";
                 parent.opacity = 1;
             }
             onExited:{
                 if (is_clicked == false){
                     info.font.pointSize = 1;
-                    parent.color = "green";
                     parent.opacity = 0.25;
                 }
             }
