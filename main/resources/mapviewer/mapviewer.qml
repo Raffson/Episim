@@ -99,6 +99,10 @@ ApplicationWindow {
                 onClicked: deselectAll()
             }
             ToolButton {
+                text: qsTr("rectangle select")
+                onClicked: selectMultiple()
+            }
+            ToolButton {
                 text: qsTr("future function")
                 onClicked: menu.open()
             }
@@ -188,6 +192,11 @@ ApplicationWindow {
             }
         }
         updateSelected()
+    }
+
+    function selectMultiple(){
+        var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
+
     }
 
     function updateSelected(){
