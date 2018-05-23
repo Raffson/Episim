@@ -91,6 +91,14 @@ ApplicationWindow {
                 onClicked: showCommutes()
             }
             ToolButton {
+                text: qsTr("select all")
+                onClicked: selectAll()
+            }
+            ToolButton {
+                text: qsTr("deselect all")
+                onClicked: deselectAll()
+            }
+            ToolButton {
                 text: qsTr("future function")
                 onClicked: menu.open()
             }
@@ -152,6 +160,34 @@ ApplicationWindow {
 
             ScrollIndicator.vertical: ScrollIndicator { }
         }
+    }
+
+    function selectAll(){
+        var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
+        for (var i = 0; i < map.children.length; i++)
+        {
+            if(map.children[i].objectName === "mqi"){
+                circle = map.children[i].sourceItem
+                circle.is_clicked = true
+                circle.area_info.font.pointSize = 16
+                circle.opacity = 1
+            }
+        }
+        updateSelected()
+    }
+
+    function deselectAll(){
+        var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
+        for (var i = 0; i < map.children.length; i++)
+        {
+            if(map.children[i].objectName === "mqi"){
+                circle = map.children[i].sourceItem
+                circle.is_clicked = false
+                circle.area_info.font.pointSize = 1
+                circle.opacity = 0.25
+            }
+        }
+        updateSelected()
     }
 
     function updateSelected(){

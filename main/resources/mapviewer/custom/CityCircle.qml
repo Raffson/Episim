@@ -18,6 +18,7 @@ Rectangle {
         property variant xco: 0
         property variant yco: 0
         property alias area_text: m_area.info_text
+        property alias area_info: m_area.city_info
 
         color: Qt.rgba((infected/population), 1-(infected/population), 0.5, 0.5)
         border.width: 3
@@ -34,6 +35,7 @@ Rectangle {
         MouseArea {
             id: m_area
             property alias info_text: info.text
+            property alias city_info: info
             Text {
                 id: info
                 text: ""
