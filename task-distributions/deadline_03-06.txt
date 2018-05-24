@@ -1,0 +1,13 @@
+Robbe:
+- Finish paper stochastic spread
+- Finish openMP
+- Help Beau with Qt integration
+Nishchal:
+- Refactor variable-names like stride (getting rid of underscores and things like that)
+- Also help Beau
+Beau:
+- Continue work on Qt stuff in general
+Raphael:
+- Fine-tune last week's refactors
+- Ability to "release" population from geogrid
+- Foundation for performance analysis (that 1 page that had to be done 2 weeks ago...)
