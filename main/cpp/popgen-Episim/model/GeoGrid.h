@@ -119,6 +119,8 @@ public:
         /// representing the configuration.
         const boost::property_tree::ptree& GetConfigPtree() const { return m_config_pt; }
 
+        /// Function to release the current population so that a new one can be generated.
+        void ReleasePopulation();
 
 private:
         friend class GeoGridGenerator;

@@ -88,4 +88,10 @@ std::tuple<bool, size_t> ContactPool::SortMembers()
         return std::make_tuple(infectious_cases, num_cases);
 }
 
+void ContactPool::ClearPool()
+{
+        m_index_immune = 0;
+        m_members.clear();
+}
+
 } // namespace stride

@@ -55,7 +55,7 @@ public:
         /// Get the household to which this pool belongs
         const Household* GetHousehold() const { return m_household; }
 
-            /// Add the given Person.
+        /// Add the given Person.
         void AddMember(const Person* p);
 
         /// Get member at index.
@@ -66,6 +66,9 @@ public:
 
         /// Get size (number of members).
         std::size_t GetSize() const { return m_members.size(); }
+
+        /// Clear the contact pool.
+        void ClearPool();
 
 private:
         /// Sort w.r.t. health status: order: exposed/infected/recovered, susceptible, immune.

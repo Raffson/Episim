@@ -158,4 +158,19 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
         return m_neighbours_in_radius[origin.GetId()][radius][type];
 }
 
+void GeoGrid::ReleasePopulation()
+{
+    for( auto type : ContactPoolType::IdList )
+    {
+        if( type != ContactPoolType::Id::Household )
+            for( auto& pool : m_population->GetContactPoolSys()[type] )
+                pool.ClearPool();
+        else
+            m_population->GetContactPoolSys()[type].clear();
+    }
+    for( auto& city : m_cities )
+        city.second.GetHouseholds().clear();
+    m_population->clear();
+}
+
 } // namespace stride
