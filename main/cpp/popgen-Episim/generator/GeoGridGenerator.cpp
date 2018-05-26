@@ -375,11 +375,22 @@ void GeoGridGenerator::ClassifyNeighbours()
     // could be different if we had more cities though, but can we test that?
     auto& nirmap = m_grid->m_neighbours_in_radius;
     auto& cities = m_grid->m_cities;
-    for (auto& cityA : cities) {
+
+    vector<unsigned int> keys;
+
+    unsigned int counter = 0;
+    for(auto& it: cities){
+        keys.emplace_back(it.first);
+        counter++;
+    }
+
+#pragma omp parallel for
+    for (auto ka = keys.begin(); ka < keys.end(); ka++) {
+        auto cityA = cities.at(*ka);
         for (auto& cityB : cities) {
             // truncating distance on purpose to avoid using floor-function
             unsigned int distance =
-                    cityB.second.GetCoordinates().GetDistance(cityA.second.GetCoordinates());
+                    cityB.second.GetCoordinates().GetDistance(cityA.GetCoordinates());
             // mind that the categories go as follows [0, initial_radius), [initial_radius,
             // 2*initial_radius), etc.
             unsigned int category = m_grid->m_initial_search_radius;
@@ -387,7 +398,10 @@ void GeoGridGenerator::ClassifyNeighbours()
                 category <<= 1; // equivalent to multiplying by 2
             for( auto type : CommunityType::IdList) {
                 if( cityB.second.HasCommunityType(type) )
-                    nirmap[cityA.first][category][type].emplace_back(&cityB.second);
+#pragma critical(nirmap_emplace)
+                {
+                    nirmap[*ka][category][type].emplace_back(&cityB.second);
+                }
             }
         }
     }
@@ -429,13 +443,23 @@ void GeoGridGenerator::AddCommunities(const vector<City *>& cities, const vector
 {
     const auto& smap = m_grid->m_sizes_map;
     auto cps = ceil((double)smap.at(CommunityType::ToSizes(type)) / smap.at(Sizes::AVERAGE_CP));
-    for (unsigned int i = 0; i < indices.size(); i++) {
-        City&      chosen_city = *cities[indices[i]];
-        Community& nw_school   = chosen_city.AddCommunity(m_cid_generator++, type);
 
-        // Add contactpools
-        for (auto j = 0; j < cps; j++)
-            nw_school.AddContactPool(m_grid->m_population->GetContactPoolSys());
+#pragma omp parallel for
+    for (unsigned int i = 0; i < indices.size(); i++) {
+        Community* nw_school;
+
+            City &chosen_city = *cities[indices[i]];
+#pragma  omp critical(f)
+        {
+            nw_school = &chosen_city.AddCommunity(m_cid_generator++, type);
+        }
+
+            // Add contactpools
+            for (auto j = 0; j < cps; j++)
+#pragma omp critical(a)
+        {
+            nw_school->AddContactPool(m_grid->m_population->GetContactPoolSys());
+        }
     }
 }
 

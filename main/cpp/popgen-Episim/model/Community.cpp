@@ -30,7 +30,10 @@ Community::Community(const size_t& id, CommunityType::Id type, City* city)
 stride::ContactPool& Community::AddContactPool(ContactPoolSys& poolSys)
 {
         ContactPoolType::Id type = CommunityType::ToContactPoolType(m_type);
-        poolSys[type].emplace_back((poolSys[type].size()+1), type, this);
+#pragma omp critical(contactpoolsys)
+    {
+        poolSys[type].emplace_back((poolSys[type].size() + 1), type, this);
+    }
         m_contact_pools.emplace_back(&poolSys[type].back());
         return (*m_contact_pools.back());
 }
