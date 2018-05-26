@@ -183,17 +183,28 @@ void GeoGridGenerator::CommunitiesFromFile(const string &fname)
 {
     const auto& smap = m_grid->m_sizes_map;
     util::CSV csv(fname);
-    for (const auto &row : csv)
+#pragma omp parallel for
+    for (auto row = csv.begin(); row < csv.end(); row ++)
     {
-        auto  id   = row.GetValue<size_t>("community_id");
-        auto  type = row.GetValue<string>("community_type");
-        auto  cid  = row.GetValue<unsigned int>("city_id");
+        auto  id   = row->GetValue<size_t>("community_id");
+        auto  type = row->GetValue<string>("community_type");
+        auto  cid  = row->GetValue<unsigned int>("city_id");
         auto& c    = m_grid->m_cities.at(cid).AddCommunity(id, CommunityType::ToType(type));
         Sizes size = CommunityType::ToSizes(CommunityType::ToType(type));
-        for( unsigned int i=0; i < ceil((double)smap.at(size) / smap.at(Sizes::AVERAGE_CP)); i++ )
+        for( unsigned int i=0; i < ceil((double)smap.at(size) / smap.at(Sizes::AVERAGE_CP)); i++ ) {
             c.AddContactPool(m_grid->m_population->GetContactPoolSys());
-        if( type == "school" ) m_grid->m_school_count++;
-        if( type == "college" ) m_grid->m_cities_with_college.emplace_back(&m_grid->m_cities.at(cid));
+        }
+
+        if( type == "school" ) {
+#pragma atomic
+            m_grid->m_school_count++;
+        }
+        if( type == "college" ) {
+#pragma critical(c_college_emplace)
+            {
+                m_grid->m_cities_with_college.emplace_back(&m_grid->m_cities.at(cid));
+            }
+        }
     }
 }
 void GeoGridGenerator::PopulationFromFile(const string &fname)
