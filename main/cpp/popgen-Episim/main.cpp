@@ -12,11 +12,14 @@
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickItem>
+#include <popgen-Episim/generator/GeoGridGenerator.h>
+
 #endif
 
-#include "popgen-Episim/model/GeoGrid.h"
+#include "popgen-Episim/generator/GeoGridGenerator.h"
 #include "popgen-Episim/generator/PopulationGenerator.h"
 #include "popgen-Episim/util/GeoGridFileWriter.h"
+#include "popgen-Episim/util/TestSummarizer.h"
 
 using namespace std;
 
@@ -101,14 +104,16 @@ int startMap(stride::GeoGrid& grid)
             /// Y coordinate
             vals["y"] = city.GetCoordinates().GetY();
             /// Radius
-            vals["radius"] = city.GetPopulation() / (2 * M_PI);
+            vals["radius"] = city.GetEffectivePopulation() / (2 * M_PI);
             /// Percentage
-            vals["perc"] = city.GetPopulation() / (double) grid.GetTotalPop();
+            vals["perc"] = city.GetEffectivePopulation() / (double) grid.GetTotalPop();
             // cout << 50000 * (city.GetPopulation() / (double)grid.GetTotalPop()) << endl;
             /// Population
-            vals["population"] = city.GetPopulation();
+            vals["population"] = city.GetEffectivePopulation();
+            /// Infected
+            vals["infected"] = city.GetInfectedCount();
             /// Info
-            ss << city.GetPopulation();
+            ss << city.GetEffectivePopulation();
             ss >> s;
             s += "\n";
             s.append(city.GetName());
@@ -148,20 +153,16 @@ int startMap(stride::GeoGrid& grid)
 
 int main(int argc, char** argv)
 {
-        stride::GeoGrid grid;
-        //grid.Initialize("run_default.xml");
-        grid.Initialize("run_default.xml", true);
-        //grid.ReadRNGstateFromFile();
-        grid.GenerateAll();
-        stride::GeoGridFileWriter::WriteAll(grid);
+        std::shared_ptr<stride::GeoGrid> grid = stride::GeoGridGenerator().Generate("run_default.xml", true);
+        stride::GeoGridFileWriter::WriteAll(*grid);
+        stride::PopulationGenerator(*grid).Generate();
 
-        stride::PopulationGenerator(grid).GeneratePopulation();
-
-        //grid.WritePopToFile("Test-pop.txt");
-        //grid.WriteRNGstateToFile();
+        stride::TestSummarizer summarizer;
+        summarizer.GenerateHtml("all_tests_episim.xml", "../../testsummary.html");
 
 #ifdef USING_QT
+
         // startMap(argc, argv);
-        startMap(grid);
+        startMap(*grid);
 #endif
 }

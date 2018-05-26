@@ -27,11 +27,11 @@ City::City(const unsigned int city_id, const unsigned int province, unsigned int
                 m_types_present[type] = false;
 }
 
-Community& City::AddCommunity(CommunityType::Id community_type)
+Community& City::AddCommunity(const size_t& id, CommunityType::Id type)
 {
-        m_communities.emplace_back(Community(community_type, this));
-        m_types_present[community_type] = true;
-        m_moc[community_type].emplace_back(&m_communities.back());
+        m_communities.emplace_back(id, type, this);
+        m_types_present[type] = true;
+        m_moc[type].emplace_back(&m_communities.back());
         return m_communities.back();
 }
 
@@ -54,6 +54,7 @@ const double& City::GetTotalInCommutersCount() const
                 m_in_commuter_count    = 0;
                 for (const auto& it : m_in_commuting)
                         m_in_commuter_count += it.second;
+                m_in_commuter_count -= m_in_commuting.at(m_city_id);
         }
         return m_in_commuter_count;
 }
@@ -61,29 +62,26 @@ const double& City::GetTotalInCommutersCount() const
 const double& City::GetTotalOutCommutersCount() const
 {
         if (m_out_commuting_changed) {
-            m_out_commuting_changed = false;
-            m_out_commuter_count    = 0;
-#pragma omp parallel for reduction(+: m_out_commuter_count)
-            for (unsigned int i= 0; i < m_out_commuting.size(); i++) {
-                auto it = m_out_commuting.begin();
-                advance(it, i );
-                m_out_commuter_count += it->second;
-            }
+                m_out_commuting_changed = false;
+                m_out_commuter_count    = 0;
+                for (const auto& it : m_out_commuting)
+                        m_out_commuter_count += it.second;
+                m_out_commuter_count -= m_out_commuting.at(m_city_id);
         }
         return m_out_commuter_count;
 }
 
 Household& City::AddHousehold(ContactPoolSys& pool_sys)
 {
-        m_households.emplace_back(Household(this, pool_sys));
+        m_households.emplace_back(this, pool_sys);
         return m_households.back();
 }
 
 unsigned int City::GetEffectivePopulation() const
 {
         unsigned int result = 0;
-    for(auto hh =m_households.begin(); hh < m_households.end(); hh++){
-                result += hh->GetSize();
+        for(auto& hh:m_households){
+                result += hh.GetSize();
         }
         return result;
 }
@@ -92,15 +90,35 @@ unsigned int City::GetEffectivePopulation() const
 unsigned int City::GetInfectedCount() const
 {
     unsigned int result = 0;
-#pragma omp parallel for reduction(+: result)
-    for(auto hh =m_households.begin(); hh < m_households.end(); hh++){
-        for(auto& a_person:hh->GetMembers()){
+    for(auto& hh:m_households){
+        for(auto& a_person:hh.GetMembers()){
             if(a_person->GetHealth().IsInfected() || a_person->GetHealth().IsRecovered()){
                 result++;
             }
         }
     }
     return result;
+}
+
+void City::AddEffectiveCommuterTo(const unsigned int destination)
+{
+    if(m_effective_out_commuting.find(destination) == m_effective_out_commuting.end()){
+        m_effective_out_commuting[destination] = 1;
+    }
+    else{
+        m_effective_out_commuting[destination] = m_effective_out_commuting[destination] + 1;
+    }
+}
+
+
+unsigned int City::GetEffectiveCommuterTo(const unsigned int destination)
+{
+    if(m_effective_out_commuting.find(destination) == m_effective_out_commuting.end()){
+        return 0;
+    }
+    else{
+        return m_effective_out_commuting[destination];
+    }
 }
 
 } // namespace stride

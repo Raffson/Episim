@@ -68,13 +68,12 @@ private:
 
         /// Initialize beliefs container (including this in SetBeliefPolicy function slows you down
         /// due to guarding aginst data races in parallel use of SetBeliefPolicy. The DoubleChecked
-        /// locking did not work in OpenMP parallel for's on MAc OSX.
+        /// locking did not work in OpenMP parallel for's on Mac OSX.
         template <typename BeliefPolicy>
         void InitBeliefPolicy()
         {
                 if (!m_beliefs) {
-                        m_beliefs.emplace<util::SegmentedVector<BeliefPolicy>>();
-                        m_beliefs.cast<util::SegmentedVector<BeliefPolicy>>()->reserve(this->size());
+                        m_beliefs.emplace<util::SegmentedVector<BeliefPolicy>>(this->size());
                 } else {
                         throw std::runtime_error("_func_ : Error, already initialized!");
                 }
@@ -87,13 +86,12 @@ private:
         // Cannot follow my preference for declaration of required explicit specializations, because SWIG
         // does not like that. Hence include of the template method definition in the header file.
         template <typename BeliefPolicy>
-        void SetBeliefPolicy(std::size_t i, const BeliefPolicy belief = BeliefPolicy())
+        void SetBeliefPolicy(std::size_t i, const BeliefPolicy& belief = BeliefPolicy())
         {
-                (*this)[i].SetBelief(&(m_beliefs.cast<util::SegmentedVector<BeliefPolicy>>()->operator[](i) = belief));
+                (*this)[i].SetBelief(m_beliefs.cast<util::SegmentedVector<BeliefPolicy>>()->emplace(i, belief));
         }
 
         friend class PopBuilder;
-        friend class PopulationGenerator;
         friend class BeliefSeeder;
 
 private:

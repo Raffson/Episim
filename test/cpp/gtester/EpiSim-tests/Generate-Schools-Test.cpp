@@ -7,7 +7,7 @@
  * Implementation of tests to check the generation of communities.
  */
 
-#include "popgen-Episim/model/GeoGrid.h"
+#include "popgen-Episim/generator/GeoGridGenerator.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <gtest/gtest.h>
@@ -50,55 +50,27 @@ TEST_P(SchoolTest, HappyDayScenario)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid;
-        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default.xml"));
+        shared_ptr<GeoGrid> grid = GeoGridGenerator().Generate("run_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        // Do the test...
-        ASSERT_NO_FATAL_FAILURE(grid.GenerateColleges());
-        ASSERT_NO_FATAL_FAILURE(grid.GenerateWorkplaces());
-        ASSERT_NO_FATAL_FAILURE(grid.GenerateSchools()); // happy day
         unsigned int target =
-            ceil(grid.GetTotalPop() * grid.GetFraction(Fractions::SCHOOLED) / grid.GetAvgSize(Sizes::SCHOOLS));
-        EXPECT_EQ(grid.GetSchoolCount(), target);
+            ceil(grid->GetTotalPop() * grid->GetFraction(Fractions::SCHOOLED) / grid->GetAvgSize(Sizes::SCHOOLS));
+        EXPECT_EQ(grid->GetSchoolCount(), target);
 
         double margin = 0.1;
 
-        for(auto& it:grid.GetCities()){
+        for(auto& it:grid->GetCities()){
             City* a_city = &it.second;
-            double target = (double)a_city->GetPopulation() / grid.GetTotalPopOfModel();
-            double actual = (double)a_city->GetSchools().size() / grid.GetSchoolCount();
+            double target = (double)a_city->GetPopulation() / grid->GetTotalPopOfModel();
+            double actual = (double)a_city->GetSchools().size() / grid->GetSchoolCount();
             EXPECT_NEAR(actual, target, margin);
         }
 
 
-}
-
-TEST_P(SchoolTest, WrongInput)
-{
-        // -----------------------------------------------------------------------------------------
-        // Initialize the GeoGrid.
-        // -----------------------------------------------------------------------------------------
-
-        /* After reworking the fractions (deduced from households) these death tests won't die anymore...
-         * need some new relevant tests here...
-         * currently i'm leaving this in comments, as well as leaving the xml files in place
-         * this (code below + files) should be deleted in the future (or reworked)
-         *
-        // Bad input file with fractions that are FUBAR
-        auto grid = GeoGrid("config/schools&colleges_bad_frac_0.xml");
-        ASSERT_DEATH_IF_SUPPORTED(grid.GenerateSchools(), "");
-        grid = GeoGrid("config/schools&colleges_bad_frac_1.xml");
-        ASSERT_DEATH_IF_SUPPORTED(grid.GenerateSchools(), "");
-        */
-
-        // uncomment the next 2 lines once the "unsigned int refractor" has happened...
-        // grid = GeoGrid("config/bad_community_sizes.xml");
-        // ASSERT_DEATH_IF_SUPPORTED(grid.GenerateSchools(), "");
 }
 
 TEST_P(SchoolTest, HighMoreLowLess)
@@ -107,11 +79,10 @@ TEST_P(SchoolTest, HighMoreLowLess)
         // Initialize the GeoGrid.
         // -----------------------------------------------------------------------------------------
         cout << "Building the GeoGrid." << endl;
-        GeoGrid grid;
-        ASSERT_NO_FATAL_FAILURE(grid.Initialize("run_default.xml"));
+        shared_ptr<GeoGrid> grid = GeoGridGenerator().Generate("run_default.xml");
         cout << "Done building the GeoGrid." << endl;
 
-        auto mp = grid.GetCities();
+        auto mp = grid->GetCities();
 
         City*         highest_pop_c = &mp.begin()->second;
         unsigned long highest_pop   = highest_pop_c->GetAllCommunities().size();

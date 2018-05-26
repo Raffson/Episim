@@ -7,8 +7,8 @@
 
 #include "trng/discrete_dist.hpp"
 
+#include <boost/filesystem.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-
 
 using namespace std;
 
@@ -21,33 +21,24 @@ void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, Cit
         util::CSV    read_in(city_file);
         unsigned int counter = 0;
         total_pop            = 0;
-#pragma omp parallel for reduction(+: total_pop)
-        for (auto it = read_in.begin() ; it < read_in.end(); it++) {
+        for (auto& it : read_in) {
                 counter++;
                 try {
-                        unsigned int id         = (unsigned int)(stoi(it->GetValue("id")));
-                        unsigned int province   = (unsigned int)(stoi(it->GetValue("province")));
-                        unsigned int population = (unsigned int)(stoi(it->GetValue("population")));
-                        double       x_coord    = stod(it->GetValue("x_coord"));
-                        double       y_coord    = stod(it->GetValue("y_coord"));
-                        double       longitude  = stod(it->GetValue("longitude"));
-                        double       latitude   = stod(it->GetValue("latitude"));
-                        string       name       = it->GetValue("name");
+                        auto id         = (const unsigned int)abs(stoi(it.GetValue("id")));
+                        auto province   = (const unsigned int)abs(stoi(it.GetValue("province")));
+                        auto population = (const unsigned int)abs(stoi(it.GetValue("population")));
+                        auto x_coord    = stod(it.GetValue("x_coord"));
+                        auto y_coord    = stod(it.GetValue("y_coord"));
+                        auto longitude  = stod(it.GetValue("longitude"));
+                        auto latitude   = stod(it.GetValue("latitude"));
+                        auto name       = it.GetValue("name");
                         total_pop += population;
-#pragma omp critical(rtree)
-                        {
-                                rtree.insert(make_pair(gPoint(longitude, latitude), id));
-                        }
+
+                        rtree.insert(make_pair(gPoint(longitude, latitude), id));
                         Coordinate coord(x_coord, y_coord, longitude, latitude);
-#pragma omp critical(cities)
-                        {
-                                cities.emplace(id, City(id, province, population, coord, name));
-                        }
+                        cities.emplace(id, City(id, province, population, coord, name));
                 } catch (exception& e) {
-#pragma omp critical(error)
-                        {
-                                cout << e.what() << endl << "at row: " << counter << endl;
-                        }
+                        cout << e.what() << endl << "at row: " << counter << endl;
                 }
         }
 }
@@ -64,16 +55,11 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
         for (auto& id : cityIds)
                 id.erase(0, 3);
 
-
         // First calculate the total number of commuters so we can normalize on the fly...
         std::vector<double> total_commuters(read_in.GetColumnCount(), 0);
-
-#pragma omp parallel for collapse(2)
-        for (auto it = read_in.begin(); it < read_in.end(); it++) {
+        for (const auto& it : read_in)
                 for (unsigned int i = 0; i < read_in.GetColumnCount(); i++)
-                        total_commuters[i] += it->GetValue<unsigned int>(i);
-
-        }
+                        total_commuters[i] += it.GetValue<double>(i);
 
         double commfrac =
             (fracs.at(Fractions::MIDDLE_AGED) * fracs.at(Fractions::COMMUTING_WORKERS) +
@@ -97,10 +83,6 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
                         // normalize
                         double commuting_pop = cities.at(origin_id).GetPopulation() * commfrac;
                         double normalized    = commuting_pop * (commuters / total_commuters[i]);
-
-                        // don't count local commuters...
-                        if (origin_id == destination_id)
-                                normalized = 0;
 
                         if (cities.count(destination_id)) {
                                 cities.at(destination_id).SetInCommuters(origin_id, normalized);
@@ -129,6 +111,7 @@ map<unsigned int, vector<vector<double>>> ParseHouseholds(const boost::filesyste
         return result;
 }
 
+//What is this function???
 vector<City> DefragmentCity(const City& city, vector<double> distr, util::RNManager& rndm)
 {
 
@@ -146,5 +129,6 @@ vector<City> DefragmentCity(const City& city, vector<double> distr, util::RNMana
         }
         return vector<City>();
 }
+
 } // namespace parser
 } // namespace stride

@@ -82,11 +82,13 @@ set(LIB_SRC
 	util/CSVRow.cpp
     util/FileSys.cpp
 	util/LogUtils.cpp
+	util/RangeIndexer.h
     util/RNEngineType.cpp
     util/RNManager.cpp
     util/RunConfigManager.cpp
 	util/Safeline.cpp
     util/SegmentedVector.h
+    util/SliceIndexer.h
     util/Stopwatch.h
     util/StringUtils.h
     util/Subject.h
@@ -101,6 +103,7 @@ set(LIB_SRC
 	viewers/SummaryViewer.cpp
 #---
     popgen-Episim/main.cpp
+    popgen-Episim/generator/GeoGridGenerator.cpp
     popgen-Episim/generator/PopulationGenerator.cpp
     popgen-Episim/model/Coordinate.cpp
     popgen-Episim/model/GeoGrid.cpp
@@ -111,6 +114,7 @@ set(LIB_SRC
     popgen-Episim/util/GeoGridFileWriter.cpp
     popgen-Episim/util/Parser.cpp
     popgen-Episim/util/Utility.cpp
+	popgen-Episim/util/TestSummarizer.cpp
 )
 
 #============================================================================
@@ -124,6 +128,7 @@ endif()
 # Build the Stride library.
 #============================================================================
 add_library(libstride ${LIB_SRC})
+set_source_files_properties(BeliefSeeder.cpp PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
 target_link_libraries(libstride ${LIBS})
 target_compile_options(libstride PUBLIC "-fPIC")
 target_compile_definitions(libstride PUBLIC "-DSTRIDE_GIT_HASH=${STRIDE_WC_REVISION_HASH}")

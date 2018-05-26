@@ -53,11 +53,6 @@ public:
     /// @param fname The name of the file to be written.
     static void WriteCommunities(const GeoGrid &grid, const std::string &fname = "communities.csv");
 
-    /// Writes the current RNG's state to a file.
-    /// @param grid The GeoGrid object from which the RNG-state will be written.
-    /// @param fname The name of the file to be written.
-    static void WriteRNGstate(const GeoGrid &grid, const std::string &fname = "RNG-state.xml");
-
 };
 
 }

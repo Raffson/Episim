@@ -15,7 +15,7 @@
 
 /**
  * @file
- * Implementation for HelthSeeder class.
+ * Implementation for BeliefSeeder class.
  */
 
 #include "BeliefSeeder.h"
@@ -29,6 +29,9 @@
 using namespace boost::property_tree;
 using namespace stride::util;
 using namespace std;
+
+#pragma clang diagnostic ignored "-Wunused-variable"
+#pragma gcc diagnostic ignored "-Wunused-variable"
 
 namespace stride {
 
@@ -46,10 +49,11 @@ void BeliefSeeder::Seed(std::shared_ptr<stride::Population> pop)
         // This gets extended as we add belief policies.
         if (policy == "NoBelief") {
                 pop->InitBeliefPolicy<NoBelief>();
+                const NoBelief nob;
                 // some randomness in actual seeding; for later on
 #pragma omp parallel for num_threads(num_thrds)
                 for (size_t i = 0; i < population.size(); ++i) {
-                        pop->SetBeliefPolicy<NoBelief>(i, NoBelief());
+                        pop->SetBeliefPolicy<NoBelief>(i, nob);
                 }
         } else if (policy == "Imitation") {
                 pop->InitBeliefPolicy<Imitation>();

@@ -11,7 +11,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with the software. If not, see <http://www.gnu.org/licenses/>.
  *
- *  Copyright 2017, Kuylen E, Willem L, Broeckhove J
+ *  Copyright 2017, 2018, Kuylen E, Willem L, Broeckhove J
  */
 
 /**
@@ -19,8 +19,6 @@
  * Header for the command line controller.
  */
 
-#include "popgen-Episim/model/GeoGrid.h"
-#include "popgen-Episim/generator/PopulationGenerator.h"
 #include "util/Stopwatch.h"
 
 #include <boost/property_tree/ptree.hpp>
@@ -31,6 +29,7 @@
 namespace stride {
 
 class SimRunner;
+class GeoGrid;
 
 /**
  * Controls a simulation run initiated with the command line interface (cli).
@@ -58,7 +57,7 @@ public:
         void Control();
 
 private:
-        /// Empty controller: used as taget for delegation.
+        /// Empty controller: used as target for delegation.
         explicit CliController();
 
         /// Check install environment.
@@ -79,7 +78,7 @@ private:
 
 private:
         boost::property_tree::ptree     m_config_pt;        ///< Main configuration for run and sim.
-        std::string                     m_output_prefix;    /// Prefix to output (name prefix or prefix dir)
+        std::string                     m_output_prefix;    ///< Prefix to output (name prefix or prefix dir)
         util::Stopwatch<>               m_run_clock;        ///< Stopwatch for timing the computation.
         std::shared_ptr<spdlog::logger> m_stride_logger;    ///< General logger.
         bool                            m_use_install_dirs; /// Working dir or install dir mode.

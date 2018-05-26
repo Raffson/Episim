@@ -36,7 +36,7 @@ public:
         City* GetCity() { return m_city; }
 
         /// Household Id.
-        unsigned int GetID() const { return m_id; }
+        size_t GetID() const { return m_id; }
 
         /// Return the members of this household.
         const vector<Person*>& GetMembers() const { return m_pool->GetPool(); }
@@ -52,10 +52,9 @@ public:
         void GetPossibleWorkers(vector<Person*>&) const;
 
 private:
-        static unsigned int m_id_generator; ///< Id generator.
-        size_t m_id;            ///< A unique ID of the household.
-        City* m_city;           ///< The City in which the household is located
-        ContactPool* m_pool;    ///< A ContactPool with the people belonging to this household.
+        const size_t m_id;   ///< A unique ID of the household.
+        City*        m_city; ///< The City in which the household is located
+        ContactPool* m_pool; ///< A ContactPool with the people belonging to this household.
 
 };
 

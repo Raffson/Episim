@@ -68,8 +68,7 @@ void DiseaseSeeder::Seed(std::shared_ptr<Population> pop, ContactLogMode::Id log
         auto numInfected = static_cast<unsigned int>(floor(static_cast<double>(popSize) * sRate));
         while (numInfected > 0) {
                 Person& p = pop->at(static_cast<size_t>(generator()));
-                if (p.GetHealth().IsSusceptible() && (p.GetAge() >= sAgeMin) &&
-                    (p.GetAge() <= sAgeMax)) {
+                if (p.GetHealth().IsSusceptible() && (p.GetAge() >= sAgeMin) && (p.GetAge() <= sAgeMax)) {
                         p.GetHealth().StartInfection();
                         numInfected--;
                         if (logmode != ContactLogMode::Id::None)

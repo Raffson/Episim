@@ -8,13 +8,15 @@
 
 namespace stride {
 
+class Population;
+
 class PopulationGenerator
 {
 public:
         explicit PopulationGenerator(GeoGrid&);
 
         /// Generates a random population according to the GeoGrid's model.
-        void GeneratePopulation();
+        void Generate();
 
 private:
         /// Generates a person
@@ -23,17 +25,16 @@ private:
         /// @param scid Represents the ID of the secondary community to which this person will belong
         /// @param pop The population to which this person will be added
         /// @param city The city in which this person will live
-        void GeneratePerson(const double& age, const unsigned int hid, const unsigned int scid, Population& pop,
-                            City& city);
+        void GeneratePerson(const double& age, const size_t& hid, const size_t& scid, Population& pop, City& city);
 
         /// Selects a random nearby city and returns the communities of the given type.
         /// This is done by selecting a random city from the nearby cities found,
         /// followed by getting the communities of the given type and returning them.
         /// @param city The city for which we need to look for nearby communities.
-        /// @param community_type The type of the communities we're looking for
+        /// @param type The type of the communities we're looking for
         /// @retval <const vector<Community*>&> A const reference to the vector of pointers containing
         /// the resulting communities.
-        const std::vector<Community*>& GetRandomCommunities(const City& city, const CommunityType::Id& community_type);
+        const std::vector<Community*>& GetRandomCommunities(const City& city, const CommunityType::Id& type);
 
         /// Selects the nearest college relative to the position of 'origin'.
         /// @param origin The city for which we need to find the nearst college.
@@ -45,8 +46,7 @@ private:
         /// @param city A reference to the city in which the household will be added.
         void GenerateHousehold(unsigned int size, City& city);
 
-        /// Initializes the distribution to be used for determining the random sizes for households, as well as
-        /// determining the distribution used for determining the composition of the households.
+        /// Initializes the distribution to be used for determining the random sizes for households.
         void InitializeHouseholdFractions();
 
         /// Initializes the distribution to be used for determining a random city for commuters.
@@ -110,11 +110,8 @@ private:
         const std::vector<double>& GetRandomModelHouseholdOfSize(unsigned int size);
 
 private:
-        ///< ID generator for creating persons, starting from 0 which in this case doesn't matter...
-        static unsigned int m_id_generator;
-
-        ///< Reference to the GeoGrid so we can access relevant information.
-        GeoGrid& m_geogrid;
+        ///< Reference to the GeoGrid for which we need to generate and link a population.
+        GeoGrid& m_grid;
 
         ///< This member will represent the chances for households with 1, 2, 3, 4,... members
         ///< The first element is the chance a household has 1 member,

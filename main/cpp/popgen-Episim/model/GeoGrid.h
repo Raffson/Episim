@@ -3,21 +3,18 @@
 // Created by beau on 3/5/18.
 //
 
+#include "City.h"
+#include "pop/Population.h"
+#include "popgen-Episim/util/Parser.h"
+#include "popgen-Episim/util/Utility.h"
+#include "util/RNManager.h"
+
 #include <map>
 #include <memory>
 #include <vector>
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
-#include "pop/Population.h"
-#include "util/RNManager.h"
-
-#include "City.h"
-#include "popgen-Episim/util/Parser.h"
-#include "popgen-Episim/util/Utility.h"
-
 
 #include <omp.h>
 
@@ -35,70 +32,10 @@ class GeoGrid
 {
 
 public:
-        /// Default constructor which initializes some members to 0.
-        /// @param info: A const reference to an RNManager's state.
-        GeoGrid(const util::RNManager::Info& info = util::RNManager::Info());
-
-        /// Specialized constructor which will immediately initialize and generate the GeoGrid.
-        /// @param p_tree: A property-tree containing the necessary information.
-        /// @param info: A const reference to an RNManager's state.
-        GeoGrid(const boost::property_tree::ptree& p_tree, const util::RNManager::Info& info = util::RNManager::Info());
-
-        /// Takes a filepath to city_config file and initializes the GeoGrid.
-        /// @param config: a path to a gegogen config file. This file contains
-        ///             things like name of the city data file, information about
-        ///             the population...
-        /// @param contactFile: A boolean value indicating if we're overriding the 'output_contact_file' value
-        /// of the given configuration. This is specifically to prevent output during the tests.
-        void Initialize(const boost::filesystem::path& config, const bool contactFile = false);
-
-        /// Takes a filepath to city_config file and initializes the GeoGrid.
-        /// @param p_tree: A property-tree containing the necessary information.
-        void Initialize(const boost::property_tree::ptree& p_tree);
-
         /// Resets the entire GeoGrid.
+        //this should become "ReleasePopulation" or something like that...
+        // aiming at being able to plug in/out a population...
         void Reset();
-
-        /// Generates the schools, places them into the cities
-        /// using a discrete distribution.
-        /// Preconditions:\n
-        ///     \li REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");\n
-        ///     \li REQUIRE(m_schooled_frac <= 1, "Schooled Fract is bigger then 1, not possible!");\n
-        ///     \li REQUIRE(m_schooled_frac >= 0, "Schooled fract can't be negative");\n
-        ///     \li REQUIRE(m_school_size >= 0, "The initial school size can't be negative");
-        ///
-        /// Postconditions:\n
-        ///     \li ENSURE(Schools are placed in cities according to discrete distribution) -> enforced in test enviroment
-        void GenerateSchools();
-
-        /// Generates the colleges, places them into the cities
-        /// using a discrete distribution.
-        /// Preconditions:\n
-        ///     \li REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");\n
-        ///     \li REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");\n
-        ///     \li REQUIRE(m_student_frac <= 1, "Student fractal can't be more then 100%");\n
-        ///     \li REQUIRE(m_workers1_frac >= 0, "Worker fractal can't be negative");\n
-        ///     \li REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");
-        ///
-        /// Postconditions:\n
-        ///     \li ENSURE(colleges are placed in x biggest cities) -> enforced in test envirorement
-        //          Need to enforce this ensure in the code as well...
-        void GenerateColleges();
-
-        /// Generates the workplaces, places them into the cities a random with chances
-        /// discretly distributed according to size. Generates contactpools for the communities.
-        /// Preconditions:\n
-        ///     \li REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");\n
-        void GenerateWorkplaces();
-
-        /// Generates the communties, places them into the cities a random with chances
-        /// discretly distributed according to size. Generates contactpools for the communities.
-        /// Preconditions:\n
-        ///     \li REQUIRE(m_initialized, "Must call GeoGrid::Initialize() before generation.");\n
-        void GenerateCommunities();
-
-        /// Calls all other generator functions.
-        void GenerateAll();
 
         /// Getter
         /// @retval <map<unsigned int, City>&> Returns the map of Cities in GeoGrid. Cities are
@@ -141,10 +78,6 @@ public:
         ///                      deduced from all cities in the grid.
         Coordinate GetCenterOfGrid();
 
-        //deprecated?
-        // Assigns the age fractions to the provided vector
-        //void GetAgeFractions(vector<double>& popfracs);
-
         /// Getter
         /// @retval <Population> Returns a reference to population
         shared_ptr<Population> GetPopulation() { return m_population; }
@@ -172,11 +105,7 @@ public:
                                                                     CommunityType::Id type);
 
         /// Getter
-        /// @retval <const bool> Returns whether or not the GeoGrid is initialized.
-        const bool IsInitialized() const { return m_initialized; }
-
-        /// Getter
-        /// @retval <const util::RNManager&> A const reference to the random number generator being used by GeoGrid.
+        /// @retval <util::RNManager&> A const reference to the random number generator being used by GeoGrid.
         util::RNManager& GetRNG() { return m_rng; }
 
         /// Getter
@@ -192,44 +121,13 @@ public:
         /// representing the configuration.
         const boost::property_tree::ptree& GetConfigPtree() const { return m_config_pt; }
 
-        /// Reads an RNG's state from a file.
-        /// @param fname The name of the file to be read from.
-        void ReadRNGstateFromFile(const std::string& fname = "RNG-state.xml");
 
 private:
+        friend class GeoGridGenerator;
         friend class GeoGridFileWriter;
 
-        /// Returns index of city with smallest population from 'lc'
-        /// used by adjustLargestCities(lc, city)
-        unsigned int FindSmallest(const vector<City*>& lc);
-
-        /// Adjusts 'lc' iff 'city' has more people than the city with the smallest population in 'lc'
-        /// used by generate_colleges()
-        void AdjustLargestCities(vector<City*>& lc, City& city);
-
-        /// Assigns the main fractions: schooled, worker1, worker2 & rest
-        void GetMainFractions();
-
-        /// Computes for each city the distances to all other cities and classifies them
-        /// in exponential order, assigning this to m_neighbours_in_radius. The default initial search radius = 10km.
-        void ClassifyNeighbours();
-        void ClassifyNeighbours2(); //for benchmarking purposes...
-
-        /// Used by GeoGrid::Initialize to create an output-directory if needed.
-        void InitOutputStuff();
-
-        /// Used by GeoGrid::Initialize to add the Popgen's configuration ptree.
-        void AddPopgenPtree();
-
-        /// Used by GeoGrid::Initialize to read the Fractions and Sizes.
-        void ReadFractionsAndSizes();
-
-        /// Used by GeoGrid::Initialize to read cities, households & commuting data from files.
-        void ReadDataFiles();
-
-        /// Used by GeoGrid::Initialize to ensure correct fractions and a "correct" average contactpool size.
-        /// With "correct" we assume the average contactpool's size is bigger than 0 and is capped by 1000.
-        void EnforceEnsures();
+        /// Default constructor for friends only.
+        GeoGrid();
 
 private: // DO NOT DELETE! this seperates private members from private methods, improves readability...
 
@@ -270,9 +168,6 @@ private: // DO NOT DELETE! this seperates private members from private methods, 
 
         ///< The population of the GeoGrid
         shared_ptr<Population> m_population;
-
-        ///< A variable indicating if the GeoGrid was initialized.
-        bool m_initialized;
 
         ///< The random number generator.
         util::RNManager m_rng;
