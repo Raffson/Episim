@@ -212,19 +212,26 @@ void GeoGridGenerator::PopulationFromFile(const string &fname)
     ContactPoolSys& poolSys = m_grid->m_population->GetContactPoolSys();
     unsigned int pid = 0U;
     util::CSV csv(fname);
-    for (const auto &row : csv)
+#pragma omp parallel for
+    for (auto row = csv.begin(); row < csv.end(); row ++)
     {
-        const auto age  = row.GetValue<double>("age");
-        const auto hid  = row.GetValue<size_t>("household_id");
-        const auto sid  = row.GetValue<size_t>("school_id");
-        const auto wid  = row.GetValue<size_t>("work_id");
-        const auto pcid = row.GetValue<size_t>("primary_community");
-        const auto scid = row.GetValue<size_t>("secundary_community");
-        m_grid->m_population->emplace_back(pid++, age, hid, sid, wid, pcid, scid);
+        const auto age  = row->GetValue<double>("age");
+        const auto hid  = row->GetValue<size_t>("household_id");
+        const auto sid  = row->GetValue<size_t>("school_id");
+        const auto wid  = row->GetValue<size_t>("work_id");
+        const auto pcid = row->GetValue<size_t>("primary_community");
+        const auto scid = row->GetValue<size_t>("secundary_community");
+#pragma omp critical(emplace_bck)
+        {
+            m_grid->m_population->emplace_back(pid++, age, hid, sid, wid, pcid, scid);
+        }
         if( hid > poolSys[ContactPoolType::Id::Household].size() )
         {
-            const auto cid  = row.GetValue<unsigned int>("city_id");
-            m_grid->m_cities.at(cid).AddHousehold(poolSys);
+            const auto cid  = row->GetValue<unsigned int>("city_id");
+#pragma omp critical(add_house_hold)
+            {
+                m_grid->m_cities.at(cid).AddHousehold(poolSys);
+            }
         }
         const Person* p = &m_grid->m_population->back();
         for( auto type : ContactPoolType::IdList )
