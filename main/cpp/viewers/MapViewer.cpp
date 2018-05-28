@@ -14,6 +14,7 @@
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickItem>
+#include <QMetaObject>
 
 using namespace std;
 using namespace std::chrono;
@@ -27,6 +28,11 @@ void MapViewer::Initialize() {
     for (const QByteArray &p : additionalLibraryPaths.split(':'))
         QCoreApplication::addLibraryPath(QString(p));
 #endif
+
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    int             dummyargc = 0;
+    QGuiApplication application(dummyargc, 0);
+    application.mouseButtons();
 
     QVariantMap parameters;
 
@@ -84,18 +90,23 @@ void MapViewer::Update(const sim_event::Id id)
 
 
 void MapViewer::loadCities() {
+    cout<<"Loading cities..."<<endl;
     QObject *item = engine->rootObjects().first();
     Q_ASSERT(item);
-
+    cout<<"\t Assertion passed"<<endl;
     /// To center the map on a specific location: use following code.
     QVariantList coords;
+    cout<<"\t Created coordinates..."<<endl;
     stride::Coordinate c = m_grid->GetCenterOfGrid();
+    cout<<"\t Center of map: "<<c.GetX()<<", "<<c.GetY()<<endl;
     coords.push_back(c.GetLatitude());
     coords.push_back(c.GetLongitude());
+    cout<<"\t Setting center of map..."<<endl;
     QMetaObject::invokeMethod(item, "setCentre", Q_ARG(QVariant, QVariant::fromValue(coords)));
-
+    cout<<"\t Done initializing Qt stuff..."<<endl;
     /// To add cities on the map: use following.
     auto cities = m_grid->GetCities();
+    cout<<"\t got cities from grid"<<endl;
     map<unsigned int, vector<stride::City>> sorted;
     for (auto &city : cities)
         sorted[-city.second.GetPopulation()].emplace_back(city.second);
