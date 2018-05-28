@@ -102,11 +102,14 @@ unsigned int City::GetInfectedCount() const
 
 void City::AddEffectiveCommuterTo(const unsigned int destination)
 {
-    if(m_effective_out_commuting.find(destination) == m_effective_out_commuting.end()){
-        m_effective_out_commuting[destination] = 1;
-    }
-    else{
-        m_effective_out_commuting[destination] = m_effective_out_commuting[destination] + 1;
+#pragma omp critical(m_effective)
+    {
+        if (m_effective_out_commuting.find(destination) == m_effective_out_commuting.end()) {
+
+            m_effective_out_commuting[destination] = 1;
+        } else {
+            m_effective_out_commuting[destination] = m_effective_out_commuting[destination] + 1;
+        }
     }
 }
 
