@@ -21,16 +21,12 @@ namespace viewers {
             MapViewer(std::shared_ptr<SimRunner> runner, const std::string &output_prefix, shared_ptr<stride::GeoGrid> grid)
                     : m_grid(grid), m_summary_file(output_prefix), m_runner(std::move(runner))
             {
-                Initialize();
             }
 
-            void Initialize();
+            int loadMap();
 
             /// Let viewer perform update.
             void Update(sim_event::Id id);
-
-            /// Load the cities from a geogrid.
-            void loadCities();
 
         private:
             shared_ptr<QQmlApplicationEngine> engine;
