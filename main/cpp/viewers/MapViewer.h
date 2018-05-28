@@ -18,12 +18,17 @@ namespace stride {
 namespace viewers {
         class MapViewer {
         public:
-            MapViewer(std::shared_ptr<SimRunner> runner, const std::string &output_prefix, shared_ptr<stride::GeoGrid> grid)
-                    : m_grid(grid), m_summary_file(output_prefix), m_runner(std::move(runner))
+            MapViewer(std::shared_ptr<SimRunner> runner, const std::string &outputPrefix, shared_ptr<stride::GeoGrid> grid)
+                    : m_grid(grid), m_summary_file(outputPrefix), m_runner(std::move(runner))
             {
             }
 
-            int loadMap();
+            MapViewer(shared_ptr<stride::GeoGrid> grid, const std::string &outputPrefix = "")
+                    : m_grid(grid), m_summary_file(outputPrefix), m_runner(nullptr)
+            {
+            }
+
+            int LoadMap();
 
             /// Let viewer perform update.
             void Update(sim_event::Id id);
