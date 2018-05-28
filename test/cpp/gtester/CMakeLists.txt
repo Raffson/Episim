@@ -29,7 +29,10 @@ set(SRC
     main.cpp
     BatchRuns.cpp
     ScenarioData.cpp
+    UnitRange.cpp
+    UnitSlice.cpp
     UnitSegmentedVector.cpp
+    UnitSVIterator.cpp
 )
 if (OPENMP_FOUND)
     set(SRC ${SRC} ParallelRuns.cpp)
