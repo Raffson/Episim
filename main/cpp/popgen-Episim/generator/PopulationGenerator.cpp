@@ -266,6 +266,39 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         }
 }
 
+void PopulationGenerator::operator()(){
+
+    // Attempt on generate that works better with openMP
+
+    cout << "Starting population generation..." << endl;
+    const clock_t begin_time     = clock();
+    long long int remaining_pop  = m_grid.GetTotalPop(); // long long to make sure the unsigned i
+    vector<pair<unsigned int, City*>> household_sizes_cty;
+
+    while(remaining_pop > 0){
+        auto household_size = GetRandomHouseholdSize();
+        if (remaining_pop - household_size < 0)
+            household_size = (unsigned int) remaining_pop;
+
+        remaining_pop -= household_size;
+        household_sizes_cty.emplace_back(pair<unsigned int, City*>(household_size,&GetRandomCity()));
+    }
+
+
+    for(auto it = household_sizes_cty.begin(); it < household_sizes_cty.end(); it++){
+
+        GenerateHousehold(it->first, *it->second);
+    }
+
+    cout << "Done generating population, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC
+         << endl;
+    SurveySeeder(m_grid.GetConfigPtree(), m_rng).Seed(m_grid.GetPopulation());
+
+
+
+    //
+}
+
 void PopulationGenerator::Generate()
 {
         // TODO: currently it takes about 20sec to generate 4.3 million people,
@@ -276,7 +309,7 @@ void PopulationGenerator::Generate()
         long long int remaining_pop  = m_grid.GetTotalPop(); // long long to make sure the unsigned int fits...
         long long int threaded_pop = round(remaining_pop / omp_get_max_threads());
 
-#pragma omp parallel for schedule(static)
+//#pragma omp parallel for schedule(static)
         for(int i = 0; i < omp_get_max_threads(); i++) {
                 long long int local_threaded_pop = threaded_pop;
                 while (local_threaded_pop > 0) {
@@ -286,7 +319,6 @@ void PopulationGenerator::Generate()
                                 household_size = local_threaded_pop;
 
                         GenerateHousehold(household_size, city);
-                        
                         local_threaded_pop -= household_size;
                 }
 
