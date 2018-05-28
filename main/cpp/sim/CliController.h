@@ -73,6 +73,8 @@ private:
         /// Make the appropriate logger for cli environment and register as stride_logger.
         void MakeLogger();
 
+        void CreateGrid();
+
         /// Register the viewers of the SimRunner.
         void RegisterViewers(std::shared_ptr<SimRunner> runner);
 
