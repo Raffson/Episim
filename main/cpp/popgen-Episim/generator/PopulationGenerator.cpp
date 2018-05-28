@@ -201,25 +201,42 @@ void PopulationGenerator::GeneratePerson(const double& age, const size_t& hid, c
         size_t schoolid = (school) ? school->GetID() : 0;
         size_t workid   = (workplace) ? workplace->GetID() : 0;
         size_t pcid     = (primcomm) ? primcomm->GetID() : 0;
+        Person *person;
+
         pop.emplace_back(pop.size(), age, hid, schoolid, workid, pcid, scid);
-        Person* person = &pop.back();
+        person = &pop.back();
+
         // Add the person to the contactpools, if any...
         if (school)
-                school->AddMember(person);
+
+        school->AddMember(person);
+
         if (workplace)
-                workplace->AddMember(person);
+
+        workplace->AddMember(person);
+
         if (primcomm)
-                primcomm->AddMember(person);
+
+        primcomm->AddMember(person);
+
 }
 
 void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
 {
         auto&        pop           = *m_grid.GetPopulation();
         auto&        pool_sys      = pop.GetContactPoolSys();
-        auto&        the_household = city.AddHousehold(pool_sys);
-        size_t       hid           = the_household.GetID();
+        Household* the_household;
 
-        ContactPool* seccomm = GetRandomContactPool(GetRandomCommunities(city, CommunityType::Id::Secondary));
+#pragma omp critical(add_household)
+        {
+                the_household = &city.AddHousehold(pool_sys);
+        }
+        size_t       hid           = the_household->GetID();
+
+    ContactPool *seccomm;
+
+       seccomm  = GetRandomContactPool(GetRandomCommunities(city, CommunityType::Id::Secondary));
+
         // Meaning you always get assigned to a community?
         size_t scid = (seccomm) ? seccomm->GetID() : 0;
 
@@ -231,10 +248,21 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
                 }
                 //if( model_household.size() == 1 and category == Fractions::SCHOOLED)
                 //    cout << "Lonely minor of model age=" << model_household[i] << " has now received age=" << age << endl;
+                Person* p;
+#pragma omp critical(gen_person)
+            {
                 GeneratePerson(age, hid, scid, pop, city);
-                the_household.AddMember(&pop.back());
+                p = &pop.back();
+            }
+#pragma omp critical(household_addmember)
+            {
+                the_household->AddMember(p);
+            }
                 if (seccomm)
-                        seccomm->AddMember(&pop.back());
+#pragma omp critical(secomm_addmember)
+            {
+                seccomm->AddMember(p);
+            }
         }
 }
 
@@ -246,17 +274,26 @@ void PopulationGenerator::Generate()
         cout << "Starting population generation..." << endl;
         const clock_t begin_time     = clock();
         long long int remaining_pop  = m_grid.GetTotalPop(); // long long to make sure the unsigned int fits...
+        long long int threaded_pop = round(remaining_pop / omp_get_max_threads());
 
-        while (remaining_pop > 0) {
-                City& city           = GetRandomCity();
-                auto  household_size = GetRandomHouseholdSize();
-                if (remaining_pop - household_size < 0)
-                        household_size = remaining_pop;
-                GenerateHousehold(household_size, city);
-                remaining_pop -= household_size;
+#pragma omp parallel for schedule(static)
+        for(int i = 0; i < omp_get_max_threads(); i++) {
+                long long int local_threaded_pop = threaded_pop;
+                while (local_threaded_pop > 0) {
+                        City &city = GetRandomCity();
+                        auto household_size = GetRandomHouseholdSize();
+                        if (local_threaded_pop - household_size < 0)
+                                household_size = local_threaded_pop;
+
+                        GenerateHousehold(household_size, city);
+                        
+                        local_threaded_pop -= household_size;
+                }
+
         }
-        cout << "Done generating population, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
-        SurveySeeder(m_grid.GetConfigPtree(), m_rng).Seed(m_grid.GetPopulation());
+    cout << "Done generating population, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC
+         << endl;
+    SurveySeeder(m_grid.GetConfigPtree(), m_rng).Seed(m_grid.GetPopulation());
 }
 
 const vector<Community*>& PopulationGenerator::GetRandomCommunities(const City& city, const CommunityType::Id& type)
