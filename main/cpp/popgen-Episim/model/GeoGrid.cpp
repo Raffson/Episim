@@ -33,28 +33,6 @@ GeoGrid::GeoGrid()
             m_sizes_map[size] = 0;
 }
 
-void GeoGrid::Reset()
-{
-        //Reset causes a crash if called multiple times like in the Ctor-test,
-        // I have no clue why...
-        m_population = nullptr;
-        for( auto frac : FractionList )
-            m_fract_map[frac] = 0;
-        for( auto size : SizeList )
-            m_sizes_map[size] = 0;
-        m_model_households.clear();
-        m_cities.clear();
-        m_neighbours_in_radius.clear();
-        m_initial_search_radius = 0;
-        m_total_pop = 0;
-        m_model_pop = 0;
-        m_school_count = 0;
-        m_cities_with_college.clear();
-        m_random_ages = false;
-        m_config_pt.clear();
-        m_rng.Initialize();
-}
-
 Coordinate GeoGrid::GetCenterOfGrid()
 {
         double smallestX    = numeric_limits<double>::max();
