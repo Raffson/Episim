@@ -51,14 +51,14 @@ class CliController
 {
 public:
         /// Straight initialization.
-        explicit CliController(const boost::property_tree::ptree& configPt);
+        explicit CliController(const boost::property_tree::ptree& configPt, const bool draw = false);
 
         /// Actual run of the simulator.
         void Control();
 
 private:
         /// Empty controller: used as target for delegation.
-        explicit CliController();
+        explicit CliController(const bool draw = false);
 
         /// Check install environment.
         void CheckEnv();
@@ -73,8 +73,6 @@ private:
         /// Make the appropriate logger for cli environment and register as stride_logger.
         void MakeLogger();
 
-        void CreateGrid();
-
         /// Register the viewers of the SimRunner.
         void RegisterViewers(std::shared_ptr<SimRunner> runner);
 
@@ -83,8 +81,9 @@ private:
         std::string                     m_output_prefix;    ///< Prefix to output (name prefix or prefix dir)
         util::Stopwatch<>               m_run_clock;        ///< Stopwatch for timing the computation.
         std::shared_ptr<spdlog::logger> m_stride_logger;    ///< General logger.
-        bool                            m_use_install_dirs; /// Working dir or install dir mode.
+        bool                            m_use_install_dirs; ///< Working dir or install dir mode.
         std::shared_ptr<GeoGrid>        m_geogrid;          ///< The GeoGrid.
+        bool                            m_draw_map;         ///< Draw or don't draw a map of the GeoGrid.
 };
 
 } // namespace stride

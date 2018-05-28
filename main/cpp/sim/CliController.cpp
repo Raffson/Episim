@@ -48,13 +48,13 @@ using namespace boost::property_tree::xml_parser;
 
 namespace stride {
 
-CliController::CliController()
+CliController::CliController(const bool draw)
     : m_config_pt(), m_output_prefix(""), m_run_clock("run"), m_stride_logger(nullptr), m_use_install_dirs(),
-      m_geogrid(nullptr)
+      m_geogrid(nullptr), m_draw_map(draw)
 {
 }
 
-CliController::CliController(const ptree& configPt) : CliController()
+CliController::CliController(const ptree& configPt, const bool draw) : CliController(draw)
 {
         m_run_clock.Start();
         m_config_pt        = configPt;
@@ -65,12 +65,6 @@ CliController::CliController(const ptree& configPt) : CliController()
         CheckOutputPrefix();
         MakeLogger();
         LogSetup();
-        CreateGrid();
-}
-
-void CliController::CreateGrid() {
-        m_geogrid = stride::GeoGridGenerator().Generate("run_default.xml", true);
-        stride::PopulationGenerator(*m_geogrid).Generate();
 }
 
 void CliController::CheckEnv()
@@ -159,10 +153,9 @@ void CliController::RegisterViewers(shared_ptr<SimRunner> runner)
         }
 
 
-
 #ifdef USING_QT
-        // Map viewer
-        if (m_config_pt.get<bool>("run.output_map", true)) {
+        // Map viewer, m_geogrid should never be null but checking just in case...
+        if (m_draw_map and m_geogrid and m_config_pt.get<bool>("run.output_map", true)) {
             m_stride_logger->info("Registering MapViewer");
             const auto v = make_shared<viewers::MapViewer>(runner, m_output_prefix, m_geogrid);
             runner->Register(v, bind(&viewers::MapViewer::Update, v, placeholders::_1));
