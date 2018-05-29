@@ -124,8 +124,8 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
         if (!m_neighbours_in_radius[origin.GetId()].count(radius)) {
                 unsigned int next_smaller = m_initial_search_radius;
                 while ((radius / next_smaller) > 1)
-                        next_smaller *= 2; // equivalent to multiplying by 2.
-                unsigned int next_bigger = next_smaller *= 2;
+                        next_smaller <<= 1; // equivalent to multiplying by 2, just more efficient...
+                unsigned int next_bigger = next_smaller << 1;
                 if ((next_bigger - radius) >= (radius - next_smaller))
                         radius = next_smaller;
                 else

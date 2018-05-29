@@ -395,7 +395,7 @@ void GeoGridGenerator::ClassifyNeighbours()
             // 2*initial_radius), etc.
             unsigned int category = m_grid->m_initial_search_radius;
             while ((distance / category) > 0)
-                category *= 2; // equivalent to multiplying by 2
+                category <<= 1; // equivalent to multiplying by 2, just more efficient...
             for( auto type : CommunityType::IdList) {
                 if( cityB.second.HasCommunityType(type) )
 #pragma critical(nirmap_emplace)
