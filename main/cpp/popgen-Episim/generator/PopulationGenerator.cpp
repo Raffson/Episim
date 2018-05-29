@@ -287,16 +287,18 @@ void PopulationGenerator::operator()(){
             remaining_pop -= household_size;
             temp_vec.emplace_back(pair<unsigned int, City *>(household_size, &GetRandomCity()));
         }
-//#pragma omp critical(total_insert)
+#pragma omp critical(total_insert)
         {
          household_sizes_cty.insert(household_sizes_cty.end(), temp_vec.begin(), temp_vec.end());
         }
     }
 
+
 #pragma omp parallel for
-    for(auto it = household_sizes_cty.begin(); it < household_sizes_cty.end(); it++){
+    for(auto it = household_sizes_cty.begin(); it < household_sizes_cty.end(); it++) {
         GenerateHousehold(it->first, *it->second);
     }
+
 
     cout << "Done generating population, time needed = " << omp_get_wtime() - begin_time
          << endl;
@@ -341,7 +343,9 @@ const vector<Community*>& PopulationGenerator::GetRandomCommunities(const City& 
         unsigned int radius = m_grid.GetInitialSearchRadius();
         REQUIRE(radius > 0, "Initial search radius of the GeoGrid must be bigger than 0.");
         while (radius != 0) {
-                const vector<City*>& cities = m_grid.GetCitiesWithinRadiusWithCommunityType(city, radius, type);
+
+                const vector<City *> &cities = m_grid.GetCitiesWithinRadiusWithCommunityType(city, radius, type);
+
                 if (!cities.empty()) {
                         auto index = (unsigned int)m_rng.GetGenerator(trng::uniform_int_dist(0, cities.size()))();
                         return cities[index]->GetCommunitiesOfType(type);
