@@ -37,44 +37,44 @@ void PopulationGenerator::InitializeHouseholdFractions()
 
 void PopulationGenerator::InitializeCommutingFractions()
 {
-        const double commuting_students_frac = m_grid.GetFraction(Fractions::COMMUTING_STUDENTS);
-        const double student_frac            = m_grid.GetFraction(Fractions::STUDENTS);
-        const double young_workers_frac      = m_grid.GetFraction(Fractions::YOUNG);
-        const double student_commuters_frac  = commuting_students_frac * student_frac * young_workers_frac;
+        const double commutingStudentsFrac = m_grid.GetFraction(Fractions::COMMUTING_STUDENTS);
+        const double studentFrac            = m_grid.GetFraction(Fractions::STUDENTS);
+        const double youngWorkersFrac      = m_grid.GetFraction(Fractions::YOUNG);
+        const double studentCommutersFrac  = commutingStudentsFrac * studentFrac * youngWorkersFrac;
         for (const auto& cityA : m_grid.GetCities()) // for each cityA...
         {
                 m_city_ids.emplace_back(cityA.first);
                 if (cityA.second.HasCommunityType(CommunityType::Id::College))
                         m_college_ids.emplace_back(cityA.first);
-                vector<double> worker_dist;
-                vector<double> student_dist;
+                vector<double> workerDist;
+                vector<double> studentDist;
                 double         commutersA = cityA.second.GetTotalOutCommutersCount();
                 for (const auto& cityB : m_grid.GetCities()) // calculate the chance to commute from cityA to cityB
                 {
-                        const bool has_college = cityB.second.HasCommunityType(CommunityType::Id::College);
+                        const bool hasCollege = cityB.second.HasCommunityType(CommunityType::Id::College);
                         // We don't want local commuting
                         if (cityA.first != cityB.first) {
-                                if (has_college) {
+                                if (hasCollege) {
                                         // Calculate the nr of commuting students
-                                        double students = cityA.second.GetPopulation() * student_commuters_frac;
+                                        double students = cityA.second.GetPopulation() * studentCommutersFrac;
                                         students *= (cityA.second.GetOutCommuting().at(cityB.first) / commutersA);
-                                        worker_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first) -
+                                        workerDist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first) -
                                                                  students);
-                                        student_dist.emplace_back(students);
+                                        studentDist.emplace_back(students);
                                 } else
-                                        worker_dist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first));
+                                        workerDist.emplace_back(cityA.second.GetOutCommuting().at(cityB.first));
 
                         } else // just push a 0, this will make sure this particular index can't be chosen...
                         {
-                                worker_dist.emplace_back(0);
-                                if (has_college)
-                                        student_dist.emplace_back(0);
+                                workerDist.emplace_back(0);
+                                if (hasCollege)
+                                        studentDist.emplace_back(0);
                         }
                 }
-                check_distribution(worker_dist);
-                check_distribution(student_dist);
-                m_worker_commuting_fracs[cityA.first]  = worker_dist;
-                m_student_commuting_fracs[cityA.first] = student_dist;
+                check_distribution(workerDist);
+                check_distribution(studentDist);
+                m_worker_commuting_fracs[cityA.first]  = workerDist;
+                m_student_commuting_fracs[cityA.first] = studentDist;
         }
 }
 
@@ -215,9 +215,9 @@ void PopulationGenerator::GeneratePerson(const double& age, const size_t& hid, c
 void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
 {
         auto&        pop           = *m_grid.GetPopulation();
-        auto&        pool_sys      = pop.GetContactPoolSys();
-        auto&        the_household = city.AddHousehold(pool_sys);
-        size_t       hid           = the_household.GetID();
+        auto&        poolSys      = pop.GetContactPoolSys();
+        auto&        theHousehold = city.AddHousehold(poolSys);
+        size_t       hid           = theHousehold.GetID();
 
         ContactPool* seccomm = GetRandomContactPool(GetRandomCommunities(city, CommunityType::Id::Secondary));
         // Meaning you always get assigned to a community?
@@ -232,7 +232,7 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
                 //if( model_household.size() == 1 and category == Fractions::SCHOOLED)
                 //    cout << "Lonely minor of model age=" << model_household[i] << " has now received age=" << age << endl;
                 GeneratePerson(age, hid, scid, pop, city);
-                the_household.AddMember(&pop.back());
+                theHousehold.AddMember(&pop.back());
                 if (seccomm)
                         seccomm->AddMember(&pop.back());
         }
@@ -244,18 +244,18 @@ void PopulationGenerator::Generate()
         // TODO: this should be improved even more if possible...
 
         cout << "Starting population generation..." << endl;
-        const clock_t begin_time     = clock();
-        long long int remaining_pop  = m_grid.GetTotalPop(); // long long to make sure the unsigned int fits...
+        const clock_t beginTime     = clock();
+        long long int remainingPop  = m_grid.GetTotalPop(); // long long to make sure the unsigned int fits...
 
-        while (remaining_pop > 0) {
+        while (remainingPop > 0) {
                 City& city           = GetRandomCity();
-                auto  household_size = GetRandomHouseholdSize();
-                if (remaining_pop - household_size < 0)
-                        household_size = remaining_pop;
-                GenerateHousehold(household_size, city);
-                remaining_pop -= household_size;
+                auto  householdSize = GetRandomHouseholdSize();
+                if (remainingPop - householdSize < 0)
+                        householdSize = remainingPop;
+                GenerateHousehold(householdSize, city);
+                remainingPop -= householdSize;
         }
-        cout << "Done generating population, time needed = " << double(clock() - begin_time) / CLOCKS_PER_SEC << endl;
+        cout << "Done generating population, time needed = " << double(clock() - beginTime) / CLOCKS_PER_SEC << endl;
         SurveySeeder(m_grid.GetConfigPtree(), m_rng).Seed(m_grid.GetPopulation());
 }
 
