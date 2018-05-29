@@ -161,6 +161,10 @@ add_executable(popgen-Episim popgen-Episim/main.cpp)
 target_link_libraries(popgen-Episim ${LIBS} libstride)
 install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
 
+add_executable(seg_searcher popgen-Episim/seg_searcher.cpp)
+target_link_libraries(seg_searcher ${LIBS} libstride)
+install(TARGETS seg_searcher  DESTINATION   ${BIN_INSTALL_LOCATION})
+
 #============================================================================
 # Clean up.
 #============================================================================

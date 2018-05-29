@@ -334,10 +334,21 @@ void PopulationGenerator::Generate()
 
         }
 
-        // Fixing rest of dividing by thread
-        City &city = GetRandomCity();
-        auto household_size = remaining_pop % omp_get_max_threads();
-        GenerateHousehold((unsigned int)household_size, city);
+        //Fixing rest of dividing by thread
+        remaining_pop = remaining_pop % omp_get_max_threads();
+        while(remaining_pop > 0){
+            City &city = GetRandomCity();
+            auto household_size = GetRandomHouseholdSize();
+            if (remaining_pop - household_size < 0)
+                household_size = (unsigned int) remaining_pop;
+
+            GenerateHousehold(household_size, city);
+            remaining_pop -= household_size;
+        }
+
+
+
+
 
     cout << "Done generating population, time needed = " << omp_get_wtime() - begin_time
          << endl;
