@@ -92,34 +92,34 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
         trng::discrete_dist distr(m_household_size_fracs.begin(), m_household_size_fracs.end());
         // plus 1 because discrete_dist returns numbers between 0 and (m_household_size_fracs.size() - 1)
         // we need numbers between 1 and m_household_size_fracs.size()
-        return (unsigned int)(m_rng.GetGenerator(distr)() + 1);
+        return (unsigned int)(m_rng.GetGenerator(distr,omp_get_thread_num())() + 1);
 }
 
 const vector<double>& PopulationGenerator::GetRandomModelHouseholdOfSize(unsigned int size)
 {
     const auto& households = m_grid.GetModelHouseholds().at(size);
     trng::uniform_int_dist distr(0, households.size());
-    return households[m_rng.GetGenerator(distr)()];
+    return households[m_rng.GetGenerator(distr,omp_get_thread_num())()];
 }
 
 double PopulationGenerator::GetRandomAge(Fractions category)
 {
         switch (category) {
         case Fractions::SCHOOLED : // [3, 18)
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(3.0, 18.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(3.0, 18.0),omp_get_thread_num())();
         case Fractions::YOUNG : // [18, 26)
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(18.0, 26.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(18.0, 26.0),omp_get_thread_num())();
         case Fractions::MIDDLE_AGED : // [26, 65)
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(26.0, 65.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(26.0, 65.0),omp_get_thread_num())();
         case Fractions::TODDLERS : // [0, 3)
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(0.0, 3.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(0.0, 3.0),omp_get_thread_num())();
         case Fractions::OLDIES : // [65, 81), cause maximum age according to Age.h is 80...
                 // gotta improve this since we would need [65, 80] but not with a uniform distribution...
                 // because the chances you become older get smaller and smaller right?
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(65.0, 81.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(65.0, 81.0),omp_get_thread_num())();
         default:
                 // throw an exception here instead?
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(0.0, 81.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(0.0, 81.0),omp_get_thread_num())();
         }
 }
 
@@ -135,11 +135,11 @@ ContactPool* PopulationGenerator::GetRandomContactPool(const vector<Community*>&
                 return nullptr;
 
         trng::uniform_int_dist distr(0, comms.size());
-        unsigned int           index = (unsigned int)m_rng.GetGenerator(distr)();
+        unsigned int           index = (unsigned int)m_rng.GetGenerator(distr, omp_get_thread_num())();
         auto&                  pools = comms.at(index)->GetContactPools();
         if (!pools.empty()) {
                 trng::uniform_int_dist pdistr(0, pools.size());
-                unsigned int           index2 = (unsigned int)m_rng.GetGenerator(pdistr)();
+                unsigned int           index2 = (unsigned int)m_rng.GetGenerator(pdistr, omp_get_thread_num())();
                 return pools[index2];
         } else
                 return nullptr;
@@ -152,7 +152,7 @@ const bool PopulationGenerator::FlipUnfairCoin(const double& frac)
         fracs.emplace_back(1 - frac);
         fracs.emplace_back(frac);
         trng::discrete_dist distr(fracs.begin(), fracs.end());
-        return (const bool)m_rng.GetGenerator(distr)();
+        return (const bool)m_rng.GetGenerator(distr,omp_get_thread_num())();
 }
 
 const bool PopulationGenerator::IsWorkingCommuter()
@@ -276,7 +276,7 @@ void PopulationGenerator::operator()(){
     int max_threads = omp_get_max_threads();
 
 #pragma omp parallel for
-    for (unsigned int i = 0 ; i < max_threads; i ++) {
+    for (int i = 0 ; i <max_threads; i ++) {
         auto remaining_pop = round(total_pop / max_threads);
         vector<pair<unsigned int, City*>> temp_vec;
         while (remaining_pop > 0) {
@@ -347,7 +347,8 @@ const vector<Community*>& PopulationGenerator::GetRandomCommunities(const City& 
                 const vector<City *> &cities = m_grid.GetCitiesWithinRadiusWithCommunityType(city, radius, type);
 
                 if (!cities.empty()) {
-                        auto index = (unsigned int)m_rng.GetGenerator(trng::uniform_int_dist(0, cities.size()))();
+                        auto index = (unsigned int)m_rng.GetGenerator(trng::uniform_int_dist(0, cities.size()),
+                                omp_get_thread_num())();
                         return cities[index]->GetCommunitiesOfType(type);
                 }
                 radius <<= 1; // equivalent to multiplying by 2
@@ -379,7 +380,7 @@ City& PopulationGenerator::GetRandomCommutingCity(City& origin, const bool stude
         const vector<double>& distribution = student ? m_student_commuting_fracs[origin.GetId()]
                                                      : m_worker_commuting_fracs[origin.GetId()];
         trng::discrete_dist distr(distribution.begin(), distribution.end());
-        auto                index = (const unsigned int)m_rng.GetGenerator(distr)();
+        auto                index = (const unsigned int)m_rng.GetGenerator(distr,omp_get_thread_num())();
 
         const unsigned int  id    = student ? m_college_ids.at(index) : m_city_ids.at(index);
         origin.AddEffectiveCommuterTo(id);
