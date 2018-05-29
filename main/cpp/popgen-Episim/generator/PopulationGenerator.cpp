@@ -126,7 +126,7 @@ double PopulationGenerator::GetRandomAge(Fractions category)
 City& PopulationGenerator::GetRandomCity()
 {
         trng::discrete_dist distr(m_city_pop_fracs.begin(), m_city_pop_fracs.end());
-        return m_grid[m_city_ids[(unsigned int)m_rng.GetGenerator(distr)()]];
+        return m_grid[m_city_ids[(unsigned int)m_rng.GetGenerator(distr, omp_get_thread_num())()]];
 }
 
 ContactPool* PopulationGenerator::GetRandomContactPool(const vector<Community*>& comms)
