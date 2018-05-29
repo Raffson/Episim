@@ -124,14 +124,17 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
         if (!m_neighbours_in_radius[origin.GetId()].count(radius)) {
                 unsigned int next_smaller = m_initial_search_radius;
                 while ((radius / next_smaller) > 1)
-                        next_smaller <<= 1; // equivalent to multiplying by 2.
-                unsigned int next_bigger = next_smaller << 1;
+                        next_smaller *= 2; // equivalent to multiplying by 2.
+                unsigned int next_bigger = next_smaller *= 2;
                 if ((next_bigger - radius) >= (radius - next_smaller))
                         radius = next_smaller;
                 else
                         radius = next_bigger;
                 //make sure radius does not exceed the limit
-                radius = min(radius, m_neighbours_in_radius[origin.GetId()].rbegin()->first);
+#pragma omp critical(radius_geogrid_get_community)
+                {
+                        radius = min(radius, m_neighbours_in_radius[origin.GetId()].rbegin()->first);
+                }
         }
         return m_neighbours_in_radius[origin.GetId()][radius][type];
 }
