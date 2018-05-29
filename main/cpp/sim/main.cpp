@@ -73,6 +73,11 @@ int main(int argc, char** argv)
                             "stride install directories";
                 SwitchArg installedArg("i", "installed", si, cmd, true);
 
+                string sv = "Specifies whether a map should be initialized by using -m or --mapviewer. Note that this "
+                            "will automatically introduce a syntheticly generator population since the populations "
+                            "for the regular simulator do not have geographical information.";
+                SwitchArg mapArg("m", "mapviewer", sv, cmd, false);
+
                 cmd.parse(argc, static_cast<const char* const*>(argv));
 
                 // -----------------------------------------------------------------------------------------
@@ -97,9 +102,21 @@ int main(int argc, char** argv)
                 }
 
                 // -----------------------------------------------------------------------------------------
+                // If geopop ...
+                // -----------------------------------------------------------------------------------------
+                if (execArg.getValue() == "geopop" or mapArg.getValue()) {
+                        if (configPt.get<string>("run.output_prefix", "").empty()) {
+                                configPt.put("run.output_prefix", TimeStamp().ToTag().append("/"));
+                        }
+                        configPt.put("run.random_geopop", true);
+                        configPt.sort();
+
+                        CliController(configPt, mapArg.getValue()).Control();
+                }
+                // -----------------------------------------------------------------------------------------
                 // If run simulation in cli ...
                 // -----------------------------------------------------------------------------------------
-                if (execArg.getValue() == "sim") {
+                else if (execArg.getValue() == "sim") {
                         if (configPt.get<string>("run.output_prefix", "").empty()) {
                                 configPt.put("run.output_prefix", TimeStamp().ToTag().append("/"));
                         }
@@ -113,18 +130,6 @@ int main(int argc, char** argv)
                 // -----------------------------------------------------------------------------------------
                 else if (execArg.getValue() == "simgui") {
                         cout << "Not implented here yet ..." << endl;
-                }
-                // -----------------------------------------------------------------------------------------
-                // If geopop ...
-                // -----------------------------------------------------------------------------------------
-                else if (execArg.getValue() == "geopop") {
-                        if (configPt.get<string>("run.output_prefix", "").empty()) {
-                                configPt.put("run.output_prefix", TimeStamp().ToTag().append("/"));
-                        }
-                        configPt.put("run.random_geopop", true);
-                        configPt.sort();
-
-                        CliController(configPt).Control();
                 }
                 // -----------------------------------------------------------------------------------------
                 // If clean/dump ...
