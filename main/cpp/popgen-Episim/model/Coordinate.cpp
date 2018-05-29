@@ -15,9 +15,7 @@
 
 #include "Coordinate.h"
 
-#include <boost/geometry/algorithms/distance.hpp>
-#include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
-#include <boost/geometry/strategies/cartesian/distance_pythagoras.hpp>
+
 
 using namespace std;
 

@@ -23,6 +23,10 @@
 #include "pool/ContactPoolType.h"
 #include "popgen-Episim/util/Utility.h"
 
+#include <boost/algorithm/string.hpp>
+#include <map>
+
+
 namespace stride {
 namespace CommunityType {
 

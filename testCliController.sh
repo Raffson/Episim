@@ -5,4 +5,4 @@ make -j16
 make all
 make install
 cd installed/
-./bin/stride
+./bin/stride -m

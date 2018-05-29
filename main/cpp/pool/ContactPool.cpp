@@ -49,8 +49,13 @@ ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, Househol
 
 void ContactPool::AddMember(const Person* p)
 {
-        m_members.emplace_back(const_cast<Person*>(p));
-        m_index_immune++;
+#pragma omp critical(c_enter)
+        {
+                m_members.emplace_back(const_cast<Person *>(p));
+        }
+#pragma atomic
+                m_index_immune++;
+
 }
 
 std::tuple<bool, size_t> ContactPool::SortMembers()
@@ -86,6 +91,12 @@ std::tuple<bool, size_t> ContactPool::SortMembers()
                 }
         }
         return std::make_tuple(infectious_cases, num_cases);
+}
+
+void ContactPool::ClearPool()
+{
+        m_index_immune = 0;
+        m_members.clear();
 }
 
 } // namespace stride

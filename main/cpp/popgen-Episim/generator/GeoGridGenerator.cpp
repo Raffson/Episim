@@ -183,17 +183,28 @@ void GeoGridGenerator::CommunitiesFromFile(const string &fname)
 {
     const auto& smap = m_grid->m_sizes_map;
     util::CSV csv(fname);
-    for (const auto &row : csv)
+#pragma omp parallel for
+    for (auto row = csv.begin(); row < csv.end(); row ++)
     {
-        auto  id   = row.GetValue<size_t>("community_id");
-        auto  type = row.GetValue<string>("community_type");
-        auto  cid  = row.GetValue<unsigned int>("city_id");
+        auto  id   = row->GetValue<size_t>("community_id");
+        auto  type = row->GetValue<string>("community_type");
+        auto  cid  = row->GetValue<unsigned int>("city_id");
         auto& c    = m_grid->m_cities.at(cid).AddCommunity(id, CommunityType::ToType(type));
         Sizes size = CommunityType::ToSizes(CommunityType::ToType(type));
-        for( unsigned int i=0; i < ceil((double)smap.at(size) / smap.at(Sizes::AVERAGE_CP)); i++ )
+        for( unsigned int i=0; i < ceil((double)smap.at(size) / smap.at(Sizes::AVERAGE_CP)); i++ ) {
             c.AddContactPool(m_grid->m_population->GetContactPoolSys());
-        if( type == "school" ) m_grid->m_school_count++;
-        if( type == "college" ) m_grid->m_cities_with_college.emplace_back(&m_grid->m_cities.at(cid));
+        }
+
+        if( type == "school" ) {
+#pragma atomic
+            m_grid->m_school_count++;
+        }
+        if( type == "college" ) {
+#pragma critical(c_college_emplace)
+            {
+                m_grid->m_cities_with_college.emplace_back(&m_grid->m_cities.at(cid));
+            }
+        }
     }
 }
 void GeoGridGenerator::PopulationFromFile(const string &fname)
@@ -201,19 +212,26 @@ void GeoGridGenerator::PopulationFromFile(const string &fname)
     ContactPoolSys& poolSys = m_grid->m_population->GetContactPoolSys();
     unsigned int pid = 0U;
     util::CSV csv(fname);
-    for (const auto &row : csv)
+#pragma omp parallel for
+    for (auto row = csv.begin(); row < csv.end(); row ++)
     {
-        const auto age  = row.GetValue<double>("age");
-        const auto hid  = row.GetValue<size_t>("household_id");
-        const auto sid  = row.GetValue<size_t>("school_id");
-        const auto wid  = row.GetValue<size_t>("work_id");
-        const auto pcid = row.GetValue<size_t>("primary_community");
-        const auto scid = row.GetValue<size_t>("secundary_community");
-        m_grid->m_population->emplace_back(pid++, age, hid, sid, wid, pcid, scid);
+        const auto age  = row->GetValue<double>("age");
+        const auto hid  = row->GetValue<size_t>("household_id");
+        const auto sid  = row->GetValue<size_t>("school_id");
+        const auto wid  = row->GetValue<size_t>("work_id");
+        const auto pcid = row->GetValue<size_t>("primary_community");
+        const auto scid = row->GetValue<size_t>("secundary_community");
+#pragma omp critical(emplace_bck)
+        {
+            m_grid->m_population->emplace_back(pid++, age, hid, sid, wid, pcid, scid);
+        }
         if( hid > poolSys[ContactPoolType::Id::Household].size() )
         {
-            const auto cid  = row.GetValue<unsigned int>("city_id");
-            m_grid->m_cities.at(cid).AddHousehold(poolSys);
+            const auto cid  = row->GetValue<unsigned int>("city_id");
+#pragma omp critical(add_house_hold)
+            {
+                m_grid->m_cities.at(cid).AddHousehold(poolSys);
+            }
         }
         const Person* p = &m_grid->m_population->back();
         for( auto type : ContactPoolType::IdList )
@@ -357,11 +375,22 @@ void GeoGridGenerator::ClassifyNeighbours()
     // could be different if we had more cities though, but can we test that?
     auto& nirmap = m_grid->m_neighbours_in_radius;
     auto& cities = m_grid->m_cities;
-    for (auto& cityA : cities) {
+
+    vector<unsigned int> keys;
+
+    unsigned int counter = 0;
+    for(auto& it: cities){
+        keys.emplace_back(it.first);
+        counter++;
+    }
+
+#pragma omp parallel for
+    for (auto ka = keys.begin(); ka < keys.end(); ka++) {
+        auto cityA = cities.at(*ka);
         for (auto& cityB : cities) {
             // truncating distance on purpose to avoid using floor-function
             unsigned int distance =
-                    cityB.second.GetCoordinates().GetDistance(cityA.second.GetCoordinates());
+                    cityB.second.GetCoordinates().GetDistance(cityA.GetCoordinates());
             // mind that the categories go as follows [0, initial_radius), [initial_radius,
             // 2*initial_radius), etc.
             unsigned int category = m_grid->m_initial_search_radius;
@@ -369,7 +398,10 @@ void GeoGridGenerator::ClassifyNeighbours()
                 category <<= 1; // equivalent to multiplying by 2
             for( auto type : CommunityType::IdList) {
                 if( cityB.second.HasCommunityType(type) )
-                    nirmap[cityA.first][category][type].emplace_back(&cityB.second);
+#pragma critical(nirmap_emplace)
+                {
+                    nirmap[*ka][category][type].emplace_back(&cityB.second);
+                }
             }
         }
     }
@@ -411,13 +443,24 @@ void GeoGridGenerator::AddCommunities(const vector<City *>& cities, const vector
 {
     const auto& smap = m_grid->m_sizes_map;
     auto cps = ceil((double)smap.at(CommunityType::ToSizes(type)) / smap.at(Sizes::AVERAGE_CP));
-    for (unsigned int i = 0; i < indices.size(); i++) {
-        City&      chosenCity = *cities[indices[i]];
-        Community& nwSchool   = chosenCity.AddCommunity(m_cid_generator++, type);
 
-        // Add contactpools
-        for (auto j = 0; j < cps; j++)
-            nwSchool.AddContactPool(m_grid->m_population->GetContactPoolSys());
+#pragma omp parallel for
+    for (unsigned int i = 0; i < indices.size(); i++) {
+
+        Community* nwSchool;
+
+            City &chosen_city = *cities[indices[i]];
+#pragma  omp critical(f)
+        {
+            nwSchool = &chosen_city.AddCommunity(m_cid_generator++, type);
+        }
+
+            // Add contactpools
+            for (auto j = 0; j < cps; j++)
+#pragma omp critical(a)
+        {
+            nwSchool->AddContactPool(m_grid->m_population->GetContactPoolSys());
+        }
     }
 }
 

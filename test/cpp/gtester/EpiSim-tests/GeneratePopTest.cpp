@@ -33,6 +33,7 @@ public:
 
 protected:
     shared_ptr<GeoGrid> grid;
+    shared_ptr<GeoGrid> grid_openMP;
 
     /// Destructor has to be virtual.
     ~GenPopTest() override {}
@@ -42,6 +43,10 @@ protected:
     {
         grid = GeoGridGenerator().Generate("run_default.xml");
         PopulationGenerator(*grid).Generate();
+
+        grid_openMP = GeoGridGenerator().Generate("run_default.xml");
+        auto gen = PopulationGenerator(*grid_openMP);
+        gen();
     }
 
     /// Tearing down the test fixture
@@ -125,6 +130,8 @@ TEST_P(GenPopTest, AgeDistributionTest)
     EXPECT_NEAR(actual_active, grid->GetFraction(Fractions::ACTIVE), margin * grid->GetFraction(Fractions::ACTIVE));
 
 }
+
+
 
 
 

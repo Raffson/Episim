@@ -14,6 +14,10 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/geometry/index/rtree.hpp>
 
+#include "util/CSV.h"
+#include "trng/discrete_dist.hpp"
+#include <boost/property_tree/xml_parser.hpp>
+
 namespace bgi = boost::geometry::index;
 typedef std::pair<gPoint, unsigned int> rtElem;
 

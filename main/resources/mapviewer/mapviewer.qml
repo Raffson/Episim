@@ -91,6 +91,10 @@ ApplicationWindow {
                 onClicked: showCommutes()
             }
             ToolButton {
+                text: qsTr("remove commutes")
+                onClicked: removeLines()
+            }
+            ToolButton {
                 text: qsTr("select all")
                 onClicked: selectAll()
             }
@@ -194,6 +198,16 @@ ApplicationWindow {
         updateSelected()
     }
 
+    function removeLines(){
+        for (var i = 0; i < map.children.length; i++)
+        {
+            if(map.children[i].objectName === "pD"){
+                map.removeMapItem(map.children[i])
+                i = 0
+            }
+        }
+    }
+
     function selectMultiple(){
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
 
@@ -220,7 +234,6 @@ ApplicationWindow {
 
 
     function showCommutes(number){
-        console.warn("start commuting");
         if(number === undefined) number = 10
         var count = 0;
         for (var i = 0; i < map.children.length; i++){
@@ -245,7 +258,6 @@ ApplicationWindow {
                 }
             }
         }
-        console.warn("finished commuting");
     }
 
     //defaults
