@@ -128,19 +128,6 @@ namespace Tests {
     }
 
 
-    TEST_P(GenPopTest, PopCrashCounter) {
-
-    for (unsigned int i = 0; i < 1000; i++) {
-        cout << i << endl;
-        auto grid = GeoGridGenerator().Generate("run_default.xml");
-        PopulationGenerator(*grid).Generate();
-    }
-}
-
-
-
-
-
 
 namespace {
 // OpenMP should have no effect atm...

@@ -338,6 +338,7 @@ void PopulationGenerator::Generate()
         City &city = GetRandomCity();
         auto household_size = remaining_pop % omp_get_max_threads();
         GenerateHousehold((unsigned int)household_size, city);
+
     cout << "Done generating population, time needed = " << omp_get_wtime() - begin_time
          << endl;
     SurveySeeder(m_grid.GetConfigPtree(), m_rng).Seed(m_grid.GetPopulation());
