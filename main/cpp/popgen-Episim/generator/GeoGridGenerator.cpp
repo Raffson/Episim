@@ -387,7 +387,7 @@ void GeoGridGenerator::ClassifyNeighbours()
         counter++;
     }
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for (auto ka = keys.begin(); ka < keys.end(); ka++) {
         auto cityA = cities.at(*ka);
         for (auto& cityB : cities) {
