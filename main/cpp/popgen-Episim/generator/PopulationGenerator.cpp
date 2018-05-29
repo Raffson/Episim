@@ -317,7 +317,7 @@ void PopulationGenerator::Generate()
         cout << "Starting population generation..." << endl;
         double begin_time     = omp_get_wtime();
         long long int remaining_pop  = m_grid.GetTotalPop(); // long long to make sure the unsigned int fits...
-        long double threaded_pop = remaining_pop / omp_get_max_threads();
+        long int threaded_pop = remaining_pop / omp_get_max_threads();
 
 #pragma omp parallel for schedule(static)
         for(int i = 0; i < omp_get_max_threads(); i++) {
@@ -333,6 +333,11 @@ void PopulationGenerator::Generate()
                 }
 
         }
+
+        // Fixing rest of dividing by thread
+        City &city = GetRandomCity();
+        auto household_size = remaining_pop % omp_get_max_threads();
+        GenerateHousehold((unsigned int)household_size, city);
     cout << "Done generating population, time needed = " << omp_get_wtime() - begin_time
          << endl;
     SurveySeeder(m_grid.GetConfigPtree(), m_rng).Seed(m_grid.GetPopulation());
