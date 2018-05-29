@@ -32,6 +32,7 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::filesystem::path &co
 
 shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree &pTree)
 {
+
     m_cid_generator = 1;
     struct make_shared_enabler : public GeoGrid
     {
@@ -45,6 +46,7 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree
     ReadDataFiles();
 
     const auto& pt = m_grid->m_config_pt;
+    omp_set_num_threads(pt.get<int>("run.num_threads"));
     m_grid->m_total_pop = pt.get<unsigned int>("run.popgen.pop_info.pop_total", 4341923);
     m_grid->m_population = Population::Create(pt);
 
@@ -66,6 +68,7 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree
         //surveyseeding should be done at a more appropriate location, right now it's all over the place...
         ClassifyNeighbours();
         m_grid->m_rng.StateFromFile(pt.get<string>("run.rng_state_file", "RNG-state.xml"));
+
     }
     else
         GenerateAll();
