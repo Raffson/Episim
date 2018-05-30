@@ -131,10 +131,9 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
                 else
                         radius = next_bigger;
                 //make sure radius does not exceed the limit
-#pragma omp critical(radius_geogrid_get_community)
-                {
-                        radius = min(radius, m_neighbours_in_radius[origin.GetId()].rbegin()->first);
-                }
+
+                radius = min(radius, m_neighbours_in_radius[origin.GetId()].rbegin()->first);
+
         }
         return m_neighbours_in_radius[origin.GetId()][radius][type];
 }

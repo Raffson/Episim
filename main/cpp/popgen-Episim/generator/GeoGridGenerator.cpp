@@ -40,6 +40,7 @@ shared_ptr<GeoGrid> GeoGridGenerator::Generate(const boost::property_tree::ptree
     m_grid = make_shared<make_shared_enabler>();
     //If an incorrect ptree is passed, this function may throw an exception...
     m_grid->m_config_pt = pTree;
+
     InitOutputStuff();
     AddPopgenPtree();
     ReadFractionsAndSizes();
@@ -392,8 +393,8 @@ void GeoGridGenerator::ClassifyNeighbours()
         auto cityA = cities.at(*ka);
         for (auto& cityB : cities) {
             // truncating distance on purpose to avoid using floor-function
-            unsigned int distance =
-                    cityB.second.GetCoordinates().GetDistance(cityA.GetCoordinates());
+            auto distance =
+            (unsigned int) cityB.second.GetCoordinates().GetDistance(cityA.GetCoordinates());
             // mind that the categories go as follows [0, initial_radius), [initial_radius,
             // 2*initial_radius), etc.
             unsigned int category = m_grid->m_initial_search_radius;
@@ -447,7 +448,7 @@ void GeoGridGenerator::AddCommunities(const vector<City *>& cities, const vector
     const auto& smap = m_grid->m_sizes_map;
     auto cps = ceil((double)smap.at(CommunityType::ToSizes(type)) / smap.at(Sizes::AVERAGE_CP));
 
-#pragma omp parallel for
+#pragma omp parallel for // cannot use range based
     for (unsigned int i = 0; i < indices.size(); i++) {
         Community* nw_school;
 
