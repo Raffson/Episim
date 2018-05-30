@@ -14,6 +14,7 @@
 #include <boost/geometry/algorithms/distance.hpp>
 #include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include "omp.h"
 
 using namespace std;
 

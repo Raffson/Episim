@@ -5,6 +5,7 @@
 
 #include "popgen-Episim/model/GeoGrid.h"
 #include <vector>
+#include "omp.h"
 
 namespace stride {
 
