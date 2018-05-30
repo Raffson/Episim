@@ -32,7 +32,7 @@ namespace Tests {
 
     protected:
         shared_ptr<GeoGrid> grid;
-        shared_ptr<GeoGrid> grid_openMP;
+
 
         /// Destructor has to be virtual.
         ~GenPopTest() override {}
@@ -41,10 +41,6 @@ namespace Tests {
         void SetUp() override {
             grid = GeoGridGenerator().Generate("run_default.xml");
             PopulationGenerator(*grid).Generate();
-
-            grid_openMP = GeoGridGenerator().Generate("run_default.xml");
-            auto gen = PopulationGenerator(*grid_openMP);
-            gen();
         }
 
         /// Tearing down the test fixture
