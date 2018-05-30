@@ -13,7 +13,6 @@
  */
 
 #include "City.h"
-#include "omp.h"
 
 using namespace std;
 
@@ -26,8 +25,6 @@ City::City(const unsigned int city_id, const unsigned int province, unsigned int
 {
         for( auto type : CommunityType::IdList )
                 m_types_present[type] = false;
-
-        omp_init_lock(&m_household_lock);
 }
 
 Community& City::AddCommunity(const size_t& id, CommunityType::Id type)
@@ -76,10 +73,7 @@ const double& City::GetTotalOutCommutersCount() const
 
 Household& City::AddHousehold(ContactPoolSys& pool_sys)
 {
-
-        omp_set_lock(&m_household_lock);
-        m_households.emplace_back(this, pool_sys); // Note that this ADDS to pool_sys
-        omp_unset_lock(&m_household_lock);
+        m_households.emplace_back(this, pool_sys);
         return m_households.back();
 }
 

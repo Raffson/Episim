@@ -4,8 +4,8 @@
 //
 
 #include "popgen-Episim/model/GeoGrid.h"
-#include <boost/filesystem.hpp>
 
+#include <boost/filesystem.hpp>
 
 
 namespace stride {

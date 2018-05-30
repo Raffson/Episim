@@ -3,7 +3,6 @@
 //
 
 #include "Household.h"
-#include "omp.h"
 
 using namespace std;
 
@@ -12,18 +11,16 @@ namespace stride {
 Household::Household(City* city, ContactPoolSys& pool_sys) :
         m_id(pool_sys[ContactPoolType::Id::Household].size()+1), m_city(city)
 {
-
         ContactPoolType::Id type = ContactPoolType::Id::Household;
-#pragma omp critical(contactpoolsys)
-        {
         pool_sys[type].emplace_back(m_id, type, this);
         m_pool = &pool_sys[type].back();
-        }
 }
 
 void Household::AddMember(const Person* member) {
-        m_pool->AddMember(member);
-
+#pragma omp critical(add_member)
+        {
+                m_pool->AddMember(member);
+        }
 }
 
 void Household::GetSchoolAttendants(vector<Person*>& vec) const
