@@ -13,6 +13,7 @@
  */
 
 #include "City.h"
+#include "omp.h"
 
 using namespace std;
 

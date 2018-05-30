@@ -6,6 +6,7 @@
 #include "pop/Person.h"
 #include "pool/ContactPoolSys.h"
 #include <vector>
+#include "omp.h"
 
 using namespace std;
 

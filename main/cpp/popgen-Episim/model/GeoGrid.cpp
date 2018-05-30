@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include <iostream>
+#include "omp.h"
 
 using namespace std;
 

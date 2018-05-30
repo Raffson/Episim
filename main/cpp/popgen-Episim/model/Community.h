@@ -19,6 +19,7 @@
 
 #include "CommunityType.h"
 #include "pool/ContactPoolSys.h"
+#include "omp.h"
 
 #include <map>
 
