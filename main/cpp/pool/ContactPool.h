@@ -24,6 +24,7 @@
 
 #include <tuple>
 #include <vector>
+#include "omp.h"
 
 namespace stride {
 
@@ -45,6 +46,8 @@ public:
 
         /// Initializing constructor for a contact pool that belongs to a household.
         ContactPool(std::size_t pool_id, ContactPoolType::Id type, Household* house);
+
+        ~ContactPool();
 
             /// Get the ID of the pool
         std::size_t GetID() const { return m_pool_id; }
@@ -85,6 +88,7 @@ private:
         std::vector<Person*> m_members;      ///< Pointers to contactpool members (raw pointers intentional).
         Community*           m_community;    ///< Pointer to the community that holds this pool.
         Household*           m_household;    ///< Pointer to the household that holds this pool.
+        omp_lock_t           m_lock;         ///<lock for mutual exlusion parallelism m_members
 };
 
 } // namespace stride

@@ -11,9 +11,13 @@ namespace stride {
 Household::Household(City* city, ContactPoolSys& pool_sys) :
         m_id(pool_sys[ContactPoolType::Id::Household].size()+1), m_city(city)
 {
+
         ContactPoolType::Id type = ContactPoolType::Id::Household;
+#pragma omp critical(ContactPoolSys)
+        {
         pool_sys[type].emplace_back(m_id, type, this);
         m_pool = &pool_sys[type].back();
+        }
 }
 
 void Household::AddMember(const Person* member) {

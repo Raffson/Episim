@@ -212,8 +212,6 @@ Person* PopulationGenerator::GeneratePerson(const double& age, const size_t& hid
     }
 
     // Add the person to the contactpools, if any...
-#pragma critical(contact_pool)
-    {
         if (school)
             school->AddMember(person);
 
@@ -222,7 +220,7 @@ Person* PopulationGenerator::GeneratePerson(const double& age, const size_t& hid
 
         if (primcomm)
             primcomm->AddMember(person);
-    }
+
 
     return person;
 }
@@ -233,10 +231,9 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         auto&        pool_sys      = pop.GetContactPoolSys();
         Household* the_household;
 
-#pragma omp critical(add_household)
-        {
-                the_household = &city.AddHousehold(pool_sys);
-        }
+
+        the_household = &city.AddHousehold(pool_sys);
+
         size_t       hid           = the_household->GetID();
 
         ContactPool *seccomm  = GetRandomContactPool(GetRandomCommunities(city, CommunityType::Id::Secondary));

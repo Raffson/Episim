@@ -33,28 +33,35 @@ ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type)
     : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members(),
       m_community(nullptr), m_household(nullptr)
 {
+        omp_init_lock(&m_lock);
 }
 
 ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, Community* community)
     : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members(),
       m_community(community), m_household(nullptr)
 {
+        omp_init_lock(&m_lock);
 }
 
 ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, Household* house)
         : m_pool_id(pool_id), m_pool_type(type), m_index_immune(0), m_members(),
           m_community(nullptr), m_household(house)
 {
+        omp_init_lock(&m_lock);
+}
+
+ContactPool::~ContactPool()
+{
+
+    omp_destroy_lock(&m_lock);
 }
 
 void ContactPool::AddMember(const Person* p)
 {
-#pragma omp critical(c_enter)
-        {
-                m_members.emplace_back(const_cast<Person *>(p));
-        }
-#pragma atomic
-                m_index_immune++;
+        omp_set_lock(&m_lock);
+        m_members.emplace_back(const_cast<Person *>(p));
+        m_index_immune++;
+        omp_unset_lock(&m_lock);
 
 }
 
