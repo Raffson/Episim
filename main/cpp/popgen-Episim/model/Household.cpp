@@ -13,7 +13,7 @@ Household::Household(City* city, ContactPoolSys& pool_sys) :
 {
 
         ContactPoolType::Id type = ContactPoolType::Id::Household;
-#pragma omp critical(ContactPoolSys)
+#pragma omp critical(contactpoolsys)
         {
         pool_sys[type].emplace_back(m_id, type, this);
         m_pool = &pool_sys[type].back();
@@ -21,10 +21,8 @@ Household::Household(City* city, ContactPoolSys& pool_sys) :
 }
 
 void Household::AddMember(const Person* member) {
-#pragma omp critical(add_member)
-        {
-                m_pool->AddMember(member);
-        }
+        m_pool->AddMember(member);
+
 }
 
 void Household::GetSchoolAttendants(vector<Person*>& vec) const
