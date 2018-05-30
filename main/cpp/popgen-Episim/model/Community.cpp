@@ -17,7 +17,6 @@
  */
 
 #include "Community.h"
-#include "omp.h"
 
 using namespace std;
 
