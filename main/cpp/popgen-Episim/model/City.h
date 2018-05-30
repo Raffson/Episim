@@ -32,6 +32,8 @@ public:
         /// No default constructor
         City() = delete;
 
+
+
         /// Constructor: set the city data.
         /// @param city_id The ID of this city
         /// @param province The province of this city.
@@ -40,6 +42,9 @@ public:
         /// @param name The name of this city.
         City(unsigned int city_id, unsigned int province, unsigned int population, Coordinate coordinates, string name);
 
+        ~City(){
+            omp_destroy_lock(&m_household_lock);
+         }
         /// Get the id of the city.
         const unsigned int GetId() const { return m_city_id; }
 
@@ -162,6 +167,7 @@ private:
         mutable bool m_out_commuting_changed;
 
         map<CommunityType::Id, bool> m_types_present; ///< This map keeps track of the community types present.
+        omp_lock_t m_household_lock;
 };
 
 } // namespace stride

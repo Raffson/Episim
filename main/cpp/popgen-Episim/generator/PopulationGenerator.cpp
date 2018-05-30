@@ -212,8 +212,6 @@ Person* PopulationGenerator::GeneratePerson(const double& age, const size_t& hid
     }
 
     // Add the person to the contactpools, if any...
-#pragma critical(contact_pool)
-    {
         if (school)
             school->AddMember(person);
 
@@ -222,7 +220,7 @@ Person* PopulationGenerator::GeneratePerson(const double& age, const size_t& hid
 
         if (primcomm)
             primcomm->AddMember(person);
-    }
+
 
     return person;
 }
@@ -233,10 +231,9 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         auto&        pool_sys      = pop.GetContactPoolSys();
         Household* the_household;
 
-#pragma omp critical(add_household)
-        {
-                the_household = &city.AddHousehold(pool_sys);
-        }
+
+        the_household = &city.AddHousehold(pool_sys);
+
         size_t       hid           = the_household->GetID();
 
         ContactPool *seccomm  = GetRandomContactPool(GetRandomCommunities(city, CommunityType::Id::Secondary));
@@ -265,49 +262,6 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         }
 }
 
-void PopulationGenerator::operator()(){
-
-    // Attempt on generate that works better with openMP
-
-    cout << "Starting population generation..." << endl;
-    const double begin_time     = omp_get_wtime();
-    unsigned int total_pop  = m_grid.GetTotalPop(); // long long to make sure the unsigned i
-    vector<pair<unsigned int, City*>> household_sizes_cty;
-    int max_threads = omp_get_max_threads();
-
-#pragma omp parallel for
-    for (int i = 0 ; i <max_threads; i ++) {
-        auto remaining_pop = round(total_pop / max_threads);
-        vector<pair<unsigned int, City*>> temp_vec;
-        while (remaining_pop > 0) {
-            auto household_size = GetRandomHouseholdSize();
-            if (remaining_pop - household_size < 0)
-                household_size = (unsigned int) remaining_pop;
-
-            remaining_pop -= household_size;
-            temp_vec.emplace_back(pair<unsigned int, City *>(household_size, &GetRandomCity()));
-        }
-#pragma omp critical(total_insert)
-        {
-         household_sizes_cty.insert(household_sizes_cty.end(), temp_vec.begin(), temp_vec.end());
-        }
-    }
-
-
-#pragma omp parallel for
-    for(auto it = household_sizes_cty.begin(); it < household_sizes_cty.end(); it++) {
-        GenerateHousehold(it->first, *it->second);
-    }
-
-
-    cout << "Done generating population, time needed = " << omp_get_wtime() - begin_time
-         << endl;
-    SurveySeeder(m_grid.GetConfigPtree(), m_rng).Seed(m_grid.GetPopulation());
-
-
-
-    //
-}
 
 void PopulationGenerator::Generate()
 {
