@@ -68,6 +68,8 @@ ApplicationWindow {
     property variant parameters
     property variant pop_info
     property var stride_paths: []
+    property var infected: 0
+
 
     readonly property bool inPortrait: appWindow.width < appWindow.height
 
@@ -155,6 +157,11 @@ ApplicationWindow {
                         font.pixelSize: 22
                         font.italic: true
                     }
+                    Label{
+                        text: "Infected: " + infected
+                        font.pixelSize: 22
+                        font.italic: true
+                    }
                     ToolButton {
                         text: qsTr("update population")
                         onClicked: updateSelected()
@@ -216,12 +223,14 @@ ApplicationWindow {
     function updateSelected(){
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
         var total_count = 0
+        infected = 0
         for (var i = 0; i < map.children.length; i++)
         {
             if(map.children[i].objectName === "mqi"){
                 circle = map.children[i].sourceItem
-                var pop = circle.isSelected()
+                var pop = circle.isSelected().popcount
                 total_count += pop
+                infected += circle.isSelected().infected
 
             }
             if(map.children[i].objectName === "pop_info"){

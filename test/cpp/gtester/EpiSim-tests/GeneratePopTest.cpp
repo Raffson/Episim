@@ -131,10 +131,6 @@ TEST_P(GenPopTest, AgeDistributionTest)
 
 }
 
-
-
-
-
 namespace {
 // OpenMP should have no effect atm...
 // Should we simply leave this out?
