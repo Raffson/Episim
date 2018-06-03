@@ -29,10 +29,6 @@ Rectangle {
                 infected: 0
             }
             if (is_clicked == true){
-                var all_pop_info = {
-                    popcount: population,
-                    infected: infected
-                }
                 all_pop_info.popcount = population
                 all_pop_info.infected = infected
             }
@@ -52,6 +48,7 @@ Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.bottom
                 anchors.topMargin: 5
+
             }
             anchors.fill:parent
             hoverEnabled: true

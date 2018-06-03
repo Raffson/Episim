@@ -69,6 +69,7 @@ ApplicationWindow {
     property variant pop_info
     property var stride_paths: []
     property var infected: 0
+    property variant selector_rect: 0
 
 
     readonly property bool inPortrait: appWindow.width < appWindow.height
@@ -131,6 +132,7 @@ ApplicationWindow {
         position: inPortrait ? 0 : 1
         visible: !inPortrait
 
+
         ListView {
             id: listView
             anchors.fill: parent
@@ -169,6 +171,11 @@ ApplicationWindow {
                     ToolButton {
                         text: qsTr("show commuters")
                         onClicked: showCommutes()
+                    }
+
+                    ToolButton{
+                        text: qsTr("update rectangle")
+                        onClicked: updateRectangle()
                     }
                 }
             }
@@ -216,9 +223,23 @@ ApplicationWindow {
     }
 
     function selectMultiple(){
-        var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
-
+        if(selector_rect == 0){
+            selector_rect = Qt.createQmlObject('import "custom";FlexRectangle {}', page)
+        }
     }
+
+    function updateRectangle(){
+        for (var i = 0; i < map.children.length; i++)
+        {
+            if(map.children[i].objectName === "mqi"){
+                var circle = map.children[i].sourceItem
+                console.log(circle.lati, circle.longi)
+            }
+        }
+        console.log("rect", selector_rect.x, selector_rect.y)
+    }
+
+
 
     function updateSelected(){
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
