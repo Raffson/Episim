@@ -8,6 +8,28 @@ QTBackEnd::QTBackEnd(QObject *parent): QObject(parent) {
 
 }
 
-void QTBackEnd::GenPop() {
+QTBackEnd::~QTBackEnd() {
+
+    for(auto& it: m_cities){
+
+        delete it;
+    }
+}
+
+
+
+void QTBackEnd::genPop() {
+
+    this->m_grid = stride::GeoGridGenerator().Generate("run_default.xml");
+    stride::PopulationGenerator(*m_grid).Generate();
+    makeCityList();
+}
+
+void QTBackEnd::makeCityList() {
+
+    for(auto& it: m_grid->GetCities()){
+        m_cities.append(new QTCity(&it.second));
+    }
 
 }
+

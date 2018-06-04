@@ -1,8 +1,11 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.2
+import QtQuick.Controls 1.4
 import QtLocation 5.6
 import QtPositioning 5.6
 import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.4
+
+import episim.backend 1.0
 
 
 ApplicationWindow{
@@ -24,6 +27,10 @@ ApplicationWindow{
 
     }
 
+    BackEnd{
+        id: backend
+    }
+
 
     ToolBar {
         id: toolBar
@@ -31,7 +38,6 @@ ApplicationWindow{
         anchors.top: parent.top
         width: parent.width
         height: 25
-        clip: true
 
         Button {
             id: button
@@ -39,6 +45,21 @@ ApplicationWindow{
             width: parent.width / 10
             height: parent.height
 
+            MouseArea {
+                id: mouseArea_run
+                anchors.fill: parent
+                onClicked: { backend.genPop()
+                             backend.cities[0].ctyTest()
+                }
+
+            }
+
+            style: ButtonStyle {
+                background: Rectangle {
+                    color: mouseArea_run.pressed ? "#336699" : "#0099FF";
+                    radius: 1;
+                }
+            }
         }
     }
 

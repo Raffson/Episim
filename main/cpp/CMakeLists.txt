@@ -124,6 +124,7 @@ if(Qt5_FOUND)
 	set(LIB_SRC ${LIB_SRC}
 		viewers/MapViewer.cpp
 		RobbeGui/QTBackEnd.cpp
+		RobbeGui/QTCity.cpp
 		)
 endif()
 
