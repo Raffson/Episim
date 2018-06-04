@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.2
 import QtQuick.Controls 1.4
 import QtLocation 5.6
 import QtPositioning 5.6
@@ -31,7 +31,6 @@ ApplicationWindow{
         id: backend
     }
 
-
     ToolBar {
         id: toolBar
         opacity: 1
@@ -49,7 +48,7 @@ ApplicationWindow{
                 id: mouseArea_run
                 anchors.fill: parent
                 onClicked: { backend.genPop()
-                             backend.cities[0].ctyTest()
+                             map.draw_cities()
                 }
 
             }
@@ -61,6 +60,10 @@ ApplicationWindow{
                 }
             }
         }
+    }
+
+    ListModel{
+        id:mapModel
     }
 
     Map {
@@ -76,5 +79,27 @@ ApplicationWindow{
         anchors.left: parent.left
         anchors.right: parent.right
 
+        MapItemView{
+            model:mapModel
+            delegate: MapCircle{
+                radius: 5000
+                color: 'red'
+                visible: true
+                border.width: 3
+                center{
+                    latitude: lat
+                    longitude: longi
+                }
+            }
+        }
+
+        function draw_cities(){
+            for(var i = 0; i < backend.cities.length; i++){
+                var cty = backend.cities[i]
+                console.log(cty.crd.x)
+                mapModel.append({lat : cty.crd.x , longi: cty.crd.y});
+
+            }
+        }
     }
 }

@@ -22,12 +22,15 @@ public:
 
     /// @brief Handler for QML to generate pop. Will do the genpop logic.
     Q_INVOKABLE void genPop();
-    Q_PROPERTY(QList<QObject*> cities READ get_citiies)
 
-    QList<QObject*> get_citiies(){return m_cities;}
+    Q_PROPERTY(QList<QObject*> cities READ get_cities)
+
+
+
 
 private:
     void makeCityList();
+    QList<QObject*> get_cities(){return m_cities;}
 
 private:
 
