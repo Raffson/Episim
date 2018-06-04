@@ -226,19 +226,44 @@ ApplicationWindow {
         if(selector_rect == 0){
             selector_rect = Qt.createQmlObject('import "custom";FlexRectangle {}', page)
         }
+        else{
+            selector_rect.x = 20
+            selector_rect.y = 20
+            selector_rect.width = 120
+            selector_rect.height = 100
+
+        }
+
     }
 
     function updateRectangle(){
+        deselectAll()
         for (var i = 0; i < map.children.length; i++)
         {
             if(map.children[i].objectName === "mqi"){
                 var circle = map.children[i].sourceItem
-                console.log(circle.lati, circle.longi)
+                //converting to the coordinate system of the screen
+                var screencoor = map.fromCoordinate(QtPositioning.coordinate(circle.lati, circle.longi), true)
+                if(isIntersection(screencoor.x, screencoor.y, circle.width/2)){
+                    circle.is_clicked = true
+                    circle.area_info.font.pointSize = 16
+                    circle.opacity = 1
+                }
+
             }
         }
-        console.log("rect", selector_rect.x, selector_rect.y)
+        updateSelected();
     }
 
+    function isIntersection(x, y, width)
+    {
+        var nearestX = Math.max(selector_rect.x, Math.min(x, selector_rect.x + selector_rect.width))
+        var nearestY = Math.max(selector_rect.y, Math.min(y, selector_rect.y + selector_rect.height))
+        var deltaX = x - nearestX
+        var deltaY = y - nearestY
+
+        return ((deltaX * deltaX + deltaY * deltaY) < (width*width) );
+    }
 
 
     function updateSelected(){
