@@ -6,14 +6,20 @@
 
 #include <QObject>
 
-class QTBackEnd {
+#include "popgen-Episim/generator/GeoGridGenerator.h"
+#include "popgen-Episim/generator/PopulationGenerator.h"
+
+class QTBackEnd: public QObject {
     Q_OBJECT
 
-    QTBackEnd(QObject *parent = 0);
+public:
+
+    QTBackEnd(QObject *parent = nullptr);
+
+    /// Handler for QML to generate pop
+    void GenPop();
 
 
 
 };
 
-
-#endif //STRIDE_QTBACKEND_H

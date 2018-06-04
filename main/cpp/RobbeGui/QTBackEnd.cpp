@@ -3,3 +3,11 @@
 //
 
 #include "QTBackEnd.h"
+
+QTBackEnd::QTBackEnd(QObject *parent): QObject(parent) {
+
+}
+
+void QTBackEnd::GenPop() {
+
+}

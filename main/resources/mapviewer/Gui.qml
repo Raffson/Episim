@@ -30,7 +30,7 @@ ApplicationWindow{
         opacity: 1
         anchors.top: parent.top
         width: parent.width
-        height: parent.height / 10
+        height: 25
         clip: true
 
         Button {
