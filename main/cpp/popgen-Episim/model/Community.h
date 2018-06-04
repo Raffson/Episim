@@ -58,6 +58,9 @@ public:
         /// Get all the contactpools
         const std::vector<ContactPool*>& GetContactPools() const { return m_contact_pools; }
 
+        /// Get all the contactpools
+        std::vector<ContactPool*>& GetContactPools() { return m_contact_pools; }
+
         /// Get the total number members of all contactpools for this community
         unsigned int GetSize() const;
 
