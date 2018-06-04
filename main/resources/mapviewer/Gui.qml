@@ -95,9 +95,9 @@ ApplicationWindow{
 
         function draw_cities(){
             for(var i = 0; i < backend.cities.length; i++){
-                var cty = backend.cities[i]
-                console.log(cty.crd.x)
-                mapModel.append({lat : cty.crd.x , longi: cty.crd.y});
+                var cty = backend.cities[i];
+                console.log(cty.crd.longitude + " " + cty.crd.latitude);
+                mapModel.append({lat : cty.crd.longitude , longi: cty.crd.latitude});
 
             }
         }

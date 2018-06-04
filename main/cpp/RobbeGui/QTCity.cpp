@@ -8,6 +8,6 @@ QTCity::QTCity(stride::City* model, QObject *parent ) : QObject(parent), m_city(
 
 }
 
-QPoint QTCity::get_coordinates() {
-    return QPoint(m_city->GetCoordinates().GetLongitude(), m_city->GetCoordinates().GetLatitude());
+QGeoCoordinate QTCity::get_coordinates() {
+    return QGeoCoordinate(m_city->GetCoordinates().GetLongitude(), m_city->GetCoordinates().GetLatitude());
 }

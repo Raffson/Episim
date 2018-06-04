@@ -20,7 +20,7 @@ public:
     Q_PROPERTY(QGeoCoordinate crd READ get_coordinates)
 
 private:
-    QPoint get_coordinates();
+    QGeoCoordinate get_coordinates();
 
 private:
 
