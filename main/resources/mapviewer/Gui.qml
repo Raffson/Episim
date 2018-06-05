@@ -70,7 +70,9 @@ ApplicationWindow{
             MouseArea {
                 id: mouseArea_run
                 anchors.fill: parent
-                onClicked: { backend.genPop()
+                onClicked: {
+                             map.clearMapItems();
+                             backend.genPop()
                              map.draw_cities()
                              map.center_and_zoom()
                 }
@@ -128,12 +130,11 @@ ApplicationWindow{
 
 
         function draw_cities(){
-            for(var i = 0; i < backend.cities.length; i++){
-
-             var circle = mapCircleComponent.createObject(map, {city: backend.cities[i]})
-             map.addMapItem(circle);
-
-            }
+                console.log(backend.cities.length)
+                for(var i = 0; i < backend.cities.length; i++){
+                    var circle = mapCircleComponent.createObject(map, {city: backend.cities[i]})
+                    map.addMapItem(circle);
+                }
         }
 
         function center_and_zoom(){

@@ -27,6 +27,13 @@ void QTBackEnd::genPop() {
 
 void QTBackEnd::makeCityList() {
 
+    QList<QObject*> temp;
+    for(auto& it: m_cities){
+
+        delete it;
+    }
+    m_cities.clear();
+
     for(auto& it: m_grid->GetCities()){
         m_cities.append(new QTCity(&it.second));
     }
