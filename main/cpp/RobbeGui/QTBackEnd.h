@@ -6,6 +6,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QGeoCoordinate>
 
 #include "popgen-Episim/generator/GeoGridGenerator.h"
 #include "popgen-Episim/generator/PopulationGenerator.h"
@@ -24,6 +25,7 @@ public:
     Q_INVOKABLE void genPop();
 
     Q_PROPERTY(QList<QObject*> cities READ get_cities)
+    Q_PROPERTY(QGeoCoordinate center READ get_center)
 
 
 
@@ -31,6 +33,8 @@ public:
 private:
     void makeCityList();
     QList<QObject*> get_cities(){return m_cities;}
+    QGeoCoordinate get_center();
+
 
 private:
 

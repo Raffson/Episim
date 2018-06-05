@@ -33,3 +33,9 @@ void QTBackEnd::makeCityList() {
 
 }
 
+QGeoCoordinate QTBackEnd::get_center() {
+
+    stride::Coordinate crd = m_grid->GetCenterOfGrid();
+    return QGeoCoordinate(crd.GetLatitude(),crd.GetLongitude() );
+}
+

@@ -49,6 +49,7 @@ ApplicationWindow{
                 anchors.fill: parent
                 onClicked: { backend.genPop()
                              map.draw_cities()
+                             map.center_and_zoom()
                 }
 
             }
@@ -99,6 +100,11 @@ ApplicationWindow{
                 mapModel.append({lat : cty.crd.longitude , longi: cty.crd.latitude});
 
             }
+        }
+
+        function center_and_zoom(){
+            map.zoomLevel = 7.5; // Fixed for now
+            map.center = backend.center
         }
     }
 }
