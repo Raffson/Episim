@@ -20,10 +20,12 @@ class QTBackEnd: public QObject {
 public:
 
     explicit QTBackEnd(QObject *parent = nullptr);
-    ~QTBackEnd();
+    ~QTBackEnd() override;
 
     /// @brief Handler for QML to generate pop. Will do the genpop logic.
     Q_INVOKABLE void genPop();
+    Q_INVOKABLE QObject* get_city(unsigned int id);
+
 
     Q_PROPERTY(QList<QObject*> cities READ get_cities)
     Q_PROPERTY(QGeoCoordinate center READ get_center)
@@ -36,6 +38,7 @@ private:
     QList<QObject*> get_cities(){return m_cities;}
     QGeoCoordinate get_center();
     int get_total_pop() const;
+
 
 
 

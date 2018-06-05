@@ -130,7 +130,6 @@ ApplicationWindow{
 
 
         function draw_cities(){
-                console.log(backend.cities.length)
                 for(var i = 0; i < backend.cities.length; i++){
                     var circle = mapCircleComponent.createObject(map, {city: backend.cities[i]})
                     map.addMapItem(circle);

@@ -27,7 +27,6 @@ void QTBackEnd::genPop() {
 
 void QTBackEnd::makeCityList() {
 
-    QList<QObject*> temp;
     for(auto& it: m_cities){
 
         delete it;
@@ -49,6 +48,19 @@ QGeoCoordinate QTBackEnd::get_center() {
 int QTBackEnd::get_total_pop() const {
 
     return m_grid->GetTotalPop();
+}
+
+QObject *QTBackEnd::get_city(unsigned int id) {
+
+    for(auto& it: m_cities){
+        auto tmp = dynamic_cast<QTCity*>(it);
+        if(id == tmp->get_m_city()->GetId()){
+            return it;
+        }
+    }
+    cout << "Could not find city with id: " << id << endl;
+    return nullptr;
+
 }
 
 
