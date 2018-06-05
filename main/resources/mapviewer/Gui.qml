@@ -70,8 +70,8 @@ ApplicationWindow{
         id: mapCircleComponent
         MapCircle{
             property City city
-            radius: (city.popCount / backend.total_pop) * 300000
-            color: 'red'
+            radius: (city.popCount / backend.total_pop) * 250000
+            color: Qt.rgba(0,1,0,0.2)
             center: city.crd
         }
     }
