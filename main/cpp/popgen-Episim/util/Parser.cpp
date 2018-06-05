@@ -38,7 +38,6 @@ void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, Cit
                         total_pop += population;
 
                         rtree.insert(make_pair(gPoint(longitude, latitude), id));
-                        cout <<"PARSER" << longitude << " " <<it.GetValue("latitude")  << endl;
                         Coordinate coord(x_coord, y_coord, longitude, latitude);
                         cities.emplace(id, City(id, province, population, coord, name));
                 } catch (exception& e) {

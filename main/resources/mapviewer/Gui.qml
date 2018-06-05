@@ -62,6 +62,9 @@ ApplicationWindow{
         }
     }
 
+    ListModel{
+        id: mapModel
+    }
 
     Map {
         id: map
@@ -77,13 +80,13 @@ ApplicationWindow{
         anchors.right: parent.right
 
         MapItemView{
-            model:map
+            model:mapModel
             delegate: MapCircle{
                 radius: 5000
                 color: 'red'
                 visible: true
                 border.width: 3
-                center{
+                center {
                     latitude: lat
                     longitude: longi
                 }
@@ -93,7 +96,7 @@ ApplicationWindow{
         function draw_cities(){
             for(var i = 0; i < backend.cities.length; i++){
                 var cty = backend.cities[i];
-                map.append({lat : cty.crd.longitude , longi: cty.crd.latitude});
+                mapModel.append({lat : cty.crd.longitude , longi: cty.crd.latitude});
 
             }
         }
