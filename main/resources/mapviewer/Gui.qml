@@ -4,6 +4,7 @@ import QtLocation 5.6
 import QtPositioning 5.6
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Controls 2.4
 
 import episim.backend 1.0
 import episim.city 1.0
@@ -54,13 +55,6 @@ ApplicationWindow{
                 }
 
             }
-
-            style: ButtonStyle {
-                background: Rectangle {
-                    color: mouseArea_run.pressed ? "#336699" : "#0099FF";
-                    radius: 1;
-                }
-            }
         }
     }
 
@@ -71,8 +65,18 @@ ApplicationWindow{
         MapCircle{
             property City city
             radius: (city.popCount / backend.total_pop) * 250000
-            color: Qt.rgba(0,1,0,0.2)
+            color: cty_mouse.containsMouse ? Qt.rgba(1,0,0.2) : Qt.rgba(0,1,0,0.2)
             center: city.crd
+            z: backend.total_pop - city.popCount
+
+            MouseArea{
+                id: cty_mouse
+                anchors.fill: parent
+                hoverEnabled: true
+                ToolTip.text: "City: " + city.name + "\nPopulation: " + city.popCount
+                ToolTip.visible: containsMouse ? true : false
+
+            }
         }
     }
 
@@ -81,7 +85,7 @@ ApplicationWindow{
         visible: true
         maximumTilt:0
         plugin: mapPlugin
-        center: QtPositioning.coordinate(0, 0) // Oslo
+        center: QtPositioning.coordinate(0, 0)
         zoomLevel: 0
 
         anchors.top: toolBar.bottom

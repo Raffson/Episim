@@ -19,3 +19,11 @@ int QTCity::get_population() const {
 QGeoCoordinate QTCity::get_coordinates() const {
     return QGeoCoordinate(m_city->GetCoordinates().GetLatitude(), m_city->GetCoordinates().GetLongitude());
 }
+
+QString QTCity::get_name() const {
+    return QString(m_city->GetName().c_str());
+}
+
+int QTCity::get_id() const {
+    return m_city->GetId();
+}
