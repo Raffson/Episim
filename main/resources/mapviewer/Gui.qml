@@ -29,6 +29,27 @@ ApplicationWindow{
 
     }
 
+    Rectangle{
+        id: data_viewer
+        width: 200
+        height: 100
+
+        anchors.left: parent.left
+        anchors.leftMargin: parent.width /15
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: parent.height / 15
+        color: Qt.rgba(0.9,0.9,0.9,1)
+        z: 1
+
+        Text {
+
+            id: total_pop
+            property int selected_pop: 0
+            text: "Selected pop: " + selected_pop
+        }
+    }
+
     BackEnd{
         id: backend
     }
@@ -64,8 +85,9 @@ ApplicationWindow{
         id: mapCircleComponent
         MapCircle{
             property City city
+            property bool clicked: false
             radius: (city.popCount / backend.total_pop) * 250000
-            color: cty_mouse.containsMouse ? Qt.rgba(1,0,0.2) : Qt.rgba(0,1,0,0.2)
+            color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1,0,0.2) : Qt.rgba(0,1,0,0.2)
             center: city.crd
             z: backend.total_pop - city.popCount
 
@@ -75,6 +97,17 @@ ApplicationWindow{
                 hoverEnabled: true
                 ToolTip.text: "City: " + city.name + "\nPopulation: " + city.popCount
                 ToolTip.visible: containsMouse ? true : false
+
+                onClicked: {
+                    if(parent.clicked){
+                        parent.clicked = false
+                        total_pop.selected_pop -= parent.city.popCount
+                    }
+                    else{
+                        parent.clicked = true
+                        total_pop.selected_pop += parent.city.popCount
+                    }
+                }
 
             }
         }
