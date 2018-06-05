@@ -81,11 +81,31 @@ ApplicationWindow{
         }
     }
 
+    Component{
+        id:path
+        MapPolyline{
+            line.width: 1
+            line.color: 'green'
 
+        }
+    }
 
     Component{
         id: mapCircleComponent
         MapCircle{
+            function draw_commuters(){
+                for(var i = 0; i < 10; i++){
+                    var co1 = [ city.crd, backend.get_city(city.out_commuters[i]) ];
+                    var pat = path.createObject(map);
+                    pat.addCoordinate(city.crd)
+                    pat.addCoordinate(backend.get_city(city.out_commuters[i]).crd)
+
+                    map.addMapItem(pat)
+
+                    //console.log(backend.get_city(city.out_commuters[i]));
+                }
+            }
+
             property City city
             property bool clicked: false
             radius: (city.popCount / backend.total_pop) * 250000
@@ -104,10 +124,12 @@ ApplicationWindow{
                     if(parent.clicked){
                         parent.clicked = false
                         total_pop.selected_pop -= parent.city.popCount
+
                     }
                     else{
                         parent.clicked = true
                         total_pop.selected_pop += parent.city.popCount
+                        parent.draw_commuters()
                     }
                 }
 
