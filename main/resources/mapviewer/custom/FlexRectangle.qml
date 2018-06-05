@@ -3,7 +3,7 @@ import QtLocation 5.6
 
 Rectangle {
     id: flexRectangle
-    x:20; y:20; width: 120; height: 100
+    x:200; y:100; width: 120; height: 100
     border.width: 3
     color: "#354682B4"
 

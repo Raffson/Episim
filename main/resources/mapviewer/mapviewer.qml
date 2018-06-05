@@ -152,21 +152,26 @@ ApplicationWindow {
             }
 
             ToolBar {
+
                 ColumnLayout {
                     anchors.fill: parent
                     Label{
                         text: "\nPopulation: " + Number(pop_info)
                         font.pixelSize: 22
                         font.italic: true
+                        color: "steelblue"
                     }
                     Label{
                         text: "Infected: " + infected
                         font.pixelSize: 22
                         font.italic: true
+                        color: "steelblue"
+
                     }
                     ToolButton {
                         text: qsTr("update population")
                         onClicked: updateSelected()
+
                     }
                     ToolButton {
                         text: qsTr("show commuters")
@@ -176,12 +181,14 @@ ApplicationWindow {
                     Label{
                         text: "\nSelector rectangle"
                         font.pixelSize: 20
+                        color: "steelblue"
                     }
 
                     Label{
                         text: "Width"
                         font.pixelSize: 15
-
+                        font.italic: true
+                        color: "steelblue"
                     }
                     ToolButton{
                         text: qsTr("+")
@@ -196,6 +203,8 @@ ApplicationWindow {
                     Label{
                         text: "Height"
                         font.pixelSize: 15
+                        font.italic: true
+                        color: "steelblue"
 
                     }
                     ToolButton{
