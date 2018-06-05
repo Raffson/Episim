@@ -155,7 +155,7 @@ ApplicationWindow {
                 ColumnLayout {
                     anchors.fill: parent
                     Label{
-                        text: "Population: " + Number(pop_info)
+                        text: "\nPopulation: " + Number(pop_info)
                         font.pixelSize: 22
                         font.italic: true
                     }
@@ -173,8 +173,43 @@ ApplicationWindow {
                         onClicked: showCommutes()
                     }
 
+                    Label{
+                        text: "\nSelector rectangle"
+                        font.pixelSize: 20
+                    }
+
+                    Label{
+                        text: "Width"
+                        font.pixelSize: 15
+
+                    }
                     ToolButton{
-                        text: qsTr("update rectangle")
+                        text: qsTr("+")
+                        onClicked: updateRectanglesSize("increaseWidth")
+                    }
+
+                    ToolButton{
+                        text: qsTr("-")
+                        onClicked: updateRectanglesSize("decreaseWidth")
+                    }
+
+                    Label{
+                        text: "Height"
+                        font.pixelSize: 15
+
+                    }
+                    ToolButton{
+                        text: qsTr("+")
+                        onClicked: updateRectanglesSize("increaseHeight")
+                    }
+
+                    ToolButton{
+                        text: qsTr("-")
+                        onClicked: updateRectanglesSize("decreaseHeight")
+                    }
+
+                    ToolButton{
+                        text: qsTr("Update rectangle")
                         onClicked: updateRectangle()
                     }
                 }
@@ -265,6 +300,29 @@ ApplicationWindow {
         return ((deltaX * deltaX + deltaY * deltaY) < (width*width) );
     }
 
+    function updateRectanglesSize(par)
+    {
+        var scale = 30
+        switch(par){
+            case "increaseHeight":
+                selector_rect.height = selector_rect.height  + scale
+                break
+            case "increaseWidth":
+                selector_rect.width = selector_rect.width + scale
+                break
+            case "decreaseHeight":
+                if( selector_rect.height > 80){
+                    selector_rect.height = selector_rect.height - scale
+                }
+                break
+            case "decreaseWidth":
+                if( selector_rect.width > 80){
+                    selector_rect.width = selector_rect.width - scale
+                }
+                break
+
+        }
+    }
 
     function updateSelected(){
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)

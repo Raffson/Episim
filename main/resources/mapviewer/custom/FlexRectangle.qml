@@ -4,7 +4,7 @@ import QtLocation 5.6
 Rectangle {
     id: flexRectangle
     x:20; y:20; width: 120; height: 100
-    border.width: 1
+    border.width: 3
     color: "#354682B4"
 
     MouseArea {
@@ -14,12 +14,7 @@ Rectangle {
         drag.target: flexRectangle
         drag.axis: Drag.XAndYAxis
         drag.minimumX: 0
-
-
-        onDoubleClicked: {
-            parent.width = parent.width * 1.2
-            parent.height = parent.height * 1.2
-        }
+        drag.minimumY: 0
 
     }
 
