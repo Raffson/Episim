@@ -136,13 +136,17 @@ endif()
 #----------------------------------------------------------------------------
 find_package(Qt5 COMPONENTS Core Gui PrintSupport Widgets Qml QUIET)
 if (Qt5_FOUND)
+	set(CMAKE_AUTOMOC ON)
+	set(CMAKE_INCLUDE_CURRENT_DIR ON)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQt5_FOUND=true")
+	find_package(Qt5Positioning)
     set(QT_INCLUDES
         ${Qt5Core_INCLUDE_DIRS}
         ${Qt5Gui_INCLUDE_DIRS}
         ${Qt5PrintSupport_INCLUDE_DIRS}
         ${QtQml_INCLUDE_DIRS}
         ${Qt5Widgets_INCLUDE_DIRS}
+        ${Qt5Positioning_INCLUDE_DIRS}
         )
 	include_directories(SYSTEM ${QT_INCLUDES})
 	add_definitions(
@@ -151,6 +155,7 @@ if (Qt5_FOUND)
         ${Qt5PrintSupport_DEFINITIONS}
         ${QtQml_DEFINITIONS}
         ${Qt5Widgets_DEFINITIONS}
+        ${Qt5Positioning_DEFINITIONS}
     )
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
     set(QT_LIBRARIES

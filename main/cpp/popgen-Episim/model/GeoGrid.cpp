@@ -89,7 +89,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         auto to_defrag = (unsigned int)round(defrag_cty.size() * X);
         while (defrag_cty.size() > to_defrag) {
                 trng::uniform_int_dist distr(0, (unsigned int)defrag_cty.size() - 1);
-                defrag_cty.erase(defrag_cty.begin() + m_rng.GetGenerator(distr)());
+                defrag_cty.erase(defrag_cty.begin() + m_rng.GetGenerator(distr,omp_get_thread_num())());
         }
 
         // Step 3: replace X% of these cities
@@ -124,14 +124,17 @@ const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City&
         if (!m_neighbours_in_radius[origin.GetId()].count(radius)) {
                 unsigned int next_smaller = m_initial_search_radius;
                 while ((radius / next_smaller) > 1)
-                        next_smaller <<= 1; // equivalent to multiplying by 2.
-                unsigned int next_bigger = next_smaller << 1;
+                        next_smaller *= 2; // equivalent to multiplying by 2.
+                unsigned int next_bigger = next_smaller *= 2;
                 if ((next_bigger - radius) >= (radius - next_smaller))
                         radius = next_smaller;
                 else
                         radius = next_bigger;
                 //make sure radius does not exceed the limit
-                radius = min(radius, m_neighbours_in_radius[origin.GetId()].rbegin()->first);
+#pragma omp critical(radius_geogrid_get_community)
+                {
+                        radius = min(radius, m_neighbours_in_radius[origin.GetId()].rbegin()->first);
+                }
         }
         return m_neighbours_in_radius[origin.GetId()][radius][type];
 }

@@ -92,41 +92,41 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
         trng::discrete_dist distr(m_household_size_fracs.begin(), m_household_size_fracs.end());
         // plus 1 because discrete_dist returns numbers between 0 and (m_household_size_fracs.size() - 1)
         // we need numbers between 1 and m_household_size_fracs.size()
-        return (unsigned int)(m_rng.GetGenerator(distr)() + 1);
+        return (unsigned int)(m_rng.GetGenerator(distr,omp_get_thread_num())() + 1);
 }
 
 const vector<double>& PopulationGenerator::GetRandomModelHouseholdOfSize(unsigned int size)
 {
     const auto& households = m_grid.GetModelHouseholds().at(size);
     trng::uniform_int_dist distr(0, households.size());
-    return households[m_rng.GetGenerator(distr)()];
+    return households[m_rng.GetGenerator(distr,omp_get_thread_num())()];
 }
 
 double PopulationGenerator::GetRandomAge(Fractions category)
 {
         switch (category) {
         case Fractions::SCHOOLED : // [3, 18)
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(3.0, 18.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(3.0, 18.0),omp_get_thread_num())();
         case Fractions::YOUNG : // [18, 26)
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(18.0, 26.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(18.0, 26.0),omp_get_thread_num())();
         case Fractions::MIDDLE_AGED : // [26, 65)
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(26.0, 65.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(26.0, 65.0),omp_get_thread_num())();
         case Fractions::TODDLERS : // [0, 3)
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(0.0, 3.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(0.0, 3.0),omp_get_thread_num())();
         case Fractions::OLDIES : // [65, 81), cause maximum age according to Age.h is 80...
                 // gotta improve this since we would need [65, 80] but not with a uniform distribution...
                 // because the chances you become older get smaller and smaller right?
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(65.0, 81.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(65.0, 81.0),omp_get_thread_num())();
         default:
                 // throw an exception here instead?
-                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(0.0, 81.0))();
+                return (double)m_rng.GetGenerator(trng::uniform_dist<double>(0.0, 81.0),omp_get_thread_num())();
         }
 }
 
 City& PopulationGenerator::GetRandomCity()
 {
         trng::discrete_dist distr(m_city_pop_fracs.begin(), m_city_pop_fracs.end());
-        return m_grid[m_city_ids[(unsigned int)m_rng.GetGenerator(distr)()]];
+        return m_grid[m_city_ids[(unsigned int)m_rng.GetGenerator(distr, omp_get_thread_num())()]];
 }
 
 ContactPool* PopulationGenerator::GetRandomContactPool(const vector<Community*>& comms)
@@ -135,11 +135,11 @@ ContactPool* PopulationGenerator::GetRandomContactPool(const vector<Community*>&
                 return nullptr;
 
         trng::uniform_int_dist distr(0, comms.size());
-        unsigned int           index = (unsigned int)m_rng.GetGenerator(distr)();
+        unsigned int           index = (unsigned int)m_rng.GetGenerator(distr, omp_get_thread_num())();
         auto&                  pools = comms.at(index)->GetContactPools();
         if (!pools.empty()) {
                 trng::uniform_int_dist pdistr(0, pools.size());
-                unsigned int           index2 = (unsigned int)m_rng.GetGenerator(pdistr)();
+                unsigned int           index2 = (unsigned int)m_rng.GetGenerator(pdistr, omp_get_thread_num())();
                 return pools[index2];
         } else
                 return nullptr;
@@ -152,7 +152,7 @@ const bool PopulationGenerator::FlipUnfairCoin(const double& frac)
         fracs.emplace_back(1 - frac);
         fracs.emplace_back(frac);
         trng::discrete_dist distr(fracs.begin(), fracs.end());
-        return (const bool)m_rng.GetGenerator(distr)();
+        return (const bool)m_rng.GetGenerator(distr,omp_get_thread_num())();
 }
 
 const bool PopulationGenerator::IsWorkingCommuter()
@@ -265,47 +265,6 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         }
 }
 
-void PopulationGenerator::operator()(){
-
-    // Attempt on generate that works better with openMP
-
-    cout << "Starting population generation..." << endl;
-    const double begin_time     = omp_get_wtime();
-    unsigned int total_pop  = m_grid.GetTotalPop(); // long long to make sure the unsigned i
-    vector<pair<unsigned int, City*>> household_sizes_cty;
-    int max_threads = omp_get_max_threads();
-
-#pragma omp parallel for
-    for (unsigned int i = 0 ; i < max_threads; i ++) {
-        auto remaining_pop = round(total_pop / max_threads);
-        vector<pair<unsigned int, City*>> temp_vec;
-        while (remaining_pop > 0) {
-            auto household_size = GetRandomHouseholdSize();
-            if (remaining_pop - household_size < 0)
-                household_size = (unsigned int) remaining_pop;
-
-            remaining_pop -= household_size;
-            temp_vec.emplace_back(pair<unsigned int, City *>(household_size, &GetRandomCity()));
-        }
-//#pragma omp critical(total_insert)
-        {
-         household_sizes_cty.insert(household_sizes_cty.end(), temp_vec.begin(), temp_vec.end());
-        }
-    }
-
-#pragma omp parallel for
-    for(auto it = household_sizes_cty.begin(); it < household_sizes_cty.end(); it++){
-        GenerateHousehold(it->first, *it->second);
-    }
-
-    cout << "Done generating population, time needed = " << omp_get_wtime() - begin_time
-         << endl;
-    SurveySeeder(m_grid.GetConfigPtree(), m_rng).Seed(m_grid.GetPopulation());
-
-
-
-    //
-}
 
 void PopulationGenerator::Generate()
 {
@@ -315,7 +274,7 @@ void PopulationGenerator::Generate()
         cout << "Starting population generation..." << endl;
         double begin_time     = omp_get_wtime();
         long long int remaining_pop  = m_grid.GetTotalPop(); // long long to make sure the unsigned int fits...
-        long double threaded_pop = remaining_pop / omp_get_max_threads();
+        long int threaded_pop = remaining_pop / omp_get_max_threads();
 
 #pragma omp parallel for schedule(static)
         for(int i = 0; i < omp_get_max_threads(); i++) {
@@ -331,6 +290,23 @@ void PopulationGenerator::Generate()
                 }
 
         }
+
+        //Fixing rest of dividing by thread
+        remaining_pop = remaining_pop % omp_get_max_threads();
+        while(remaining_pop > 0){
+            City &city = GetRandomCity();
+            auto household_size = GetRandomHouseholdSize();
+            if (remaining_pop - household_size < 0)
+                household_size = (unsigned int) remaining_pop;
+
+            GenerateHousehold(household_size, city);
+            remaining_pop -= household_size;
+        }
+
+
+
+
+
     cout << "Done generating population, time needed = " << omp_get_wtime() - begin_time
          << endl;
     SurveySeeder(m_grid.GetConfigPtree(), m_rng).Seed(m_grid.GetPopulation());
@@ -341,9 +317,12 @@ const vector<Community*>& PopulationGenerator::GetRandomCommunities(const City& 
         unsigned int radius = m_grid.GetInitialSearchRadius();
         REQUIRE(radius > 0, "Initial search radius of the GeoGrid must be bigger than 0.");
         while (radius != 0) {
-                const vector<City*>& cities = m_grid.GetCitiesWithinRadiusWithCommunityType(city, radius, type);
+
+                const vector<City *> &cities = m_grid.GetCitiesWithinRadiusWithCommunityType(city, radius, type);
+
                 if (!cities.empty()) {
-                        auto index = (unsigned int)m_rng.GetGenerator(trng::uniform_int_dist(0, cities.size()))();
+                        auto index = (unsigned int)m_rng.GetGenerator(trng::uniform_int_dist(0, cities.size()),
+                                omp_get_thread_num())();
                         return cities[index]->GetCommunitiesOfType(type);
                 }
                 radius <<= 1; // equivalent to multiplying by 2
@@ -375,7 +354,7 @@ City& PopulationGenerator::GetRandomCommutingCity(City& origin, const bool stude
         const vector<double>& distribution = student ? m_student_commuting_fracs[origin.GetId()]
                                                      : m_worker_commuting_fracs[origin.GetId()];
         trng::discrete_dist distr(distribution.begin(), distribution.end());
-        auto                index = (const unsigned int)m_rng.GetGenerator(distr)();
+        auto                index = (const unsigned int)m_rng.GetGenerator(distr,omp_get_thread_num())();
 
         const unsigned int  id    = student ? m_college_ids.at(index) : m_city_ids.at(index);
         origin.AddEffectiveCommuterTo(id);

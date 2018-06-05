@@ -10,6 +10,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include <clocale>
+
 using namespace std;
 
 namespace stride {
@@ -18,6 +20,7 @@ namespace parser {
 void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, City>& cities, unsigned int& total_pop,
                  bgi::rtree<rtElem, bgi::quadratic<16>>& rtree)
 {
+        setlocale(LC_ALL, "C");
         util::CSV    read_in(city_file);
         unsigned int counter = 0;
         total_pop            = 0;
@@ -35,6 +38,7 @@ void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, Cit
                         total_pop += population;
 
                         rtree.insert(make_pair(gPoint(longitude, latitude), id));
+                        cout <<"PARSER" << longitude << " " <<it.GetValue("latitude")  << endl;
                         Coordinate coord(x_coord, y_coord, longitude, latitude);
                         cities.emplace(id, City(id, province, population, coord, name));
                 } catch (exception& e) {

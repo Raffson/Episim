@@ -10,6 +10,8 @@
 #include <vector>
 #include <string>
 
+#include "omp.h"
+
 using namespace std;
 
 namespace stride {

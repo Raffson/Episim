@@ -31,7 +31,7 @@ vector<unsigned int> generate_random(const vector<double>& p_vec, util::RNManage
         trng::discrete_dist  dist(p_vec.begin(), p_vec.end());
         vector<unsigned int> ret_vec;
         for (unsigned int i = 0; i < amount; i++) {
-                ret_vec.emplace_back((unsigned int)rng.GetGenerator(dist)());
+                ret_vec.emplace_back((unsigned int)rng.GetGenerator(dist, omp_get_thread_num())());
         }
         return ret_vec;
 }
@@ -41,7 +41,7 @@ vector<unsigned int> generate_random(unsigned int begin, unsigned int end, util:
         trng::uniform_int_dist dist(begin, end);
         vector<unsigned int>   ret_vec;
         for (unsigned int i = 0; i < amount; i++) {
-                ret_vec.emplace_back((unsigned int)rng.GetGenerator(dist)());
+                ret_vec.emplace_back((unsigned int)rng.GetGenerator(dist, omp_get_thread_num())());
         }
         return ret_vec;
 }
