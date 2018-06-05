@@ -6,6 +6,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
 import episim.backend 1.0
+import episim.city 1.0
 
 
 ApplicationWindow{
@@ -63,8 +64,16 @@ ApplicationWindow{
         }
     }
 
-    ListModel{
-        id: mapModel
+
+
+    Component{
+        id: mapCircleComponent
+        MapCircle{
+            property City city
+            radius: 5000
+            color: 'red'
+            center: city.crd
+        }
     }
 
     Map {
@@ -80,24 +89,12 @@ ApplicationWindow{
         anchors.left: parent.left
         anchors.right: parent.right
 
-        MapItemView{
-            model:mapModel
-            delegate: MapCircle{
-                radius: 5000
-                color: 'red'
-                visible: true
-                border.width: 3
-                center {
-                    latitude: lat
-                    longitude: longi
-                }
-            }
-        }
 
         function draw_cities(){
             for(var i = 0; i < backend.cities.length; i++){
-                var cty = backend.cities[i];
-                mapModel.append({lat : cty.crd.longitude , longi: cty.crd.latitude});
+
+             var circle = mapCircleComponent.createObject(map, {city: backend.cities[i]})
+             map.addMapItem(circle);
 
             }
         }

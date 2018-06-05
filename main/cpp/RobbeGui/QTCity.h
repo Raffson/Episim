@@ -14,13 +14,14 @@ class QTCity : public QObject {
 
 public:
     explicit  QTCity(stride::City* m_city, QObject* = nullptr);
+    explicit  QTCity(QObject* = nullptr);
 
     Q_INVOKABLE void ctyTest() {cout << "Hello from" << m_city->GetName() << endl;}
-
-    Q_PROPERTY(QGeoCoordinate crd READ get_coordinates)
+    Q_PROPERTY(QGeoCoordinate crd READ get_coordinates CONSTANT)
 
 private:
     QGeoCoordinate get_coordinates();
+    
 
 private:
 

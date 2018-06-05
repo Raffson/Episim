@@ -20,7 +20,7 @@ namespace parser {
 void ParseCities(const boost::filesystem::path& city_file, map<unsigned int, City>& cities, unsigned int& total_pop,
                  bgi::rtree<rtElem, bgi::quadratic<16>>& rtree)
 {
-        setlocale(LC_ALL, "C");
+        setlocale(LC_ALL, "C"); // Enforces . is the floating point delimitter (for STOD QT takes local machine delimmiter)
         util::CSV    read_in(city_file);
         unsigned int counter = 0;
         total_pop            = 0;
