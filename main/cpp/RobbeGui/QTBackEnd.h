@@ -26,7 +26,7 @@ public:
 
     Q_PROPERTY(QList<QObject*> cities READ get_cities)
     Q_PROPERTY(QGeoCoordinate center READ get_center)
-
+    Q_PROPERTY(int total_pop READ get_total_pop CONSTANT);
 
 
 
@@ -34,6 +34,8 @@ private:
     void makeCityList();
     QList<QObject*> get_cities(){return m_cities;}
     QGeoCoordinate get_center();
+    int get_total_pop() const;
+
 
 
 private:

@@ -39,3 +39,10 @@ QGeoCoordinate QTBackEnd::get_center() {
     return QGeoCoordinate(crd.GetLatitude(),crd.GetLongitude() );
 }
 
+int QTBackEnd::get_total_pop() const {
+
+    return m_grid->GetTotalPop();
+}
+
+
+

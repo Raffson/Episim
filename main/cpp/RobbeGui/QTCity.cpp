@@ -12,6 +12,10 @@ QTCity::QTCity(QObject *parent ) : QObject(parent){
 
 }
 
-QGeoCoordinate QTCity::get_coordinates() {
+int QTCity::get_population() const {
+    return m_city->GetPopulation();
+}
+
+QGeoCoordinate QTCity::get_coordinates() const {
     return QGeoCoordinate(m_city->GetCoordinates().GetLatitude(), m_city->GetCoordinates().GetLongitude());
 }
