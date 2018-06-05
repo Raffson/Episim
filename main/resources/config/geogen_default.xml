@@ -10,7 +10,7 @@
 </neighbour_classification>
 
 <pop_info>
-    <pop_total>1000</pop_total>
+    <pop_total>600000</pop_total>
     <random_ages>false</random_ages>
 
     <!-- fraction of people able to work that is student (18y-26y) -->

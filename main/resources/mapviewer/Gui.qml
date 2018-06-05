@@ -70,7 +70,7 @@ ApplicationWindow{
         id: mapCircleComponent
         MapCircle{
             property City city
-            radius: city.popCount / backend.total_pop * 100
+            radius: (city.popCount / backend.total_pop) * 300000
             color: 'red'
             center: city.crd
         }

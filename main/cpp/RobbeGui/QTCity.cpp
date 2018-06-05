@@ -13,7 +13,7 @@ QTCity::QTCity(QObject *parent ) : QObject(parent){
 }
 
 int QTCity::get_population() const {
-    return m_city->GetPopulation();
+    return m_city->GetEffectivePopulation();
 }
 
 QGeoCoordinate QTCity::get_coordinates() const {
