@@ -94,6 +94,7 @@ ApplicationWindow{
         id: mapCircleComponent
         MapCircle{
             function draw_commuters(){
+                console.log(commuting_lst)
                 for(var i = 0; i < 10; i++){
                     var co1 = [ city.crd, backend.get_city(city.out_commuters[i]) ];
                     var pat = path.createObject(map);
@@ -101,13 +102,24 @@ ApplicationWindow{
                     pat.addCoordinate(backend.get_city(city.out_commuters[i]).crd)
 
                     map.addMapItem(pat)
+                    commuting_lst.push(pat);
 
                     //console.log(backend.get_city(city.out_commuters[i]));
                 }
+                console.log(commuting_lst)
+            }
+
+            function remove_commuters(){
+                for(var i = 0; i < commuting_lst.length; i++){
+                    map.removeMapItem(commuting_lst[i]);
+
+                }
+                commuting_lst = []
             }
 
             property City city
             property bool clicked: false
+            property var commuting_lst: []
             radius: (city.popCount / backend.total_pop) * 250000
             color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1,0,0.2) : Qt.rgba(0,1,0,0.2)
             center: city.crd
@@ -124,6 +136,7 @@ ApplicationWindow{
                     if(parent.clicked){
                         parent.clicked = false
                         total_pop.selected_pop -= parent.city.popCount
+                        parent.remove_commuters()
 
                     }
                     else{
