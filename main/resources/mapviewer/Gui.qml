@@ -84,8 +84,9 @@ ApplicationWindow{
     Component{
         id:path
         MapPolyline{
-            line.width: 1
-            line.color: 'green'
+            property var clr
+            line.width: 2
+            line.color: clr
 
         }
     }
@@ -94,19 +95,23 @@ ApplicationWindow{
         id: mapCircleComponent
         MapCircle{
             function draw_commuters(){
-                console.log(commuting_lst)
                 for(var i = 0; i < 10; i++){
-                    var co1 = [ city.crd, backend.get_city(city.out_commuters[i]) ];
-                    var pat = path.createObject(map);
+
+                    var pat = path.createObject(map, {clr: 'green'});
                     pat.addCoordinate(city.crd)
                     pat.addCoordinate(backend.get_city(city.out_commuters[i]).crd)
 
-                    map.addMapItem(pat)
-                    commuting_lst.push(pat);
+                    console.log(backend.get_city(city.in_commuters[i]))
+                    var path2 = path.createObject(map, {clr: 'red'});
+                    path2.addCoordinate(city.crd)
+                    path2.addCoordinate(backend.get_city(city.in_commuters[i]).crd)
 
-                    //console.log(backend.get_city(city.out_commuters[i]));
+                    map.addMapItem(pat);
+                    map.addMapItem((path2));
+
+                    commuting_lst.push(pat);
+                    commuting_lst.push(path2);
                 }
-                console.log(commuting_lst)
             }
 
             function remove_commuters(){
@@ -121,7 +126,7 @@ ApplicationWindow{
             property bool clicked: false
             property var commuting_lst: []
             radius: (city.popCount / backend.total_pop) * 250000
-            color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1,0,0.2) : Qt.rgba(0,1,0,0.2)
+            color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1,0,0,0.2) : Qt.rgba(0,1,0,0.2)
             center: city.crd
             z: backend.total_pop - city.popCount
 
@@ -136,7 +141,7 @@ ApplicationWindow{
                     if(parent.clicked){
                         parent.clicked = false
                         total_pop.selected_pop -= parent.city.popCount
-                        parent.remove_commuters()
+                        parent.remove_commuters();
 
                     }
                     else{

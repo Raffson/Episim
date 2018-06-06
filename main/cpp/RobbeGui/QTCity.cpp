@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <boost/range/adaptor/reversed.hpp>
 
+
+
 QTCity::QTCity(stride::City* model, QObject *parent ) : QObject(parent), m_city(model){
     fill_in_in_commuters();
     fill_in_out_commuters();
@@ -49,14 +51,17 @@ void QTCity::fill_in_out_commuters() {
 void QTCity::fill_in_in_commuters() {
 
     vector<pair<double, unsigned int>> tmp_vec;
+
     for(auto& it: m_city->GetInCommuting()){
         tmp_vec.emplace_back(make_pair(it.second, it.first));
     }
 
     std::sort(tmp_vec.begin(), tmp_vec.end());
 
+
     for(auto& it: boost::adaptors::reverse(tmp_vec)){
         m_sorted_in_commuters.append(it.second);
         m_commuter_in_count.append(it.first);
     }
+
 }
