@@ -85,12 +85,51 @@ ApplicationWindow{
         id:path
         MapPolyline{
             property var cty
-            property int commuter_count: 0
+            property int commuter_count_out: 0
+            property int commuter_count_in: 0
             property bool out: false
             property bool inc: false
-            line.width: commuter_count / (out ? cty.total_out_commuters : cty.total_in_commuters) * 100
-            line.color: (out && inc) ? 'blue' : (inc ? Qt.rgba(1,0,0,0.4): Qt.rgba(0,1,0,0.4))
+            line.width: calc_line_width() * 100
+            line.color:mouse_line.containsMouse ? Qt.rgba(1,1,1,0.4) : (out && inc) ? 'blue' : (inc ? Qt.rgba(1,0,0,0.4): Qt.rgba(0,1,0,0.4))
 
+
+            function calc_line_width(){
+
+                if(out && inc){
+                    return (commuter_count_in + commuter_count_out) / (cty.total_out_commuters + cty.total_in_commuters)
+                }
+
+                else if(inc){
+                    return commuter_count_in / cty.total_in_commuters
+                }
+
+                else{
+
+                    return commuter_count_out / cty.total_out_commuters
+                }
+            }
+
+            function generate_tool_text(){
+                var ret = ""
+
+                if (out){
+                    ret = ret + "Outgoing commuters: " + commuter_count_out + "\n"
+                }
+
+                if(inc){
+                  ret = ret + "Incomming commuters: " + commuter_count_in
+                }
+
+              return ret
+            }
+
+            MouseArea{
+                id: mouse_line
+                anchors.fill: parent
+                hoverEnabled: true
+                ToolTip.visible: containsMouse ? true : false
+                ToolTip.text: generate_tool_text()
+            }
         }
     }
 
@@ -98,21 +137,52 @@ ApplicationWindow{
         id: mapCircleComponent
         MapCircle{
             function draw_commuters(){
+
+                // Outs first to filter duplicates
                 for(var i = 0; i < 10; i++){
+                    var added = false
+                    for(var k = 0; k < 10; k++){
+                        if(city.out_commuters[i] === city.in_commuters[k]){
+                            var pat_b = path.createObject(map,{
+                                                              cty: city ,
+                                                              commuter_count_out: city.out_commuters_count[i],
+                                                              commuter_count_in: city.in_commuters_count[k],
+                                                              inc: true,
+                                                              out: true
+                                                              });
+                            pat_b.addCoordinate(city.crd)
+                            pat_b.addCoordinate(backend.get_city(city.out_commuters[i]).crd)
 
-                    var pat = path.createObject(map, {cty: city , commuter_count: city.out_commuters_count[i], out: true});
-                    pat.addCoordinate(city.crd)
-                    pat.addCoordinate(backend.get_city(city.out_commuters[i]).crd)
+                            map.addMapItem(pat_b)
+                            commuting_lst.push(pat_b)
+                            added = true
+                            break
+                        }
+                    }
+                    if(!added){
+                        pat_b = path.createObject(map, {cty: city , commuter_count_out: city.out_commuters_count[i], out: true});
+                        pat_b.addCoordinate(city.crd)
+                        pat_b.addCoordinate(backend.get_city(city.out_commuters[i]).crd)
+                        map.addMapItem(pat_b)
+                        commuting_lst.push(pat_b)
+                    }
+                }
 
-                    var path2 = path.createObject(map, {cty: city, commuter_count: city.in_commuters_count[i], inc : true});
-                    path2.addCoordinate(city.crd)
-                    path2.addCoordinate(backend.get_city(city.in_commuters[i]).crd)
-
-                    map.addMapItem(pat);
-                    map.addMapItem((path2));
-
-                    commuting_lst.push(pat);
-                    commuting_lst.push(path2);
+                for(i = 0; i < 10; i++){
+                    for(k = 0; k <10; k++){
+                        added = false
+                        if(city.in_commuters[i] === city.out_commuters[k]){
+                            added = true
+                            break
+                        }
+                    }
+                    if(!added){
+                        pat_b = path.createObject(map, {cty: city , commuter_count_in: city.in_commuters_count[i], inc: true});
+                        pat_b.addCoordinate(city.crd)
+                        pat_b.addCoordinate(backend.get_city(city.in_commuters[i]).crd)
+                        map.addMapItem(pat_b)
+                        commuting_lst.push(pat_b)
+                    }
                 }
             }
 
@@ -130,7 +200,7 @@ ApplicationWindow{
             radius: (city.popCount / backend.total_pop) * 250000
             color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1,0,0,0.2) : Qt.rgba(0,1,0,0.2)
             center: city.crd
-            z: backend.total_pop - city.popCount
+            z: 1
 
             MouseArea{
                 id: cty_mouse
