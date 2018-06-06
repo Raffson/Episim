@@ -49,8 +49,8 @@ private:
     QList<int> get_out_commuters_count(){ return m_commuter_out_count;}
     QList<int> get_in_commuters(){ return m_sorted_in_commuters;}
     QList<int> get_in_commuters_count(){ return m_commuter_in_count;}
-    int get_total_commuters_out(){return m_city->GetTotalOutCommutersCount();}
-    int get_total_commuters_in(){return m_city->GetTotalInCommutersCount();}
+    int get_total_commuters_out(){return(int) m_city->GetTotalOutCommutersCount();}
+    int get_total_commuters_in(){return (int) m_city->GetTotalInCommutersCount();}
 
     void fill_in_out_commuters();
     void fill_in_in_commuters();

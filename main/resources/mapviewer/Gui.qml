@@ -84,9 +84,12 @@ ApplicationWindow{
     Component{
         id:path
         MapPolyline{
-            property var clr
-            line.width: 2
-            line.color: clr
+            property var cty
+            property int commuter_count: 0
+            property bool out: false
+            property bool inc: false
+            line.width: commuter_count / (out ? cty.total_out_commuters : cty.total_in_commuters) * 100
+            line.color: (out && inc) ? 'blue' : (inc ? Qt.rgba(1,0,0,0.4): Qt.rgba(0,1,0,0.4))
 
         }
     }
@@ -97,12 +100,11 @@ ApplicationWindow{
             function draw_commuters(){
                 for(var i = 0; i < 10; i++){
 
-                    var pat = path.createObject(map, {clr: 'green'});
+                    var pat = path.createObject(map, {cty: city , commuter_count: city.out_commuters_count[i], out: true});
                     pat.addCoordinate(city.crd)
                     pat.addCoordinate(backend.get_city(city.out_commuters[i]).crd)
 
-                    console.log(backend.get_city(city.in_commuters[i]))
-                    var path2 = path.createObject(map, {clr: 'red'});
+                    var path2 = path.createObject(map, {cty: city, commuter_count: city.in_commuters_count[i], inc : true});
                     path2.addCoordinate(city.crd)
                     path2.addCoordinate(backend.get_city(city.in_commuters[i]).crd)
 
