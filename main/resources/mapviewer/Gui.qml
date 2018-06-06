@@ -85,12 +85,15 @@ ApplicationWindow{
         id:path
         MapPolyline{
             property var cty
+            property var cty2
             property int commuter_count_out: 0
             property int commuter_count_in: 0
             property bool out: false
             property bool inc: false
             line.width: calc_line_width() * 100
             line.color:mouse_line.containsMouse ? Qt.rgba(1,1,1,0.4) : (out && inc) ? 'blue' : (inc ? Qt.rgba(1,0,0,0.4): Qt.rgba(0,1,0,0.4))
+            z: 1000000 - calc_line_width()
+
 
 
             function calc_line_width(){
@@ -110,10 +113,26 @@ ApplicationWindow{
             }
 
             function generate_tool_text(){
-                var ret = ""
+                var ret = cty.name
+
+                if(out && inc){
+                    ret += " <-> " + cty2.name + "\n"
+                }
+
+                else if(out){
+                    ret += " -> " + cty2.name + "\n"
+                }
+
+                else{
+                    ret += " <- " + cty2.name + "\n"
+                }
 
                 if (out){
-                    ret = ret + "Outgoing commuters: " + commuter_count_out + "\n"
+                    ret = ret + "Outgoing commuters: " + commuter_count_out
+                }
+
+                if(out && inc){
+                    ret += "\n"
                 }
 
                 if(inc){
@@ -145,6 +164,7 @@ ApplicationWindow{
                         if(city.out_commuters[i] === city.in_commuters[k]){
                             var pat_b = path.createObject(map,{
                                                               cty: city ,
+                                                              cty2: backend.get_city(city.out_commuters[i]),
                                                               commuter_count_out: city.out_commuters_count[i],
                                                               commuter_count_in: city.in_commuters_count[k],
                                                               inc: true,
@@ -160,7 +180,7 @@ ApplicationWindow{
                         }
                     }
                     if(!added){
-                        pat_b = path.createObject(map, {cty: city , commuter_count_out: city.out_commuters_count[i], out: true});
+                        pat_b = path.createObject(map, {cty: city , cty2: backend.get_city(city.out_commuters[i]), commuter_count_out: city.out_commuters_count[i], out: true});
                         pat_b.addCoordinate(city.crd)
                         pat_b.addCoordinate(backend.get_city(city.out_commuters[i]).crd)
                         map.addMapItem(pat_b)
@@ -177,7 +197,7 @@ ApplicationWindow{
                         }
                     }
                     if(!added){
-                        pat_b = path.createObject(map, {cty: city , commuter_count_in: city.in_commuters_count[i], inc: true});
+                        pat_b = path.createObject(map, {cty: city ,cty2: backend.get_city(city.in_commuters[i]), commuter_count_in: city.in_commuters_count[i], inc: true});
                         pat_b.addCoordinate(city.crd)
                         pat_b.addCoordinate(backend.get_city(city.in_commuters[i]).crd)
                         map.addMapItem(pat_b)
