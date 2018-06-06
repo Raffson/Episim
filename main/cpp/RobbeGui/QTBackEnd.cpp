@@ -63,5 +63,12 @@ QObject *QTBackEnd::get_city(unsigned int id) {
 
 }
 
+void QTBackEnd::run_simulator(unsigned int days) {
+
+    std::shared_ptr<stride::Population> pop = m_grid->GetPopulation();
+    auto runner = make_shared<stride::SimRunner>(m_pt, pop, m_grid);
+    runner->Run();
+}
+
 
 

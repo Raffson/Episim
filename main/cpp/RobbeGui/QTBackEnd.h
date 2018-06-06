@@ -13,6 +13,8 @@
 #include "popgen-Episim/generator/GeoGridGenerator.h"
 #include "popgen-Episim/generator/PopulationGenerator.h"
 
+#include "pop/Population.h"
+#include "sim/SimRunner.h"
 using namespace boost::property_tree;
 
 #include "QTCity.h"
@@ -28,6 +30,7 @@ public:
     /// @brief Handler for QML to generate pop. Will do the genpop logic.
     Q_INVOKABLE void genPop();
     Q_INVOKABLE QObject* get_city(unsigned int id);
+    Q_INVOKABLE void run_simulator(unsigned int days = 0);
 
 
     Q_PROPERTY(QList<QObject*> cities READ get_cities)
