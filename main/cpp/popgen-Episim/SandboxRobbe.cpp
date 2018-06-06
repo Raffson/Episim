@@ -5,21 +5,31 @@
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
+
 #include "RobbeGui/QTBackEnd.h"
 #endif
 
+#include <boost/property_tree/xml_parser.hpp>
+#include "boost/property_tree/ptree.hpp"
+using namespace boost::property_tree;
 
 
 int main(int argc, char** argv){
+    ptree pt;
+    read_xml("config/run_default.xml",pt);
+
 #ifdef USING_QT
     QGuiApplication app(argc, argv); // main app
 
-    qmlRegisterType<QTBackEnd>("episim.backend",1,0,"BackEnd"); // let the qml find the BackEnd class
+    QScopedPointer<QTBackEnd> backend(new QTBackEnd(pt));
+    //qmlRegisterType<QTBackEnd>("episim.backend",1,0,"BackEnd"); // let the qml find the BackEnd class
     qmlRegisterType<QTCity>("episim.city",1,0,"City"); // let the qml find the City class
 
 
     QQmlApplicationEngine engine;
     engine.load(QStringLiteral("mapviewer/Gui.qml"));
+    engine.rootContext()->setContextProperty("backend", backend.data());
 
     return app.exec();
 #endif

@@ -6,7 +6,6 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 2.4
 
-import episim.backend 1.0
 import episim.city 1.0
 
 
@@ -50,9 +49,6 @@ ApplicationWindow{
         }
     }
 
-    BackEnd{
-        id: backend
-    }
 
     ToolBar {
         id: toolBar
@@ -90,7 +86,7 @@ ApplicationWindow{
             property int commuter_count_in: 0
             property bool out: false
             property bool inc: false
-            line.width: calc_line_width() * 100
+            line.width: calc_line_width() * 50
             line.color:mouse_line.containsMouse ? Qt.rgba(1,1,1,0.4) : (out && inc) ? 'blue' : (inc ? Qt.rgba(1,0,0,0.4): Qt.rgba(0,1,0,0.4))
             z: 1000000 - calc_line_width()
 

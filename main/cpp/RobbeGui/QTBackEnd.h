@@ -8,9 +8,12 @@
 #include <QList>
 #include <QGeoCoordinate>
 
+#include "boost/property_tree/ptree.hpp"
 
 #include "popgen-Episim/generator/GeoGridGenerator.h"
 #include "popgen-Episim/generator/PopulationGenerator.h"
+
+using namespace boost::property_tree;
 
 #include "QTCity.h"
 
@@ -19,7 +22,7 @@ class QTBackEnd: public QObject {
 
 public:
 
-    explicit QTBackEnd(QObject *parent = nullptr);
+    explicit QTBackEnd(ptree& pt, QObject *parent = nullptr);
     ~QTBackEnd() override;
 
     /// @brief Handler for QML to generate pop. Will do the genpop logic.
@@ -49,6 +52,8 @@ private:
 
     ///> A Qlist that conains our QTCity models
     QList<QObject*> m_cities;
+
+    ptree& m_pt;
 
 
 };

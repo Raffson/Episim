@@ -4,7 +4,7 @@
 
 #include "QTBackEnd.h"
 
-QTBackEnd::QTBackEnd(QObject *parent): QObject(parent) {
+QTBackEnd::QTBackEnd(ptree& pt, QObject *parent):QObject(parent),m_pt(pt) {
 
 }
 
@@ -20,7 +20,7 @@ QTBackEnd::~QTBackEnd() {
 
 void QTBackEnd::genPop() {
 
-    this->m_grid = stride::GeoGridGenerator().Generate("run_default.xml");
+    this->m_grid = stride::GeoGridGenerator().Generate(m_pt);
     stride::PopulationGenerator(*m_grid).Generate();
     makeCityList();
 }
