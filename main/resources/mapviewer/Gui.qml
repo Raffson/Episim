@@ -240,7 +240,7 @@ ApplicationWindow{
                 id: cty_mouse
                 anchors.fill: parent
                 hoverEnabled: true
-                ToolTip.text: "City: " + city.name + "\nPopulation: " + city.popCount
+                ToolTip.text: "City: " + city.name + "\nPopulation: " + city.popCount + "\nInfected: " + city.infected
                 ToolTip.visible: containsMouse ? true : false
 
                 onClicked: {

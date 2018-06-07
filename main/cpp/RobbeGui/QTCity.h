@@ -35,6 +35,7 @@ public:
     Q_PROPERTY(QList<int> in_commuters_count READ get_in_commuters_count CONSTANT)
     Q_PROPERTY(int total_in_commuters READ get_total_commuters_in CONSTANT)
     Q_PROPERTY(int total_out_commuters READ get_total_commuters_out CONSTANT)
+    Q_PROPERTY(int infected READ get_infected CONSTANT)
 
 
     stride::City* get_m_city(){return m_city;}
@@ -51,6 +52,7 @@ private:
     QList<int> get_in_commuters_count(){ return m_commuter_in_count;}
     int get_total_commuters_out(){return(int) m_city->GetTotalOutCommutersCount();}
     int get_total_commuters_in(){return (int) m_city->GetTotalInCommutersCount();}
+    int get_infected() const {return (int) m_city->GetInfectedCount();}
 
     void fill_in_out_commuters();
     void fill_in_in_commuters();
