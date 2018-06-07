@@ -76,6 +76,23 @@ ApplicationWindow{
 
             }
         }
+
+        Button {
+            id: button_sim
+            text: qsTr("RUN sim")
+            width: parent.width / 10
+            height: parent.height
+            anchors.right: parent.right
+
+            MouseArea {
+                id: mouseArea_sim
+                anchors.fill: parent
+                onClicked: {
+                    backend.run_simulator();
+                }
+
+            }
+        }
     }
 
     Component{
