@@ -59,7 +59,6 @@ void QTBackEnd::run_simulator(unsigned int days) {
     auto runner = make_shared<stride::SimRunner>(m_pt, pop, m_grid);
     runner->Run();
     m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
-    cout << "Done" << endl;
 }
 
 
