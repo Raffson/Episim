@@ -1,4 +1,4 @@
-import QtQuick 2.2
+import QtQuick 2.0
 import QtQuick.Controls 1.4
 import QtLocation 5.6
 import QtPositioning 5.6
@@ -67,10 +67,11 @@ ApplicationWindow{
                 id: mouseArea_run
                 anchors.fill: parent
                 onClicked: {
-                             map.clearMapItems();
-                             backend.genPop()
-                             map.draw_cities()
-                             map.center_and_zoom()
+                    //cty_model.clear();
+                    map.clearMapItems();
+                    backend.genPop();
+                    //map.draw_cities();
+                    map.center_and_zoom();
                 }
 
             }
@@ -210,7 +211,7 @@ ApplicationWindow{
                 commuting_lst = []
             }
 
-            property City city
+            property City city : model.modelData
             property bool clicked: false
             property var commuting_lst: []
             radius: (city.popCount / backend.total_pop) * 250000
@@ -243,6 +244,10 @@ ApplicationWindow{
         }
     }
 
+    /*ListModel{
+        id: cty_model
+    }*/
+
     Map {
         id: map
         visible: true
@@ -256,13 +261,20 @@ ApplicationWindow{
         anchors.left: parent.left
         anchors.right: parent.right
 
+        MapItemView{
+            /*model:cty_model
+            delegate: mapCircleComponent */
 
-        function draw_cities(){
+            model:CityModel
+            delegate: mapCircleComponent
+
+            }
+
+        /*function draw_cities(){
                 for(var i = 0; i < backend.cities.length; i++){
-                    var circle = mapCircleComponent.createObject(map, {city: backend.cities[i]})
-                    map.addMapItem(circle);
+                    cty_model.append({cty: backend.cities[i]})
                 }
-        }
+        } */
 
         function center_and_zoom(){
             map.zoomLevel = 7.5; // Fixed for now

@@ -3,19 +3,11 @@
 //
 
 #include "QTBackEnd.h"
+#include <QtQuick/QQuickView>
 
-QTBackEnd::QTBackEnd(ptree& pt, QObject *parent):QObject(parent),m_pt(pt) {
-
+QTBackEnd::QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent):QObject(parent),m_pt(pt),m_engine(engine) {
+    m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
 }
-
-QTBackEnd::~QTBackEnd() {
-
-    for(auto& it: m_cities){
-
-        delete it;
-    }
-}
-
 
 
 void QTBackEnd::genPop() {
@@ -27,16 +19,14 @@ void QTBackEnd::genPop() {
 
 void QTBackEnd::makeCityList() {
 
-    for(auto& it: m_cities){
 
-        delete it;
-    }
     m_cities.clear();
 
     for(auto& it: m_grid->GetCities()){
         m_cities.append(new QTCity(&it.second));
     }
 
+    m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
 }
 
 QGeoCoordinate QTBackEnd::get_center() {

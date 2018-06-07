@@ -7,6 +7,9 @@
 #include <QObject>
 #include <QList>
 #include <QGeoCoordinate>
+#include <QGuiApplication>
+#include <QtQml/QQmlApplicationEngine>
+#include <QtQml/QQmlContext>
 
 #include "boost/property_tree/ptree.hpp"
 
@@ -19,13 +22,14 @@ using namespace boost::property_tree;
 
 #include "QTCity.h"
 
+
+
 class QTBackEnd: public QObject {
     Q_OBJECT
 
 public:
 
-    explicit QTBackEnd(ptree& pt, QObject *parent = nullptr);
-    ~QTBackEnd() override;
+    explicit QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent = nullptr);
 
     /// @brief Handler for QML to generate pop. Will do the genpop logic.
     Q_INVOKABLE void genPop();
@@ -57,6 +61,8 @@ private:
     QList<QObject*> m_cities;
 
     ptree& m_pt;
+    QQmlApplicationEngine& m_engine;
+
 
 
 };

@@ -140,6 +140,7 @@ if (Qt5_FOUND)
 	set(CMAKE_INCLUDE_CURRENT_DIR ON)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQt5_FOUND=true")
 	find_package(Qt5Positioning)
+	find_package(QtQml)
     set(QT_INCLUDES
         ${Qt5Core_INCLUDE_DIRS}
         ${Qt5Gui_INCLUDE_DIRS}
