@@ -26,18 +26,48 @@ ApplicationWindow{
 
     }
     Rectangle{
-    TabView{
-        width: window.width
-        height: window.height
-        Tab{
-            title: "Map"
-            Map_rect {
-                id: map_rect
+        TabView{
+            width: window.width
+            height: window.height
+            Tab{
+                title: "Map"
+                Map_rect {
+                    id: map_rect
+                }
             }
-        }
-        Tab{
-            title:"config pop"
+
+            Tab{
+                id: config_pop
+                title:"config pop"
+
+                ColumnLayout {
+                    id: columnLayout
+                    width: 795
+                    height: 444
+
+                    RowLayout {
+                        id: rowLayout
+                        width: 100
+                        height: 100
+                        Layout.preferredHeight: 0
+                        Layout.preferredWidth: 0
+                        Layout.fillWidth: true
+                        visible: true
+
+                        Text {
+                            id: text1
+                            y: 0
+                            width: 500
+                            height: 50
+                            color: "#555753"
+                            text: qsTr("Text")
+                            visible: true
+                            font.pixelSize: 24
+                        }
+                    }
+                }
+            }
+
         }
     }
-}
 }
