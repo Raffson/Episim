@@ -29,15 +29,13 @@ ApplicationWindow{
     Component{
         id: lbl
         Label{
-            Label {
-                id: label
-                text: qsTr("Population")
-                lineHeight: 0.9
-                verticalAlignment: Text.AlignVCenter
-                Layout.fillWidth: true
-            }
-
+            id: label
+            lineHeight: 0.9
+            verticalAlignment: Text.AlignVCenter
+            Layout.fillWidth: true
         }
+
+
     }
 
     Component{
@@ -80,11 +78,29 @@ ApplicationWindow{
                     columnSpacing: 5
                     rows: 2
                     columns: 5
+                    Repeater{
+                        model: ["Population", "Fractions Students", "Fraction commuting students", "Fraction active workers"
+                                ,"Fraction commuting workers", "Average size", "College Size", "Community size", "Workplace Size"]
                             ColumnLayout{
                                 Layout.alignment: Qt.AlignTop
-                                Loader{sourceComponent: lbl}
-                                Loader{sourceComponent: spnner}
+                                Label{
+                                    id: label
+                                    text: modelData
+                                    lineHeight: 0.9
+                                    verticalAlignment: Text.AlignVCenter
+                                    Layout.fillWidth: true
+                                }
+
+                                SpinBox {
+                                    id: spinBox9
+                                    to: 1
+                                    stepSize: 0
+                                    editable: true
+                                    Layout.fillWidth: true
+                                }
+
                             }
+                    }
 
 
 
