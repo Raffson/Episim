@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.1
 import QtQuick.Controls 1.4
 import QtLocation 5.6
 import QtPositioning 5.6
@@ -30,6 +30,7 @@ ApplicationWindow{
             width: window.width
             height: window.height
             Tab{
+                id: map_tab
                 title: "Map"
                 Map_rect {
                     id: map_rect
@@ -40,34 +41,37 @@ ApplicationWindow{
                 id: config_pop
                 title:"config pop"
 
-                ColumnLayout {
-                    id: columnLayout
-                    width: 795
-                    height: 444
+                Grid {
+                    id: grid
+                    anchors.leftMargin: parent.width / 20
+                    anchors.topMargin: parent.height / 20
+                    spacing: 25
+                    anchors.fill: parent
+                    rows: 5
+                    columns: 2
 
-                    RowLayout {
-                        id: rowLayout
-                        width: 100
-                        height: 100
-                        Layout.preferredHeight: 0
-                        Layout.preferredWidth: 0
-                        Layout.fillWidth: true
-                        visible: true
+                    Row {
+                        id: row
+                        spacing: 5
+                        layoutDirection: Qt.RightToLeft
 
-                        Text {
-                            id: text1
-                            y: 0
-                            width: 500
-                            height: 50
-                            color: "#555753"
-                            text: qsTr("Text")
-                            visible: true
-                            font.pixelSize: 24
+                        TextField {
+                            id: textField
+                            placeholderText: qsTr("Text Field")
                         }
+
+                        Label {
+                            id: label
+                            text: qsTr("Population:")
+                            topPadding: textField.height / 4
+                            lineHeight: 0.9
+                            verticalAlignment: Text.AlignTop
+                        }
+
                     }
                 }
-            }
 
+            }
         }
     }
 }
