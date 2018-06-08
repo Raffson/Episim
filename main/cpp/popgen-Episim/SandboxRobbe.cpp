@@ -24,11 +24,7 @@ int main(int argc, char** argv){
     QQmlApplicationEngine engine;
 
     QScopedPointer<QTBackEnd> backend(new QTBackEnd(engine, pt));
-    //qmlRegisterType<QTBackEnd>("episim.backend",1,0,"BackEnd"); // let the qml find the BackEnd class
     qmlRegisterType<QTCity>("episim.city",1,0,"City"); // let the qml find the City class
-
-
-
     engine.load(QStringLiteral("mapviewer/Gui.qml"));
     engine.rootContext()->setContextProperty("backend", backend.data());
 
