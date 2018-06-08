@@ -25,6 +25,33 @@ ApplicationWindow{
 
 
     }
+
+    Component{
+        id: lbl
+        Label{
+            Label {
+                id: label
+                text: qsTr("Population")
+                lineHeight: 0.9
+                verticalAlignment: Text.AlignVCenter
+                Layout.fillWidth: true
+            }
+
+        }
+    }
+
+    Component{
+        id:spnner
+        SpinBox {
+            id: spinBox9
+            to: 1
+            stepSize: 0
+            editable: true
+            Layout.fillWidth: true
+        }
+    }
+
+
     Rectangle{
         TabView{
             width: window.width
@@ -42,32 +69,26 @@ ApplicationWindow{
                 id: config_pop
                 active: false
                 title:"config pop"
-
-                Item {
-                    id: item1
-                    anchors.leftMargin: parent.width / 25
-                    anchors.topMargin: parent.height / 25
+            Rectangle{
+                anchors.fill: parent
+                 color: Qt.rgba(0.9,0.9,0.9,0.5)
+                GridLayout{
+                    id: alligner
+                    anchors.topMargin: parent.height / 50
+                    anchors.leftMargin: 50
                     anchors.fill: parent
-
-                    ColumnLayout{
-                        id: alligner
-                        width: parent.width
-                        RowLayout{
-                            id: row1
-                            spacing: 25
-                            Layout.fillHeight: true
-
-
-                            Text {
-                                id: text1
-                                text: qsTr("Population:")
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                                font.pixelSize: 20
-
+                    columnSpacing: 5
+                    rows: 2
+                    columns: 5
+                            ColumnLayout{
+                                Layout.alignment: Qt.AlignTop
+                                Loader{sourceComponent: lbl}
+                                Loader{sourceComponent: spnner}
                             }
 
-                            ColumnLayout {
+
+
+                            /*ColumnLayout {
                                 id: pop_grp
                                 spacing: 5
                                 Layout.fillWidth: true
@@ -76,15 +97,17 @@ ApplicationWindow{
                                     text: qsTr("Population")
                                     lineHeight: 0.9
                                     verticalAlignment: Text.AlignVCenter
+                                    Layout.fillWidth: true
                                 }
 
-
-                                TextField {
-                                    id: textField
-                                    width: parent.width / 6
-                                    placeholderText: qsTr("Text Field")
-                                    //Layout.fillWidth: true
+                                SpinBox {
+                                    id: spinBox9
+                                    to: 1
+                                    stepSize: 0
+                                    editable: true
+                                    Layout.fillWidth: true
                                 }
+
 
                             }
 
@@ -94,6 +117,8 @@ ApplicationWindow{
                                 Label {
                                     id: label1
                                     text: qsTr("Students (%)")
+                                    Layout.fillWidth: true
+                                    horizontalAlignment: Text.AlignLeft
                                     lineHeight: 0.9
                                     verticalAlignment: Text.AlignTop
                                 }
@@ -103,6 +128,7 @@ ApplicationWindow{
                                     editable: true
                                     stepSize: 0
                                     to: 1
+                                    Layout.fillWidth: true
                                 }
 
                                 spacing: 5
@@ -113,7 +139,9 @@ ApplicationWindow{
                                 Label {
                                     id: label2
                                     text: qsTr("Commuting Students(%)")
-                                    font.pointSize: 10
+                                    Layout.fillWidth: true
+                                    horizontalAlignment: Text.AlignLeft
+                                    font.pointSize: 12
                                     lineHeight: 0.9
                                     verticalAlignment: Text.AlignTop
                                 }
@@ -123,6 +151,7 @@ ApplicationWindow{
                                     stepSize: 0
                                     editable: true
                                     to: 1
+                                    Layout.fillWidth: true
                                 }
                                 spacing: 5
                             }
@@ -132,6 +161,8 @@ ApplicationWindow{
                                 Label {
                                     id: label3
                                     text: qsTr("Active Workers(%)")
+                                    Layout.fillWidth: true
+                                    horizontalAlignment: Text.AlignLeft
                                     lineHeight: 0.9
                                     verticalAlignment: Text.AlignTop
                                 }
@@ -141,6 +172,7 @@ ApplicationWindow{
                                     stepSize: 0
                                     editable: true
                                     to: 1
+                                    Layout.fillWidth: true
                                 }
                                 spacing: 5
                             }
@@ -148,65 +180,159 @@ ApplicationWindow{
                             ColumnLayout {
 
                                 id: fract3
+                                Layout.fillWidth: false
                                 spacing: 5
                                 Label {
                                     id: label4
                                     text: qsTr("Active Workers(%)")
+                                    Layout.fillWidth: true
+                                    horizontalAlignment: Text.AlignLeft
                                     lineHeight: 0.9
                                     verticalAlignment: Text.AlignTop
+
                                 }
 
                                 SpinBox {
                                     id: spinBox3
                                     width: parent.width
+                                    to: 1
                                     stepSize: 0
                                     editable: true
-                                    to: 1
+                                    Layout.fillWidth: true
                                 }
-
-                            }
-
-                        }
-                        RowLayout{
-                            id: contactpool_info
-                            spacing: 25
-                            Text {
-                                id: cp_text1
-                                text: qsTr("Population:")
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                                font.pixelSize: 20
 
                             }
 
                             ColumnLayout {
-                                id: cp_pop_grp
-                                spacing: 5
-                                Layout.fillWidth: true
+                                id: average_size
                                 Label {
-                                    id: cp_label
-                                    text: qsTr("Population")
+                                    id: com_size
+                                    text: qsTr("Average Size")
+                                    Layout.fillWidth: true
+                                    horizontalAlignment: Text.AlignLeft
+                                    Layout.minimumWidth: 50
+                                    Layout.preferredWidth: 50
                                     lineHeight: 0.9
-                                    verticalAlignment: Text.AlignVCenter
+                                    verticalAlignment: Text.AlignTop
                                 }
 
-
-                                TextField {
-                                    id: cp_textField
-                                    width: parent.width / 6
-                                    placeholderText: qsTr("Text Field")
-                                    //Layout.fillWidth: true
+                                SpinBox {
+                                    id: spinBox4
+                                    width: parent.width
+                                    to: 1
+                                    stepSize: 0
+                                    editable: true
+                                    Layout.fillWidth: true
                                 }
+                                spacing: 5
+                            }
+
+                            ColumnLayout {
+                                id: school_size
+                                Label {
+                                    id: com_size1
+                                    text: qsTr("School Size")
+                                    Layout.fillWidth: true
+                                    lineHeight: 0.9
+                                    horizontalAlignment: Text.AlignLeft
+                                    Layout.preferredWidth: 50
+                                    verticalAlignment: Text.AlignTop
+                                    Layout.minimumWidth: 50
+                                }
+
+                                SpinBox {
+                                    id: spinBox5
+                                    width: parent.width
+                                    to: 1
+                                    stepSize: 0
+                                    editable: true
+                                    Layout.fillWidth: true
+                                }
+                                spacing: 5
+                            }
+
+                            ColumnLayout {
+                                id: college_size
+                                Label {
+                                    id: com_size2
+                                    text: qsTr("College Size")
+                                    Layout.fillWidth: true
+                                    lineHeight: 0.9
+                                    horizontalAlignment: Text.AlignLeft
+                                    Layout.preferredWidth: 50
+                                    verticalAlignment: Text.AlignTop
+                                    Layout.minimumWidth: 50
+                                }
+
+                                SpinBox {
+                                    id: spinBox6
+                                    width: parent.width
+                                    to: 1
+                                    stepSize: 0
+                                    editable: true
+                                    Layout.fillWidth: true
+                                }
+                                spacing: 5
+                            }
+
+                            ColumnLayout {
+                                id: workplace_size
+                                Label {
+                                    id: com_size3
+                                    text: qsTr("Workplace Size")
+                                    Layout.fillWidth: true
+                                    lineHeight: 0.9
+                                    horizontalAlignment: Text.AlignLeft
+                                    Layout.preferredWidth: 50
+                                    verticalAlignment: Text.AlignTop
+                                    Layout.minimumWidth: 50
+                                }
+
+                                SpinBox {
+                                    id: spinBox7
+                                    width: parent.width
+                                    to: 1
+                                    stepSize: 0
+                                    editable: true
+                                    Layout.fillWidth: true
+                                }
+                                spacing: 5
+                            }
+
+                            ColumnLayout {
+                                id: community_size
+                                Label {
+                                    id: com_size4
+                                    text: qsTr("Community Size")
+                                    Layout.fillWidth: true
+                                    lineHeight: 0.9
+                                    horizontalAlignment: Text.AlignLeft
+                                    Layout.preferredWidth: 50
+                                    verticalAlignment: Text.AlignTop
+                                    Layout.minimumWidth: 50
+                                }
+
+                                SpinBox {
+                                    id: spinBox8
+                                    width: parent.width
+                                    to: 1
+                                    stepSize: 0
+                                    editable: true
+                                    Layout.fillWidth: true
+                                }
+                                spacing: 5
+                            }*/
+
+                        }
+
 
                             }
                         }
 
                     }
                 }
-            }
-        }
-    }
-}
+                }
+
 
 /*##^## Designer {
     D{i:5;invisible:true}D{i:8;anchors_x:5}D{i:4;invisible:true}
