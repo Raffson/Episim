@@ -2,7 +2,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.4
 import QtLocation 5.6
 import QtPositioning 5.6
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.11
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 2.4
 //import episim.city 1.0
@@ -10,7 +10,7 @@ import QtQuick.Controls 2.4
 
 ApplicationWindow{
     id: window
-    width: 900
+    width: 1200
     height: 500
     title: "Simulator"
     visible: true
@@ -29,6 +29,7 @@ ApplicationWindow{
         TabView{
             width: window.width
             height: window.height
+            currentIndex: 1
             Tab{
                 id: map_tab
                 title: "Map"
@@ -39,39 +40,175 @@ ApplicationWindow{
 
             Tab{
                 id: config_pop
+                active: false
                 title:"config pop"
 
-                Grid {
-                    id: grid
-                    anchors.leftMargin: parent.width / 20
-                    anchors.topMargin: parent.height / 20
-                    spacing: 25
+                Item {
+                    id: item1
+                    anchors.leftMargin: parent.width / 25
+                    anchors.topMargin: parent.height / 25
                     anchors.fill: parent
-                    rows: 5
-                    columns: 2
 
-                    Row {
-                        id: row
-                        spacing: 5
-                        layoutDirection: Qt.RightToLeft
+                    ColumnLayout{
+                        id: alligner
+                        width: parent.width
+                        RowLayout{
+                            id: row1
+                            spacing: 25
+                            Layout.fillHeight: true
 
-                        TextField {
-                            id: textField
-                            placeholderText: qsTr("Text Field")
+
+                            Text {
+                                id: text1
+                                text: qsTr("Population:")
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                font.pixelSize: 20
+
+                            }
+
+                            ColumnLayout {
+                                id: pop_grp
+                                spacing: 5
+                                Layout.fillWidth: true
+                                Label {
+                                    id: label
+                                    text: qsTr("Population")
+                                    lineHeight: 0.9
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+
+
+                                TextField {
+                                    id: textField
+                                    width: parent.width / 6
+                                    placeholderText: qsTr("Text Field")
+                                    //Layout.fillWidth: true
+                                }
+
+                            }
+
+                            ColumnLayout {
+                                id: fract
+                                Layout.fillWidth: true
+                                Label {
+                                    id: label1
+                                    text: qsTr("Students (%)")
+                                    lineHeight: 0.9
+                                    verticalAlignment: Text.AlignTop
+                                }
+
+                                SpinBox {
+                                    id: spinBox
+                                    editable: true
+                                    stepSize: 0
+                                    to: 1
+                                }
+
+                                spacing: 5
+                            }
+
+                            ColumnLayout {
+                                id: fract1
+                                Label {
+                                    id: label2
+                                    text: qsTr("Commuting Students(%)")
+                                    font.pointSize: 10
+                                    lineHeight: 0.9
+                                    verticalAlignment: Text.AlignTop
+                                }
+
+                                SpinBox {
+                                    id: spinBox1
+                                    stepSize: 0
+                                    editable: true
+                                    to: 1
+                                }
+                                spacing: 5
+                            }
+
+                            ColumnLayout {
+                                id: fract2
+                                Label {
+                                    id: label3
+                                    text: qsTr("Active Workers(%)")
+                                    lineHeight: 0.9
+                                    verticalAlignment: Text.AlignTop
+                                }
+
+                                SpinBox {
+                                    id: spinBox2
+                                    stepSize: 0
+                                    editable: true
+                                    to: 1
+                                }
+                                spacing: 5
+                            }
+
+                            ColumnLayout {
+
+                                id: fract3
+                                spacing: 5
+                                Label {
+                                    id: label4
+                                    text: qsTr("Active Workers(%)")
+                                    lineHeight: 0.9
+                                    verticalAlignment: Text.AlignTop
+                                }
+
+                                SpinBox {
+                                    id: spinBox3
+                                    width: parent.width
+                                    stepSize: 0
+                                    editable: true
+                                    to: 1
+                                }
+
+                            }
+
                         }
+                        RowLayout{
+                            id: contactpool_info
+                            spacing: 25
+                            Text {
+                                id: cp_text1
+                                text: qsTr("Population:")
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                font.pixelSize: 20
 
-                        Label {
-                            id: label
-                            text: qsTr("Population:")
-                            topPadding: textField.height / 4
-                            lineHeight: 0.9
-                            verticalAlignment: Text.AlignTop
+                            }
+
+                            ColumnLayout {
+                                id: cp_pop_grp
+                                spacing: 5
+                                Layout.fillWidth: true
+                                Label {
+                                    id: cp_label
+                                    text: qsTr("Population")
+                                    lineHeight: 0.9
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+
+
+                                TextField {
+                                    id: cp_textField
+                                    width: parent.width / 6
+                                    placeholderText: qsTr("Text Field")
+                                    //Layout.fillWidth: true
+                                }
+
+                            }
                         }
 
                     }
                 }
-
             }
         }
     }
 }
+
+/*##^## Designer {
+    D{i:5;invisible:true}D{i:8;anchors_x:5}D{i:4;invisible:true}
+}
+ ##^##*/
