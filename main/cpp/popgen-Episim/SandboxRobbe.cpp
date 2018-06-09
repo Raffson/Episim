@@ -1,6 +1,7 @@
 //
 // Created by robbe on 03.06.18.
 //
+#include "stdlib.h"
 #ifdef USING_QT
 
 #include <QGuiApplication>
@@ -18,6 +19,7 @@ using namespace boost::property_tree;
 int main(int argc, char** argv){
     ptree pt;
     read_xml("config/short.xml",pt);
+    //system("cd bin; rm -r *_*; cd ..");
 
 #ifdef USING_QT
     QGuiApplication app(argc, argv); // main app
