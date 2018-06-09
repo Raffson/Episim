@@ -18,8 +18,8 @@ using namespace boost::property_tree;
 
 int main(int argc, char** argv){
     ptree pt;
-    read_xml("config/short.xml",pt);
-    //system("cd bin; rm -r *_*; cd ..");
+    read_xml("config/run_short.xml",pt);
+    system("cd bin; rm -r *_*; cd ..");
 
 #ifdef USING_QT
     QGuiApplication app(argc, argv); // main app
