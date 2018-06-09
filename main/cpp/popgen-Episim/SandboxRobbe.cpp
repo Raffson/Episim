@@ -17,7 +17,7 @@ using namespace boost::property_tree;
 
 int main(int argc, char** argv){
     ptree pt;
-    read_xml("config/run_default.xml",pt);
+    read_xml("config/short.xml",pt);
 
 #ifdef USING_QT
     QGuiApplication app(argc, argv); // main app
