@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import QtQuick.Controls 1.4
 import QtLocation 5.6
 import QtPositioning 5.6
 import QtQuick.Layouts 1.1
@@ -17,56 +16,85 @@ Rectangle{
         anchors.top: parent.top
         width: parent.width
         height: 25
-        
-        Button {
-            id: button
-            text: qsTr("RUN")
-            width: parent.width / 10
-            height: parent.height
+        RowLayout{
+            anchors.fill: parent
 
-            onClicked: {map.clearMapItems();
-                        backend.genPop();
-                        map.center_and_zoom();
+            Text {
+                id: total_pop
+                property int selected_pop: 0
+                text: "Selected pop: " + selected_pop
+                verticalAlignment: Text.AlignVCenter
             }
 
-            background: Rectangle {
-                id: rc
-                opacity: enabled ? 1 : 0.3
-                color: button.down ?  "red" : button.hovered ?"white" : "green"
+            Button {
+                Layout.fillHeight: true
+                id: button
+                text: qsTr("RUN PopBuilder")
 
-
-            }
-            
-        }
-        Text {
-
-            id: total_pop
-            property int selected_pop: 0
-            text: "Selected pop: " + selected_pop
-            verticalAlignment: Text.AlignVCenter
-            anchors.left: button.right
-            anchors.bottom: parent.bottom
-            anchors.top: parent.top
-        }
-
-        
-        Button {
-            id: button_sim
-            text: qsTr("RUN sim")
-            width: parent.width / 10
-            height: parent.height
-            anchors.right: parent.right
-            
-            MouseArea {
-                id: mouseArea_sim
-                anchors.fill: parent
                 onClicked: {
+                    map.clearMapItems();
+                    backend.genPop();
+                    map.center_and_zoom();
+                }
+
+                background: Rectangle {
+                    id: pop_b
+                    opacity: enabled ? 1 : 0.3
+                    color: button.down ?  "red" : button.hovered ? "white" : "green"
+                }
+            }
+            Button {
+                id: button_sim
+                text: qsTr("RUN sim")
+                onClicked:{
                     backend.run_simulator();
                 }
-                
+
+                background: Rectangle {
+                    id: run_sim
+                    opacity: enabled ? 1 : 0.3
+                    color: button_sim.down ?  "red" : button_sim.hovered ? "white" : "green"
+                }
+
             }
         }
     }
+
+    Map {
+        id: map
+        visible: true
+        maximumTilt:0
+        plugin: mapPlugin
+        center: QtPositioning.coordinate(0, 0)
+        zoomLevel: 0
+
+        anchors.top: toolBar.bottom
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+
+        MapItemView{
+            /*model:cty_model
+            delegate: mapCircleComponent */
+
+            model:CityModel
+            delegate: mapCircleComponent
+
+        }
+
+        /*function draw_cities(){
+                for(var i = 0; i < backend.cities.length; i++){
+                    cty_model.append({cty: backend.cities[i]})
+                }
+        } */
+
+        function center_and_zoom(){
+            map.zoomLevel = 7.5; // Fixed for now
+            map.center = backend.center
+        }
+    }
+
+
     
     Component{
         id:path
@@ -238,37 +266,4 @@ Rectangle{
         id: cty_model
     }*/
     
-    Map {
-        id: map
-        visible: true
-        maximumTilt:0
-        plugin: mapPlugin
-        center: QtPositioning.coordinate(0, 0)
-        zoomLevel: 0
-        
-        anchors.top: toolBar.bottom
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        
-        MapItemView{
-            /*model:cty_model
-            delegate: mapCircleComponent */
-            
-            model:CityModel
-            delegate: mapCircleComponent
-            
-        }
-        
-        /*function draw_cities(){
-                for(var i = 0; i < backend.cities.length; i++){
-                    cty_model.append({cty: backend.cities[i]})
-                }
-        } */
-        
-        function center_and_zoom(){
-            map.zoomLevel = 7.5; // Fixed for now
-            map.center = backend.center
-        }
-    }
 }
