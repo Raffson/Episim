@@ -4,9 +4,18 @@
 
 #include "QTBackEnd.h"
 #include <QtQuick/QQuickView>
+#include <string>
+#include <util/FileSys.h>
+#include "util/InstallDirs.h"
+#include <boost/filesystem/path.hpp>
+
 
 QTBackEnd::QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent):QObject(parent),m_pt(pt),m_engine(engine) {
     m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
+
+    string file(m_pt.get<string>("run.geopop_file"));
+    string path = "config/" + file;
+    read_xml(path, m_geo_pt);
 }
 
 
@@ -59,6 +68,16 @@ void QTBackEnd::run_simulator(unsigned int days) {
     auto runner = make_shared<stride::SimRunner>(m_pt, pop, m_grid);
     runner->Run();
     m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
+}
+
+QString QTBackEnd::get_config(QString xml_tag) {
+    return QString((m_geo_pt.get<string>(xml_tag.toStdString())).c_str());
+}
+
+void QTBackEnd::set_config(QString xml_tag, QString val) {
+
+    m_geo_pt.put(val.toStdString(), xml_tag.toStdString());
+    
 }
 
 

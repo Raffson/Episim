@@ -19,7 +19,7 @@ using namespace boost::property_tree;
 int main(int argc, char** argv){
     ptree pt;
     read_xml("config/run_short.xml",pt);
-    system("cd bin; rm -r *_*; cd ..");
+    system("rm -r *_*");
 
 #ifdef USING_QT
     QGuiApplication app(argc, argv); // main app
@@ -27,8 +27,9 @@ int main(int argc, char** argv){
 
     QScopedPointer<QTBackEnd> backend(new QTBackEnd(engine, pt));
     qmlRegisterType<QTCity>("episim.city",1,0,"City"); // let the qml find the City class
-    engine.load(QStringLiteral("mapviewer/Gui.qml"));
     engine.rootContext()->setContextProperty("backend", backend.data());
+    engine.load(QStringLiteral("mapviewer/Gui.qml"));
+
 
     return app.exec();
 #endif
