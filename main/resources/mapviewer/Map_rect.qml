@@ -10,28 +10,7 @@ import QtQuick.Controls 2.4
 
 Rectangle{
     id: map_rect
-    Rectangle{
-        id: data_viewer
-        width: 200
-        height: 100
-        
-        anchors.left: parent.left
-        anchors.leftMargin: parent.width /15
-        
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: parent.height / 15
-        color: Qt.rgba(0.9,0.9,0.9,1)
-        z: 1
-        
-        Text {
-            
-            id: total_pop
-            property int selected_pop: 0
-            text: "Selected pop: " + selected_pop
-        }
-    }
-    
-    
+
     ToolBar {
         id: toolBar
         opacity: 1
@@ -44,20 +23,32 @@ Rectangle{
             text: qsTr("RUN")
             width: parent.width / 10
             height: parent.height
-            
-            MouseArea {
-                id: mouseArea_run
-                anchors.fill: parent
-                onClicked: {
-                    //cty_model.clear();
-                    map.clearMapItems();
-                    backend.genPop();
-                    //map.draw_cities();
-                    map.center_and_zoom();
-                }
-                
+
+            onClicked: {map.clearMapItems();
+                        backend.genPop();
+                        map.center_and_zoom();
             }
+
+            background: Rectangle {
+                id: rc
+                opacity: enabled ? 1 : 0.3
+                color: button.down ?  "red" : button.hovered ?"white" : "green"
+
+
+            }
+            
         }
+        Text {
+
+            id: total_pop
+            property int selected_pop: 0
+            text: "Selected pop: " + selected_pop
+            verticalAlignment: Text.AlignVCenter
+            anchors.left: button.right
+            anchors.bottom: parent.bottom
+            anchors.top: parent.top
+        }
+
         
         Button {
             id: button_sim

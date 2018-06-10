@@ -90,7 +90,7 @@ ApplicationWindow{
                                 z:5
                                 spacing: 50
                                 Layout.alignment: Qt.AlignTop
-                                Layout.maximumHeight: 1
+                                Layout.maximumHeight: 4
                                 Label{
                                     id: label
                                     text: tag
@@ -115,26 +115,39 @@ ApplicationWindow{
 
                             }
                         }
-                       /* RowLayout{
+                        RowLayout{
                             Layout.alignment: Qt.AlignTop
+                            Layout.maximumHeight: 4
+
+                            Label{
+                                id: cty_file_label
+                                text: "City data file"
+                                verticalAlignment: Text.AlignVCenter
+                                Layout.minimumWidth: 245
+                                Layout.alignment: Qt.AlignLeft
+
+                            }
 
                             TextField{
+                                 Layout.alignment: Qt.AlignRight
+                                 Layout.minimumWidth: 300
 
                             }
 
                             Button{
                                 text: "..."
                                 onClicked: cty.visible = true
+                                Layout.maximumWidth: 20
                             }
 
-                        }*/
+                        }
 
 
 
                         FileDialog{
                             id: cty
                             title: "Please choose a file"
-                            folder: shortcuts.home
+                            folder: "../data/"
                                onAccepted: {
                                    console.log("You chose: " + fileDialog.fileUrls)
 

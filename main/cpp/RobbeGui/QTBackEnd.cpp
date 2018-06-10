@@ -77,7 +77,7 @@ QString QTBackEnd::get_config(QString xml_tag) {
 void QTBackEnd::set_config(QString xml_tag, QString val) {
 
     m_geo_pt.put(val.toStdString(), xml_tag.toStdString());
-    
+
 }
 
 
