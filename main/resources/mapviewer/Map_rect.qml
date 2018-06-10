@@ -17,6 +17,7 @@ Rectangle{
         width: parent.width
         height: 25
         RowLayout{
+            spacing: 10
             anchors.fill: parent
 
             Text {
@@ -24,6 +25,16 @@ Rectangle{
                 property int selected_pop: 0
                 text: "Selected pop: " + selected_pop
                 verticalAlignment: Text.AlignVCenter
+                //Layout.fillWidth: true
+                Layout.preferredWidth: parent.width / 3
+            }
+
+            Text {
+                id: total_infected
+                property int selected_infected: 0
+                text: "Selected infected: " + selected_infected
+                verticalAlignment: Text.AlignVCenter
+                Layout.fillWidth: true
             }
 
             Button {
@@ -230,7 +241,6 @@ Rectangle{
             }
             
             property var city : model.modelData
-            property bool clicked: false
             property var commuting_lst: []
             radius: (city.popCount / backend.total_pop) * 250000
             color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1,0,0,0.2) : Qt.rgba(0,1,0,0.2)
@@ -245,14 +255,14 @@ Rectangle{
                 ToolTip.visible: containsMouse ? true : false
                 
                 onClicked: {
-                    if(parent.clicked){
-                        parent.clicked = false
+                    if(parent.city.clicked){
+                        parent.city.clicked = false
                         total_pop.selected_pop -= parent.city.popCount
                         parent.remove_commuters();
                         
                     }
                     else{
-                        parent.clicked = true
+                        parent.city.clicked = true
                         total_pop.selected_pop += parent.city.popCount
                         parent.draw_commuters()
                     }

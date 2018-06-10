@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QObject>
 #include <QList>
 #include <QString>
@@ -18,10 +20,13 @@
 #include "popgen-Episim/generator/PopulationGenerator.h"
 
 #include "pop/Population.h"
-#include "sim/SimRunner.h"
-using namespace boost::property_tree;
+#include "sim/Sim.h"
 
 #include "QTCity.h"
+
+using namespace boost::property_tree;
+using namespace std;
+
 
 
 
@@ -67,8 +72,6 @@ private:
     ptree& m_pt;
     ptree  m_geo_pt;
     QQmlApplicationEngine& m_engine;
-
-
-
+    
 };
 

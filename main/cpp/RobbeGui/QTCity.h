@@ -35,10 +35,15 @@ public:
     Q_PROPERTY(QList<int> in_commuters_count READ get_in_commuters_count CONSTANT)
     Q_PROPERTY(int total_in_commuters READ get_total_commuters_in CONSTANT)
     Q_PROPERTY(int total_out_commuters READ get_total_commuters_out CONSTANT)
-    Q_PROPERTY(int infected READ get_infected CONSTANT)
+    Q_PROPERTY(int infected READ get_infected NOTIFY infectedChanged)
+    Q_PROPERTY(bool clicked MEMBER m_is_clicked NOTIFY clickedChanged)
 
 
     stride::City* get_m_city(){return m_city;}
+
+signals:
+    void infectedChanged();
+    void clickedChanged();
 
 private:
     QGeoCoordinate get_coordinates() const;
@@ -58,6 +63,9 @@ private:
     void fill_in_in_commuters();
 
 
+
+
+
     
 
 private:
@@ -69,4 +77,8 @@ private:
 
     QList<int> m_sorted_in_commuters; ///> Keeps a list sorted high low to the commuters
     QList<int> m_commuter_in_count; ///> count ot amount of commuters
+
+    bool m_is_clicked{false};
+
+
 };
