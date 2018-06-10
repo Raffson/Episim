@@ -71,6 +71,18 @@ Rectangle{
         }
     }
 
+    Rectangle{
+        id: sidebar
+        anchors.left: parent.left
+        anchors.top: toolBar.bottom
+        anchors .right: map.left
+        anchors.bottom: map.bottom
+        width: parent.width / 7
+
+
+    }
+
+
     Map {
         id: map
         visible: true
@@ -78,10 +90,11 @@ Rectangle{
         plugin: mapPlugin
         center: QtPositioning.coordinate(0, 0)
         zoomLevel: 0
+        z:1
 
         anchors.top: toolBar.bottom
         anchors.bottom: parent.bottom
-        anchors.left: parent.left
+        anchors.left: sidebar.right
         anchors.right: parent.right
 
         MapItemView{

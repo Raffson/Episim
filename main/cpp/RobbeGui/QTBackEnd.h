@@ -72,6 +72,6 @@ private:
     ptree& m_pt;
     ptree  m_geo_pt;
     QQmlApplicationEngine& m_engine;
-    
+
 };
 
