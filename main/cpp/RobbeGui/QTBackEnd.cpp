@@ -4,9 +4,20 @@
 
 #include "QTBackEnd.h"
 #include <QtQuick/QQuickView>
+#include <string>
+#include <util/FileSys.h>
+#include "util/InstallDirs.h"
+#include <boost/filesystem/path.hpp>
+#include <sim/SimRunner.h>
 
-QTBackEnd::QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent):QObject(parent),m_pt(pt),m_engine(engine) {
+
+QTBackEnd::QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent):QObject(parent),
+                    m_pt(pt),m_engine(engine) {
     m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
+
+    string file(m_pt.get<string>("run.geopop_file"));
+    string path = "config/" + file;
+    read_xml(path, m_geo_pt);
 }
 
 
@@ -25,6 +36,8 @@ void QTBackEnd::makeCityList() {
     for(auto& it: m_grid->GetCities()){
         m_cities.append(new QTCity(&it.second));
     }
+
+
 
     m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
 }
@@ -55,10 +68,29 @@ QObject *QTBackEnd::get_city(unsigned int id) {
 
 void QTBackEnd::run_simulator(unsigned int days) {
 
-    std::shared_ptr<stride::Population> pop = m_grid->GetPopulation();
-    auto runner = make_shared<stride::SimRunner>(m_pt, pop, m_grid);
-    runner->Run();
-    m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
+    genPop();
+    if(m_grid == nullptr){
+        cout << "run popgen first" << endl;
+        return;
+    }
+    stride::SimRunner w(m_pt, m_grid->GetPopulation(), m_grid);
+    w.Run();
+
+    //m_sim->TimeStep();
+    for(auto& it: m_cities){
+        emit dynamic_cast<QTCity*>(it)->infectedChanged();
+    }
+    //m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
+}
+
+QString QTBackEnd::get_config(QString xml_tag) {
+    return QString((m_geo_pt.get<string>(xml_tag.toStdString())).c_str());
+}
+
+void QTBackEnd::set_config(QString xml_tag, QString val) {
+
+    m_geo_pt.put(val.toStdString(), xml_tag.toStdString());
+
 }
 
 

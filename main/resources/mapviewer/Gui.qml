@@ -58,37 +58,43 @@ ApplicationWindow{
                     color: Qt.rgba(0.9,0.9,0.9,0.5)
                     GridLayout{
                         id: alligner
+                        flow: GridLayout.LeftToRight
 
                         anchors.topMargin: parent.height / 50
                         anchors.leftMargin: 50
                         anchors.fill: parent
                         columnSpacing: 5
                         rowSpacing: 1
-                        rows: 5
+                        rows: 10
                         columns: 1
                         ListModel{
-                            id: bttn_model
-                            ListElement{property string title: "Population"}
-                            ListElement{property string title: "Fractions Students"}
-                            ListElement{property string title: "commuting students"}
-                            ListElement{property string title: "active workers"}
-                            ListElement{property string title: "commuting worker"}
-                            ListElement{property string title: "College Size"}
-                            ListElement{property string title: "Community siz"}
-                            ListElement{property string title: "Workplace Size"}
+                            id: num_bttns
+                            ListElement { tag: "Population"; xml: "pop_info.pop_total"; fract: false}
+                            ListElement { tag: "Fraction students"; xml: "pop_info.fraction_students"; fract: true}
+                            ListElement { tag: "Fraction active workers"; xml: "pop_info.fraction_active_workers"; fract: true}
+                            ListElement { tag: "Fraction commuting students"; xml: "pop_info.fraction_commuting_workers"; fract: true}
+                            ListElement { tag: "Fraction commuting workers"; xml: "pop_info.fraction_commuting_workers"; fract: true}
+                            ListElement { tag: "Average size"; xml:"contactpool_info.average_size"; fract: false }
+                            ListElement { tag: "School Size";  xml:"contactpool_info.school.size";fract: false }
+                            ListElement { tag: "College Size"; xml:"contactpool_info.college.size";fract: false }
+                            ListElement { tag: "Workplace Size";  xml:"contactpool_info.workplace.size";fract: false }
+                            ListElement { tag: "Nr cities with colleges"; xml:"contactpool_info.college.cities"; fract: false}
+                            ListElement { tag: "Community size";  xml:"contactpool_info.community.size"; fract: false}
+
+
                         }
 
                         Repeater{
-                            model: bttn_model
+                            model: num_bttns
                             RowLayout{
                                 z:5
                                 spacing: 50
                                 Layout.alignment: Qt.AlignTop
-                                Layout.maximumHeight: 10
+                                Layout.maximumHeight: 4
                                 Label{
                                     id: label
-                                    text: title
-                                    lineHeight: 0.9
+                                    text: tag
+                                    //lineHeight: 0.9
                                     verticalAlignment: Text.AlignVCenter
                                     Layout.minimumWidth: 200
                                     Layout.alignment: Qt.AlignLeft
@@ -98,22 +104,40 @@ ApplicationWindow{
                                     id: spinBox9
                                     font.pointSize: 10
                                     Layout.minimumWidth: 100
-                                    stepSize: 0
+                                    stepSize: 1
+                                    maximumValue: fract ? 100 : Infinity
                                     //Layout.fillWidth: true
                                     Layout.alignment: Qt.AlignRight
+                                    value: fract? backend.get_config(xml) * 100 : backend.get_config(xml)
+                                    suffix: fract ? "%" : ""
+                                    onValueChanged: fract? backend.set_config(xml, value / 100): backend.set_config(xml, value)
                                 }
 
                             }
                         }
                         RowLayout{
+                            Layout.alignment: Qt.AlignTop
+                            Layout.maximumHeight: 4
+
+                            Label{
+                                id: cty_file_label
+                                text: "City data file"
+                                verticalAlignment: Text.AlignVCenter
+                                Layout.minimumWidth: 245
+                                Layout.alignment: Qt.AlignLeft
+
+                            }
 
                             TextField{
+                                 Layout.alignment: Qt.AlignRight
+                                 Layout.minimumWidth: 300
 
                             }
 
                             Button{
                                 text: "..."
                                 onClicked: cty.visible = true
+                                Layout.maximumWidth: 20
                             }
 
                         }
@@ -123,7 +147,7 @@ ApplicationWindow{
                         FileDialog{
                             id: cty
                             title: "Please choose a file"
-                            folder: shortcuts.home
+                            folder: "../data/"
                                onAccepted: {
                                    console.log("You chose: " + fileDialog.fileUrls)
 
