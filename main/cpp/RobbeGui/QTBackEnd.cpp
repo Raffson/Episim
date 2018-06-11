@@ -81,7 +81,7 @@ void QTBackEnd::run_simulator(unsigned int days) {
     stride::SimRunner w(m_pt, m_grid->GetPopulation(), m_grid);
     w.Run();
     m_pop_generated = false;
-    
+
     for(auto& it: m_cities){
         emit dynamic_cast<QTCity*>(it)->infectedChanged();
     }

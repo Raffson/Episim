@@ -26,16 +26,18 @@ Rectangle{
                 text: "Selected pop: " + selected_pop
                 verticalAlignment: Text.AlignVCenter
                 //Layout.fillWidth: true
-                Layout.preferredWidth: parent.width / 3
+                Layout.preferredWidth: parent.width / 4
             }
 
             Text {
                 id: total_infected
-                text: "Selected infected: " + backend.selected_infected
+                property int perc: total_pop.selected_pop === 0 ? 0 : Math.round(backend.selected_infected / total_pop.selected_pop * 100)
+                text: "Selected infected: " + backend.selected_infected + "|"+ perc + "%"
                 verticalAlignment: Text.AlignVCenter
                 Layout.fillWidth: true
 
             }
+
 
             Button {
                 Layout.fillHeight: true
@@ -109,7 +111,7 @@ Rectangle{
                        Text{
                            enabled:clicked ? true : false
                            visible:clicked ? true : false
-                           text: "Infected: " + infected
+                           text: "Infected: " + infected+ "|" + Math.round(infected/popCount*100)+"%"
                            font.pointSize: 10
                        }
 
