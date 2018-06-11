@@ -26,7 +26,7 @@ Rectangle{
                 text: "Selected pop: " + selected_pop
                 verticalAlignment: Text.AlignVCenter
                 //Layout.fillWidth: true
-                Layout.preferredWidth: parent.width / 4
+                Layout.preferredWidth: parent.width / 5
             }
 
             Text {
@@ -34,8 +34,19 @@ Rectangle{
                 property int perc: total_pop.selected_pop === 0 ? 0 : Math.round(backend.selected_infected / total_pop.selected_pop * 100)
                 text: "Selected infected: " + backend.selected_infected + "|"+ perc + "%"
                 verticalAlignment: Text.AlignVCenter
-                Layout.fillWidth: true
+                //Layout.fillWidth: true
 
+            }
+
+            Text{
+               verticalAlignment: Text.AlignVCenter
+               text: "Total pop: " + backend.total_pop
+            }
+
+            Text{
+               verticalAlignment: Text.AlignVCenter
+               property real perc: backend.total_pop === 0 ? 0 : Math.round(backend.total_infected / backend.total_pop * 100)
+               text: "Total infected: " + backend.total_infected + "|" + perc + "%"
             }
 
 
@@ -87,6 +98,14 @@ Rectangle{
         ColumnLayout{
             spacing: 5
             anchors.fill: parent
+            RowLayout{
+                Text{
+                    text: "Selected Cities"
+                    font.pointSize: 15
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
+
             Repeater{
                 model: CityModel
                RowLayout{
