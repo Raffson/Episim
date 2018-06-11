@@ -81,12 +81,11 @@ void QTBackEnd::run_simulator(unsigned int days) {
     stride::SimRunner w(m_pt, m_grid->GetPopulation(), m_grid);
     w.Run();
     m_pop_generated = false;
-
-    //m_sim->TimeStep();
+    
     for(auto& it: m_cities){
         emit dynamic_cast<QTCity*>(it)->infectedChanged();
     }
-    //m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
+    emit selected_infectedChanged();
 }
 
 QString QTBackEnd::get_config(QString xml_tag) {
@@ -108,7 +107,6 @@ int QTBackEnd::count_selected_infected() {
             counter += cty->get_infected();
         }
     }
-    emit selected_infectedChanged();
     return counter;
 }
 
