@@ -66,12 +66,20 @@ ApplicationWindow{
                         rowSpacing: 1
                         rows: 5
                         columns: 1
+                        ListModel{
+                            id: bttn_model
+                            ListElement{property string title: "Population"}
+                            ListElement{property string title: "Fractions Students"}
+                            ListElement{property string title: "commuting students"}
+                            ListElement{property string title: "active workers"}
+                            ListElement{property string title: "commuting worker"}
+                            ListElement{property string title: "College Size"}
+                            ListElement{property string title: "Community siz"}
+                            ListElement{property string title: "Workplace Size"}
+                        }
+
                         Repeater{
-                            model: ["Population", "Fractions Students", "Fraction commuting students", "Fraction active workers"
-                                ,"Fraction commuting workers",
-                                "Average size", "College Size",
-                                "Community size",
-                                "Workplace Size"]
+                            model: bttn_model
                             RowLayout{
                                 z:5
                                 spacing: 50
@@ -79,7 +87,7 @@ ApplicationWindow{
                                 Layout.maximumHeight: 10
                                 Label{
                                     id: label
-                                    text: modelData
+                                    text: title
                                     lineHeight: 0.9
                                     verticalAlignment: Text.AlignVCenter
                                     Layout.minimumWidth: 200
