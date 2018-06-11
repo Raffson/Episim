@@ -25,6 +25,7 @@ void QTBackEnd::genPop() {
 
     this->m_grid = stride::GeoGridGenerator().Generate(m_pt);
     stride::PopulationGenerator(*m_grid).Generate();
+    m_pop_generated = true;
     makeCityList();
 }
 
@@ -34,7 +35,7 @@ void QTBackEnd::makeCityList() {
     m_cities.clear();
 
     for(auto& it: m_grid->GetCities()){
-        m_cities.append(new QTCity(&it.second));
+        m_cities.append(new QTCity(&it.second, this));
     }
 
 
@@ -68,13 +69,18 @@ QObject *QTBackEnd::get_city(unsigned int id) {
 
 void QTBackEnd::run_simulator(unsigned int days) {
 
-    genPop();
+    if(!m_pop_generated){
+        genPop();
+    }
+
     if(m_grid == nullptr){
         cout << "run popgen first" << endl;
         return;
     }
+
     stride::SimRunner w(m_pt, m_grid->GetPopulation(), m_grid);
     w.Run();
+    m_pop_generated = false;
 
     //m_sim->TimeStep();
     for(auto& it: m_cities){
@@ -91,6 +97,19 @@ void QTBackEnd::set_config(QString xml_tag, QString val) {
 
     m_geo_pt.put(val.toStdString(), xml_tag.toStdString());
 
+}
+
+int QTBackEnd::count_selected_infected() {
+
+    int counter = 0;
+    for(auto& it : m_cities){
+        QTCity* cty = dynamic_cast<QTCity*>(it);
+        if(cty->get_clicked()){
+            counter += cty->get_infected();
+        }
+    }
+    emit selected_infectedChanged();
+    return counter;
 }
 
 

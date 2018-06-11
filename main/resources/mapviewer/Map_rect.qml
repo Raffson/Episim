@@ -31,10 +31,10 @@ Rectangle{
 
             Text {
                 id: total_infected
-                property int selected_infected: 0
-                text: "Selected infected: " + selected_infected
+                text: "Selected infected: " + backend.selected_infected
                 verticalAlignment: Text.AlignVCenter
                 Layout.fillWidth: true
+
             }
 
             Button {
@@ -58,6 +58,10 @@ Rectangle{
                 id: button_sim
                 text: qsTr("RUN sim")
                 onClicked:{
+                    if(backend.should_redraw()){
+                        map.clearMapItems();
+                    }
+
                     backend.run_simulator();
                 }
 
@@ -78,10 +82,46 @@ Rectangle{
         anchors .right: map.left
         anchors.bottom: map.bottom
         width: parent.width / 7
+        ColumnLayout{
+            spacing: 5
+            anchors.fill: parent
+            Repeater{
+                model: CityModel
+               RowLayout{
+                   enabled:clicked ? true : false
+                   visible: clicked ? true: false
+                   Layout.maximumHeight: clicked ? 55 : 0
+                   Layout.minimumHeight: clicked ? 55 : 0
+                   ColumnLayout{
+                       Text{
+                           enabled:clicked ? true : false
+                           visible:clicked ? true : false
+                           text: name
+                       }
 
+                       Text{
+                           enabled:clicked ? true : false
+                           visible:clicked ? true : false
+                           text: "Population: " + popCount
+                           font.pointSize: 10
+                       }
+
+                       Text{
+                           enabled:clicked ? true : false
+                           visible:clicked ? true : false
+                           text: "Infected: " + infected
+                           font.pointSize: 10
+                       }
+
+                   }
+                }
+            }
+            Item{
+                Layout.fillHeight:true
+            }
+        }
 
     }
-
 
     Map {
         id: map
@@ -258,7 +298,7 @@ Rectangle{
             radius: (city.popCount / backend.total_pop) * 250000
             color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1,0,0,0.2) : Qt.rgba(0,1,0,0.2)
             center: city.crd
-            z: 1
+            z: backend.total_pop - city.popCount
             
             MouseArea{
                 id: cty_mouse
@@ -272,7 +312,7 @@ Rectangle{
                         parent.city.clicked = false
                         total_pop.selected_pop -= parent.city.popCount
                         parent.remove_commuters();
-                        
+
                     }
                     else{
                         parent.city.clicked = true

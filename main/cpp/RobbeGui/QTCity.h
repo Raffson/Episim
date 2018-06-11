@@ -11,16 +11,19 @@
 #include <QList>
 
 #include "popgen-Episim/model/City.h"
+#include "QTBackEnd.h"
+//#include "RobbeGui/QTBackEnd.h"
 
 #include <iostream>
 using namespace std;
+
+class QTBackEnd;
 
 class QTCity : public QObject {
     Q_OBJECT
 
 public:
-    explicit  QTCity(stride::City* m_city, QObject* = nullptr);
-    explicit  QTCity(QObject* = nullptr);
+    explicit  QTCity(stride::City* m_city, QTBackEnd* back_end,  QObject* = nullptr);
 
     Q_INVOKABLE void ctyTest() {cout << "Hello from" << m_city->GetName() << endl;}
 
@@ -36,14 +39,19 @@ public:
     Q_PROPERTY(int total_in_commuters READ get_total_commuters_in CONSTANT)
     Q_PROPERTY(int total_out_commuters READ get_total_commuters_out CONSTANT)
     Q_PROPERTY(int infected READ get_infected NOTIFY infectedChanged)
-    Q_PROPERTY(bool clicked MEMBER m_is_clicked NOTIFY clickedChanged)
+    Q_PROPERTY(bool clicked READ get_clicked WRITE set_clicked NOTIFY clickedChanged)
 
 
     stride::City* get_m_city(){return m_city;}
+    int get_infected() const {return (int) m_city->GetInfectedCount();}
+    bool get_clicked(){return m_is_clicked;}
+
 
 signals:
     void infectedChanged();
     void clickedChanged();
+
+
 
 private:
     QGeoCoordinate get_coordinates() const;
@@ -57,10 +65,13 @@ private:
     QList<int> get_in_commuters_count(){ return m_commuter_in_count;}
     int get_total_commuters_out(){return(int) m_city->GetTotalOutCommutersCount();}
     int get_total_commuters_in(){return (int) m_city->GetTotalInCommutersCount();}
-    int get_infected() const {return (int) m_city->GetInfectedCount();}
+
 
     void fill_in_out_commuters();
     void fill_in_in_commuters();
+
+
+    void set_clicked(bool val);
 
 
 
@@ -70,15 +81,17 @@ private:
 
 private:
 
-   stride::City* m_city;
+    stride::City* m_city;
 
-   QList<int> m_sorted_out_commuters; ///> Keeps a list sorted high low to the commuters
-   QList<int> m_commuter_out_count; ///> count ot amount of commuters
+    QList<int> m_sorted_out_commuters; ///> Keeps a list sorted high low to the commuters
+    QList<int> m_commuter_out_count; ///> count ot amount of commuters
 
     QList<int> m_sorted_in_commuters; ///> Keeps a list sorted high low to the commuters
     QList<int> m_commuter_in_count; ///> count ot amount of commuters
 
     bool m_is_clicked{false};
+
+    QTBackEnd* m_back_end;
 
 
 };

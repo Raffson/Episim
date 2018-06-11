@@ -8,14 +8,13 @@
 
 
 
-QTCity::QTCity(stride::City* model, QObject *parent ) : QObject(parent), m_city(model){
+QTCity::QTCity(stride::City* model,QTBackEnd* back_end, QObject *parent ):
+        QObject(parent), m_city(model),m_back_end(back_end){
     fill_in_in_commuters();
     fill_in_out_commuters();
 }
 
-QTCity::QTCity(QObject *parent ) : QObject(parent){
 
-}
 
 int QTCity::get_population() const {
     return m_city->GetEffectivePopulation();
@@ -64,4 +63,10 @@ void QTCity::fill_in_in_commuters() {
         m_commuter_in_count.append(it.first);
     }
 
+}
+
+void QTCity::set_clicked(bool val){
+    m_is_clicked = val;
+    emit clickedChanged();
+    emit m_back_end->selected_infectedChanged();
 }
