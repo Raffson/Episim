@@ -299,7 +299,7 @@ Rectangle{
             property var perc : city.popCount === 0 ? 0 : Math.round(city.infected/city.popCount * 100)
             property var commuting_lst: []
             radius: (city.popCount / backend.total_pop) * 250000
-            color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1,0,0,0.2) : Qt.rgba(0,1,0,0.2)
+            color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1 - perc / 50 ,0,0 + perc /50,0.2 + perc / 50) : Qt.rgba(0,1 - perc / 50,0 + perc / 50 ,0.2 + perc / 50 )
             center: city.crd
             z: backend.total_pop - city.popCount
             
