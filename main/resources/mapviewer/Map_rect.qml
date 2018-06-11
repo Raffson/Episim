@@ -296,6 +296,7 @@ Rectangle{
             }
             
             property var city : model.modelData
+            property var perc : city.popCount === 0 ? 0 : Math.round(city.infected/city.popCount * 100)
             property var commuting_lst: []
             radius: (city.popCount / backend.total_pop) * 250000
             color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1,0,0,0.2) : Qt.rgba(0,1,0,0.2)
@@ -306,7 +307,9 @@ Rectangle{
                 id: cty_mouse
                 anchors.fill: parent
                 hoverEnabled: true
-                ToolTip.text: "City: " + city.name + "\nPopulation: " + city.popCount + "\nInfected: " + city.infected
+                ToolTip.text: "City: " + city.name + "\nPopulation: "
+                              + city.popCount + "\nInfected: " + city.infected
+                              + "|" + perc +"%"
                 ToolTip.visible: containsMouse ? true : false
                 
                 onClicked: {
