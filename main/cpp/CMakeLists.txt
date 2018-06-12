@@ -121,7 +121,11 @@ set(LIB_SRC
 # Add specific sources if Qt was found.
 #============================================================================
 if(Qt5_FOUND)
-	set(LIB_SRC ${LIB_SRC} viewers/MapViewer.cpp)
+	set(LIB_SRC ${LIB_SRC}
+		viewers/MapViewer.cpp
+		RobbeGui/QTBackEnd.cpp
+		RobbeGui/QTCity.cpp
+		)
 endif()
 
 #============================================================================
@@ -164,6 +168,15 @@ install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
 add_executable(seg_searcher popgen-Episim/seg_searcher.cpp)
 target_link_libraries(seg_searcher ${LIBS} libstride)
 install(TARGETS seg_searcher  DESTINATION   ${BIN_INSTALL_LOCATION})
+
+#============================================================================
+# Build and install Robbe"s Testing excecutable
+#============================================================================
+if(Qt5_FOUND)
+	add_executable(SandboxRobbe popgen-Episim/SandboxRobbe.cpp)
+	target_link_libraries(SandboxRobbe ${LIBS} libstride ${Qt5Positioning_LIBRARIES})
+	install(TARGETS SandboxRobbe  DESTINATION   ${BIN_INSTALL_LOCATION})
+endif()
 
 #============================================================================
 # Clean up.

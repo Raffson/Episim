@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data_files>
+    <cities>flanders_cities.csv</cities>
+    <commuting>flanders_commuting.csv</commuting>
+    <households>households_flanders.xml</households>
+</data_files>
+
+<neighbour_classification>
+    <initial_search_radius>10</initial_search_radius>
+</neighbour_classification>
+
+<pop_info>
+    <pop_total>100000</pop_total>
+    <random_ages>false</random_ages>
+
+    <!-- fraction of people able to work that is student (18y-26y) -->
+    <fraction_students>0.5</fraction_students>
+    <!-- commuting fraction of students -->
+    <fraction_commuting_students>0.5</fraction_commuting_students>
+
+    <!-- fraction of people that is able to work and actually working -->
+    <fraction_active_workers>0.5</fraction_active_workers>
+    <!-- commuting fraction of active workers -->
+    <fraction_commuting_workers>0.5</fraction_commuting_workers>
+</pop_info>
+
+<contactpool_info>
+    <average_size>20</average_size>
+    <school>
+        <size>500</size>
+    </school>
+    <college>
+        <size>3000</size>
+        <cities>10</cities>
+    </college>
+    <community>
+        <size>2000</size>
+    </community>
+    <workplace>
+        <size>20</size>
+    </workplace>
+</contactpool_info>

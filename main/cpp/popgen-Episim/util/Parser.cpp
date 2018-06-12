@@ -10,6 +10,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include <clocale>
+
 using namespace std;
 
 namespace stride {
@@ -18,6 +20,7 @@ namespace parser {
 void ParseCities(const boost::filesystem::path& cityFile, map<unsigned int, City>& cities, unsigned int& totalPop,
                  bgi::rtree<rtElem, bgi::quadratic<16>>& rtree)
 {
+        setlocale(LC_ALL, "C"); // Enforces . is the floating point delimitter (for STOD QT takes local machine delimmiter)
         util::CSV    readIn(cityFile);
         unsigned int counter = 0;
         totalPop            = 0;

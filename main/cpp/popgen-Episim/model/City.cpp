@@ -25,6 +25,7 @@ City::City(const unsigned int city_id, const unsigned int province, unsigned int
 {
         for( auto type : CommunityType::IdList )
                 m_types_present[type] = false;
+
 }
 
 Community& City::AddCommunity(const size_t& id, CommunityType::Id type)
