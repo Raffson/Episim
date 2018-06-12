@@ -26,7 +26,7 @@ void QTBackEnd::genPop() {
     this->m_grid = stride::GeoGridGenerator().Generate(m_pt);
     stride::PopulationGenerator(*m_grid).Generate();
     m_pop_generated = true;
-    emit popChanged();
+    //emit popChanged();
     makeCityList();
 }
 
