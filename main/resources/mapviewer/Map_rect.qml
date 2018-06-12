@@ -167,7 +167,7 @@ Rectangle{
 
         }
 
-        Rectangle {
+        /*Rectangle {
                 id: selectionRect
                 visible: false
                 x: 0
@@ -204,50 +204,96 @@ Rectangle{
             onPositionChanged: {
                 if(selectionRect.visible == true){
 
-                        if (mouse.x < selectionRect.x)
-                        {
-                            if (mouse.y > selectionRect.y){ // from the right top corner
-                                selectionRect.rotation = 90
-                                selectionRect.width = mouse.y - selectionRect.y
-                                selectionRect.height = selectionRect.x - mouse.x
-
-                            }
-                             else{
-                               selectionRect.rotation = 180
-                               selectionRect.width = selectionRect.x - mouse.x
-                               selectionRect.height = selectionRect.y - mouse.y
-
-                            }
+                    if (mouse.x < selectionRect.x)
+                    {
+                        if (mouse.y > selectionRect.y){ // from the right top corner
+                            selectionRect.rotation = 90
+                            selectionRect.width = mouse.y - selectionRect.y
+                            selectionRect.height = selectionRect.x - mouse.x
 
                         }
-                        else // x is bigger
-                        {
-                            if (mouse.y >= selectionRect.y){ // from the left top corner
-                                selectionRect.rotation = 0
-                                selectionRect.width  = mouse.x - selectionRect.x
-                                selectionRect.height = mouse.y - selectionRect.y
-                            }
-                            else{
-                              selectionRect.rotation = 270
-                                selectionRect.width = selectionRect.y - mouse.y
-                                selectionRect.height = mouse.x - selectionRect.x
-                            }
+                        else{
+                            selectionRect.rotation = 180
+                            selectionRect.width = selectionRect.x - mouse.x
+                            selectionRect.height = selectionRect.y - mouse.y
+
                         }
 
+                    }
+                    else // x is bigger
+                    {
+                        if (mouse.y >= selectionRect.y){ // from the left top corner
+                            selectionRect.rotation = 0
+                            selectionRect.width  = mouse.x - selectionRect.x
+                            selectionRect.height = mouse.y - selectionRect.y
+                        }
+                        else{
+                            selectionRect.rotation = 270
+                            selectionRect.width = selectionRect.y - mouse.y
+                            selectionRect.height = mouse.x - selectionRect.x
+                        }
+                    }
                 }
 
             }
             onReleased: {
-                        selectionRect.visible = false
-                        map.enabled = true
+                selectionRect.visible = false
+                map.enabled = true
+
+                var x_low
+                var x_high
+                var y_low
+                var y_high
+
+                if(selectionRect.rotation === 0){
+                    x_low  = selectionRect.x
+                    x_high = selectionRect.x + selectionRect.width
+                    y_low  = selectionRect.y
+                    y_high = selectionRect.y + selectionRect.height
+                }
+
+                else if(selectionRect.rotation === 90){
+                    x_low  = selectionRect.x - selectionRect.width
+                    x_high = selectionRect.x
+                    y_low  = selectionRect.y
+                    y_high = selectionRect.y + selectionRect.height
+
+                }
+
+                else if(selectionRect.rotation === 180){
+                    x_low  = selectionRect.x - selectionRect.width
+                    x_high = selectionRect.x
+                    y_low  = selectionRect.y - selectionRect.height
+                    y_high = selectionRect.y
+
+                }
+
+                else{
+                    x_low  = selectionRect.x
+                    x_high = selectionRect.x + selectionRect.width
+                    y_low  = selectionRect.y - selectionRect.height
+                    y_high = selectionRect.y
+                }
+
+                for(var i = 0; i < map.mapItems.length; i++){
+                    var item = map.mapItems[i]
+
+                    if(item.x > x_low && item.x < x_high){
+                        if(item.y > y_low && item.y < y_high){
+                            item.city.clicked = true
+                        }
+                    }
+                }
             }
-        }
+        }*/
+
 
         function center_and_zoom(){
             map.zoomLevel = 7.5; // Fixed for now
             map.center = backend.center
         }
     }
+
 
 
     
