@@ -6,7 +6,7 @@
 
 #include <QObject>
 #include <QPoint>
-#include <QGeoCoordinate>
+#include <QtPositioning/QGeoCoordinate>
 #include <QString>
 #include <QList>
 

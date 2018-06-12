@@ -121,6 +121,8 @@ set(LIB_SRC
 # Add specific sources if Qt was found.
 #============================================================================
 if(Qt5_FOUND)
+	set(CMAKE_AUTOMOC ON)
+	set(CMAKE_INCLUDE_CURRENT_DIR ON)
 	set(LIB_SRC ${LIB_SRC}
 		viewers/MapViewer.cpp
 		RobbeGui/QTBackEnd.cpp

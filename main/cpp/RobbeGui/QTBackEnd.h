@@ -9,8 +9,7 @@
 #include <QObject>
 #include <QList>
 #include <QString>
-#include <QGeoCoordinate>
-#include <QGuiApplication>
+#include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
 
