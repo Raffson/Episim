@@ -167,12 +167,14 @@ Rectangle{
 
         }
 
-        /*Rectangle {
+
+
+        Rectangle {
                 id: selectionRect
                 visible: false
                 x: 0
                 y: 0
-                z: backend.total_pop + 10
+                z: backend.total_pop  +10
                 width: 0
                 height: 0
                 rotation: 0
@@ -180,6 +182,7 @@ Rectangle{
                 border.width: 1
                 border.color: "#103A6E"
                 transformOrigin: Item.TopLeft
+                enabled: false
             }
 
         MouseArea{
@@ -192,6 +195,7 @@ Rectangle{
 
             onPressed: {
                 if (mouse.button === Qt.LeftButton && mouse.modifiers & Qt.ShiftModifier){
+                    selectionRect.enabled = true
                     selectionRect.x = mouse.x
                     selectionRect.y = mouse.y
                     selectionRect.width = 0
@@ -240,7 +244,7 @@ Rectangle{
                 selectionRect.visible = false
                 map.enabled = true
 
-                var x_low
+               var x_low
                 var x_high
                 var y_low
                 var y_high
@@ -253,10 +257,10 @@ Rectangle{
                 }
 
                 else if(selectionRect.rotation === 90){
-                    x_low  = selectionRect.x - selectionRect.width
+                    x_low  = selectionRect.x - selectionRect.height
                     x_high = selectionRect.x
                     y_low  = selectionRect.y
-                    y_high = selectionRect.y + selectionRect.height
+                    y_high = selectionRect.y + selectionRect.width
 
                 }
 
@@ -270,8 +274,8 @@ Rectangle{
 
                 else{
                     x_low  = selectionRect.x
-                    x_high = selectionRect.x + selectionRect.width
-                    y_low  = selectionRect.y - selectionRect.height
+                    x_high = selectionRect.x + selectionRect.height
+                    y_low  = selectionRect.y - selectionRect.width
                     y_high = selectionRect.y
                 }
 
@@ -285,7 +289,7 @@ Rectangle{
                     }
                 }
             }
-        }*/
+        }
 
 
         function center_and_zoom(){

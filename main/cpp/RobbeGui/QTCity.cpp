@@ -17,6 +17,9 @@ QTCity::QTCity(stride::City* model,QTBackEnd* back_end, QObject *parent ):
 
 
 int QTCity::get_population() const {
+    if(m_city == nullptr){
+        return 0;
+    }
     return m_city->GetEffectivePopulation();
 }
 
