@@ -198,42 +198,42 @@ Rectangle{
                     selectionRect.height = 0
                     selectionRect.visible = true
                     map.enabled = false
+                    justStarted = true
                 }
             }
-
             onPositionChanged: {
                 if(selectionRect.visible == true){
-                    if (justStarted == true && (mouse.x != initialXPos || mouse.y != initialYPos))
-                    {
-                        if (mouse.x >= initialXPos)
+
+                        if (mouse.x < selectionRect.x)
                         {
-                            if (mouse.y >= initialYPos)
-                                selectionRect.rotation = 0
-                            else
-                                selectionRect.rotation = -90
-                        }
-                        else
-                        {
-                            if (mouse.y >= initialYPos)
+                            if (mouse.y > selectionRect.y){ // from the right top corner
                                 selectionRect.rotation = 90
-                            else
-                                selectionRect.rotation = -180
+                                selectionRect.width = mouse.y - selectionRect.y
+                                selectionRect.height = selectionRect.x - mouse.x
+
+                            }
+                             else{
+                               selectionRect.rotation = 180
+                               selectionRect.width = selectionRect.x - mouse.x
+                               selectionRect.height = selectionRect.y - mouse.y
+
+                            }
+
+                        }
+                        else // x is bigger
+                        {
+                            if (mouse.y >= selectionRect.y){ // from the left top corner
+                                selectionRect.rotation = 0
+                                selectionRect.width  = mouse.x - selectionRect.x
+                                selectionRect.height = mouse.y - selectionRect.y
+                            }
+                            else{
+                              selectionRect.rotation = 270
+                                selectionRect.width = selectionRect.y - mouse.y
+                                selectionRect.height = mouse.x - selectionRect.x
+                            }
                         }
 
-                        justStarted = false
-                        //console.log("Selection rotation: " + selectionRect.rotation)
-                    }
-
-                    if (selectionRect.rotation == 0 || selectionRect.rotation == -180)
-                    {
-                        selectionRect.width = Math.abs(mouse.x - selectionRect.x)
-                        selectionRect.height = Math.abs(mouse.y - selectionRect.y)
-                    }
-                    else
-                    {
-                        selectionRect.width = Math.abs(mouse.y - selectionRect.y)
-                        selectionRect.height = Math.abs(mouse.x - selectionRect.x)
-                    }
                 }
 
             }
