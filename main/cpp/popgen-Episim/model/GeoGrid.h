@@ -81,8 +81,8 @@ public:
         /// Cities.
         /// @param X The first fraction.
         /// @param Y The second fraction.
-        /// @param p_vec A vector representing a probability distribution.
-        void DefragmentSmallestCities(double X, double Y, const vector<double>& p_vec);
+        /// @param pVec A vector representing a probability distribution.
+        void DefragmentSmallestCities(double X, double Y, const vector<double>& pVec);
 
         /// Getter
         /// @retval <unsigned int> Returns the initial search radius.

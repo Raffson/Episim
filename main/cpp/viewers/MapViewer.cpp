@@ -110,7 +110,7 @@ int MapViewer::LoadMap() {
             /// Infected
             vals["infected"] = city.GetInfectedCount();
             /// Info
-            ss << city.GetEffectivePopulation();
+            ss << city.GetEffectivePopulation() << "<i>(" << city.GetInfectedCount() << ")</i><br>";
             ss >> s;
             s += "\n";
             s.append(city.GetName());
