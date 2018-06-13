@@ -63,6 +63,12 @@ void QTCity::fill_in_in_commuters() {
 
 void QTCity::set_clicked(bool val){
     m_is_clicked = val;
+    if(val){
+        m_back_end->add_selected_pop(m_pop);
+    }
+    else{
+        m_back_end->add_selected_pop(m_pop  * -1);
+    }
     emit clickedChanged();
     emit m_back_end->selected_infectedChanged();
 }

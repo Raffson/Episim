@@ -30,7 +30,7 @@ Rectangle{
 
             Text {
                 id: total_infected
-                property int perc: backend.selected_pop === 0 ? 0 : Math.round(backend.selected_infected / total_pop.selected_pop * 100)
+                property int perc: backend.selected_pop === 0 ? 0 : Math.round(backend.selected_infected / backend.selected_pop * 100)
                 text: "Selected infected: " + backend.selected_infected + "|"+ perc + "%"
                 verticalAlignment: Text.AlignVCenter
                 //Layout.fillWidth: true
@@ -455,7 +455,6 @@ Rectangle{
                 ToolTip.visible: containsMouse ? true : false
                 
                 onClicked: {
-                    console.log("????")
                     if(parent.city.clicked){
                         parent.city.clicked = false
                         parent.remove_commuters();
