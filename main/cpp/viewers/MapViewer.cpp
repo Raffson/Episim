@@ -16,6 +16,7 @@
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickItem>
 #include <QMetaObject>
+#include <QtGui/QPainter>
 
 using namespace std;
 using namespace std::chrono;
@@ -23,7 +24,7 @@ using namespace stride::sim_event;
 namespace stride {
 namespace viewers {
 
-int MapViewer::LoadMap() {
+int MapViewer::LoadMap(bool showMap) {
     REQUIRE(m_grid, "GeoGrid must be intialized in order to load a map for it.");
     cout << "Loading map..." << endl;
 #if QT_CONFIG(library)
@@ -62,18 +63,18 @@ int MapViewer::LoadMap() {
     engine.load(QUrl::fromLocalFile("mapviewer/mapviewer.qml"));
     QObject::connect(&engine, SIGNAL(quit()), qApp, SLOT(quit()));
 
-    QObject* item = engine.rootObjects().first();
-    Q_ASSERT(item);
+    m_item = engine.rootObjects().first();
+    Q_ASSERT(m_item);
 
     /// Call a function from a qml file.
-    QMetaObject::invokeMethod(item, "initializeProviders", Q_ARG(QVariant, QVariant::fromValue(parameters)));
+    QMetaObject::invokeMethod(m_item, "initializeProviders", Q_ARG(QVariant, QVariant::fromValue(parameters)));
 
     /// To center the map on a specific location: use following code.
     QVariantList       coords;
     stride::Coordinate c = m_grid->GetCenterOfGrid();
     coords.push_back(c.GetLatitude());
     coords.push_back(c.GetLongitude());
-    QMetaObject::invokeMethod(item, "setCentre", Q_ARG(QVariant, QVariant::fromValue(coords)));
+    QMetaObject::invokeMethod(m_item, "setCentre", Q_ARG(QVariant, QVariant::fromValue(coords)));
 
     /// To add cities on the map: use following.
     auto cities = m_grid->GetCities();
@@ -132,14 +133,21 @@ int MapViewer::LoadMap() {
                 out_commuting_id.push_back(it.first);
                 out_commuting_size.push_back(it.second);
             }
-            QMetaObject::invokeMethod(item, "placeCity", Q_ARG(QVariant, QVariant::fromValue(vals)),
+            QMetaObject::invokeMethod(m_item, "placeCity", Q_ARG(QVariant, QVariant::fromValue(vals)),
                                       Q_ARG(QVariant, QVariant::fromValue(in_commuting_id)),
                                       Q_ARG(QVariant, QVariant::fromValue(in_commuting_size)),
                                       Q_ARG(QVariant, QVariant::fromValue(out_commuting_id)),
                                       Q_ARG(QVariant, QVariant::fromValue(out_commuting_size)));
         }
     }
-    return application.exec();
+    if(showMap) {
+        return application.exec();
+    }
+    else{return 0;}
+}
+
+void MapViewer::ToPng(){
+    QMetaObject::invokeMethod(m_item, "saveToImage");
 }
 
 void MapViewer::Update(const sim_event::Id id) {
@@ -151,7 +159,7 @@ void MapViewer::Update(const sim_event::Id id) {
             break;
         }
         case Id::Finished: {
-            LoadMap();
+            LoadMap(false);
             break;
         }
         default:
