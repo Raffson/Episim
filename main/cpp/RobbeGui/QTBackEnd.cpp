@@ -25,8 +25,12 @@ void QTBackEnd::genPop() {
 
     this->m_grid = stride::GeoGridGenerator().Generate(m_pt);
     stride::PopulationGenerator(*m_grid).Generate();
+
     m_pop_generated = true;
-    //emit popChanged();
+
+    m_total_pop = m_grid->GetTotalPop();
+    emit popChanged();
+
     makeCityList();
 }
 
@@ -34,12 +38,9 @@ void QTBackEnd::makeCityList() {
 
 
     m_cities.clear();
-
     for(auto& it: m_grid->GetCities()){
         m_cities.append(new QTCity(&it.second, this));
     }
-
-
 
     m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
 }
@@ -50,13 +51,6 @@ QGeoCoordinate QTBackEnd::get_center() {
     return QGeoCoordinate(crd.GetLatitude(),crd.GetLongitude() );
 }
 
-int QTBackEnd::get_total_pop() const {
-
-    if(m_grid == nullptr){
-        return 0;
-    }
-    return m_grid->GetTotalPop();
-}
 
 QObject *QTBackEnd::get_city(unsigned int id) {
 

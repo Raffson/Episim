@@ -9,19 +9,12 @@
 
 
 QTCity::QTCity(stride::City* model,QTBackEnd* back_end, QObject *parent ):
-        QObject(parent), m_city(model),m_back_end(back_end){
+        QObject(parent), m_city(model),m_back_end(back_end), m_pop(model->GetEffectivePopulation()){
     fill_in_in_commuters();
     fill_in_out_commuters();
 }
 
 
-
-int QTCity::get_population() const {
-    if(m_city == nullptr){
-        return 0;
-    }
-    return m_city->GetEffectivePopulation();
-}
 
 QGeoCoordinate QTCity::get_coordinates() const {
     return QGeoCoordinate(m_city->GetCoordinates().GetLatitude(), m_city->GetCoordinates().GetLongitude());

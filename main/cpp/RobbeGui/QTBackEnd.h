@@ -49,7 +49,7 @@ public:
 
     Q_PROPERTY(QList<QObject*> cities READ get_cities CONSTANT)
     Q_PROPERTY(QGeoCoordinate center READ get_center CONSTANT)
-    Q_PROPERTY(int total_pop READ get_total_pop NOTIFY popChanged);
+    Q_PROPERTY(int total_pop MEMBER m_total_pop NOTIFY popChanged);
     Q_PROPERTY(int selected_infected READ count_selected_infected NOTIFY selected_infectedChanged())
     Q_PROPERTY(int total_infected READ get_total_infected NOTIFY total_infectedChanged)
 
@@ -65,7 +65,6 @@ private:
     void makeCityList();
     QList<QObject*> get_cities(){return m_cities;}
     QGeoCoordinate get_center();
-    int get_total_pop() const;
     int count_selected_infected();
     int get_total_infected();
 
@@ -85,6 +84,7 @@ private:
     QQmlApplicationEngine& m_engine;
 
     bool m_pop_generated{false};
+    int m_total_pop{0};
 
 };
 
