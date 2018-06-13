@@ -120,5 +120,11 @@ int QTBackEnd::get_total_infected() {
     return counter;
 }
 
+void QTBackEnd::add_selected_pop(int amount) {
+
+    m_selected_pop += amount;
+    emit selected_popChanged();
+}
+
 
 

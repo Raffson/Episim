@@ -21,9 +21,8 @@ Rectangle{
             anchors.fill: parent
 
             Text {
-                id: total_pop
-                property int selected_pop: 0
-                text: "Selected pop: " + selected_pop
+                id: selected_pop_header
+                text: "Selected pop: " + backend.selected_pop
                 verticalAlignment: Text.AlignVCenter
                 //Layout.fillWidth: true
                 Layout.preferredWidth: parent.width / 5
@@ -31,7 +30,7 @@ Rectangle{
 
             Text {
                 id: total_infected
-                property int perc: total_pop.selected_pop === 0 ? 0 : Math.round(backend.selected_infected / total_pop.selected_pop * 100)
+                property int perc: backend.selected_pop === 0 ? 0 : Math.round(backend.selected_infected / total_pop.selected_pop * 100)
                 text: "Selected infected: " + backend.selected_infected + "|"+ perc + "%"
                 verticalAlignment: Text.AlignVCenter
                 //Layout.fillWidth: true
@@ -190,11 +189,14 @@ Rectangle{
             property int initialXPos
             property int initialYPos
             property bool justStarted
-            z: backend.total_pop + 11
+            z: 5
             anchors.fill: parent
+
+
 
             onPressed: {
                 if (mouse.button === Qt.LeftButton && mouse.modifiers & Qt.ShiftModifier){
+                    enabled = true
                     selectionRect.enabled = true
                     selectionRect.x = mouse.x
                     selectionRect.y = mouse.y
@@ -243,8 +245,9 @@ Rectangle{
             onReleased: {
                 selectionRect.visible = false
                 map.enabled = true
+                //enabled = false
 
-               var x_low
+                var x_low
                 var x_high
                 var y_low
                 var y_high
@@ -452,15 +455,14 @@ Rectangle{
                 ToolTip.visible: containsMouse ? true : false
                 
                 onClicked: {
+                    console.log("????")
                     if(parent.city.clicked){
                         parent.city.clicked = false
-                        total_pop.selected_pop -= parent.city.popCount
                         parent.remove_commuters();
 
                     }
                     else{
                         parent.city.clicked = true
-                        total_pop.selected_pop += parent.city.popCount
                         parent.draw_commuters()
                     }
                 }
