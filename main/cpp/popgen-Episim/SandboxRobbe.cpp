@@ -1,23 +1,30 @@
 //
 // Created by robbe on 03.06.18.
 //
-
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-//#include <QGeoCoordinate>
-
+#include "stdlib.h"
+#ifdef USING_QT
 #include "RobbeGui/QTBackEnd.h"
+#endif
+
+#include <boost/property_tree/xml_parser.hpp>
+#include "boost/property_tree/ptree.hpp"
+using namespace boost::property_tree;
+
 
 int main(int argc, char** argv){
+    ptree pt;
+    read_xml("config/run_short.xml",pt);
+    system("rm -r *_*");
 
+#ifdef USING_QT
     QGuiApplication app(argc, argv); // main app
-
-    qmlRegisterType<QTBackEnd>("episim.backend",1,0,"BackEnd"); // let the qml find the BackEnd class
-    //qmlRegisterType<QTCity>("episim.city",1,0,"City"); // let the qml find the City class
-
-
     QQmlApplicationEngine engine;
+
+    QScopedPointer<QTBackEnd> backend(new QTBackEnd(engine, pt));
+    engine.rootContext()->setContextProperty("backend", backend.data());
     engine.load(QStringLiteral("mapviewer/Gui.qml"));
 
+
     return app.exec();
+#endif
 }

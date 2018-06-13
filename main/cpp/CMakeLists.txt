@@ -172,9 +172,11 @@ install(TARGETS seg_searcher  DESTINATION   ${BIN_INSTALL_LOCATION})
 #============================================================================
 # Build and install Robbe"s Testing excecutable
 #============================================================================
-add_executable(SandboxRobbe popgen-Episim/SandboxRobbe.cpp)
-target_link_libraries(SandboxRobbe ${LIBS} libstride)
-install(TARGETS SandboxRobbe  DESTINATION   ${BIN_INSTALL_LOCATION})
+if(Qt5_FOUND)
+	add_executable(SandboxRobbe popgen-Episim/SandboxRobbe.cpp)
+	target_link_libraries(SandboxRobbe ${LIBS} libstride ${Qt5Positioning_LIBRARIES})
+	install(TARGETS SandboxRobbe  DESTINATION   ${BIN_INSTALL_LOCATION})
+endif()
 
 #============================================================================
 # Clean up.

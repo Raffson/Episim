@@ -23,41 +23,41 @@ void TestSummarizer::CreateTopTags(ofstream& file)
 
 }
 
-void TestSummarizer::GenerateHtml(const boost::filesystem::path &test_path, const string &fname)
+void TestSummarizer::GenerateHtml(const boost::filesystem::path &testPath, const string &fname)
 {
-    boost::property_tree::ptree p_tree;
+    boost::property_tree::ptree pTree;
 
-    if(boost::filesystem::exists(test_path)){
+    if(boost::filesystem::exists(testPath)){
 
-        boost::property_tree::read_xml(test_path.string(), p_tree);
+        boost::property_tree::read_xml(testPath.string(), pTree);
 
         ofstream file;
         file.open(fname, ofstream::out);
         CreateTopTags(file);
-        file << "<h2 style=\"text-align:center;\">"<< p_tree.get<std::string>("testsuites.<xmlattr>.name", "") << " with "
-             << p_tree.get<std::string>("testsuites.<xmlattr>.tests", "") << " testcases. "
-             << p_tree.get<std::string>("testsuites.<xmlattr>.failures", "") << " failing tests. Generated at "
-             << p_tree.get<std::string>("testsuites.<xmlattr>.timestamp", "") << "</h4>";
+        file << "<h2 style=\"text-align:center;\">"<< pTree.get<std::string>("testsuites.<xmlattr>.name", "") << " with "
+             << pTree.get<std::string>("testsuites.<xmlattr>.tests", "") << " testcases. "
+             << pTree.get<std::string>("testsuites.<xmlattr>.failures", "") << " failing tests. Generated at "
+             << pTree.get<std::string>("testsuites.<xmlattr>.timestamp", "") << "</h4>";
 
-        for(auto& node: p_tree.get_child("testsuites")){
+        for(auto& node: pTree.get_child("testsuites")){
             auto subtree = node.second;
-            string testsuite_name = subtree.get<std::string>("<xmlattr>.name", "");
+            string testsuiteName = subtree.get<std::string>("<xmlattr>.name", "");
             //int nr_failures = subtree.get<int>("<xmlattr>.failures", 0);
 
-            if(testsuite_name == "")
+            if(testsuiteName == "")
                 continue;
 
-            file << "<h3>" << testsuite_name << "</h3>" << endl;
+            file << "<h3>" << testsuiteName << "</h3>" << endl;
             file << "<table class=\"table table-striped\">\n<tr><th>Testcases' name</th><th>Time</th><th>Status</th></tr>\n";
 
 
             for(auto& tc: subtree.get_child("")){
-                string testcase_name = tc.second.get<std::string>("<xmlattr>.name", "");
+                string testcaseName = tc.second.get<std::string>("<xmlattr>.name", "");
 
-                if(testcase_name == "")
+                if(testcaseName == "")
                     continue;
 
-                file << "<tr><td>" << testcase_name << "</td>";
+                file << "<tr><td>" << testcaseName << "</td>";
                 file << "<td>" << tc.second.get<std::string>("<xmlattr>.time", "") << "</td>";
 
                 boost::optional< boost::property_tree::ptree& > failures = tc.second.get_child_optional( "failure" );
@@ -85,8 +85,8 @@ void TestSummarizer::GenerateHtml(const boost::filesystem::path &test_path, cons
     }
 
     else{
-        cerr << test_path << " doesn't exist. Please run a test-executable with flag --gtest_output=xml:"
-             <<test_path  << " and try again." <<endl;
+        cerr << testPath << " doesn't exist. Please run a test-executable with flag --gtest_output=xml:"
+             <<testPath  << " and try again." <<endl;
     }
 
 

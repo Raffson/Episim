@@ -15,11 +15,16 @@
 #############################################################################
 
 #============================================================================
-# Add subdirectories:
+# Build & install executable.
 #============================================================================
-include_directories(${CMAKE_SOURCE_DIR}/test/cpp/myhayai)
-add_subdirectory(demo)
-add_subdirectory(myhayai)
-add_subdirectory(episim-bench)
+set(SRC class_delivery.cpp
+        flex_delivery.cpp
+        main.cpp
+)
+
+add_executable(episim-bench ${SRC})
+target_link_libraries(episim-bench myhayai libstride)
+install(TARGETS episim-bench  DESTINATION   ${BIN_INSTALL_LOCATION})
+unset(SRC)
 
 #############################################################################

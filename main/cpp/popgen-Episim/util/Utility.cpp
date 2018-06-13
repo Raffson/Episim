@@ -25,38 +25,38 @@ bool file_exists(const boost::filesystem::path& path)
 
 double convert_to_radians(double degrees) { return degrees * M_PI / 180.0; }
 
-vector<unsigned int> generate_random(const vector<double>& p_vec, util::RNManager& rng, unsigned int amount)
+vector<unsigned int> generate_random(const vector<double>& pVec, util::RNManager& rng, unsigned int amount)
 {
 
-        trng::discrete_dist  dist(p_vec.begin(), p_vec.end());
-        vector<unsigned int> ret_vec;
+        trng::discrete_dist  dist(pVec.begin(), pVec.end());
+        vector<unsigned int> retVec;
         for (unsigned int i = 0; i < amount; i++) {
-                ret_vec.emplace_back((unsigned int)rng.GetGenerator(dist, omp_get_thread_num())());
+                retVec.emplace_back((unsigned int)rng.GetGenerator(dist, omp_get_thread_num())());
         }
-        return ret_vec;
+        return retVec;
 }
 
 vector<unsigned int> generate_random(unsigned int begin, unsigned int end, util::RNManager& rng, unsigned int amount)
 {
         trng::uniform_int_dist dist(begin, end);
-        vector<unsigned int>   ret_vec;
+        vector<unsigned int>   retVec;
         for (unsigned int i = 0; i < amount; i++) {
-                ret_vec.emplace_back((unsigned int)rng.GetGenerator(dist, omp_get_thread_num())());
+                retVec.emplace_back((unsigned int)rng.GetGenerator(dist, omp_get_thread_num())());
         }
-        return ret_vec;
+        return retVec;
 }
 
-void check_distribution(vector<double>& p_vec)
+void check_distribution(vector<double>& pVec)
 {
         bool allzero = true;
-        for (const auto& elem : p_vec) {
+        for (const auto& elem : pVec) {
                 if (elem != 0) {
                         allzero = false;
                         break;
                 }
         }
         if (allzero)
-                for (auto& elem : p_vec)
+                for (auto& elem : pVec)
                         elem += 1;
 }
 
