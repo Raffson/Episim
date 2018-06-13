@@ -81,10 +81,8 @@ private:
 private:
 
     stride::City* m_city;
-
     QList<int> m_sorted_out_commuters; ///> Keeps a list sorted high low to the commuters
     QList<int> m_commuter_out_count; ///> count ot amount of commuters
-
     QList<int> m_sorted_in_commuters; ///> Keeps a list sorted high low to the commuters
     QList<int> m_commuter_in_count; ///> count ot amount of commuters
 

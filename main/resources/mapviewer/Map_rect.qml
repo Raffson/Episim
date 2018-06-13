@@ -282,12 +282,18 @@ Rectangle{
                     y_high = selectionRect.y
                 }
 
+                selectionRect.x = -1
+                selectionRect.y = -1
+                selectionRect.width = -1
+                selectionRect.height = -1
+
                 for(var i = 0; i < map.mapItems.length; i++){
                     var item = map.mapItems[i]
 
                     if(item.x > x_low && item.x < x_high){
                         if(item.y > y_low && item.y < y_high){
                             item.city.clicked = true
+                            item.draw_commuters()
                         }
                     }
                 }
@@ -441,7 +447,7 @@ Rectangle{
             property var perc : city.popCount === 0 ? 0 : Math.round(city.infected/city.popCount * 100)
             property var commuting_lst: []
             radius: (city.popCount / backend.total_pop) * 250000
-            color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1 - perc / 50 ,0,0 + perc /50,0.2 + perc / 50) : Qt.rgba(0,1 - perc / 50,0 + perc / 50 ,0.2 + perc / 50 )
+            color: cty_mouse.containsMouse ? Qt.rgba(1, 1, 1, 0.2) : city.clicked ? Qt.rgba(1 - perc / 50 ,0,0 + perc /50,0.2 + perc / 50) : Qt.rgba(0,1 - perc / 50,0 + perc / 50 ,0.2 + perc / 50 )
             center: city.crd
             z: backend.total_pop - city.popCount
             

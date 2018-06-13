@@ -6,21 +6,21 @@
 
 #include <QObject>
 #include "QtPositioning/QGeoCoordinate"
-
 #include "popgen-Episim/model/Coordinate.h"
-
+#include "QTCity.h"
 
 class QTCommuter : public QObject {
 
 public:
-    QTCommuter(stride::Coordinate c1, stride::Coordinate c2, QObject* parent = nullptr);
+    QTCommuter(QTCity* city1, QTCity* city2, QObject* parent = nullptr);
     ~QTCommuter() = default;
 
 
 private:
 
-QGeoCoordinate m_c1;
-QGeoCoordinate m_c2;
+QTCity* m_city1;
+QTCity* m_city2;
+
 
 
 };
