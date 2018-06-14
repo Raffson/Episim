@@ -292,8 +292,12 @@ Rectangle{
 
                     if(item.x > x_low && item.x < x_high){
                         if(item.y > y_low && item.y < y_high){
-                            item.city.clicked = true
-                            item.draw_commuters()
+                            if(item.circle === true){
+                                item.city.clicked = true
+                                item.draw_commuters()
+                            }
+
+
                         }
                     }
                 }
@@ -319,9 +323,10 @@ Rectangle{
             property int commuter_count_in: 0
             property bool out: false
             property bool inc: false
+            property bool circle: false
             line.width: calc_line_width() * 50
             line.color:mouse_line.containsMouse ? Qt.rgba(1,1,1,0.4) : (out && inc) ? 'blue' : (inc ? Qt.rgba(1,0,0,0.4): Qt.rgba(0,1,0,0.4))
-            z: 1000000 - calc_line_width()
+            z: backend.total_pop / 2 - calc_line_width()
             
             
             
@@ -446,7 +451,8 @@ Rectangle{
             property var city : model.modelData
             property var perc : city.popCount === 0 ? 0 : Math.round(city.infected/city.popCount * 100)
             property var commuting_lst: []
-            radius: (city.popCount / backend.total_pop) * 250000
+            property bool circle : true
+            radius:  city.popCount/ backend.total_pop * 250000
             color: cty_mouse.containsMouse ? Qt.rgba(1, 1, 1, 0.2) : city.clicked ? Qt.rgba(1 - perc / 50 ,0,0 + perc /50,0.2 + perc / 50) : Qt.rgba(0,1 - perc / 50,0 + perc / 50 ,0.2 + perc / 50 )
             center: city.crd
             z: backend.total_pop - city.popCount

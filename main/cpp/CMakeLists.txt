@@ -128,6 +128,7 @@ if(Qt5_FOUND)
 		RobbeGui/QTBackEnd.cpp
 		RobbeGui/QTCity.cpp
 		RobbeGui/QTCommuter.cpp
+		RobbeGui/QTCommuterModel.cpp
 		)
 endif()
 
