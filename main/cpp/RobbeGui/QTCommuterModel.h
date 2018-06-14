@@ -17,4 +17,4 @@ private:
 };
 
 
-#endif //STRIDE_QTCOMMUTERMODEL_H
+
