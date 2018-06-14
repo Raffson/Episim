@@ -30,6 +30,11 @@
 #include <string>
 #include <vector>
 
+#ifdef USING_QT
+#include "popgen-Episim/gui//QTBackEnd.h"
+#endif
+
+
 using namespace std;
 using namespace stride;
 using namespace stride::util;
@@ -129,7 +134,17 @@ int main(int argc, char** argv)
                 // If run simulation in gui ...
                 // -----------------------------------------------------------------------------------------
                 else if (execArg.getValue() == "simgui") {
-                        cout << "Not implented here yet ..." << endl;
+#ifdef USING_QT
+                        QGuiApplication app(argc, argv); // main app
+                        QQmlApplicationEngine engine;
+
+                        QScopedPointer<QTBackEnd> backend(new QTBackEnd(engine, configPt));
+                        engine.rootContext()->setContextProperty("backend", backend.data());
+                        engine.load(QStringLiteral("mapviewer/Gui.qml"));
+                        return app.exec();
+#else
+                        cout << "Qt was not found, unable to start GUI..." << endl;
+#endif
                 }
                 // -----------------------------------------------------------------------------------------
                 // If clean/dump ...
