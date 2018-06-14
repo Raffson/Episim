@@ -21,7 +21,6 @@ QTCommuter::QTCommuter(QTCity* city1, QTCity* city2, double outcommuting, double
 
 
 void QTCommuter::set_in_commuters(double amount) {
-    cout << amount << endl;
         m_in_count = amount;
 }
 
@@ -45,7 +44,6 @@ double QTCommuter::calculate_line_width() {
 QColor QTCommuter::pick_color() {
 
     if(m_in_count == 0){ // so it is an outcommuters line
-        cout << "Is this ever 0" << endl;
         return QColor("green");
     }
     else if(m_out_count == 0){
