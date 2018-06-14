@@ -77,7 +77,7 @@ void QTCity::set_clicked(bool val){
     }
     else{
         m_back_end->add_selected_pop(m_pop  * -1);
-        m_back_end->remove_commute_lines((unsigned int) m_id, m_commuting_lst.size());
+        m_back_end->remove_commute_lines((unsigned int) m_id, 100);
     }
     emit clickedChanged();
     emit m_back_end->selected_infectedChanged();
@@ -94,7 +94,6 @@ void QTCity::create_commuting_lst(int amount){
     //We make a search map so we can find the objects more easly.
     map<unsigned int, QTCity*> search_map;
     for(auto& it: m_back_end->get_cities()) {
-
         auto cty = dynamic_cast<QTCity*>(it);
         search_map[(unsigned int)cty->get_id()] = cty;
 
@@ -118,21 +117,23 @@ void QTCity::create_commuting_lst(int amount){
     for(auto& it: m_city->GetInCommuting()){
         tmp_vec2.emplace_back(make_pair(it.second, it.first));
     }
-    std::sort(tmp_vec.begin(), tmp_vec.end());
+    std::sort(tmp_vec2.begin(), tmp_vec2.end());
+
 
     // Now we add the incommuters
     for(int i = 0; i < amount; i++){
-        unsigned int id = tmp_vec[tmp_vec.size() -1 - i].second;
-        double incommuters = tmp_vec[tmp_vec.size() -1 - i].first;
+        unsigned int id = tmp_vec2[tmp_vec.size() -1 - i].second;
+        double incommuters = tmp_vec2[tmp_vec.size() -1 - i].first;
 
         if(search_map.count(id) > 0){ // Line not yet exists bcz we delete found cities in the outcommuters part
             QTCity *cty2 = search_map.at((unsigned int) id);
-            auto* cmt = new QTCommuter(this, cty2, incommuters,0);
+            auto* cmt = new QTCommuter(this, cty2, (int) incommuters,0);
             m_commuting_lst.append(cmt);
         }
 
         else{
             {
+
                 QTCommuter* cmt = found_map.at(id);
                 cmt->set_in_commuters(incommuters);
             }

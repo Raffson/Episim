@@ -320,7 +320,7 @@ Rectangle{
         id: path
         MapPolyline{
             line.width: modelData.width
-            line.color: modelData.green
+            line.color: modelData.color
             path:[modelData.center_city1,modelData.center_city2 ]
         }
 
@@ -487,8 +487,6 @@ Rectangle{
                     else{
                         parent.city.clicked = true
                         //parent.draw_commuters()
-                        console.log(backend.commuters)
-                        console.log(backend.cities)
 
                     }
                 }

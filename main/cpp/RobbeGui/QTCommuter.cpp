@@ -4,7 +4,7 @@
 
 #include <algorithm>
 #include "QTCommuter.h"
-
+#include <iostream>
 using namespace std;
 
 QTCommuter::QTCommuter(QTCity* city1, QTCity* city2, int outcommuting, int incommuting,  QObject* parent ):
@@ -40,13 +40,16 @@ double QTCommuter::calculate_line_width() {
 QColor QTCommuter::pick_color() {
 
     if(m_in_count == 0){ // so it is an outcommuters line
-        return QColor(1,0,0,1);
+        cout << "blue" << endl;
+        return QColor("green");
     }
     else if(m_out_count == 0){
-        return QColor(1,0,0,1);
+        cout << "red" << endl;
+        return QColor("red");
     }
     else{
-        return QColor(1,0,1,1);
+        cout <<"blue" << endl;
+        return QColor("blue");
     }
 }
 
