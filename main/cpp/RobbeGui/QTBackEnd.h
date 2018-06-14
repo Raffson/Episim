@@ -28,6 +28,7 @@ using namespace std;
 
 
 class QTCity;
+class QTCommuter;
 
 class QTBackEnd: public QObject {
     Q_OBJECT
@@ -35,6 +36,7 @@ class QTBackEnd: public QObject {
 public:
 
     explicit QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent = nullptr);
+    ~QTBackEnd() = default;
 
     /// @brief Handler for QML to generate pop. Will do the genpop logic.
     Q_INVOKABLE void genPop();
@@ -52,6 +54,7 @@ public:
     Q_PROPERTY(int selected_pop MEMBER m_selected_pop NOTIFY selected_popChanged)
     Q_PROPERTY(int selected_infected READ count_selected_infected NOTIFY selected_infectedChanged())
     Q_PROPERTY(int total_infected READ get_total_infected NOTIFY total_infectedChanged)
+    Q_PROPERTY(QList<QObject*> commuters MEMBER m_commuters NOTIFY commutersChanged)
 
 signals:
     void selected_popChanged();
@@ -59,16 +62,21 @@ signals:
     void selected_infectedChanged();
     void total_infectedChanged();
     void citiesChanged();
+    void commutersChanged();
 
 public:
     void add_selected_pop(int amount);
+    QList<QObject*> get_cities(){return m_cities;}
+
+    void add_commute_lines(const QList<QTCommuter*>& lst);
+    void remove_commute_lines(unsigned int cty_id, int amount);
 
 
 
 
 private:
     void makeCityList();
-    QList<QObject*> get_cities(){return m_cities;}
+
     QGeoCoordinate get_center();
     int count_selected_infected();
     int get_total_infected();
@@ -82,14 +90,15 @@ private:
     shared_ptr<stride::GeoGrid> m_grid;
 
     ///> A Qlist that conains our QTCity models
+    vector<QTCity> m_effective_cities;
     QList<QObject*> m_cities;
+    QList<QObject*> m_commuters; // Commuting lines to be drawn?
 
     ptree& m_pt;
     ptree  m_geo_pt;
     QQmlApplicationEngine& m_engine;
 
     bool m_pop_generated{false};
-
     int m_total_pop{0};
     int m_selected_pop{0};
 

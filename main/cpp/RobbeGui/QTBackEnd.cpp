@@ -38,9 +38,12 @@ void QTBackEnd::makeCityList() {
 
     m_cities.clear();
     for(auto& it: m_grid->GetCities()){
+        m_cities.append(new QTCity(&it.second, this));
+    }
+    for(auto& it: m_cities){ // Needs to happen when the full list is initialized
+        auto cty = dynamic_cast<QTCity*>(it);
 
-        auto cty = new QTCity(&it.second, this);
-        m_cities.append(cty);
+        cty->create_commuting_lst(10);
     }
     emit citiesChanged();
 }
@@ -55,7 +58,7 @@ QGeoCoordinate QTBackEnd::get_center() {
 QObject* QTBackEnd::get_city(unsigned int id) {
 
     for(auto& it: m_cities){
-        if(id == dynamic_cast<QTCity*>(it)->get_m_city()->GetId()){
+        if(id ==(unsigned int) dynamic_cast<QTCity*>(it)->get_id()){
             return it;
         }
     }
@@ -100,7 +103,7 @@ int QTBackEnd::count_selected_infected() {
 
     int counter = 0;
     for(auto& it : m_cities){
-        QTCity* cty = dynamic_cast<QTCity*>(it);
+        auto * cty = dynamic_cast<QTCity*>(it);
         if(cty->get_clicked()){
             counter += cty->get_infected();
         }
@@ -123,6 +126,30 @@ void QTBackEnd::add_selected_pop(int amount) {
 
     m_selected_pop += amount;
     emit selected_popChanged();
+}
+
+void QTBackEnd::add_commute_lines(const QList<QTCommuter *> &lst) {
+
+    for(auto& it: lst){
+        m_commuters.append(it);
+    }
+    emit commutersChanged();
+}
+
+void QTBackEnd::remove_commute_lines(unsigned int cty_id, int amount) {
+
+    int removed = 0;
+    for(auto it = m_commuters.begin(); m_commuters.end() > it; it++){
+        auto cmt = dynamic_cast<QTCommuter*>(*it);
+        if(cty_id ==(unsigned int) cmt->get_main_city()->get_id()){
+            m_commuters.erase(it);
+            removed ++;
+            if(removed== amount){
+                break;
+            }
+        }
+    }
+    emit commutersChanged();
 }
 
 
