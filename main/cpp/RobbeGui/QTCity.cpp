@@ -28,6 +28,12 @@ QGeoCoordinate QTCity::get_coordinates() const {
     return QGeoCoordinate(m_city->GetCoordinates().GetLatitude(), m_city->GetCoordinates().GetLongitude());
 }
 
+void QTCity::flip(){
+
+    m_is_clicked = !m_is_clicked;
+    emit clickedChanged();
+}
+
 QString QTCity::get_name() const {
     return QString(m_city->GetName().c_str());
 }
@@ -128,13 +134,12 @@ void QTCity::create_commuting_lst(int amount){
         double incommuters = tmp_vec2[tmp_vec.size() -1 - i].first;
 
         if(found_map.count(id) == 0){ // Line not yet exists bcz we delete found cities in the outcommuters part
-            cout << "red line" << endl;
             QTCity *cty2 = search_map.at(id);
             auto* cmt = new QTCommuter(this, cty2,0, (int) incommuters);
             m_commuting_lst.append(cmt);
         }
         else {
-            //cout << "hier " << endl;
+
             found_map[id]->set_in_commuters(incommuters);
             }
 

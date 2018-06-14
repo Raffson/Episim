@@ -36,10 +36,6 @@ public:
     Q_PROPERTY(QString name READ get_name CONSTANT)
     Q_PROPERTY(int id READ get_id CONSTANT)
 
-    Q_PROPERTY(QList<int> out_commuters READ get_out_commuters CONSTANT)
-    Q_PROPERTY(QList<int> out_commuters_count READ get_out_commuters_count CONSTANT)
-    Q_PROPERTY(QList<int> in_commuters READ get_in_commuters CONSTANT)
-    Q_PROPERTY(QList<int> in_commuters_count READ get_in_commuters_count CONSTANT)
     Q_PROPERTY(int total_in_commuters READ get_total_commuters_in CONSTANT)
     Q_PROPERTY(int total_out_commuters READ get_total_commuters_out CONSTANT)
     Q_PROPERTY(int infected READ get_infected NOTIFY infectedChanged)
@@ -59,23 +55,21 @@ public:
     void create_commuting_lst(int amount);
     QGeoCoordinate get_coordinates() const;
 
+    QList<QTCommuter*> get_commuters ()  const{return m_commuting_lst;}
+
+    void flip();
+
 private:
     QString get_name() const;
 
-
-    QList<int> get_out_commuters(){ return m_sorted_out_commuters;}
-    QList<int> get_out_commuters_count(){ return m_commuter_out_count;}
-    QList<int> get_in_commuters(){ return m_sorted_in_commuters;}
-    QList<int> get_in_commuters_count(){ return m_commuter_in_count;}
     int get_total_commuters_out(){return(int) m_city->GetTotalOutCommutersCount();}
     int get_total_commuters_in(){return (int) m_city->GetTotalInCommutersCount();}
 
 
     void fill_in_out_commuters();
     void fill_in_in_commuters();
-
-
     void set_clicked(bool val);
+
 
 private:
 
