@@ -26,7 +26,7 @@ class QTCity : public QObject {
 
 public:
     explicit  QTCity(stride::City* m_city = nullptr, QTBackEnd* back_end = nullptr,  QObject* = nullptr);
-    ~QTCity() = default;
+    ~QTCity()= default;
     QTCity(const QTCity&);
 
     Q_INVOKABLE void ctyTest() {cout << "Hello from" << m_city->GetName() << endl;}
@@ -46,16 +46,16 @@ public:
     Q_PROPERTY(bool clicked READ get_clicked WRITE set_clicked NOTIFY clickedChanged)
 
 
+signals:
+    void infectedChanged();
+    void clickedChanged();
+
+public:
     stride::City* get_m_city()const {return m_city;}
     QTBackEnd* get_back_end() const {return m_back_end;}
     int get_infected() const {return (int) m_city->GetInfectedCount();}
     bool get_clicked(){return m_is_clicked;}
-
-
-
-signals:
-    void infectedChanged();
-    void clickedChanged();
+    int get_id() const;
 
 
 
@@ -91,7 +91,9 @@ private:
     QList<QTCommuter*> m_commuting_lst;
     bool m_is_clicked{false};
     QTBackEnd* m_back_end;
-    int m_pop;
+
+    const int m_id;
+    const int m_pop;
 
 };
 

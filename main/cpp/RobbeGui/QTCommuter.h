@@ -17,6 +17,8 @@ public:
     QTCommuter(QTCity* city1, QTCity* city2, int outcommuting, int incommuting, QObject* parent = nullptr);
     ~QTCommuter() override = default;
 
+    void set_in_commuters(int amount);
+    QTCity* get_main_city();
 
 private:
 

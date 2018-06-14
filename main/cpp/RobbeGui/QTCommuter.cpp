@@ -9,3 +9,11 @@ QTCommuter::QTCommuter(QTCity* city1, QTCity* city2, int outcommuting, int incom
         QObject(parent),m_city1(city1), m_city2(city2), m_out_count(outcommuting), m_in_count(incommuting){
 
 }
+
+void QTCommuter::set_in_commuters(int amount) {
+        m_in_count = amount;
+}
+
+QTCity *QTCommuter::get_main_city() {
+        return m_city1;
+}

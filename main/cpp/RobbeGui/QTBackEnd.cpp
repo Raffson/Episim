@@ -38,9 +38,7 @@ void QTBackEnd::makeCityList() {
 
     m_cities.clear();
     for(auto& it: m_grid->GetCities()){
-
-        auto cty = new QTCity(&it.second, this);
-        m_cities.append(cty);
+        m_cities.append(new QTCity(&it.second, this));
     }
     emit citiesChanged();
 }
@@ -123,6 +121,30 @@ void QTBackEnd::add_selected_pop(int amount) {
 
     m_selected_pop += amount;
     emit selected_popChanged();
+}
+
+void QTBackEnd::add_commute_lines(const QList<QTCommuter *> &lst) {
+
+    for(auto& it: lst){
+        m_commuters.append(it);
+    }
+    emit commutersChanged();
+}
+
+void QTBackEnd::remove_commute_lines(unsigned int cty_id, int amount) {
+
+    int removed = 0;
+    for(auto it = m_commuters.begin(); it < m_commuters.end(); it++){
+        auto cmt = dynamic_cast<QTCommuter*>(*it);
+        if(cty_id == cmt->get_main_city()->get_m_city()->GetId()){
+            m_commuters.erase(it);
+            removed ++;
+            if(removed== amount){
+                break;
+            }
+        }
+    }
+    emit commutersChanged();
 }
 
 
