@@ -77,7 +77,7 @@ void QTCity::set_clicked(bool val){
     }
     else{
         m_back_end->add_selected_pop(m_pop  * -1);
-        m_back_end->remove_commute_lines((unsigned int) m_id, 10);
+        m_back_end->remove_commute_lines((unsigned int) m_id, m_commuting_lst.size());
     }
     emit clickedChanged();
     emit m_back_end->selected_infectedChanged();
@@ -106,7 +106,7 @@ void QTCity::create_commuting_lst(int amount){
         int id = tmp_vec[tmp_vec.size() -1 - i].second;
         double outcommuters = tmp_vec[tmp_vec.size() -1 - i].first;
         QTCity* cty2 = search_map.at((unsigned int) id);
-        search_map.erase(id); // erase found ones
+        search_map.erase((unsigned int)id); // erase found ones
         auto cmt = new QTCommuter(this, cty2, 0 ,(int)outcommuters);
         found_map[id] = cmt;
         m_commuting_lst.append(cmt);

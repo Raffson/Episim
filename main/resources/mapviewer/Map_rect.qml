@@ -299,7 +299,6 @@ Rectangle{
                         if(item.y > y_low && item.y < y_high){
                             if(item.circle === true){
                                 item.city.clicked = true
-                                item.draw_commuters()
                             }
 
 
@@ -320,8 +319,8 @@ Rectangle{
     Component{
         id: path
         MapPolyline{
-            line.width: 3
-            line.color: "green"
+            line.width: modelData.width
+            line.color: modelData.green
             path:[modelData.center_city1,modelData.center_city2 ]
         }
 

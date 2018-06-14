@@ -2,8 +2,10 @@
 // Created by robbe on 13.06.18.
 //
 
+#include <algorithm>
 #include "QTCommuter.h"
 
+using namespace std;
 
 QTCommuter::QTCommuter(QTCity* city1, QTCity* city2, int outcommuting, int incommuting,  QObject* parent ):
         QObject(parent),m_city1(city1), m_city2(city2), m_center_city1(city1->get_coordinates()),
@@ -24,5 +26,27 @@ void QTCommuter::set_in_commuters(int amount) {
 
 QTCity *QTCommuter::get_main_city() {
         return m_city1;
+}
+
+double QTCommuter::calculate_line_width() {
+
+    double biggest = max(m_in_count, m_out_count);
+    double biggest_total = max(m_city1->get_m_city()->GetTotalInCommutersCount(),
+            m_city1->get_m_city()->GetTotalOutCommutersCount());
+
+    return  biggest / biggest_total * 50;
+}
+
+QColor QTCommuter::pick_color() {
+
+    if(m_in_count == 0){ // so it is an outcommuters line
+        return QColor(1,0,0,1);
+    }
+    else if(m_out_count == 0){
+        return QColor(1,0,0,1);
+    }
+    else{
+        return QColor(1,0,1,1);
+    }
 }
 
