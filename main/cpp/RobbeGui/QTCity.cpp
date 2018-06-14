@@ -9,19 +9,12 @@
 
 
 QTCity::QTCity(stride::City* model,QTBackEnd* back_end, QObject *parent ):
-        QObject(parent), m_city(model),m_back_end(back_end){
+        QObject(parent), m_city(model),m_back_end(back_end), m_pop(model->GetEffectivePopulation()){
     fill_in_in_commuters();
     fill_in_out_commuters();
 }
 
 
-
-int QTCity::get_population() const {
-    if(m_city == nullptr){
-        return 0;
-    }
-    return m_city->GetEffectivePopulation();
-}
 
 QGeoCoordinate QTCity::get_coordinates() const {
     return QGeoCoordinate(m_city->GetCoordinates().GetLatitude(), m_city->GetCoordinates().GetLongitude());
@@ -70,6 +63,12 @@ void QTCity::fill_in_in_commuters() {
 
 void QTCity::set_clicked(bool val){
     m_is_clicked = val;
+    if(val){
+        m_back_end->add_selected_pop(m_pop);
+    }
+    else{
+        m_back_end->add_selected_pop(m_pop  * -1);
+    }
     emit clickedChanged();
     emit m_back_end->selected_infectedChanged();
 }

@@ -28,7 +28,7 @@ public:
     Q_INVOKABLE void ctyTest() {cout << "Hello from" << m_city->GetName() << endl;}
 
     Q_PROPERTY(QGeoCoordinate crd READ get_coordinates CONSTANT)
-    Q_PROPERTY(int popCount READ get_population CONSTANT)
+    Q_PROPERTY(int popCount MEMBER m_pop CONSTANT)
     Q_PROPERTY(QString name READ get_name CONSTANT)
     Q_PROPERTY(int id READ get_id CONSTANT)
 
@@ -55,7 +55,6 @@ signals:
 
 private:
     QGeoCoordinate get_coordinates() const;
-    int get_population() const;
     QString get_name() const;
     int get_id() const;
 
@@ -82,16 +81,16 @@ private:
 private:
 
     stride::City* m_city;
-
     QList<int> m_sorted_out_commuters; ///> Keeps a list sorted high low to the commuters
     QList<int> m_commuter_out_count; ///> count ot amount of commuters
-
     QList<int> m_sorted_in_commuters; ///> Keeps a list sorted high low to the commuters
     QList<int> m_commuter_in_count; ///> count ot amount of commuters
 
     bool m_is_clicked{false};
 
     QTBackEnd* m_back_end;
+
+    int m_pop;
 
 
 };

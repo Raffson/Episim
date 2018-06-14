@@ -9,7 +9,6 @@
 #include <QObject>
 #include <QList>
 #include <QString>
-#include <QtPositioning/QGeoCoordinate>
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
@@ -42,22 +41,25 @@ public:
     Q_INVOKABLE QObject* get_city(unsigned int id);
     Q_INVOKABLE void run_simulator(unsigned int days = 0);
     Q_INVOKABLE bool should_redraw(){return !m_pop_generated;};
-
-
     Q_INVOKABLE QString get_config(QString xml_tag);
     Q_INVOKABLE void set_config(QString xml_tag, QString val);
 
-
     Q_PROPERTY(QList<QObject*> cities READ get_cities CONSTANT)
     Q_PROPERTY(QGeoCoordinate center READ get_center CONSTANT)
-    Q_PROPERTY(int total_pop READ get_total_pop NOTIFY popChanged);
+
+    Q_PROPERTY(int total_pop MEMBER m_total_pop NOTIFY popChanged);
+    Q_PROPERTY(int selected_pop MEMBER m_selected_pop NOTIFY selected_popChanged)
     Q_PROPERTY(int selected_infected READ count_selected_infected NOTIFY selected_infectedChanged())
     Q_PROPERTY(int total_infected READ get_total_infected NOTIFY total_infectedChanged)
 
-    signals:
-    void selected_infectedChanged();
+signals:
+    void selected_popChanged();
     void popChanged();
+    void selected_infectedChanged();
     void total_infectedChanged();
+
+public:
+    void add_selected_pop(int amount);
 
 
 
@@ -66,7 +68,6 @@ private:
     void makeCityList();
     QList<QObject*> get_cities(){return m_cities;}
     QGeoCoordinate get_center();
-    int get_total_pop() const;
     int count_selected_infected();
     int get_total_infected();
 
@@ -86,6 +87,9 @@ private:
     QQmlApplicationEngine& m_engine;
 
     bool m_pop_generated{false};
+
+    int m_total_pop{0};
+    int m_selected_pop{0};
 
 };
 
