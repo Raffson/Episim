@@ -21,7 +21,8 @@ namespace stride {
 City::City(const unsigned int city_id, const unsigned int province, unsigned int population,
            const Coordinate coordinates, const string name)
     : m_city_id(city_id), m_province(province), m_population(population), m_coordinates(coordinates), m_name(name),
-      m_in_commuter_count(0), m_out_commuter_count(0), m_in_commuting_changed(false), m_out_commuting_changed(false)
+      m_in_commuter_count(0), m_out_commuter_count(0), m_in_commuting_changed(false), m_out_commuting_changed(false),
+      m_student_commuters_count(0), m_worker_commuters_count(0)
 {
         for( auto type : CommunityType::IdList )
                 m_types_present[type] = false;
@@ -101,7 +102,7 @@ unsigned int City::GetInfectedCount() const
     return result;
 }
 
-void City::AddEffectiveCommuterTo(const unsigned int destination)
+void City::AddEffectiveCommuterTo(const unsigned int destination, const bool isStudent)
 {
 #pragma omp critical(m_effective)
     {
@@ -110,6 +111,13 @@ void City::AddEffectiveCommuterTo(const unsigned int destination)
             m_effective_out_commuting[destination] = 1;
         } else {
             m_effective_out_commuting[destination] = m_effective_out_commuting[destination] + 1;
+        }
+
+        if(isStudent){
+            m_student_commuters_count++;
+        }
+        else{
+            m_worker_commuters_count++;
         }
     }
 }
