@@ -25,7 +25,6 @@ QTCity::QTCity(const QTCity& obj):QObject(obj.parent()), m_city(obj.get_m_city()
 
 
 QGeoCoordinate QTCity::get_coordinates() const {
-    cout << "bla" << endl;
     return QGeoCoordinate(m_city->GetCoordinates().GetLatitude(), m_city->GetCoordinates().GetLongitude());
 }
 

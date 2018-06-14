@@ -4,7 +4,7 @@ import QtPositioning 5.6
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 2.4
-import episim.city 1.0
+//import episim.city 1.0
 
 
 Rectangle{
@@ -60,7 +60,6 @@ Rectangle{
                     backend.genPop();
                     map.center_and_zoom();
 
-                    console.log(backend.cities[0])
                 }
 
                 background: Rectangle {
@@ -109,30 +108,30 @@ Rectangle{
             }
 
             Repeater{
-                model: CityModel
+                model: backend.cities
                RowLayout{
-                   enabled:clicked ? true : false
-                   visible: clicked ? true: false
-                   Layout.maximumHeight: clicked ? 55 : 0
-                   Layout.minimumHeight: clicked ? 55 : 0
+                   enabled:modelData.clicked ? true : false
+                   visible: modelData.clicked ? true: false
+                   Layout.maximumHeight: modelData.clicked ? 55 : 0
+                   Layout.minimumHeight: modelData.clicked ? 55 : 0
                    ColumnLayout{
                        Text{
-                           enabled:clicked ? true : false
-                           visible:clicked ? true : false
-                           text: name
+                           enabled:modelData.clicked ? true : false
+                           visible:modelData.clicked ? true : false
+                           text: modelData.name
                        }
 
                        Text{
-                           enabled:clicked ? true : false
-                           visible:clicked ? true : false
-                           text: "Population: " + popCount
+                           enabled:modelData.clicked ? true : false
+                           visible:modelData.clicked ? true : false
+                           text: "Population: " + modelData.popCount
                            font.pointSize: 10
                        }
 
                        Text{
-                           enabled:clicked ? true : false
-                           visible:clicked ? true : false
-                           text: "Infected: " + infected+ "|" + Math.round(infected/popCount*100)+"%"
+                           enabled:modelData.clicked ? true : false
+                           visible:modelData.clicked ? true : false
+                           text: "Infected: " + modelData.infected+ "|" + Math.round(modelData.infected/modelData.popCount*100)+"%"
                            font.pointSize: 10
                        }
 
@@ -161,8 +160,6 @@ Rectangle{
         anchors.right: parent.right
 
         MapItemView{
-            /*model:cty_model
-            delegate: mapCircleComponent */
 
             model: backend.cities
             delegate: mapCircleComponent

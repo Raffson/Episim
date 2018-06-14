@@ -13,7 +13,6 @@
 
 QTBackEnd::QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent):QObject(parent),
                     m_pt(pt),m_engine(engine) {
-    m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
 
     string file(m_pt.get<string>("run.geopop_file"));
     string path = "config/" + file;
@@ -39,10 +38,11 @@ void QTBackEnd::makeCityList() {
 
     m_cities.clear();
     for(auto& it: m_grid->GetCities()){
-        m_cities.append(QTCity(&it.second, this));
+
+        auto cty = new QTCity(&it.second, this);
+        m_cities.append(cty);
     }
     emit citiesChanged();
-    m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
 }
 
 QGeoCoordinate QTBackEnd::get_center() {
@@ -52,10 +52,10 @@ QGeoCoordinate QTBackEnd::get_center() {
 }
 
 
-QObject QTBackEnd::get_city(unsigned int id) {
+QObject* QTBackEnd::get_city(unsigned int id) {
 
     for(auto& it: m_cities){
-        if(id == it>get_m_city()->GetId()){
+        if(id == dynamic_cast<QTCity*>(it)->get_m_city()->GetId()){
             return it;
         }
     }
