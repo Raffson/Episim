@@ -134,7 +134,13 @@ endif()
 #----------------------------------------------------------------------------
 # Qt : not a definitive list of components yet; these are placeholders
 #----------------------------------------------------------------------------
-find_package(Qt5 COMPONENTS Core Gui PrintSupport Widgets Qml QUIET)
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
+			"~/Qt/5.11.0/clang_64"
+			"~/Qt/5.11.0/gcc_64"
+			"~/Qt/5.10.1/clang_64"
+			"~/Qt/5.10.1/gcc_64"
+)
+find_package(Qt5 COMPONENTS Core Qml Network Quick Positioning Location Widgets Gui PrintSupport)
 if (Qt5_FOUND)
 	set(CMAKE_AUTOMOC ON)
 	set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -172,8 +178,14 @@ if (Qt5_FOUND)
     if( CMAKE_BUILD_TYPE MATCHES "Debug" )
         add_definitions( -DQDEBUG_OUTPUT )
     endif()
+	message(STATUS "Found Qt5: version " ${Qt5_VERSION})
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQt5_FOUND=false")
+	message(STATUS "Qt5 not found, searched following paths: ")
+	foreach(path ${CMAKE_PREFIX_PATH})
+  		message(STATUS "   " ${path})
+	endforeach(path)
+	message(STATUS " Try adding your path to Qt to CMAKE_PREFIX_PATH in CMakeLocal.cmake")
 endif()
 
 #----------------------------------------------------------------------------
@@ -199,28 +211,6 @@ else()
 		# This is done to eliminate blank output of undefined CMake variables.
 		set(HDF5_FOUND FALSE)
 	endif()
-endif()
-
-#----------------------------------------------------------------------------
-# Qt libraries
-#----------------------------------------------------------------------------
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
-			"~/Qt/5.11.0/clang_64"
-			"~/Qt/5.11.0/gcc_64"
-			"~/Qt/5.10.1/clang_64"
-			"~/Qt/5.10.1/gcc_64"
-)
-find_package(Qt5 COMPONENTS Core Qml Network Quick Positioning Location Widgets)
-
-if(Qt5_FOUND)
-	#little message although we also show this in the report, perhaps leave it out?
-	message(STATUS "Found Qt5: version " ${Qt5_VERSION})
-else()
-	message(STATUS "Qt5 not found, searched following paths: ")
-	foreach(path ${CMAKE_PREFIX_PATH})
-  		message(STATUS "   " ${path})
-	endforeach(path)
-	message(STATUS " Try adding your path to Qt to CMAKE_PREFIX_PATH in CMakeLocal.cmake")
 endif()
 
 #############################################################################

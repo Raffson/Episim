@@ -456,6 +456,17 @@ ApplicationWindow {
                                        , map)
     }
 
+    function saveToImage(){
+        console.warn("saving image")
+        if (map.grabToImage(function(result) {
+                               result.saveToFile("something.png");
+                                    })){
+                                    console.warn("succes")
+                                    }
+                                    else{
+                                    console.warn("fail")
+                                    }
+    }
 
     function placeCity(values, commuting_in_id, commuting_in_size, commuting_out_id, commuting_out_size){
         var item = Qt.createQmlObject('import QtQuick 2.7; import QtLocation 5.3; MapQuickItem{objectName: "mqi";}', map, "dynamic")
@@ -487,6 +498,9 @@ ApplicationWindow {
         circle.population = values["population"]
         item.sourceItem = circle
         item.anchorPoint = Qt.point(item.sourceItem.width/2, item.sourceItem.height/2)
+        var percentage = circle.infected/circle.population
+        circle.color = Qt.hsva(0, 1, percentage, 0.75)
+
         map.addMapItem(item)
     }
 

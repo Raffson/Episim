@@ -13,7 +13,6 @@
 
 QTBackEnd::QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent):QObject(parent),
                     m_pt(pt),m_engine(engine) {
-    m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
 
     string file(m_pt.get<string>("run.geopop_file"));
     string path = "config/" + file;
@@ -25,8 +24,12 @@ void QTBackEnd::genPop() {
 
     this->m_grid = stride::GeoGridGenerator().Generate(m_pt);
     stride::PopulationGenerator(*m_grid).Generate();
+
     m_pop_generated = true;
-    //emit popChanged();
+
+    m_total_pop = m_grid->GetTotalPop();
+    emit popChanged();
+
     makeCityList();
 }
 
@@ -34,14 +37,12 @@ void QTBackEnd::makeCityList() {
 
 
     m_cities.clear();
-
     for(auto& it: m_grid->GetCities()){
-        m_cities.append(new QTCity(&it.second, this));
+
+        auto cty = new QTCity(&it.second, this);
+        m_cities.append(cty);
     }
-
-
-
-    m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
+    emit citiesChanged();
 }
 
 QGeoCoordinate QTBackEnd::get_center() {
@@ -50,19 +51,11 @@ QGeoCoordinate QTBackEnd::get_center() {
     return QGeoCoordinate(crd.GetLatitude(),crd.GetLongitude() );
 }
 
-int QTBackEnd::get_total_pop() const {
 
-    if(m_grid == nullptr){
-        return 0;
-    }
-    return m_grid->GetTotalPop();
-}
-
-QObject *QTBackEnd::get_city(unsigned int id) {
+QObject* QTBackEnd::get_city(unsigned int id) {
 
     for(auto& it: m_cities){
-        auto tmp = dynamic_cast<QTCity*>(it);
-        if(id == tmp->get_m_city()->GetId()){
+        if(id == dynamic_cast<QTCity*>(it)->get_m_city()->GetId()){
             return it;
         }
     }
@@ -124,6 +117,12 @@ int QTBackEnd::get_total_infected() {
         counter += it.second.GetInfectedCount();
     }
     return counter;
+}
+
+void QTBackEnd::add_selected_pop(int amount) {
+
+    m_selected_pop += amount;
+    emit selected_popChanged();
 }
 
 

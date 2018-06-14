@@ -21,9 +21,8 @@ Rectangle{
             anchors.fill: parent
 
             Text {
-                id: total_pop
-                property int selected_pop: 0
-                text: "Selected pop: " + selected_pop
+                id: selected_pop_header
+                text: "Selected pop: " + backend.selected_pop
                 verticalAlignment: Text.AlignVCenter
                 //Layout.fillWidth: true
                 Layout.preferredWidth: parent.width / 5
@@ -31,7 +30,7 @@ Rectangle{
 
             Text {
                 id: total_infected
-                property int perc: total_pop.selected_pop === 0 ? 0 : Math.round(backend.selected_infected / total_pop.selected_pop * 100)
+                property int perc: backend.selected_pop === 0 ? 0 : Math.round(backend.selected_infected / backend.selected_pop * 100)
                 text: "Selected infected: " + backend.selected_infected + "|"+ perc + "%"
                 verticalAlignment: Text.AlignVCenter
                 //Layout.fillWidth: true
@@ -41,6 +40,7 @@ Rectangle{
             Text{
                verticalAlignment: Text.AlignVCenter
                text: "Total pop: " + backend.total_pop
+
             }
 
             Text{
@@ -59,6 +59,7 @@ Rectangle{
                     map.clearMapItems();
                     backend.genPop();
                     map.center_and_zoom();
+
                 }
 
                 background: Rectangle {
@@ -107,30 +108,30 @@ Rectangle{
             }
 
             Repeater{
-                model: CityModel
+                model: backend.cities
                RowLayout{
-                   enabled:clicked ? true : false
-                   visible: clicked ? true: false
-                   Layout.maximumHeight: clicked ? 55 : 0
-                   Layout.minimumHeight: clicked ? 55 : 0
+                   enabled:modelData.clicked ? true : false
+                   visible: modelData.clicked ? true: false
+                   Layout.maximumHeight: modelData.clicked ? 55 : 0
+                   Layout.minimumHeight: modelData.clicked ? 55 : 0
                    ColumnLayout{
                        Text{
-                           enabled:clicked ? true : false
-                           visible:clicked ? true : false
-                           text: name
+                           enabled:modelData.clicked ? true : false
+                           visible:modelData.clicked ? true : false
+                           text: modelData.name
                        }
 
                        Text{
-                           enabled:clicked ? true : false
-                           visible:clicked ? true : false
-                           text: "Population: " + popCount
+                           enabled:modelData.clicked ? true : false
+                           visible:modelData.clicked ? true : false
+                           text: "Population: " + modelData.popCount
                            font.pointSize: 10
                        }
 
                        Text{
-                           enabled:clicked ? true : false
-                           visible:clicked ? true : false
-                           text: "Infected: " + infected+ "|" + Math.round(infected/popCount*100)+"%"
+                           enabled:modelData.clicked ? true : false
+                           visible:modelData.clicked ? true : false
+                           text: "Infected: " + modelData.infected+ "|" + Math.round(modelData.infected/modelData.popCount*100)+"%"
                            font.pointSize: 10
                        }
 
@@ -159,10 +160,8 @@ Rectangle{
         anchors.right: parent.right
 
         MapItemView{
-            /*model:cty_model
-            delegate: mapCircleComponent */
 
-            model:CityModel
+            model: backend.cities
             delegate: mapCircleComponent
 
         }
@@ -190,11 +189,14 @@ Rectangle{
             property int initialXPos
             property int initialYPos
             property bool justStarted
-            z: backend.total_pop + 11
+            z: 5
             anchors.fill: parent
+
+
 
             onPressed: {
                 if (mouse.button === Qt.LeftButton && mouse.modifiers & Qt.ShiftModifier){
+                    enabled = true
                     selectionRect.enabled = true
                     selectionRect.x = mouse.x
                     selectionRect.y = mouse.y
@@ -243,8 +245,9 @@ Rectangle{
             onReleased: {
                 selectionRect.visible = false
                 map.enabled = true
+                //enabled = false
 
-               var x_low
+                var x_low
                 var x_high
                 var y_low
                 var y_high
@@ -279,12 +282,22 @@ Rectangle{
                     y_high = selectionRect.y
                 }
 
+                selectionRect.x = -1
+                selectionRect.y = -1
+                selectionRect.width = -1
+                selectionRect.height = -1
+
                 for(var i = 0; i < map.mapItems.length; i++){
                     var item = map.mapItems[i]
 
                     if(item.x > x_low && item.x < x_high){
                         if(item.y > y_low && item.y < y_high){
-                            item.city.clicked = true
+                            if(item.circle === true){
+                                item.city.clicked = true
+                                item.draw_commuters()
+                            }
+
+
                         }
                     }
                 }
@@ -310,9 +323,10 @@ Rectangle{
             property int commuter_count_in: 0
             property bool out: false
             property bool inc: false
+            property bool circle: false
             line.width: calc_line_width() * 50
             line.color:mouse_line.containsMouse ? Qt.rgba(1,1,1,0.4) : (out && inc) ? 'blue' : (inc ? Qt.rgba(1,0,0,0.4): Qt.rgba(0,1,0,0.4))
-            z: 1000000 - calc_line_width()
+            z: backend.total_pop / 2 - calc_line_width()
             
             
             
@@ -437,8 +451,9 @@ Rectangle{
             property var city : model.modelData
             property var perc : city.popCount === 0 ? 0 : Math.round(city.infected/city.popCount * 100)
             property var commuting_lst: []
-            radius: (city.popCount / backend.total_pop) * 250000
-            color: (cty_mouse.containsMouse || clicked) ? Qt.rgba(1 - perc / 50 ,0,0 + perc /50,0.2 + perc / 50) : Qt.rgba(0,1 - perc / 50,0 + perc / 50 ,0.2 + perc / 50 )
+            property bool circle : true
+            radius:  city.popCount/ backend.total_pop * 250000
+            color: cty_mouse.containsMouse ? Qt.rgba(1, 1, 1, 0.2) : city.clicked ? Qt.rgba(1 - perc / 50 ,0,0 + perc /50,0.2 + perc / 50) : Qt.rgba(0,1 - perc / 50,0 + perc / 50 ,0.2 + perc / 50 )
             center: city.crd
             z: backend.total_pop - city.popCount
             
@@ -454,13 +469,11 @@ Rectangle{
                 onClicked: {
                     if(parent.city.clicked){
                         parent.city.clicked = false
-                        total_pop.selected_pop -= parent.city.popCount
                         parent.remove_commuters();
 
                     }
                     else{
                         parent.city.clicked = true
-                        total_pop.selected_pop += parent.city.popCount
                         parent.draw_commuters()
                     }
                 }
