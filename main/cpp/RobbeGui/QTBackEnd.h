@@ -69,7 +69,7 @@ public:
     QList<QObject*> get_cities(){return m_cities;}
 
     void add_commute_lines(const QList<QTCommuter*>& lst);
-    void remove_commute_lines(unsigned int cty_id, int amount);
+    void remove_commute_lines(const QList<QTCommuter *> &lst);
 
 
 

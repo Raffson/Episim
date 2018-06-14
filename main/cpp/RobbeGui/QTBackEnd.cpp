@@ -136,19 +136,14 @@ void QTBackEnd::add_commute_lines(const QList<QTCommuter *> &lst) {
     emit commutersChanged();
 }
 
-void QTBackEnd::remove_commute_lines(unsigned int cty_id, int amount) {
+void QTBackEnd::remove_commute_lines(const QList<QTCommuter *>& lst) {
 
-    int removed = 0;
-    for(auto it = m_commuters.begin(); m_commuters.end() > it; it++){
-        auto cmt = dynamic_cast<QTCommuter*>(*it);
-        if(cty_id ==(unsigned int) cmt->get_main_city()->get_id()){
-            m_commuters.erase(it);
-            removed ++;
-            if(removed== amount){
-                break;
-            }
+    for(auto& it : lst){
+        if(! m_commuters.removeOne(it)){
+            cout << "probleem" << endl;
         }
     }
+
     emit commutersChanged();
 }
 
