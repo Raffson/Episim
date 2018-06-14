@@ -24,10 +24,10 @@ public:
 
 
 
-    explicit QTCommuter(QTCity* city1 = nullptr, QTCity* city2 = nullptr, int outcommuting = 0, int incommuting = 0, QObject* parent = nullptr);
+    explicit QTCommuter(QTCity* city1 = nullptr, QTCity* city2 = nullptr, double outcommuting = 0, double incommuting = 0, QObject* parent = nullptr);
     ~QTCommuter() override = default;
 
-    void set_in_commuters(int amount);
+    void set_in_commuters(double amount);
     QTCity* get_main_city();
 
 private:
@@ -42,10 +42,9 @@ QTCity* m_city2;
 QGeoCoordinate m_center_city1;
 QGeoCoordinate m_center_city2;
 
-int m_out_count;
-int m_in_count;
+double m_out_count;
+double m_in_count;
 
-int m_line_width{0};
 };
 
 
