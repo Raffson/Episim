@@ -29,6 +29,7 @@ public:
 
     void set_in_commuters(double amount);
     QTCity* get_main_city();
+    QTCity* get_second_city();
 
 private:
 

@@ -104,8 +104,10 @@ void QTCity::create_commuting_lst(int amount){
     for(int i = 0; i < amount; i++){
         int id = tmp_vec[tmp_vec.size() -1 - i].second;
         double outcommuters = tmp_vec[tmp_vec.size() -1 - i].first;
+
         QTCity* cty2 = search_map.at((unsigned int) id);
         search_map.erase((unsigned int)id); // erase found ones
+
         auto cmt = new QTCommuter(this, cty2,(int)outcommuters, 0);
         found_map[id] = cmt;
         m_commuting_lst.append(cmt);
@@ -126,29 +128,18 @@ void QTCity::create_commuting_lst(int amount){
         double incommuters = tmp_vec2[tmp_vec.size() -1 - i].first;
 
         if(found_map.count(id) == 0){ // Line not yet exists bcz we delete found cities in the outcommuters part
+            cout << "red line" << endl;
             QTCity *cty2 = search_map.at(id);
             auto* cmt = new QTCommuter(this, cty2,0, (int) incommuters);
             m_commuting_lst.append(cmt);
         }
-
-        else{
-            {
-                //cout << "hier " << endl;
-                for(auto& it: m_commuting_lst){
-                    if(it->get_main_city()->get_id() == m_id){
-                        it->set_in_commuters(incommuters);
-                        //break;
-                    }
-                    else{
-                        cout << "something went wrong with adding commuters" << endl;
-                    }
-                }
-
+        else {
+            //cout << "hier " << endl;
+            found_map[id]->set_in_commuters(incommuters);
             }
-        }
-
 
 
     }
 
 }
+
