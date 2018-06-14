@@ -9,13 +9,13 @@
 
 
 QTCity::QTCity(stride::City* model,QTBackEnd* back_end, QObject *parent ):
-        QObject(parent), m_city(model),m_back_end(back_end), m_pop(model->GetEffectivePopulation()){
+        QObject(parent), m_city(model),m_back_end(back_end), m_id(model->GetId()), m_pop(model->GetEffectivePopulation()){
     fill_in_in_commuters();
     fill_in_out_commuters();
 }
 
-QTCity::QTCity(const QTCity& obj):QObject(obj.parent()), m_city(obj.get_m_city()), m_back_end(obj.get_back_end()),
-                                    m_pop(obj.get_m_city()->GetEffectivePopulation()){
+QTCity::QTCity(const QTCity& obj): QObject(obj.parent()), m_city(obj.get_m_city()), m_back_end(obj.get_back_end()),
+                                    m_id(obj.get_id()), m_pop(obj.get_m_city()->GetEffectivePopulation()){
 
     fill_in_in_commuters();
     fill_in_out_commuters();
@@ -33,7 +33,7 @@ QString QTCity::get_name() const {
 }
 
 int QTCity::get_id() const {
-    return m_city->GetId();
+    return m_id;
 }
 
 void QTCity::fill_in_out_commuters() {
@@ -77,7 +77,7 @@ void QTCity::set_clicked(bool val){
     }
     else{
         m_back_end->add_selected_pop(m_pop  * -1);
-        m_back_end->remove_commute_lines(m_city->GetId(), 10);
+        m_back_end->remove_commute_lines((unsigned int) m_id, 10);
     }
     emit clickedChanged();
     emit m_back_end->selected_infectedChanged();

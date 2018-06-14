@@ -26,7 +26,7 @@ class QTCity : public QObject {
 
 public:
     explicit  QTCity(stride::City* m_city = nullptr, QTBackEnd* back_end = nullptr,  QObject* = nullptr);
-    ~QTCity()= default;
+    ~QTCity() override = default;
     QTCity(const QTCity&);
 
     Q_INVOKABLE void ctyTest() {cout << "Hello from" << m_city->GetName() << endl;}
@@ -56,13 +56,12 @@ public:
     int get_infected() const {return (int) m_city->GetInfectedCount();}
     bool get_clicked(){return m_is_clicked;}
     int get_id() const;
-
-
+    void create_commuting_lst(int amount);
+    QGeoCoordinate get_coordinates() const;
 
 private:
-    QGeoCoordinate get_coordinates() const;
     QString get_name() const;
-    int get_id() const;
+
 
     QList<int> get_out_commuters(){ return m_sorted_out_commuters;}
     QList<int> get_out_commuters_count(){ return m_commuter_out_count;}
@@ -77,8 +76,6 @@ private:
 
 
     void set_clicked(bool val);
-    void create_commuting_lst(int amount);
-
 
 private:
 

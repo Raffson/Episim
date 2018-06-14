@@ -36,7 +36,7 @@ class QTBackEnd: public QObject {
 public:
 
     explicit QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent = nullptr);
-    ~QTBackEnd(){}
+    ~QTBackEnd() = default;
 
     /// @brief Handler for QML to generate pop. Will do the genpop logic.
     Q_INVOKABLE void genPop();

@@ -166,6 +166,11 @@ Rectangle{
 
         }
 
+        MapItemView{
+            model: backend.commuters
+            delegate: path
+        }
+
 
 
         Rectangle {
@@ -312,9 +317,17 @@ Rectangle{
     }
 
 
-
-    
     Component{
+        id: path
+        MapPolyline{
+            line.width: 3
+            line.color: "green"
+            path:[modelData.center_city1,modelData.center_city2 ]
+        }
+
+    }
+    
+    /*Component{
         id:path
         MapPolyline{
             property var cty
@@ -385,11 +398,11 @@ Rectangle{
             }
         }
     }
-    
+    */
     Component{
         id: mapCircleComponent
         MapCircle{
-            function draw_commuters(){
+            /*function draw_commuters(){
                 
                 // Outs first to filter duplicates
                 for(var i = 0; i < 10; i++){
@@ -447,7 +460,7 @@ Rectangle{
                 }
                 commuting_lst = []
             }
-            
+            */
             property var city : model.modelData
             property var perc : city.popCount === 0 ? 0 : Math.round(city.infected/city.popCount * 100)
             property var commuting_lst: []
@@ -469,12 +482,15 @@ Rectangle{
                 onClicked: {
                     if(parent.city.clicked){
                         parent.city.clicked = false
-                        parent.remove_commuters();
+                        //parent.remove_commuters();
 
                     }
                     else{
                         parent.city.clicked = true
-                        parent.draw_commuters()
+                        //parent.draw_commuters()
+                        console.log(backend.commuters)
+                        console.log(backend.cities)
+
                     }
                 }
                 

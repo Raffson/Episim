@@ -24,6 +24,7 @@ int main(int argc, char** argv){
 #ifdef USING_QT
     QGuiApplication app(argc, argv); // main app
     QQmlApplicationEngine engine;
+
     QScopedPointer<QTBackEnd> backend(new QTBackEnd(engine, pt));
     engine.rootContext()->setContextProperty("backend", backend.data());
     engine.load(QStringLiteral("mapviewer/Gui.qml"));
