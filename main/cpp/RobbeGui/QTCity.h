@@ -23,7 +23,9 @@ class QTCity : public QObject {
     Q_OBJECT
 
 public:
-    explicit  QTCity(stride::City* m_city, QTBackEnd* back_end,  QObject* = nullptr);
+    explicit  QTCity(stride::City* m_city = nullptr, QTBackEnd* back_end = nullptr,  QObject* = nullptr);
+    ~QTCity() = default;
+    QTCity(const QTCity&);
 
     Q_INVOKABLE void ctyTest() {cout << "Hello from" << m_city->GetName() << endl;}
 
@@ -42,9 +44,11 @@ public:
     Q_PROPERTY(bool clicked READ get_clicked WRITE set_clicked NOTIFY clickedChanged)
 
 
-    stride::City* get_m_city(){return m_city;}
+    stride::City* get_m_city()const {return m_city;}
+    QTBackEnd* get_back_end() const {return m_back_end;}
     int get_infected() const {return (int) m_city->GetInfectedCount();}
     bool get_clicked(){return m_is_clicked;}
+
 
 
 signals:
@@ -73,11 +77,6 @@ private:
     void set_clicked(bool val);
 
 
-
-
-
-    
-
 private:
 
     stride::City* m_city;
@@ -94,3 +93,8 @@ private:
 
 
 };
+
+//Q_DECLARE_METATYPE(QTCity)
+//Q_DECLARE_METATYPE(QTCity*)
+//Q_DECLARE_OPAQUE_POINTER(QTCity*);*/
+

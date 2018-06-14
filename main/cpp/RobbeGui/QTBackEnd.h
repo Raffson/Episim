@@ -44,7 +44,8 @@ public:
     Q_INVOKABLE QString get_config(QString xml_tag);
     Q_INVOKABLE void set_config(QString xml_tag, QString val);
 
-    Q_PROPERTY(QList<QObject*> cities READ get_cities CONSTANT)
+
+    Q_PROPERTY(QList<QObject*> cities MEMBER m_cities NOTIFY citiesChanged)
     Q_PROPERTY(QGeoCoordinate center READ get_center CONSTANT)
 
     Q_PROPERTY(int total_pop MEMBER m_total_pop NOTIFY popChanged);
@@ -57,6 +58,7 @@ signals:
     void popChanged();
     void selected_infectedChanged();
     void total_infectedChanged();
+    void citiesChanged();
 
 public:
     void add_selected_pop(int amount);
@@ -90,6 +92,8 @@ private:
 
     int m_total_pop{0};
     int m_selected_pop{0};
+
+
 
 };
 
