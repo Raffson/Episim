@@ -20,11 +20,7 @@ int main(int argc, char** argv){
     QGuiApplication app(argc, argv); // main app
     QQmlApplicationEngine engine;
 
-    //qRegisterMetaType<QTCity>();
-
-
     QScopedPointer<QTBackEnd> backend(new QTBackEnd(engine, pt));
-    //qmlRegisterType<QTCity>("episim.city", 1, 0 ,"City");
     engine.rootContext()->setContextProperty("backend", backend.data());
     engine.load(QStringLiteral("mapviewer/Gui.qml"));
 
