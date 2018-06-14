@@ -12,12 +12,14 @@
 
 #include "popgen-Episim/model/City.h"
 #include "QTBackEnd.h"
+#include "QTCommuter.h"
 //#include "RobbeGui/QTBackEnd.h"
 
 #include <iostream>
 using namespace std;
 
 class QTBackEnd;
+class QTCommuter;
 
 class QTCity : public QObject {
     Q_OBJECT
@@ -75,6 +77,7 @@ private:
 
 
     void set_clicked(bool val);
+    void create_commuting_lst(int amount);
 
 
 private:
@@ -85,12 +88,10 @@ private:
     QList<int> m_sorted_in_commuters; ///> Keeps a list sorted high low to the commuters
     QList<int> m_commuter_in_count; ///> count ot amount of commuters
 
+    QList<QTCommuter*> m_commuting_lst;
     bool m_is_clicked{false};
-
     QTBackEnd* m_back_end;
-
     int m_pop;
-
 
 };
 

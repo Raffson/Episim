@@ -62,13 +62,14 @@ signals:
 
 public:
     void add_selected_pop(int amount);
+    QList<QObject*> get_cities(){return m_cities;}
 
 
 
 
 private:
     void makeCityList();
-    QList<QObject*> get_cities(){return m_cities;}
+
     QGeoCoordinate get_center();
     int count_selected_infected();
     int get_total_infected();
@@ -82,14 +83,15 @@ private:
     shared_ptr<stride::GeoGrid> m_grid;
 
     ///> A Qlist that conains our QTCity models
+    QList<QTCity> m_effective_cities;
     QList<QObject*> m_cities;
+    QList<QObject*> m_commuters; // Commuting lines to be drawn?
 
     ptree& m_pt;
     ptree  m_geo_pt;
     QQmlApplicationEngine& m_engine;
 
     bool m_pop_generated{false};
-
     int m_total_pop{0};
     int m_selected_pop{0};
 

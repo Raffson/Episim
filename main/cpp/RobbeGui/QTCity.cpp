@@ -52,7 +52,6 @@ void QTCity::fill_in_out_commuters() {
 }
 
 void QTCity::fill_in_in_commuters() {
-
     vector<pair<double, unsigned int>> tmp_vec;
 
     for(auto& it: m_city->GetInCommuting()){
@@ -60,6 +59,7 @@ void QTCity::fill_in_in_commuters() {
     }
 
     std::sort(tmp_vec.begin(), tmp_vec.end());
+
 
 
     for(auto& it: boost::adaptors::reverse(tmp_vec)){
@@ -79,4 +79,32 @@ void QTCity::set_clicked(bool val){
     }
     emit clickedChanged();
     emit m_back_end->selected_infectedChanged();
+}
+
+void QTCity::create_commuting_lst(int amount){
+
+    vector<pair<double, unsigned int>> tmp_vec;
+
+    for(auto& it: m_city->GetInCommuting()){
+        tmp_vec.emplace_back(make_pair(it.second, it.first));
+    }
+
+    std::sort(tmp_vec.begin(), tmp_vec.end());
+
+    map<unsigned int, QTCity*> search_map;
+    for(auto& it: m_back_end->get_cities()) {
+
+        auto cty = dynamic_cast<QTCity*>(it);
+        search_map[(unsigned int)cty->get_id()] = cty;
+    }
+
+    for(int i = 0; i < amount; i++){
+
+        int id = tmp_vec[tmp_vec.size() -1 - i].second;
+        double outcommuters = tmp_vec[tmp_vec.size() -1 - i].first;
+        QTCity* cty2 = search_map.at((unsigned int) id);
+
+
+    }
+
 }
