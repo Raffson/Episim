@@ -4,7 +4,7 @@ import QtPositioning 5.6
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 2.4
-//import episim.city 1.0
+import episim.city 1.0
 
 
 Rectangle{
@@ -40,6 +40,7 @@ Rectangle{
             Text{
                verticalAlignment: Text.AlignVCenter
                text: "Total pop: " + backend.total_pop
+
             }
 
             Text{
@@ -58,6 +59,8 @@ Rectangle{
                     map.clearMapItems();
                     backend.genPop();
                     map.center_and_zoom();
+
+                    console.log(backend.cities[0])
                 }
 
                 background: Rectangle {
@@ -161,7 +164,7 @@ Rectangle{
             /*model:cty_model
             delegate: mapCircleComponent */
 
-            model:CityModel
+            model: backend.cities
             delegate: mapCircleComponent
 
         }

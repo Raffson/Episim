@@ -14,9 +14,18 @@ QTCity::QTCity(stride::City* model,QTBackEnd* back_end, QObject *parent ):
     fill_in_out_commuters();
 }
 
+QTCity::QTCity(const QTCity& obj):QObject(obj.parent()), m_city(obj.get_m_city()), m_back_end(obj.get_back_end()),
+                                    m_pop(obj.get_m_city()->GetEffectivePopulation()){
+
+    fill_in_in_commuters();
+    fill_in_out_commuters();
+
+}
+
 
 
 QGeoCoordinate QTCity::get_coordinates() const {
+    cout << "bla" << endl;
     return QGeoCoordinate(m_city->GetCoordinates().GetLatitude(), m_city->GetCoordinates().GetLongitude());
 }
 

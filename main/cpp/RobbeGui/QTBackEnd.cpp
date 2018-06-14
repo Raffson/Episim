@@ -39,9 +39,9 @@ void QTBackEnd::makeCityList() {
 
     m_cities.clear();
     for(auto& it: m_grid->GetCities()){
-        m_cities.append(new QTCity(&it.second, this));
+        m_cities.append(QTCity(&it.second, this));
     }
-
+    emit citiesChanged();
     m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
 }
 
@@ -52,11 +52,10 @@ QGeoCoordinate QTBackEnd::get_center() {
 }
 
 
-QObject *QTBackEnd::get_city(unsigned int id) {
+QObject QTBackEnd::get_city(unsigned int id) {
 
     for(auto& it: m_cities){
-        auto tmp = dynamic_cast<QTCity*>(it);
-        if(id == tmp->get_m_city()->GetId()){
+        if(id == it>get_m_city()->GetId()){
             return it;
         }
     }

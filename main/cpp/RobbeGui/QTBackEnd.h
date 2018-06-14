@@ -44,7 +44,7 @@ public:
     Q_INVOKABLE QString get_config(QString xml_tag);
     Q_INVOKABLE void set_config(QString xml_tag, QString val);
 
-    Q_PROPERTY(QList<QObject*> cities READ get_cities CONSTANT)
+    Q_PROPERTY(QList<QTCity> cities READ get_cities NOTIFY citiesChanged)
     Q_PROPERTY(QGeoCoordinate center READ get_center CONSTANT)
 
     Q_PROPERTY(int total_pop MEMBER m_total_pop NOTIFY popChanged);
@@ -57,6 +57,7 @@ signals:
     void popChanged();
     void selected_infectedChanged();
     void total_infectedChanged();
+    void citiesChanged();
 
 public:
     void add_selected_pop(int amount);
@@ -66,7 +67,7 @@ public:
 
 private:
     void makeCityList();
-    QList<QObject*> get_cities(){return m_cities;}
+    QList<QTCity> get_cities(){return m_cities;}
     QGeoCoordinate get_center();
     int count_selected_infected();
     int get_total_infected();
@@ -80,7 +81,7 @@ private:
     shared_ptr<stride::GeoGrid> m_grid;
 
     ///> A Qlist that conains our QTCity models
-    QList<QObject*> m_cities;
+    QList<QTCity> m_cities;
 
     ptree& m_pt;
     ptree  m_geo_pt;
