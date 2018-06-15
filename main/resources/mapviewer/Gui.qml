@@ -50,14 +50,14 @@ ApplicationWindow{
                     color: Qt.rgba(0.9,0.9,0.9,0.5)
                     GridLayout{
                         id: alligner
-                        flow: GridLayout.LeftToRight
-
+                        layoutDirection: Qt.LeftToRight
+                        flow: GridLayout.TopToBottom
                         anchors.topMargin: parent.height / 50
                         anchors.leftMargin: 50
                         anchors.fill: parent
                         columnSpacing: 5
                         rowSpacing: 1
-                        rows: 10
+                        rows: 15
                         columns: 1
                         ListModel{
                             id: num_bttns
@@ -108,6 +108,8 @@ ApplicationWindow{
                             }
                         }
 
+
+
                         ListModel{
                             id: search_file_model
                             ListElement{ tg: "cities"; txt: "City data file"; def_folder: "../data/"; xml: false}
@@ -118,7 +120,6 @@ ApplicationWindow{
 
                         Repeater{
                             model: search_file_model
-
                             RowLayout{
                                 id: cty_fil_select
                                 Layout.alignment: Qt.AlignTop
@@ -166,7 +167,27 @@ ApplicationWindow{
 
                                 }
                             }
+
                         }
+
+                        RowLayout{
+                            Layout.alignment: Qt.AlignTop
+                            Layout.maximumHeight: 4
+                            Label{
+                                id: rndm_age_lbl
+                                verticalAlignment: Text.AlignVCenter
+                                Layout.minimumWidth: 245
+                                Layout.alignment: Qt.AlignLeft
+                                text: "Random ages"
+                            }
+
+                            CheckBox{
+                                id: rndm_age
+                                checked: backend.get_bool_config("pop_info.random_ages")
+                                onClicked:backend.set_bool_config("pop_info.random_ages", checked);
+                            }
+                        }
+
                     }
                 }
             }

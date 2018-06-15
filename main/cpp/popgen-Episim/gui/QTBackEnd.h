@@ -38,17 +38,23 @@ public:
     explicit QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent = nullptr);
     ~QTBackEnd() = default;
 
+// Logic Invokables
+/***********************************************************************************************************************/
     /// @brief Handler for QML to generate pop. Will do the genpop logic.
     Q_INVOKABLE void genPop();
     Q_INVOKABLE QObject* get_city(unsigned int id);
     Q_INVOKABLE void run_simulator(unsigned int days = 0);
     Q_INVOKABLE bool should_redraw(){return !m_pop_generated;};
-    Q_INVOKABLE QString get_config(QString xml_tag);
-    Q_INVOKABLE void set_config(QString xml_tag, QString val);
     Q_INVOKABLE void flip_items(QList<QObject*>);
 
+//Config Invokables
+/************************************************************************************************************************/
+    Q_INVOKABLE QString get_config(QString xml_tag);
+    Q_INVOKABLE void set_config(QString xml_tag, QString val);
     Q_INVOKABLE QString read_path(QString tag);
     Q_INVOKABLE QString set_path(QString tag, QString path);
+    Q_INVOKABLE bool get_bool_config(QString xml_tag);
+    Q_INVOKABLE bool set_bool_config(QString xml_tag, bool value);
 
 
     Q_PROPERTY(QList<QObject*> cities MEMBER m_cities NOTIFY citiesChanged)

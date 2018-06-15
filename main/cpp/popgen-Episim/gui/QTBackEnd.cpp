@@ -130,6 +130,17 @@ QString QTBackEnd::set_path(QString tag, QString path) {
     return lst.back();
 }
 
+bool QTBackEnd::get_bool_config(QString xml_tag){
+
+    return m_geo_pt.get<bool>(xml_tag.toStdString());
+}
+bool QTBackEnd::set_bool_config(QString xml_tag, bool value){
+
+    m_geo_pt.put(xml_tag.toStdString(), value);
+
+    return !value;
+}
+
 /***********************************************************************************************************************/
 
 
