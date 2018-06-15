@@ -13,7 +13,6 @@
 
 QTBackEnd::QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent):QObject(parent),
                     m_pt(pt),m_engine(engine) {
-    m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
 
     string file(m_pt.get<string>("run.geopop_file"));
     string path = "config/" + file;
@@ -25,8 +24,12 @@ void QTBackEnd::genPop() {
 
     this->m_grid = stride::GeoGridGenerator().Generate(m_pt);
     stride::PopulationGenerator(*m_grid).Generate();
+
     m_pop_generated = true;
+
+    m_total_pop = m_grid->GetTotalPop();
     emit popChanged();
+
     makeCityList();
 }
 
@@ -34,14 +37,15 @@ void QTBackEnd::makeCityList() {
 
 
     m_cities.clear();
-
     for(auto& it: m_grid->GetCities()){
         m_cities.append(new QTCity(&it.second, this));
     }
+    for(auto& it: m_cities){ // Needs to happen when the full list is initialized
+        auto cty = dynamic_cast<QTCity*>(it);
 
-
-
-    m_engine.rootContext()->setContextProperty("CityModel", QVariant::fromValue(m_cities));
+        cty->create_commuting_lst(10);
+    }
+    emit citiesChanged();
 }
 
 QGeoCoordinate QTBackEnd::get_center() {
@@ -50,19 +54,11 @@ QGeoCoordinate QTBackEnd::get_center() {
     return QGeoCoordinate(crd.GetLatitude(),crd.GetLongitude() );
 }
 
-int QTBackEnd::get_total_pop() const {
 
-    if(m_grid == nullptr){
-        return 0;
-    }
-    return m_grid->GetTotalPop();
-}
-
-QObject *QTBackEnd::get_city(unsigned int id) {
+QObject* QTBackEnd::get_city(unsigned int id) {
 
     for(auto& it: m_cities){
-        auto tmp = dynamic_cast<QTCity*>(it);
-        if(id == tmp->get_m_city()->GetId()){
+        if(id ==(unsigned int) dynamic_cast<QTCity*>(it)->get_id()){
             return it;
         }
     }
@@ -107,7 +103,7 @@ int QTBackEnd::count_selected_infected() {
 
     int counter = 0;
     for(auto& it : m_cities){
-        QTCity* cty = dynamic_cast<QTCity*>(it);
+        auto * cty = dynamic_cast<QTCity*>(it);
         if(cty->get_clicked()){
             counter += cty->get_infected();
         }
@@ -124,6 +120,60 @@ int QTBackEnd::get_total_infected() {
         counter += it.second.GetInfectedCount();
     }
     return counter;
+}
+
+void QTBackEnd::add_selected_pop(int amount) {
+
+    m_selected_pop += amount;
+    emit selected_popChanged();
+}
+
+void QTBackEnd::add_commute_lines(const QList<QTCommuter*> &lst) {
+
+    for(auto& it: lst){
+        m_commuters.append(it);
+    }
+    emit commutersChanged();
+}
+
+void QTBackEnd::add_commute_lines_no_emit(const QList<QTCommuter*> &lst) {
+    for(auto& it: lst){
+        m_commuters.append(it);
+    }
+}
+
+void QTBackEnd::remove_commute_lines(const QList<QTCommuter*> &lst) {
+
+    for(auto& it: lst){
+        m_commuters.removeOne(it);
+    }
+    emit commutersChanged();
+}
+void QTBackEnd::remove_commute_lines_no_emit(const QList<QTCommuter*> &lst) {
+
+    for(auto& it: lst){
+        m_commuters.removeOne(it);
+    }
+}
+
+
+
+void QTBackEnd::flip_items(QList<QObject*> cities) {
+
+    for(auto& it: cities){
+        auto cty = dynamic_cast<QTCity*>(it);
+        if(cty->get_clicked()){
+            remove_commute_lines_no_emit(cty->get_commuters());
+        }
+        else{
+            add_commute_lines_no_emit(cty->get_commuters());
+        }
+        cty->flip();
+
+    }
+    emit commutersChanged();
+    emit selected_popChanged();
+    emit selected_infectedChanged();
 }
 
 
