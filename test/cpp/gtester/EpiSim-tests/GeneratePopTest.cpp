@@ -50,15 +50,15 @@ namespace Tests {
 
     TEST_P(GenPopTest, CityPopulationTest) {
         double margin = 0.01;
-        unsigned int pop_counter = 0;
+        unsigned int popCounter = 0;
         for (auto &it: grid->GetCities()) {
-            City *a_city = &it.second;
-            double target = ((double) a_city->GetPopulation() / (double) grid->GetTotalPopOfModel());
-            double actual = ((double) a_city->GetEffectivePopulation() / (double) grid->GetTotalPop());
-            pop_counter += a_city->GetEffectivePopulation();
+            City *aCity = &it.second;
+            double target = ((double) aCity->GetPopulation() / (double) grid->GetTotalPopOfModel());
+            double actual = ((double) aCity->GetEffectivePopulation() / (double) grid->GetTotalPop());
+            popCounter += aCity->GetEffectivePopulation();
             EXPECT_NEAR(actual, target, margin);
         }
-        EXPECT_EQ(grid->GetPopulation()->size(), pop_counter);
+        EXPECT_EQ(grid->GetPopulation()->size(), popCounter);
     }
 
 
