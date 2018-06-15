@@ -125,10 +125,10 @@ if(Qt5_FOUND)
 	set(CMAKE_AUTOMOC  ON)
 	set(LIB_SRC ${LIB_SRC}
 		viewers/MapViewer.cpp
-		RobbeGui/QTBackEnd.cpp
-		RobbeGui/QTCity.cpp
-		RobbeGui/QTCommuter.cpp
-		RobbeGui/QTCommuterModel.cpp
+			popgen-Episim/gui/QTBackEnd.cpp
+			popgen-Episim/gui/QTCity.cpp
+			popgen-Episim/gui/QTCommuter.cpp
+			popgen-Episim/gui/QTCommuterModel.cpp
 		)
 endif()
 
@@ -176,9 +176,11 @@ install(TARGETS seg_searcher  DESTINATION   ${BIN_INSTALL_LOCATION})
 #============================================================================
 # Build and install Robbe"s Testing excecutable
 #============================================================================
-add_executable(SandboxRobbe popgen-Episim/SandboxRobbe.cpp)
-target_link_libraries(SandboxRobbe ${LIBS} libstride)
-install(TARGETS SandboxRobbe  DESTINATION   ${BIN_INSTALL_LOCATION})
+if(Qt5_FOUND)
+	add_executable(SandboxRobbe popgen-Episim/SandboxRobbe.cpp)
+	target_link_libraries(SandboxRobbe ${LIBS} libstride ${Qt5Positioning_LIBRARIES})
+	install(TARGETS SandboxRobbe  DESTINATION   ${BIN_INSTALL_LOCATION})
+endif()
 
 #============================================================================
 # Clean up.

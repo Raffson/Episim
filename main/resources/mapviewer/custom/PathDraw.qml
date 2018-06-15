@@ -2,6 +2,7 @@ import QtLocation 5.3
 
 MapPolyline {
         id: pathDraw
+        objectName: "pD"
         line.width: 3
         line.color: 'green'
         property double longi1: 0
