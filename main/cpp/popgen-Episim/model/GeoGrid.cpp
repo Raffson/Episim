@@ -78,7 +78,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
 {
         // Step 1: find all cities that have less then Y% of the population
         // popCap: if the population of a city are smaller or equal to this number we defragment them
-        auto          popCap = (unsigned int)round(m_total_pop * Y);
+        auto          popCap = (unsigned int)round(m_model_pop * Y);
         vector<City*> defragCty;
         for (auto& it : m_cities) {
                 if (it.second.GetPopulation() <= popCap)
@@ -95,9 +95,12 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         // Step 3: replace X% of these cities
         vector<unsigned int> amountToFrag = generate_random(pVec, m_rng, (unsigned int)defragCty.size());
         defragCty.shrink_to_fit();
+        vector<stride::City&> nw_cities;
         unsigned int counter = 0;
         for (auto& it : defragCty) {
                 // We add 2 to the amount to defrag, bcs we want to defrag in atleast 2 parts
+                auto outcommuters = it->GetOutCommuting();
+                auto incommuters = it->GetInCommuting();
                 for (unsigned int i = 0; i < amountToFrag[counter] + 2; i++) {
 
                         auto newId    = m_cities.rbegin()->first + 1;
@@ -109,14 +112,27 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                         auto newName = it->GetName();
                         newName += to_string(i);
                         m_cities.emplace(newId,
-                                         City(newId, it->GetProvince(), it->GetPopulation() / (amountToFrag[counter] + 2),
+                                         City(newId, it->GetProvince(), it->GetPopulation() / ((amountToFrag[counter] + 2)),
                                          Coordinate(newX, newY, newLong, newLat), newName) );
+
+                        stride::City& cty = m_cities.at(newId);
+                        nw_cities.emplace_back(cty);
+                        //cty.SetOutCommuters(newId, 0);
+                        for(auto& commute_line: outcommuters){
+                                cty.SetOutCommuters(commute_line.first, commute_line.second / (amountToFrag[counter] + 2));
+                        }
+                        //cty.SetInCommuters(newId, 0);
+                        for(auto& commute_line: incommuters){
+                                cty.SetInCommuters(commute_line.first, commute_line.second / (amountToFrag[counter] + 2));
+                        }
+
+
                 }
                 counter++;
                 m_cities.erase(it->GetId());
         }
         // cout << m_cities.size() << endl;
-}
+
 
 const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City& origin, unsigned int radius,
                                                                      CommunityType::Id type)
