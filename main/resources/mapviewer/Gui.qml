@@ -16,10 +16,10 @@ ApplicationWindow{
 
     Plugin {
         id: mapPlugin
-        name:  "mapbox"//", "esri", ...
-        PluginParameter{ name: "mapbox.access_token";
-            value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"
-        }
+        name: "osm" //"mapbox"//", "esri", ...
+        /*PluginParameter{ name: "mapbox.access_token";
+            value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"*/
+       // }
 
 
     }
