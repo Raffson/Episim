@@ -191,5 +191,15 @@ void QTBackEnd::flip_items(QList<QObject*> cities) {
     emit selected_infectedChanged();
 }
 
+QString QTBackEnd::read_path(QString tag){
+
+    string complete_tag = "data_files." + tag.toStdString();
+    if(tag == QString("cities")){
+       auto file = m_geo_pt.get<string>(complete_tag);
+       string strng = "data/" + file;
+       return QString(strng.c_str());
+    }
+}
+
 
 

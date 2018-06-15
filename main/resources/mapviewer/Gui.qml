@@ -4,7 +4,7 @@ import QtLocation 5.6
 import QtPositioning 5.6
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs 1.3
 
 ApplicationWindow{
     id: window
@@ -118,6 +118,7 @@ ApplicationWindow{
                         RowLayout{
                             Layout.alignment: Qt.AlignTop
                             Layout.maximumHeight: 4
+                            property string tag : "cities"
 
                             Label{
                                 id: cty_file_label
@@ -129,14 +130,20 @@ ApplicationWindow{
                             }
 
                             TextField{
+                                 id: cty_config_text
                                  Layout.alignment: Qt.AlignRight
                                  Layout.minimumWidth: 300
+                                 text: backend.read_path(parent.tag)
+
 
                             }
 
                             Button{
                                 text: "..."
-                                onClicked: cty.visible = true
+                                onClicked:{
+                                    console.log(backend.read_path("cities"))
+                                    cty_file.visible = true
+                                }
                                 Layout.maximumWidth: 20
                             }
 
@@ -145,11 +152,14 @@ ApplicationWindow{
 
 
                         FileDialog{
-                            id: cty
+                            id: cty_file
                             title: "Please choose a file"
                             folder: "../data/"
-                               onAccepted: {
-                                   console.log("You chose: " + fileDialog.fileUrls)
+                             nameFilters: [ "*.csv"]
+                                onAccepted: {
+                                   console.log("You chose: " + cty_file.fileUrls)
+                                   cty_config_text.text = cty_file.fileUrls.toString()
+
 
                                }
                                onRejected: {

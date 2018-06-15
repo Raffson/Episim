@@ -47,6 +47,8 @@ public:
     Q_INVOKABLE void set_config(QString xml_tag, QString val);
     Q_INVOKABLE void flip_items(QList<QObject*>);
 
+    Q_INVOKABLE QString read_path(QString tag);
+
 
     Q_PROPERTY(QList<QObject*> cities MEMBER m_cities NOTIFY citiesChanged)
     Q_PROPERTY(QGeoCoordinate center READ get_center CONSTANT)
