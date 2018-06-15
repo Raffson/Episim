@@ -98,14 +98,17 @@ Rectangle{
          width: parent.width / 7
 
          ScrollView{
+             focusPolicy: Qt.NoFocus
              clip: true
              anchors.fill: parent
         ColumnLayout{
             spacing: 5
             anchors.fill: parent
             RowLayout{
+                clip: true
                 Text{
                     text: "Selected Cities"
+                    clip: true
                     font.pointSize: 15
                     horizontalAlignment: Text.AlignHCenter
                 }

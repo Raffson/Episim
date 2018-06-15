@@ -9,18 +9,29 @@
 #include "util/InstallDirs.h"
 #include <boost/filesystem/path.hpp>
 #include <sim/SimRunner.h>
-
+#include <fstream>
+using namespace std;
 
 QTBackEnd::QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent):QObject(parent),
                     m_pt(pt),m_engine(engine) {
 
     string file(m_pt.get<string>("run.geopop_file"));
     string path = "config/" + file;
+    fstream filestr;
+    filestr.open(path);
     read_xml(path, m_geo_pt);
+    filestr.close();
 }
 
 
 void QTBackEnd::genPop() {
+
+    string file(m_pt.get<string>("run.geopop_file"));
+    string path = "config/" + file;
+    fstream filestr;
+    filestr.open(path);
+    write_xml(path, m_geo_pt);
+    filestr.close();
 
     this->m_grid = stride::GeoGridGenerator().Generate(m_pt);
     stride::PopulationGenerator(*m_grid).Generate();
@@ -94,8 +105,8 @@ QString QTBackEnd::get_config(QString xml_tag) {
 }
 
 void QTBackEnd::set_config(QString xml_tag, QString val) {
-
-    m_geo_pt.put(val.toStdString(), xml_tag.toStdString());
+    cout << val.toStdString() << endl;
+    m_geo_pt.put(xml_tag.toStdString(),val.toStdString() );
 
 }
 
