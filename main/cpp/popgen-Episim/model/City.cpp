@@ -47,6 +47,7 @@ void City::SetOutCommuters(unsigned int id, double number_of_commuters)
 {
         m_out_commuting_changed = true;
         m_out_commuting[id]     = number_of_commuters;
+
 }
 
 const double& City::GetTotalInCommutersCount() const

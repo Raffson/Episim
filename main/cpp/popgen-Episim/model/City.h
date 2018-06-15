@@ -143,6 +143,7 @@ public:
         /// @param destination the destination city of commuters
         unsigned int GetEffectiveCommuterTo(const unsigned int destination);
 
+
 private:
         const unsigned int m_city_id;   ///< A unique ID of the city.
         const unsigned int m_province;  ///< Province

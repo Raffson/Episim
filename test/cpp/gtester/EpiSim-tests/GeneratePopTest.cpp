@@ -12,6 +12,7 @@
 #include <gtest/gtest.h>
 #include <omp.h>
 #include <spdlog/spdlog.h>
+#include <boost/range/adaptors.hpp>
 
 #include "popgen-Episim/generator/GeoGridGenerator.h"
 #include "popgen-Episim/generator/PopulationGenerator.h"
@@ -131,10 +132,11 @@ namespace Tests {
         unsigned int active = 0;
         unsigned int students = 0;
 
-        for(auto it:grid->GetCities()){
+        for(auto& it:grid->GetCities()){
             City* aCity = &it.second;
             studentCommuters += aCity->GetStudentCommutersCount();
             workerCommuters += aCity->GetWorkerCommutersCount();
+
         }
 
         for (unsigned int i = 0; i < grid->GetPopulation()->size(); i++) {
