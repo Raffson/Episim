@@ -48,6 +48,7 @@ public:
     Q_INVOKABLE void flip_items(QList<QObject*>);
 
     Q_INVOKABLE QString read_path(QString tag);
+    Q_INVOKABLE QString set_path(QString tag, QString path);
 
 
     Q_PROPERTY(QList<QObject*> cities MEMBER m_cities NOTIFY citiesChanged)

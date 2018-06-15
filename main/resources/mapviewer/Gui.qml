@@ -141,31 +141,33 @@ ApplicationWindow{
                             Button{
                                 text: "..."
                                 onClicked:{
-                                    console.log(backend.read_path("cities"))
                                     cty_file.visible = true
                                 }
                                 Layout.maximumWidth: 20
                             }
 
+                            FileDialog{
+                                id: cty_file
+                                title: "Please choose a file"
+                                folder: "../data/"
+                                 nameFilters: [ "*.csv"]
+                                    onAccepted: {
+                                       console.log("You chose: " + cty_file.fileUrls)
+                                       cty_config_text.text = cty_file.fileUrls.toString();
+                                       backend.set_path(parent.tag, cty_file.fileUrls.toString());
+
+
+                                   }
+                                   onRejected: {
+                                       console.log("Canceled")
+
+                                   }
+
                         }
 
 
 
-                        FileDialog{
-                            id: cty_file
-                            title: "Please choose a file"
-                            folder: "../data/"
-                             nameFilters: [ "*.csv"]
-                                onAccepted: {
-                                   console.log("You chose: " + cty_file.fileUrls)
-                                   cty_config_text.text = cty_file.fileUrls.toString()
 
-
-                               }
-                               onRejected: {
-                                   console.log("Canceled")
-
-                               }
 
 
                         }

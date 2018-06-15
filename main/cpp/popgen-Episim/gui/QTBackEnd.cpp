@@ -201,5 +201,16 @@ QString QTBackEnd::read_path(QString tag){
     }
 }
 
+QString QTBackEnd::set_path(QString tag, QString path) {
+
+    string complete_tage = "data_files" + tag.toStdString();
+    if(tag == QString("cities")){
+        cout << "hier" << end;
+        auto lst = path.split("/");
+        cout << lst.back().toStdString() << endl;
+    }
+    return QString("bla");
+}
+
 
 
