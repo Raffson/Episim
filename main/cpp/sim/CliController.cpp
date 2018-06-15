@@ -35,7 +35,8 @@
 #include "viewers/SummaryViewer.h"
 
 #ifdef USING_QT
-    #include "viewers/MapViewer.h"
+#include "popgen-Episim/gui//QTBackEnd.h"
+#include "viewers/MapViewer.h"
 #endif
 
 #include <boost/property_tree/xml_parser.hpp>
@@ -104,6 +105,24 @@ void CliController::Control()
         auto runner = make_shared<SimRunner>(m_config_pt, pop, m_geogrid);
         RegisterViewers(runner);
         runner->Run();
+        m_stride_logger->info("CliController shutting down.");
+        spdlog::drop_all();
+}
+
+void CliController::ControlGui()
+{
+#ifdef USING_QT
+        int dummyArgc = 0;
+        QGuiApplication app(dummyArgc, 0); // main app
+        QQmlApplicationEngine engine;
+
+        QScopedPointer<QTBackEnd> backend(new QTBackEnd(engine, m_config_pt));
+        engine.rootContext()->setContextProperty("backend", backend.data());
+        engine.load(QStringLiteral("mapviewer/Gui.qml"));
+        app.exec();
+#else
+        cout << "Qt was not found, unable to start GUI..." << endl;
+#endif
         m_stride_logger->info("CliController shutting down.");
         spdlog::drop_all();
 }

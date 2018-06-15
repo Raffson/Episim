@@ -56,6 +56,9 @@ public:
         /// Actual run of the simulator.
         void Control();
 
+        /// Runs the gui.
+        void ControlGui();
+
 private:
         /// Empty controller: used as target for delegation.
         explicit CliController(const bool draw = false);

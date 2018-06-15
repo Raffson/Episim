@@ -34,7 +34,7 @@ void QTBackEnd::genPop() {
     write_xml(path, m_geo_pt);
     filestr.close();
 
-    this->m_grid = stride::GeoGridGenerator().Generate(m_pt);
+    m_grid = stride::GeoGridGenerator().Generate(m_pt);
     stride::PopulationGenerator(*m_grid).Generate();
 
     m_pop_generated = true;

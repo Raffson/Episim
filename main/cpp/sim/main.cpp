@@ -30,11 +30,6 @@
 #include <string>
 #include <vector>
 
-#ifdef USING_QT
-#include "popgen-Episim/gui//QTBackEnd.h"
-#endif
-
-
 using namespace std;
 using namespace stride;
 using namespace stride::util;
@@ -134,17 +129,13 @@ int main(int argc, char** argv)
                 // If run simulation in gui ...
                 // -----------------------------------------------------------------------------------------
                 else if (execArg.getValue() == "simgui") {
-#ifdef USING_QT
-                        QGuiApplication app(argc, argv); // main app
-                        QQmlApplicationEngine engine;
+                        if (configPt.get<string>("run.output_prefix", "").empty()) {
+                            configPt.put("run.output_prefix", TimeStamp().ToTag().append("/"));
+                        }
+                        configPt.put("run.random_geopop", true);
+                        configPt.sort();
 
-                        QScopedPointer<QTBackEnd> backend(new QTBackEnd(engine, configPt));
-                        engine.rootContext()->setContextProperty("backend", backend.data());
-                        engine.load(QStringLiteral("mapviewer/Gui.qml"));
-                        return app.exec();
-#else
-                        cout << "Qt was not found, unable to start GUI..." << endl;
-#endif
+                        CliController(configPt).ControlGui();
                 }
                 // -----------------------------------------------------------------------------------------
                 // If clean/dump ...
