@@ -26,6 +26,7 @@ QTBackEnd::QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent):
 
 void QTBackEnd::genPop() {
 
+
     string file(m_pt.get<string>("run.geopop_file"));
     string path = "config/" + file;
     fstream filestr;
@@ -48,6 +49,7 @@ void QTBackEnd::makeCityList() {
 
 
     m_cities.clear();
+    m_commuters.clear();
     for(auto& it: m_grid->GetCities()){
         m_cities.append(new QTCity(&it.second, this));
     }
@@ -105,7 +107,6 @@ QString QTBackEnd::get_config(QString xml_tag) {
 }
 
 void QTBackEnd::set_config(QString xml_tag, QString val) {
-    cout << val.toStdString() << endl;
     m_geo_pt.put(xml_tag.toStdString(),val.toStdString() );
 
 }
@@ -170,16 +171,19 @@ void QTBackEnd::remove_commute_lines_no_emit(const QList<QTCommuter*> &lst) {
 
 
 void QTBackEnd::flip_items(QList<QObject*> cities) {
-
     for(auto& it: cities){
         auto cty = dynamic_cast<QTCity*>(it);
-        if(cty->get_clicked()){
-            remove_commute_lines_no_emit(cty->get_commuters());
+        if(cty != nullptr) {
+            if (cty->get_clicked()) {
+                remove_commute_lines_no_emit(cty->get_commuters());
+            } else {
+                add_commute_lines_no_emit(cty->get_commuters());
+            }
+            cty->flip();
         }
         else{
-            add_commute_lines_no_emit(cty->get_commuters());
+            cout << "Some Items are in flip items not cities" << endl;
         }
-        cty->flip();
 
     }
     emit commutersChanged();

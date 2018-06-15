@@ -58,6 +58,7 @@ Rectangle{
                 onClicked: {
                     map.clearMapItems();
                     backend.genPop();
+                    gc();
                     map.center_and_zoom();
 
                 }
@@ -336,32 +337,31 @@ Rectangle{
     Component{
         id: mapCircleComponent
         MapCircle{
-            property var city : model.modelData
-            property var perc : city.popCount === 0 ? 0 : Math.round(city.infected/city.popCount * 100)
-            property var commuting_lst: []
+            property var city : modelData
+            property var perc : modelData.popCount === 0 ? 0 : Math.round(modelData.infected/modelData.popCount * 100)
             property bool circle : true
-            radius:  city.popCount/ backend.total_pop * 250000
-            color: cty_mouse.containsMouse ? Qt.rgba(1, 1, 1, 0.2) : city.clicked ? Qt.rgba(1 - perc / 50 ,0,0 + perc /50,0.2 + perc / 50) : Qt.rgba(0,1 - perc / 50,0 + perc / 50 ,0.2 + perc / 50 )
-            center: city.crd
-            z: backend.total_pop - city.popCount
+            radius:  modelData.popCount/ backend.total_pop * 250000
+            color: cty_mouse.containsMouse ? Qt.rgba(1, 1, 1, 0.2) : modelData.clicked ? Qt.rgba(1 - perc / 50 ,0,0 + perc /50,0.2 + perc / 50) : Qt.rgba(0,1 - perc / 50,0 + perc / 50 ,0.2 + perc / 50 )
+            center: modelData.crd
+            z: backend.total_pop - modelData.popCount
             
             MouseArea{
                 id: cty_mouse
                 anchors.fill: parent
                 hoverEnabled: true
-                ToolTip.text: "City: " + city.name + "\nPopulation: "
-                              + city.popCount + "\nInfected: " + city.infected
+                ToolTip.text: "City: " + modelData.name + "\nPopulation: "
+                              + modelData.popCount + "\nInfected: " + modelData.infected
                               + "|" + perc +"%"
                 ToolTip.visible: containsMouse ? true : false
                 
                 onClicked: {
-                    if(parent.city.clicked){
-                        parent.city.clicked = false
+                    if(modelData.clicked){
+                        modelData.clicked = false
                         //parent.remove_commuters();
 
                     }
                     else{
-                        parent.city.clicked = true
+                        modelData.clicked = true
                         //parent.draw_commuters()
                     }
                 }
