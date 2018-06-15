@@ -9,18 +9,30 @@
 #include "util/InstallDirs.h"
 #include <boost/filesystem/path.hpp>
 #include <sim/SimRunner.h>
-
+#include <fstream>
+using namespace std;
 
 QTBackEnd::QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent):QObject(parent),
                     m_pt(pt),m_engine(engine) {
 
     string file(m_pt.get<string>("run.geopop_file"));
     string path = "config/" + file;
+    fstream filestr;
+    filestr.open(path);
     read_xml(path, m_geo_pt);
+    filestr.close();
 }
 
 
 void QTBackEnd::genPop() {
+
+
+    string file(m_pt.get<string>("run.geopop_file"));
+    string path = "config/" + file;
+    fstream filestr;
+    filestr.open(path);
+    write_xml(path, m_geo_pt);
+    filestr.close();
 
     this->m_grid = stride::GeoGridGenerator().Generate(m_pt);
     stride::PopulationGenerator(*m_grid).Generate();
@@ -37,6 +49,7 @@ void QTBackEnd::makeCityList() {
 
 
     m_cities.clear();
+    m_commuters.clear();
     for(auto& it: m_grid->GetCities()){
         m_cities.append(new QTCity(&it.second, this));
     }
@@ -94,8 +107,7 @@ QString QTBackEnd::get_config(QString xml_tag) {
 }
 
 void QTBackEnd::set_config(QString xml_tag, QString val) {
-
-    m_geo_pt.put(val.toStdString(), xml_tag.toStdString());
+    m_geo_pt.put(xml_tag.toStdString(),val.toStdString() );
 
 }
 
@@ -159,21 +171,45 @@ void QTBackEnd::remove_commute_lines_no_emit(const QList<QTCommuter*> &lst) {
 
 
 void QTBackEnd::flip_items(QList<QObject*> cities) {
-
     for(auto& it: cities){
         auto cty = dynamic_cast<QTCity*>(it);
-        if(cty->get_clicked()){
-            remove_commute_lines_no_emit(cty->get_commuters());
+        if(cty != nullptr) {
+            if (cty->get_clicked()) {
+                remove_commute_lines_no_emit(cty->get_commuters());
+            } else {
+                add_commute_lines_no_emit(cty->get_commuters());
+            }
+            cty->flip();
         }
         else{
-            add_commute_lines_no_emit(cty->get_commuters());
+            cout << "Some Items are in flip items not cities" << endl;
         }
-        cty->flip();
 
     }
     emit commutersChanged();
     emit selected_popChanged();
     emit selected_infectedChanged();
+}
+
+QString QTBackEnd::read_path(QString tag){
+
+    string complete_tag = "data_files." + tag.toStdString();
+    if(tag == QString("cities")){
+       auto file = m_geo_pt.get<string>(complete_tag);
+       string strng = "data/" + file;
+       return QString(strng.c_str());
+    }
+}
+
+QString QTBackEnd::set_path(QString tag, QString path) {
+
+    string complete_tage = "data_files" + tag.toStdString();
+    if(tag == QString("cities")){
+        cout << "hier" << end;
+        auto lst = path.split("/");
+        cout << lst.back().toStdString() << endl;
+    }
+    return QString("bla");
 }
 
 

@@ -16,7 +16,7 @@ class TestSummarizer {
 public:
 
     ///
-    void GenerateHtml(const boost::filesystem::path &test_path, const std::string &fname);
+    void GenerateHtml(const boost::filesystem::path &testPath, const std::string &fname);
 private:
     void CreateTopTags(std::ofstream& file);
 };

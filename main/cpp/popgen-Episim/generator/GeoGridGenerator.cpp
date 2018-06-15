@@ -143,16 +143,16 @@ void GeoGridGenerator::ReadDataFiles()
 {
     // reading the cities data file
     const auto& pt        = m_grid->m_config_pt;
-    const auto base_path  = pt.get<bool>("run.use_install_dirs", true) ? util::FileSys::GetDataDir() : "";
-    string city_file      = pt.get("run.popgen.data_files.cities", "flanders_cities.csv");
-    string commuting_file = pt.get("run.popgen.data_files.commuting", "flanders_commuting.csv");
-    string household_file = pt.get("run.popgen.data_files.households", "households_flanders.xml");
+    const auto basePath  = pt.get<bool>("run.use_install_dirs", true) ? util::FileSys::GetDataDir() : "";
+    string cityFile      = pt.get("run.popgen.data_files.cities", "flanders_cities.csv");
+    string commutingFile = pt.get("run.popgen.data_files.commuting", "flanders_commuting.csv");
+    string householdFile = pt.get("run.popgen.data_files.households", "households_flanders.xml");
 
-    m_grid->m_model_households = parser::ParseHouseholds(base_path / household_file);
+    m_grid->m_model_households = parser::ParseHouseholds(basePath / householdFile);
     GetMainFractions();
 
-    parser::ParseCities(base_path / city_file, m_grid->m_cities, m_grid->m_model_pop, m_grid->m_rtree);
-    parser::ParseCommuting(base_path / commuting_file, m_grid->m_cities, m_grid->m_fract_map);
+    parser::ParseCities(basePath / cityFile, m_grid->m_cities, m_grid->m_model_pop, m_grid->m_rtree);
+    parser::ParseCommuting(basePath / commutingFile, m_grid->m_cities, m_grid->m_fract_map);
 }
 
 void GeoGridGenerator::EnsureConsistency()
@@ -258,18 +258,18 @@ void GeoGridGenerator::GenerateSchools()
     const auto& smap = m_grid->m_sizes_map;
 
     // Setting up to divide the schools to cities
-    vector<double> p_vec;
-    vector<City*>  c_vec;
+    vector<double> pVec;
+    vector<City*>  cVec;
     for (auto& it : m_grid->m_cities) {
-        c_vec.emplace_back(&it.second);
-        p_vec.emplace_back(it.second.GetPopulation());
+        cVec.emplace_back(&it.second);
+        pVec.emplace_back(it.second.GetPopulation());
     }
 
     auto amountSchooled  = m_grid->m_total_pop * fmap.at(Fractions::SCHOOLED);
     auto amountOfSchools = (const unsigned int)ceil(amountSchooled / smap.at(Sizes::SCHOOLS));
     m_grid->m_school_count += amountOfSchools;
-    auto rndm_vec = generate_random(p_vec, m_grid->m_rng, amountOfSchools);
-    AddCommunities(c_vec, rndm_vec, CommunityType::Id::School);
+    auto rndmVec = generate_random(pVec, m_grid->m_rng, amountOfSchools);
+    AddCommunities(cVec, rndmVec, CommunityType::Id::School);
 }
 
 unsigned int GeoGridGenerator::FindSmallest(const vector<City*>& lc)
@@ -302,14 +302,14 @@ void GeoGridGenerator::GenerateColleges()
     for (auto& it : m_grid->m_cities)
         AdjustLargestCities(cities, it.second);
 
-    vector <double> p_vec;
+    vector <double> pVec;
     for (auto it : cities)
-        p_vec.emplace_back(it->GetPopulation());
+        pVec.emplace_back(it->GetPopulation());
 
     double students = m_grid->m_total_pop * fmap.at(Fractions::YOUNG) * fmap.at(Fractions::STUDENTS);
     auto nrcolleges = (unsigned int)ceil(students / smap.at(Sizes::COLLEGES));
-    auto lottery_vec = generate_random(p_vec, m_grid->m_rng, nrcolleges);
-    AddCommunities(cities, lottery_vec, CommunityType::Id::College);
+    auto lotteryVec = generate_random(pVec, m_grid->m_rng, nrcolleges);
+    AddCommunities(cities, lotteryVec, CommunityType::Id::College);
     // filter out the cities that eventually haven't received colleges
     for( unsigned int i=0; i < cities.size(); i++ )
         if( !cities[i]->HasCommunityType(CommunityType::Id::College) )
@@ -320,34 +320,34 @@ void GeoGridGenerator::GenerateWorkplaces()
 {
     const auto& fmap = m_grid->m_fract_map;
     const auto& smap = m_grid->m_sizes_map;
-    double possible_workers_frac = (fmap.at(Fractions::MIDDLE_AGED) +
+    double possibleWorkersFrac = (fmap.at(Fractions::MIDDLE_AGED) +
                                     fmap.at(Fractions::YOUNG) * (1 - fmap.at(Fractions::STUDENTS)));
-    double active_workers_frac = possible_workers_frac * fmap.at(Fractions::ACTIVE);
+    double activeWorkersFrac = possibleWorkersFrac * fmap.at(Fractions::ACTIVE);
 
-    vector<double> lottery_vec; // vector of relative probabillitys
-    vector<City*>  c_vec;       // we will use this to vec to map the city to a set of sequential numbers 0...n
+    vector<double> lotteryVec; // vector of relative probabillitys
+    vector<City*>  cVec;       // we will use this to vec to map the city to a set of sequential numbers 0...n
     for (auto& it : m_grid->m_cities) {
-        const bool has_college = it.second.HasCommunityType(CommunityType::Id::College);
-        double in_commuters_modifier = (has_college) ? possible_workers_frac : 1;
+        const bool hasCollege = it.second.HasCommunityType(CommunityType::Id::College);
+        double inCommutersModifier = (hasCollege) ? possibleWorkersFrac : 1;
         // if there's no college in this city, all incoming commuters are workers
 
-        auto work_pop = (it.second.GetPopulation() * active_workers_frac +
-                         it.second.GetTotalInCommutersCount() * in_commuters_modifier -
-                         it.second.GetTotalOutCommutersCount() * possible_workers_frac);
+        auto workPop = (it.second.GetPopulation() * activeWorkersFrac +
+                         it.second.GetTotalInCommutersCount() * inCommutersModifier -
+                         it.second.GetTotalOutCommutersCount() * possibleWorkersFrac);
         // out-commuters should allways be modified because there can always be students present
         // for in-commuters this is only true if this city contains colleges
         // note that commuters should always be active workers or students
 
         // Inserting the amount of id's of the city equal to the pop working in the city
-        c_vec.emplace_back(&it.second);
-        lottery_vec.emplace_back(work_pop);
+        cVec.emplace_back(&it.second);
+        lotteryVec.emplace_back(workPop);
     }
 
     // Now we calculate how many workplaces we have to create.
-    double allworkers           = active_workers_frac * m_grid->m_total_pop;
-    auto   number_of_workplaces = (unsigned int)ceil(allworkers / smap.at(Sizes::WORKPLACES));
-    auto   rndm_vec             = generate_random(lottery_vec, m_grid->m_rng, number_of_workplaces);
-    AddCommunities(c_vec, rndm_vec, CommunityType::Id::Work);
+    double allworkers           = activeWorkersFrac * m_grid->m_total_pop;
+    auto   numberOfWorkplaces = (unsigned int)ceil(allworkers / smap.at(Sizes::WORKPLACES));
+    auto   rndmVec             = generate_random(lotteryVec, m_grid->m_rng, numberOfWorkplaces);
+    AddCommunities(cVec, rndmVec, CommunityType::Id::Work);
 }
 
 // Communities need to be distributed according to the relative population size.
@@ -355,19 +355,19 @@ void GeoGridGenerator::GenerateCommunities()
 {
     const auto& smap = m_grid->m_sizes_map;
     // First we need to determine the total number of communities to be used.
-    auto total_communities = (unsigned int)ceil((double)m_grid->m_total_pop / smap.at(Sizes::COMMUNITIES));
+    auto totalCommunities = (unsigned int)ceil((double)m_grid->m_total_pop / smap.at(Sizes::COMMUNITIES));
 
-    vector<double> p_vec;
-    vector<City*>  c_vec;
+    vector<double> pVec;
+    vector<City*>  cVec;
     for (auto& it : m_grid->m_cities) {
-        c_vec.emplace_back(&it.second);
-        p_vec.emplace_back(it.second.GetPopulation());
+        cVec.emplace_back(&it.second);
+        pVec.emplace_back(it.second.GetPopulation());
     }
 
-    auto rndm_vec = generate_random(p_vec, m_grid->m_rng, total_communities);
-    AddCommunities(c_vec, rndm_vec, CommunityType::Id::Primary);
-    rndm_vec = generate_random(p_vec, m_grid->m_rng, total_communities);
-    AddCommunities(c_vec, rndm_vec, CommunityType::Id::Secondary);
+    auto rndmVec = generate_random(pVec, m_grid->m_rng, totalCommunities);
+    AddCommunities(cVec, rndmVec, CommunityType::Id::Primary);
+    rndmVec = generate_random(pVec, m_grid->m_rng, totalCommunities);
+    AddCommunities(cVec, rndmVec, CommunityType::Id::Secondary);
 }
 
 void GeoGridGenerator::ClassifyNeighbours()
@@ -398,7 +398,7 @@ void GeoGridGenerator::ClassifyNeighbours()
             // 2*initial_radius), etc.
             unsigned int category = m_grid->m_initial_search_radius;
             while ((distance / category) > 0)
-                category <<= 1; // equivalent to multiplying by 2
+                category <<= 1; // equivalent to multiplying by 2, just more efficient...
             for( auto type : CommunityType::IdList) {
                 if( cityB.second.HasCommunityType(type) )
 #pragma critical(nirmap_emplace)
@@ -449,19 +449,20 @@ void GeoGridGenerator::AddCommunities(const vector<City *>& cities, const vector
 
 #pragma omp parallel for
     for (unsigned int i = 0; i < indices.size(); i++) {
-        Community* nw_school;
+
+        Community* nwSchool;
 
             City &chosen_city = *cities[indices[i]];
 #pragma  omp critical(f)
         {
-            nw_school = &chosen_city.AddCommunity(m_cid_generator++, type);
+            nwSchool = &chosen_city.AddCommunity(m_cid_generator++, type);
         }
 
             // Add contactpools
             for (auto j = 0; j < cps; j++)
 #pragma omp critical(a)
         {
-            nw_school->AddContactPool(m_grid->m_population->GetContactPoolSys());
+            nwSchool->AddContactPool(m_grid->m_population->GetContactPoolSys());
         }
     }
 }

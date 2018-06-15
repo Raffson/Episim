@@ -11,6 +11,7 @@
 #include "sim/event/Id.h"
 
 class QQmlApplicationEngine;
+class QObject;
 
 using namespace std;
 
@@ -28,16 +29,19 @@ namespace viewers {
             {
             }
 
-            int LoadMap();
+            int LoadMap(bool showMap=true);
 
             /// Let viewer perform update.
             void Update(sim_event::Id id);
 
         private:
+            void ToPng();
+
             shared_ptr<QQmlApplicationEngine> engine;
             shared_ptr<stride::GeoGrid> m_grid;
             output::SummaryFile m_summary_file;
             std::shared_ptr<SimRunner> m_runner;
+            QObject* m_item;
         };
 }
 }

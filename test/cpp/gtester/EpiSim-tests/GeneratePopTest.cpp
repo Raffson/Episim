@@ -55,7 +55,7 @@ namespace Tests {
             double target = ((double) a_city->GetPopulation() / (double) grid->GetTotalPopOfModel());
             double actual = ((double) a_city->GetEffectivePopulation() / (double) grid->GetTotalPop());
             pop_counter += a_city->GetEffectivePopulation();
-            //EXPECT_NEAR(actual, target, margin); TODO: something goes wrong here check later
+            EXPECT_NEAR(actual, target, margin);
         }
         EXPECT_EQ(grid->GetPopulation()->size(), pop_counter);
     }
@@ -65,12 +65,12 @@ namespace Tests {
 
         unsigned int schooled = 0;
         unsigned int youngsters = 0;
-        unsigned int middle_aged = 0;
+        unsigned int middleAged = 0;
         unsigned int toddlers = 0;
         unsigned int oldies = 0;
         unsigned int active = 0;
 
-        unsigned int pop_count = grid->GetPopulation()->size();
+        unsigned int popCount = grid->GetPopulation()->size();
 
         for (unsigned int i = 0; i < grid->GetPopulation()->size(); i++) {
             auto a_person = grid->GetPopulation()->at(i);
@@ -88,7 +88,7 @@ namespace Tests {
                     break;
                 }
                 case Fractions::MIDDLE_AGED : {
-                    middle_aged++;
+                    middleAged++;
                     if (a_person.GetPoolId(ContactPoolType::Id::Work) != 0) {
                         active++;
                     }
@@ -107,22 +107,21 @@ namespace Tests {
 
         double margin = 0.01;
 
-        EXPECT_NEAR((double) schooled / pop_count, grid->GetFraction(Fractions::SCHOOLED),
+        EXPECT_NEAR((double) schooled / popCount, grid->GetFraction(Fractions::SCHOOLED),
                     margin * grid->GetFraction(Fractions::SCHOOLED));
-        EXPECT_NEAR((double) youngsters / pop_count, grid->GetFraction(Fractions::YOUNG),
+        EXPECT_NEAR((double) youngsters / popCount, grid->GetFraction(Fractions::YOUNG),
                     margin * grid->GetFraction(Fractions::YOUNG));
-        EXPECT_NEAR((double) middle_aged / pop_count, grid->GetFraction(Fractions::MIDDLE_AGED),
+        EXPECT_NEAR((double) middleAged / popCount, grid->GetFraction(Fractions::MIDDLE_AGED),
                     margin * grid->GetFraction(Fractions::MIDDLE_AGED));
-        EXPECT_NEAR((double) oldies / pop_count, grid->GetFraction(Fractions::OLDIES),
+        EXPECT_NEAR((double) oldies / popCount, grid->GetFraction(Fractions::OLDIES),
                     margin * grid->GetFraction(Fractions::OLDIES));
 
-        double actual_active = (double) active / (middle_aged + youngsters);
+        double actualActive = (double) active / (middleAged + youngsters);
         //we have approx. 46% active from the people of the working age 4% less than we are supposed to have
         margin = 0.1;
-        EXPECT_NEAR(actual_active, grid->GetFraction(Fractions::ACTIVE), margin * grid->GetFraction(Fractions::ACTIVE));
+        EXPECT_NEAR(actualActive, grid->GetFraction(Fractions::ACTIVE), margin * grid->GetFraction(Fractions::ACTIVE));
 
     }
-
 
 
 namespace {

@@ -23,7 +23,7 @@ public:
         /// Household's contructor.
         /// @param city A pointer to the city to which this household's assigned.
         /// @param pool A reference to the ContactPoolSys used by stride to create the contact pool
-        Household(City* city, ContactPoolSys& pool_sys);
+        Household(City* city, ContactPoolSys& poolSys);
 
         /// Add a member to the household.
         /// @param: member the person to be added to the household

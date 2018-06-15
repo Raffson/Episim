@@ -68,6 +68,9 @@ ApplicationWindow {
     property variant parameters
     property variant pop_info
     property var stride_paths: []
+    property var infected: 0
+    property variant selector_rect: 0
+
 
     readonly property bool inPortrait: appWindow.width < appWindow.height
 
@@ -89,6 +92,10 @@ ApplicationWindow {
             ToolButton {
                 text: qsTr("show commutings")
                 onClicked: showCommutes()
+            }
+            ToolButton {
+                text: qsTr("remove commutes")
+                onClicked: removeLines()
             }
             ToolButton {
                 text: qsTr("select all")
@@ -125,6 +132,7 @@ ApplicationWindow {
         position: inPortrait ? 0 : 1
         visible: !inPortrait
 
+
         ListView {
             id: listView
             anchors.fill: parent
@@ -144,20 +152,74 @@ ApplicationWindow {
             }
 
             ToolBar {
+
                 ColumnLayout {
                     anchors.fill: parent
                     Label{
-                        text: "Population: " + Number(pop_info)
+                        text: "\nPopulation: " + Number(pop_info)
                         font.pixelSize: 22
                         font.italic: true
+                        color: "steelblue"
+                    }
+                    Label{
+                        text: "Infected: " + infected
+                        font.pixelSize: 22
+                        font.italic: true
+                        color: "steelblue"
+
                     }
                     ToolButton {
                         text: qsTr("update population")
                         onClicked: updateSelected()
+
                     }
                     ToolButton {
                         text: qsTr("show commuters")
                         onClicked: showCommutes()
+                    }
+
+                    Label{
+                        text: "\nSelector rectangle"
+                        font.pixelSize: 20
+                        color: "steelblue"
+                    }
+
+                    Label{
+                        text: "Width"
+                        font.pixelSize: 15
+                        font.italic: true
+                        color: "steelblue"
+                    }
+                    ToolButton{
+                        text: qsTr("+")
+                        onClicked: updateRectanglesSize("increaseWidth")
+                    }
+
+                    ToolButton{
+                        text: qsTr("-")
+                        onClicked: updateRectanglesSize("decreaseWidth")
+                    }
+
+                    Label{
+                        text: "Height"
+                        font.pixelSize: 15
+                        font.italic: true
+                        color: "steelblue"
+
+                    }
+                    ToolButton{
+                        text: qsTr("+")
+                        onClicked: updateRectanglesSize("increaseHeight")
+                    }
+
+                    ToolButton{
+                        text: qsTr("-")
+                        onClicked: updateRectanglesSize("decreaseHeight")
+                    }
+
+                    ToolButton{
+                        text: qsTr("Update rectangle")
+                        onClicked: updateRectangle()
                     }
                 }
             }
@@ -194,20 +256,94 @@ ApplicationWindow {
         updateSelected()
     }
 
-    function selectMultiple(){
-        var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
+    function removeLines(){
+        for (var i = 0; i < map.children.length; i++)
+        {
+            if(map.children[i].objectName === "pD"){
+                map.removeMapItem(map.children[i])
+                i = 0
+            }
+        }
+    }
 
+    function selectMultiple(){
+        if(selector_rect == 0){
+            selector_rect = Qt.createQmlObject('import "custom";FlexRectangle {}', page)
+        }
+        else{
+            selector_rect.x = 20
+            selector_rect.y = 20
+            selector_rect.width = 120
+            selector_rect.height = 100
+
+        }
+
+    }
+
+    function updateRectangle(){
+        deselectAll()
+        for (var i = 0; i < map.children.length; i++)
+        {
+            if(map.children[i].objectName === "mqi"){
+                var circle = map.children[i].sourceItem
+                //converting to the coordinate system of the screen
+                var screencoor = map.fromCoordinate(QtPositioning.coordinate(circle.lati, circle.longi), true)
+                if(isIntersection(screencoor.x, screencoor.y, circle.width/2)){
+                    circle.is_clicked = true
+                    circle.area_info.font.pointSize = 16
+                    circle.opacity = 1
+                }
+
+            }
+        }
+        updateSelected();
+    }
+
+    function isIntersection(x, y, width)
+    {
+        var nearestX = Math.max(selector_rect.x, Math.min(x, selector_rect.x + selector_rect.width))
+        var nearestY = Math.max(selector_rect.y, Math.min(y, selector_rect.y + selector_rect.height))
+        var deltaX = x - nearestX
+        var deltaY = y - nearestY
+
+        return ((deltaX * deltaX + deltaY * deltaY) < (width*width) );
+    }
+
+    function updateRectanglesSize(par)
+    {
+        var scale = 30
+        switch(par){
+            case "increaseHeight":
+                selector_rect.height = selector_rect.height  + scale
+                break
+            case "increaseWidth":
+                selector_rect.width = selector_rect.width + scale
+                break
+            case "decreaseHeight":
+                if( selector_rect.height > 80){
+                    selector_rect.height = selector_rect.height - scale
+                }
+                break
+            case "decreaseWidth":
+                if( selector_rect.width > 80){
+                    selector_rect.width = selector_rect.width - scale
+                }
+                break
+
+        }
     }
 
     function updateSelected(){
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
         var total_count = 0
+        infected = 0
         for (var i = 0; i < map.children.length; i++)
         {
             if(map.children[i].objectName === "mqi"){
                 circle = map.children[i].sourceItem
-                var pop = circle.isSelected()
+                var pop = circle.isSelected().popcount
                 total_count += pop
+                infected += circle.isSelected().infected
 
             }
             if(map.children[i].objectName === "pop_info"){
@@ -220,7 +356,6 @@ ApplicationWindow {
 
 
     function showCommutes(number){
-        console.warn("start commuting");
         if(number === undefined) number = 10
         var count = 0;
         for (var i = 0; i < map.children.length; i++){
@@ -245,7 +380,6 @@ ApplicationWindow {
                 }
             }
         }
-        console.warn("finished commuting");
     }
 
     //defaults
@@ -322,6 +456,17 @@ ApplicationWindow {
                                        , map)
     }
 
+    function saveToImage(){
+        console.warn("saving image")
+        if (map.grabToImage(function(result) {
+                               result.saveToFile("something.png");
+                                    })){
+                                    console.warn("succes")
+                                    }
+                                    else{
+                                    console.warn("fail")
+                                    }
+    }
 
     function placeCity(values, commuting_in_id, commuting_in_size, commuting_out_id, commuting_out_size){
         var item = Qt.createQmlObject('import QtQuick 2.7; import QtLocation 5.3; MapQuickItem{objectName: "mqi";}', map, "dynamic")
@@ -353,6 +498,9 @@ ApplicationWindow {
         circle.population = values["population"]
         item.sourceItem = circle
         item.anchorPoint = Qt.point(item.sourceItem.width/2, item.sourceItem.height/2)
+        var percentage = circle.infected/circle.population
+        circle.color = Qt.hsva(0, 1, percentage, 0.75)
+
         map.addMapItem(item)
     }
 

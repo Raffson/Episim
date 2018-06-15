@@ -3,12 +3,7 @@
 //
 #include "stdlib.h"
 #ifdef USING_QT
-
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
-
-#include "RobbeGui/QTBackEnd.h"
+#include "gui/QTBackEnd.h"
 #endif
 
 #include <boost/property_tree/xml_parser.hpp>

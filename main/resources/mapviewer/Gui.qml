@@ -4,7 +4,7 @@ import QtLocation 5.6
 import QtPositioning 5.6
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs 1.3
 
 ApplicationWindow{
     id: window
@@ -16,10 +16,10 @@ ApplicationWindow{
 
     Plugin {
         id: mapPlugin
-        name:  "mapbox"//", "esri", ...
-        PluginParameter{ name: "mapbox.access_token";
-            value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"
-        }
+        name: "osm" //"mapbox"//", "esri", ...
+        /*PluginParameter{ name: "mapbox.access_token";
+            value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"*/
+       // }
 
 
     }
@@ -118,6 +118,7 @@ ApplicationWindow{
                         RowLayout{
                             Layout.alignment: Qt.AlignTop
                             Layout.maximumHeight: 4
+                            property string tag : "cities"
 
                             Label{
                                 id: cty_file_label
@@ -129,33 +130,44 @@ ApplicationWindow{
                             }
 
                             TextField{
+                                 id: cty_config_text
                                  Layout.alignment: Qt.AlignRight
                                  Layout.minimumWidth: 300
+                                 text: backend.read_path(parent.tag)
+
 
                             }
 
                             Button{
                                 text: "..."
-                                onClicked: cty.visible = true
+                                onClicked:{
+                                    cty_file.visible = true
+                                }
                                 Layout.maximumWidth: 20
                             }
+
+                            FileDialog{
+                                id: cty_file
+                                title: "Please choose a file"
+                                folder: "../data/"
+                                 nameFilters: [ "*.csv"]
+                                    onAccepted: {
+                                       console.log("You chose: " + cty_file.fileUrls)
+                                       cty_config_text.text = cty_file.fileUrls.toString();
+                                       backend.set_path(parent.tag, cty_file.fileUrls.toString());
+
+
+                                   }
+                                   onRejected: {
+                                       console.log("Canceled")
+
+                                   }
 
                         }
 
 
 
-                        FileDialog{
-                            id: cty
-                            title: "Please choose a file"
-                            folder: "../data/"
-                               onAccepted: {
-                                   console.log("You chose: " + fileDialog.fileUrls)
 
-                               }
-                               onRejected: {
-                                   console.log("Canceled")
-
-                               }
 
 
                         }

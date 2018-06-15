@@ -28,15 +28,15 @@ namespace parser {
 
 /// Parse the information of cities
 /// @param: path to the file containing information about the city
-/// @param: cities map city_ids as key and City as the value
-/// @param: total_pop total population got from the sum of all the cities
+/// @param: cities map cityIds as key and City as the value
+/// @param: totalPop total population got from the sum of all the cities
 /// @param: rtree a boost rtree used for queries
-void ParseCities(const boost::filesystem::path&, map<unsigned int, City>& cities, unsigned int& total_pop,
+void ParseCities(const boost::filesystem::path&, map<unsigned int, City>& cities, unsigned int& totalPop,
                  bgi::rtree<rtElem, bgi::quadratic<16>>& rtree);
 
 /// Parse the commuting information
 /// @param: path to the file containing information about commuting
-/// @param: cities map city_ids as key and City as the value
+/// @param: cities map cityIds as key and City as the value
 /// @param: fracs distribution of different age-group, working and commuting-behaviour
 void ParseCommuting(const boost::filesystem::path&, map<unsigned int, City>&, const map<Fractions, double>& fracs);
 

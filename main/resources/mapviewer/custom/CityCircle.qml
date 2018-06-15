@@ -20,16 +20,19 @@ Rectangle {
         property alias area_text: m_area.info_text
         property alias area_info: m_area.city_info
 
-        color: Qt.rgba((infected/population), 1-(infected/population), 0.5, 0.5)
+        color: Qt.hsva(0, 1, 0.5, 0.5)
         border.width: 3
 
         function isSelected(){
+            var all_pop_info = {
+                popcount: 0,
+                infected: 0
+            }
             if (is_clicked == true){
-                return population;
+                all_pop_info.popcount = population
+                all_pop_info.infected = infected
             }
-            else{
-                return 0;
-            }
+            return all_pop_info;
         }
 
         MouseArea {
@@ -45,6 +48,7 @@ Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.bottom
                 anchors.topMargin: 5
+
             }
             anchors.fill:parent
             hoverEnabled: true
