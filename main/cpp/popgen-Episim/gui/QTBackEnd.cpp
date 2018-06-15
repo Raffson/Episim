@@ -102,6 +102,9 @@ void QTBackEnd::run_simulator(unsigned int days) {
     emit total_infectedChanged();
 }
 
+//Config setters and getters
+/***********************************************************************************************************************/
+
 QString QTBackEnd::get_config(QString xml_tag) {
     return QString((m_geo_pt.get<string>(xml_tag.toStdString())).c_str());
 }
@@ -110,6 +113,25 @@ void QTBackEnd::set_config(QString xml_tag, QString val) {
     m_geo_pt.put(xml_tag.toStdString(),val.toStdString() );
 
 }
+
+QString QTBackEnd::read_path(QString tag){
+
+    string complete_tag = "data_files." + tag.toStdString();
+    auto file = m_geo_pt.get<string>(complete_tag);
+    return QString(file.c_str());
+
+}
+
+QString QTBackEnd::set_path(QString tag, QString path) {
+
+    string complete_tag = "data_files." + tag.toStdString();
+    auto lst = path.split("/");
+    m_geo_pt.put(complete_tag, lst.back().toStdString());
+    return lst.back();
+}
+
+/***********************************************************************************************************************/
+
 
 int QTBackEnd::count_selected_infected() {
 
@@ -191,26 +213,6 @@ void QTBackEnd::flip_items(QList<QObject*> cities) {
     emit selected_infectedChanged();
 }
 
-QString QTBackEnd::read_path(QString tag){
-
-    string complete_tag = "data_files." + tag.toStdString();
-    if(tag == QString("cities")){
-       auto file = m_geo_pt.get<string>(complete_tag);
-       string strng = "data/" + file;
-       return QString(strng.c_str());
-    }
-}
-
-QString QTBackEnd::set_path(QString tag, QString path) {
-
-    string complete_tage = "data_files" + tag.toStdString();
-    if(tag == QString("cities")){
-        cout << "hier" << end;
-        auto lst = path.split("/");
-        cout << lst.back().toStdString() << endl;
-    }
-    return QString("bla");
-}
 
 
 

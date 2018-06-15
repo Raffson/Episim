@@ -4,10 +4,20 @@ import QtPositioning 5.6
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 2.4
-//import episim.city 1.0
+
+
 
 
 Rectangle{
+    Plugin {
+        id: mapPlugin
+        name: "osm" //"mapbox"//", "esri", ...
+        /*PluginParameter{ name: "mapbox.access_token";
+            value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"*/
+        // }
+
+
+    }
     id: map_rect
 
     ToolBar {

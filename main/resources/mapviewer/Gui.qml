@@ -14,15 +14,7 @@ ApplicationWindow{
     visible: true
     //visibility: "FullScreen"
 
-    Plugin {
-        id: mapPlugin
-        name: "osm" //"mapbox"//", "esri", ...
-        /*PluginParameter{ name: "mapbox.access_token";
-            value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"*/
-       // }
 
-
-    }
 
     Component{
         id: lbl
@@ -115,61 +107,65 @@ ApplicationWindow{
 
                             }
                         }
-                        RowLayout{
-                            Layout.alignment: Qt.AlignTop
-                            Layout.maximumHeight: 4
-                            property string tag : "cities"
 
-                            Label{
-                                id: cty_file_label
-                                text: "City data file"
-                                verticalAlignment: Text.AlignVCenter
-                                Layout.minimumWidth: 245
-                                Layout.alignment: Qt.AlignLeft
-
-                            }
-
-                            TextField{
-                                 id: cty_config_text
-                                 Layout.alignment: Qt.AlignRight
-                                 Layout.minimumWidth: 300
-                                 text: backend.read_path(parent.tag)
-
-
-                            }
-
-                            Button{
-                                text: "..."
-                                onClicked:{
-                                    cty_file.visible = true
-                                }
-                                Layout.maximumWidth: 20
-                            }
-
-                            FileDialog{
-                                id: cty_file
-                                title: "Please choose a file"
-                                folder: "../data/"
-                                 nameFilters: [ "*.csv"]
-                                    onAccepted: {
-                                       console.log("You chose: " + cty_file.fileUrls)
-                                       cty_config_text.text = cty_file.fileUrls.toString();
-                                       backend.set_path(parent.tag, cty_file.fileUrls.toString());
-
-
-                                   }
-                                   onRejected: {
-                                       console.log("Canceled")
-
-                                   }
+                        ListModel{
+                            id: search_file_model
+                            ListElement{ tg: "cities"; txt: "City data file"; def_folder: "../data/"; xml: false}
+                            ListElement{ tg: "commuting"; txt: "Commuters data file"; def_folder: "../data/";xml: false}
+                            ListElement{ tg: "households"; txt: "Households data file"; def_folder: "../data/"; xml: true}
 
                         }
 
+                        Repeater{
+                            model: search_file_model
+
+                            RowLayout{
+                                id: cty_fil_select
+                                Layout.alignment: Qt.AlignTop
+                                Layout.maximumHeight: 4
+                                property string tag : tg
+
+                                Label{
+                                    id: cty_file_label
+                                    text: txt
+                                    verticalAlignment: Text.AlignVCenter
+                                    Layout.minimumWidth: 245
+                                    Layout.alignment: Qt.AlignLeft
+
+                                }
+
+                                TextField{
+                                    id: cty_config_text
+                                    Layout.alignment: Qt.AlignRight
+                                    Layout.minimumWidth: 300
+                                    text: backend.read_path(parent.tag)
 
 
+                                }
 
+                                Button{
+                                    text: "..."
+                                    onClicked:{
+                                        cty_file.visible = true
+                                    }
+                                    Layout.maximumWidth: 20
+                                }
 
+                                FileDialog{
+                                    id: cty_file
+                                    title: "Please choose a file"
+                                    folder: def_folder
+                                    nameFilters: xml ?["*.xml"] : [ "*.csv"]
+                                    onAccepted: {
+                                        cty_config_text.text = backend.set_path(cty_fil_select.tag, cty_file.fileUrls.toString());
 
+                                    }
+                                    onRejected: {
+
+                                    }
+
+                                }
+                            }
                         }
                     }
                 }
