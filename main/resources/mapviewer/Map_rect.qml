@@ -292,19 +292,19 @@ Rectangle{
                 selectionRect.width = -1
                 selectionRect.height = -1
 
+                var items = []
                 for(var i = 0; i < map.mapItems.length; i++){
                     var item = map.mapItems[i]
-
                     if(item.x > x_low && item.x < x_high){
                         if(item.y > y_low && item.y < y_high){
                             if(item.circle === true){
-                                item.city.clicked = true
+                                items.push(item.city)
+
                             }
-
-
                         }
                     }
                 }
+               backend.flip_items(items)
             }
         }
 
@@ -326,140 +326,9 @@ Rectangle{
 
     }
     
-    /*Component{
-        id:path
-        MapPolyline{
-            property var cty
-            property var cty2
-            property int commuter_count_out: 0
-            property int commuter_count_in: 0
-            property bool out: false
-            property bool inc: false
-            property bool circle: false
-            line.width: calc_line_width() * 50
-            line.color:mouse_line.containsMouse ? Qt.rgba(1,1,1,0.4) : (out && inc) ? 'blue' : (inc ? Qt.rgba(1,0,0,0.4): Qt.rgba(0,1,0,0.4))
-            z: backend.total_pop / 2 - calc_line_width()
-            
-            
-            
-            function calc_line_width(){
-                
-                if(out && inc){
-                    return (commuter_count_in + commuter_count_out) / (cty.total_out_commuters + cty.total_in_commuters)
-                }
-                
-                else if(inc){
-                    return commuter_count_in / cty.total_in_commuters
-                }
-                
-                else{
-                    
-                    return commuter_count_out / cty.total_out_commuters
-                }
-            }
-            
-            function generate_tool_text(){
-                var ret = cty.name
-                
-                if(out && inc){
-                    ret += " <-> " + cty2.name + "\n"
-                }
-                
-                else if(out){
-                    ret += " -> " + cty2.name + "\n"
-                }
-                
-                else{
-                    ret += " <- " + cty2.name + "\n"
-                }
-                
-                if (out){
-                    ret = ret + "Outgoing commuters: " + commuter_count_out
-                }
-                
-                if(out && inc){
-                    ret += "\n"
-                }
-                
-                if(inc){
-                    ret = ret + "Incomming commuters: " + commuter_count_in
-                }
-                
-                return ret
-            }
-            
-            MouseArea{
-                id: mouse_line
-                anchors.fill: parent
-                hoverEnabled: true
-                ToolTip.visible: containsMouse ? true : false
-                ToolTip.text: generate_tool_text()
-            }
-        }
-    }
-    */
     Component{
         id: mapCircleComponent
         MapCircle{
-            /*function draw_commuters(){
-                
-                // Outs first to filter duplicates
-                for(var i = 0; i < 10; i++){
-                    var added = false
-                    for(var k = 0; k < 10; k++){
-                        if(city.out_commuters[i] === city.in_commuters[k]){
-                            var pat_b = path.createObject(map,{
-                                                              cty: city ,
-                                                              cty2: backend.get_city(city.out_commuters[i]),
-                                                              commuter_count_out: city.out_commuters_count[i],
-                                                              commuter_count_in: city.in_commuters_count[k],
-                                                              inc: true,
-                                                              out: true
-                                                          });
-                            pat_b.addCoordinate(city.crd)
-                            pat_b.addCoordinate(backend.get_city(city.out_commuters[i]).crd)
-                            
-                            map.addMapItem(pat_b)
-                            commuting_lst.push(pat_b)
-                            added = true
-                            break
-                        }
-                    }
-                    if(!added){
-                        pat_b = path.createObject(map, {cty: city , cty2: backend.get_city(city.out_commuters[i]), commuter_count_out: city.out_commuters_count[i], out: true});
-                        pat_b.addCoordinate(city.crd)
-                        pat_b.addCoordinate(backend.get_city(city.out_commuters[i]).crd)
-                        map.addMapItem(pat_b)
-                        commuting_lst.push(pat_b)
-                    }
-                }
-                
-                for(i = 0; i < 10; i++){
-                    for(k = 0; k <10; k++){
-                        added = false
-                        if(city.in_commuters[i] === city.out_commuters[k]){
-                            added = true
-                            break
-                        }
-                    }
-                    if(!added){
-                        pat_b = path.createObject(map, {cty: city ,cty2: backend.get_city(city.in_commuters[i]), commuter_count_in: city.in_commuters_count[i], inc: true});
-                        pat_b.addCoordinate(city.crd)
-                        pat_b.addCoordinate(backend.get_city(city.in_commuters[i]).crd)
-                        map.addMapItem(pat_b)
-                        commuting_lst.push(pat_b)
-                    }
-                }
-            }
-            
-            function remove_commuters(){
-                for(var i = 0; i < commuting_lst.length; i++){
-                    map.removeMapItem(commuting_lst[i]);
-                    
-                }
-                commuting_lst = []
-            }
-            */
             property var city : model.modelData
             property var perc : city.popCount === 0 ? 0 : Math.round(city.infected/city.popCount * 100)
             property var commuting_lst: []
@@ -487,7 +356,6 @@ Rectangle{
                     else{
                         parent.city.clicked = true
                         //parent.draw_commuters()
-
                     }
                 }
                 

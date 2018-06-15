@@ -45,6 +45,7 @@ public:
     Q_INVOKABLE bool should_redraw(){return !m_pop_generated;};
     Q_INVOKABLE QString get_config(QString xml_tag);
     Q_INVOKABLE void set_config(QString xml_tag, QString val);
+    Q_INVOKABLE void flip_items(QList<QObject*>);
 
 
     Q_PROPERTY(QList<QObject*> cities MEMBER m_cities NOTIFY citiesChanged)
@@ -69,7 +70,7 @@ public:
     QList<QObject*> get_cities(){return m_cities;}
 
     void add_commute_lines(const QList<QTCommuter*>& lst);
-    void remove_commute_lines(unsigned int cty_id, int amount);
+    void remove_commute_lines(const QList<QTCommuter *> &lst);
 
 
 
@@ -80,6 +81,9 @@ private:
     QGeoCoordinate get_center();
     int count_selected_infected();
     int get_total_infected();
+
+    void add_commute_lines_no_emit(const QList<QTCommuter*>& lst);
+    void remove_commute_lines_no_emit(const QList<QTCommuter *> &lst);
 
 
 

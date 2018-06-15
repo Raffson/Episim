@@ -125,10 +125,10 @@ if(Qt5_FOUND)
 	set(CMAKE_AUTOMOC  ON)
 	set(LIB_SRC ${LIB_SRC}
 		viewers/MapViewer.cpp
-		RobbeGui/QTBackEnd.cpp
-		RobbeGui/QTCity.cpp
-		RobbeGui/QTCommuter.cpp
-		RobbeGui/QTCommuterModel.cpp
+			popgen-Episim/gui/QTBackEnd.cpp
+			popgen-Episim/gui/QTCity.cpp
+			popgen-Episim/gui/QTCommuter.cpp
+			popgen-Episim/gui/QTCommuterModel.cpp
 		)
 endif()
 

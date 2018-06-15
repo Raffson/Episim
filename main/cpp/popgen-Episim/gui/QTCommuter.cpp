@@ -7,7 +7,7 @@
 #include <iostream>
 using namespace std;
 
-QTCommuter::QTCommuter(QTCity* city1, QTCity* city2, int outcommuting, int incommuting,  QObject* parent ):
+QTCommuter::QTCommuter(QTCity* city1, QTCity* city2, double outcommuting, double incommuting,  QObject* parent ):
         QObject(parent),m_city1(city1), m_city2(city2), m_center_city1(city1->get_coordinates()),
         m_center_city2(city2->get_coordinates()),m_out_count(outcommuting), m_in_count(incommuting){
 
@@ -20,13 +20,17 @@ QTCommuter::QTCommuter(QTCity* city1, QTCity* city2, int outcommuting, int incom
 }*/
 
 
-void QTCommuter::set_in_commuters(int amount) {
+void QTCommuter::set_in_commuters(double amount) {
         m_in_count = amount;
 }
 
 QTCity *QTCommuter::get_main_city() {
         return m_city1;
 }
+QTCity *QTCommuter::get_second_city() {
+    return m_city2;
+}
+
 
 double QTCommuter::calculate_line_width() {
 
@@ -40,16 +44,14 @@ double QTCommuter::calculate_line_width() {
 QColor QTCommuter::pick_color() {
 
     if(m_in_count == 0){ // so it is an outcommuters line
-        cout << "blue" << endl;
         return QColor("green");
     }
     else if(m_out_count == 0){
-        cout << "red" << endl;
         return QColor("red");
     }
     else{
-        cout <<"blue" << endl;
         return QColor("blue");
     }
 }
+
 

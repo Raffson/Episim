@@ -128,7 +128,7 @@ void QTBackEnd::add_selected_pop(int amount) {
     emit selected_popChanged();
 }
 
-void QTBackEnd::add_commute_lines(const QList<QTCommuter *> &lst) {
+void QTBackEnd::add_commute_lines(const QList<QTCommuter*> &lst) {
 
     for(auto& it: lst){
         m_commuters.append(it);
@@ -136,20 +136,44 @@ void QTBackEnd::add_commute_lines(const QList<QTCommuter *> &lst) {
     emit commutersChanged();
 }
 
-void QTBackEnd::remove_commute_lines(unsigned int cty_id, int amount) {
+void QTBackEnd::add_commute_lines_no_emit(const QList<QTCommuter*> &lst) {
+    for(auto& it: lst){
+        m_commuters.append(it);
+    }
+}
 
-    int removed = 0;
-    for(auto it = m_commuters.begin(); m_commuters.end() > it; it++){
-        auto cmt = dynamic_cast<QTCommuter*>(*it);
-        if(cty_id ==(unsigned int) cmt->get_main_city()->get_id()){
-            m_commuters.erase(it);
-            removed ++;
-            if(removed== amount){
-                break;
-            }
-        }
+void QTBackEnd::remove_commute_lines(const QList<QTCommuter*> &lst) {
+
+    for(auto& it: lst){
+        m_commuters.removeOne(it);
     }
     emit commutersChanged();
+}
+void QTBackEnd::remove_commute_lines_no_emit(const QList<QTCommuter*> &lst) {
+
+    for(auto& it: lst){
+        m_commuters.removeOne(it);
+    }
+}
+
+
+
+void QTBackEnd::flip_items(QList<QObject*> cities) {
+
+    for(auto& it: cities){
+        auto cty = dynamic_cast<QTCity*>(it);
+        if(cty->get_clicked()){
+            remove_commute_lines_no_emit(cty->get_commuters());
+        }
+        else{
+            add_commute_lines_no_emit(cty->get_commuters());
+        }
+        cty->flip();
+
+    }
+    emit commutersChanged();
+    emit selected_popChanged();
+    emit selected_infectedChanged();
 }
 
 
