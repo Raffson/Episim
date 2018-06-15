@@ -88,14 +88,15 @@ Rectangle{
             }
         }
     }
-
+ScrollBar{
+    id: sidebar
+    anchors.left: parent.left
+    anchors.top: toolBar.bottom
+    anchors .right: map.left
+    anchors.bottom: map.bottom
+    width: parent.width / 7
     Rectangle{
-        id: sidebar
-        anchors.left: parent.left
-        anchors.top: toolBar.bottom
-        anchors .right: map.left
-        anchors.bottom: map.bottom
-        width: parent.width / 7
+
         ColumnLayout{
             spacing: 5
             anchors.fill: parent
@@ -144,6 +145,7 @@ Rectangle{
         }
 
     }
+}
 
     Map {
         id: map
