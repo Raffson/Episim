@@ -19,8 +19,8 @@ int main(int argc, char** argv){
 #ifdef USING_QT
     QGuiApplication app(argc, argv); // main app
     QQmlApplicationEngine engine;
-
-    QScopedPointer<stride::gui::QTBackEnd> backend(new stride::gui::QTBackEnd(engine, pt));
+    shared_ptr<stride::SimRunner> ptr;
+    QScopedPointer<stride::gui::QTBackEnd> backend(new stride::gui::QTBackEnd(engine, pt,ptr));
     engine.rootContext()->setContextProperty("backend", backend.data());
     engine.load(QStringLiteral("mapviewer/Gui.qml"));
 

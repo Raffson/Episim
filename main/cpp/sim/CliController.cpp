@@ -117,8 +117,9 @@ void CliController::ControlGui()
         int dummyArgc = 0;
         QGuiApplication app(dummyArgc, 0); // main app
         QQmlApplicationEngine engine;
-
-        QScopedPointer<gui::QTBackEnd> backend(new gui::QTBackEnd(engine, m_config_pt));
+        shared_ptr<SimRunner> runner;
+        QScopedPointer<gui::QTBackEnd> backend(new gui::QTBackEnd(engine, m_config_pt, runner, nullptr));
+        RegisterViewers(runner);
         engine.rootContext()->setContextProperty("backend", backend.data());
         engine.load(QStringLiteral("mapviewer/Gui.qml"));
         app.exec();

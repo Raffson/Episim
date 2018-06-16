@@ -13,8 +13,8 @@
 using namespace std;
 namespace stride {
 namespace gui{
-QTBackEnd::QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, QObject *parent) : QObject(parent),
-                                                                                  m_pt(pt), m_engine(engine) {
+QTBackEnd::QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, shared_ptr<stride::SimRunner> &viewer, QObject *parent)
+        : QObject(parent), m_pt(pt), m_engine(engine),m_view_ptr(viewer) {
 
     string file(m_pt.get<string>("run.geopop_file"));
     string path = "config/" + file;
@@ -92,8 +92,8 @@ void QTBackEnd::runSimulator(unsigned int days) {
         return;
     }
 
-    stride::SimRunner w(m_pt, m_grid->GetPopulation(), m_grid);
-    w.Run();
+    m_view_ptr = make_shared<SimRunner>(m_pt, m_grid->GetPopulation(), m_grid);
+    m_view_ptr->Run();
     m_pop_generated = false;
 
     for (auto &it: m_cities) {

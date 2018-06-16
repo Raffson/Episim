@@ -15,6 +15,7 @@
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
 #include <QtPositioning/QGeoCoordinate>
+#include <sim/SimRunner.h>
 
 #include "boost/property_tree/ptree.hpp"
 
@@ -54,7 +55,10 @@ public:
     /// @brief Constructor of BackEnd.
     /// @param engine the Qtquick engine.
     /// @param pt the config pt.
-    explicit QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, QObject *parent = nullptr);
+    /// @param viewer Optinal the pointer to the viewer
+    /// @param parent Optional Used in QML to be a MetaObject of QT
+    explicit QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, shared_ptr<SimRunner> &viewer,
+                        QObject *parent = nullptr);
 
     /// @brief default destructor
     ~QTBackEnd() override = default;
@@ -321,6 +325,9 @@ private:
 
     ///> Pop that is selected
     int m_selected_pop{0};
+
+    ///> shared ptr to the viewer simrunner
+    shared_ptr<SimRunner>& m_view_ptr;
 ///@}
 
 
