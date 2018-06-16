@@ -95,41 +95,95 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         // Step 3: replace X% of these cities
         vector<unsigned int> amountToFrag = generate_random(pVec, m_rng, (unsigned int)defragCty.size());
         defragCty.shrink_to_fit();
-        vector<stride::City&> nw_cities;
         unsigned int counter = 0;
+        map<unsigned int,vector<City>> remember_commuters;
+        unsigned int id_counter = m_cities.rbegin()->second.GetId();
         for (auto& it : defragCty) {
                 // We add 2 to the amount to defrag, bcs we want to defrag in atleast 2 parts
-                auto outcommuters = it->GetOutCommuting();
-                auto incommuters = it->GetInCommuting();
+                auto& outcommuters = it->GetOutCommuting();
+                auto& incommuters = it->GetInCommuting();
+                vector<City> commuters_temp;
                 for (unsigned int i = 0; i < amountToFrag[counter] + 2; i++) {
 
-                        auto newId    = m_cities.rbegin()->first + 1;
+                        auto newId    = id_counter;
+                        id_counter++;
                         auto coords    = it->GetCoordinates();
-                        double newLat  = coords.GetLatitude() + pow(-1, i) * (0.1 * i);
-                        double newLong = coords.GetLongitude() + pow(-1, i) * (0.1 * i);
+                        double newLat  = coords.GetLatitude() + pow(-1, i) * (0.001 * i);
+                        double newLong = coords.GetLongitude() + pow(-1, i) * (0.001 * i);
                         double newX    = coords.GetX() + pow(-1, i) * (0.1 * i);
                         double newY    = coords.GetY() + pow(-1, i) * (0.1 * i);
                         auto newName = it->GetName();
-                        newName += to_string(i);
-                        m_cities.emplace(newId,
-                                         City(newId, it->GetProvince(), it->GetPopulation() / ((amountToFrag[counter] + 2)),
-                                         Coordinate(newX, newY, newLong, newLat), newName) );
+                        newName += " " + to_string(i);
 
-                        stride::City& cty = m_cities.at(newId);
-                        nw_cities.emplace_back(cty);
-                        //cty.SetOutCommuters(newId, 0);
-                        for(auto& commute_line: outcommuters){
-                                cty.SetOutCommuters(commute_line.first, commute_line.second / (amountToFrag[counter] + 2));
-                        }
-                        //cty.SetInCommuters(newId, 0);
-                        for(auto& commute_line: incommuters){
-                                cty.SetInCommuters(commute_line.first, commute_line.second / (amountToFrag[counter] + 2));
-                        }
-
+                        commuters_temp.emplace_back(City(newId, it->GetProvince(),
+                                                                it->GetPopulation() / ((amountToFrag[counter] + 2)),
+                                                                Coordinate(newX, newY, newLong, newLat), newName) );
+                    ;
 
                 }
+                remember_commuters[it->GetId()] = move(commuters_temp);
                 counter++;
-                m_cities.erase(it->GetId());
+            }
+
+            for( auto& it: remember_commuters){
+                stride::City* old_city  = &m_cities.at(it.first);
+                //m_cities.erase(old_city->GetId());
+
+                for(auto& nw_city: it.second){
+
+                    for(auto& other_old_city: m_cities){
+                        if(remember_commuters.count(other_old_city.first) == 0) {
+
+                            //All old cities get an entry to the new city
+                            double outcommuting_to = old_city->GetOutCommuting().at(other_old_city.second.GetId());
+                            other_old_city.second.SetOutCommuters(nw_city.GetId(),
+                                                                  ceil(outcommuting_to / (double)(amountToFrag[counter] + 2)));
+
+                            double incommuting_to = old_city->GetInCommuting().at(other_old_city.second.GetId());
+                            other_old_city.second.SetInCommuters(nw_city.GetId(),
+                                                                 ceil(incommuting_to / (double)(amountToFrag[counter] + 2)));
+
+
+
+                            //the new city gets all entries to the old city
+                            outcommuting_to = other_old_city.second.GetOutCommuting().at(old_city->GetId());
+                            nw_city.SetOutCommuters(other_old_city.first,
+                                                     ceil(outcommuting_to / (double)(amountToFrag[counter] + 2)));
+
+                            incommuting_to = other_old_city.second.GetInCommuting().at(old_city->GetId());
+                            nw_city.SetInCommuters(other_old_city.first, ceil(incommuting_to / (double)(amountToFrag[counter] + 2)));
+
+
+                        }
+                    }
+
+                    for (auto& it2: remember_commuters) {
+                        for (auto &nw_city2: it2.second) {
+                            nw_city.SetOutCommuters(nw_city2.GetId(), 1);
+                            nw_city.SetInCommuters(nw_city2.GetId(), 1);
+                        }
+                    }
+                }
+
+                for(auto& it2: m_cities){
+                    it2.second.RemoveInCommuters(it.first);
+                    it2.second.RemoveOutCommuters(it.first);
+                }
+            }
+
+            for(auto& it: remember_commuters){
+                m_cities.erase(it.first);
+
+                for(auto& it_new: it.second){
+                    it_new.SetOutCommuters(it_new.GetId(), 1);
+                    it_new.SetInCommuters(it_new.GetId(), 1);
+                    //cout << it_new.GetName() << " " << to_string(it_new.GetId()) << endl;
+                    m_cities.emplace(it_new.GetId(), move(it_new));
+                }
+
+
+        }
+
         }
         // cout << m_cities.size() << endl;
 
