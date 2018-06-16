@@ -9,18 +9,12 @@
 
 
 QTCity::QTCity(stride::City* model,QTBackEnd* back_end, QObject *parent ):
-        QObject(parent), m_city(model),m_back_end(back_end), m_id(model->GetId()), m_pop(model->GetEffectivePopulation()){
-    FillInInCommuters();
-    FillInOutCommuters();
-}
+        QObject(parent), m_city(model),m_back_end(back_end), m_id(model->GetId()),
+        m_pop(model->GetEffectivePopulation()){}
+
 
 QTCity::QTCity(const QTCity& obj): QObject(obj.parent()), m_city(obj.GetModelCity()), m_back_end(obj.GetBackEnd()),
-                                    m_id(obj.GetId()), m_pop(obj.GetModelCity()->GetEffectivePopulation()){
-
-    FillInInCommuters();
-    FillInOutCommuters();
-
-}
+                                    m_id(obj.GetId()), m_pop(obj.GetModelCity()->GetEffectivePopulation()){}
 
 
 
@@ -47,38 +41,6 @@ int QTCity::GetId() const {
     return m_id;
 }
 
-void QTCity::FillInOutCommuters() {
-
-    vector<pair<double, unsigned int>> tmp_vec;
-    for(auto& it: m_city->GetOutCommuting()){
-        tmp_vec.emplace_back(make_pair(it.second, it.first));
-    }
-
-    std::sort(tmp_vec.begin(), tmp_vec.end());
-
-    for(auto& it: boost::adaptors::reverse(tmp_vec)){
-        m_sorted_out_commuters.append(it.second);
-        m_commuter_out_count.append(it.first);
-    }
-}
-
-void QTCity::FillInInCommuters() {
-    vector<pair<double, unsigned int>> tmp_vec;
-
-    for(auto& it: m_city->GetInCommuting()){
-        tmp_vec.emplace_back(make_pair(it.second, it.first));
-    }
-
-    std::sort(tmp_vec.begin(), tmp_vec.end());
-
-
-
-    for(auto& it: boost::adaptors::reverse(tmp_vec)){
-        m_sorted_in_commuters.append(it.second);
-        m_commuter_in_count.append(it.first);
-    }
-
-}
 
 void QTCity::SetClicked(bool val){
     m_is_clicked = val;

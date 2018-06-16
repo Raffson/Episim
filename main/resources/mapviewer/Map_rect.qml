@@ -339,7 +339,7 @@ Rectangle{
         MapPolyline{
             line.width: modelData.width
             line.color: modelData.color
-            path:[modelData.center_city_1,modelData.center_city2 ]
+            path:[modelData.center_city_1, modelData.center_city_2 ]
         }
 
     }

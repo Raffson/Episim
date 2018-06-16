@@ -14,6 +14,7 @@
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
+#include <QtPositioning/QGeoCoordinate>
 
 #include "boost/property_tree/ptree.hpp"
 

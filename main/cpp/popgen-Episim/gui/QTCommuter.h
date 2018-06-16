@@ -1,5 +1,6 @@
 //
 // Created by robbe on 13.06.18.
+// File contains the QTCommuter class.
 //
 
 #pragma once
@@ -11,20 +12,57 @@
 #include "QTCity.h"
 
 class QTCity;
-
+/**
+ * @brief: Represents a visual commuter line in the GUI. We will handle the logic at the C++ side
+ *
+ */
 class QTCommuter : public QObject {
     Q_OBJECT
 
 public:
-
-    Q_PROPERTY(QGeoCoordinate center_city_1 MEMBER m_center_city1 CONSTANT)
-    Q_PROPERTY(QGeoCoordinate center_city_2 MEMBER m_center_city2 CONSTANT)
-    Q_PROPERTY(double width READ CalculateLineWidth CONSTANT)
-    Q_PROPERTY(QColor color READ PickColor CONSTANT)
-
+// Constructors, Destructor
+/***********************************************************************************************************************/
+/**
+ * @name Constructors, Destructors
+ * All constructors and destructors
+ *
+ */
+ ///@{
+    /**
+     * @brief Constructor of QTCommuter can also used as a default to use QTCommuter as a metatype in QML
+     * @param city1 The main city, city where we draw the commute line from.
+     * @param city2 City where the commute line goes to
+     * @param outcommuting total outcommuters on the line
+     * @param incommuting  total incommuters on the line
+     * @param parent  parent used for QML purposes
+     */
     explicit QTCommuter(QTCity* city1 = nullptr, QTCity* city2 = nullptr, double outcommuting = 0, double incommuting = 0, QObject* parent = nullptr);
-    ~QTCommuter() override = default;
 
+    /// Default destructor
+    ~QTCommuter() override = default;
+///@}
+
+// Q Properties
+/***********************************************************************************************************************/
+/**
+ * @name Q Properties
+ * Q Properties of a Commuting line.
+ */
+ ///@{
+    ///< The Coordinates of the center of city1 in latitude and longitude
+    Q_PROPERTY(QGeoCoordinate center_city1 MEMBER m_center_city1 CONSTANT)
+
+    ///< The Coordinate of the center of city2 in latitude and longitude
+    Q_PROPERTY(QGeoCoordinate center_city2 MEMBER m_center_city2 CONSTANT)
+
+    ///< The width of our line in the Gui Representation
+    Q_PROPERTY(double width READ CalculateLineWidth CONSTANT)
+
+    ///< Color the line should have in the gui Representation
+    Q_PROPERTY(QColor color READ PickColor CONSTANT)
+///@}
+
+/***********************************************************************************************************************/
     void set_in_commuters(double amount);
     QTCity* GetMainCity();
     QTCity* GetSecondCity();

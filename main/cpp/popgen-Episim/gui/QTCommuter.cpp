@@ -11,6 +11,8 @@ QTCommuter::QTCommuter(QTCity* city1, QTCity* city2, double outcommuting, double
         QObject(parent),m_city1(city1), m_city2(city2), m_center_city1(city1->GetCoordinates()),
         m_center_city2(city2->GetCoordinates()),m_out_count(outcommuting), m_in_count(incommuting){
 
+    cout << m_center_city1.latitude() <<" "  << m_center_city1.latitude() << ", " <<  m_center_city2.latitude() << m_center_city2.longitude() << endl ;
+
 }
 /*QTCommuter::QTCommuter(const QTCommuter& obj):QObject(obj.parent()), m_city1(obj.m_city1), m_city2(obj.m_city2),
                                               m_center_city1(obj.m_center_city1), m_center_city2(obj.m_center_city2),
