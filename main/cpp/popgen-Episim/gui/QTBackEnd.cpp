@@ -61,14 +61,14 @@ void QTBackEnd::MakeCityList() {
     emit CitiesChanged();
 }
 
-QGeoCoordinate QTBackEnd::GetCenter() {
+QGeoCoordinate QTBackEnd::GetCenter() const {
 
     stride::Coordinate crd = m_grid->GetCenterOfGrid();
     return QGeoCoordinate(crd.GetLatitude(),crd.GetLongitude() );
 }
 
 
-QObject* QTBackEnd::getCity(unsigned int id) {
+QObject* QTBackEnd::getCity(unsigned int id) const {
 
     for(auto& it: m_cities){
         if(id ==(unsigned int) dynamic_cast<QTCity *>(it)->GetId()){
@@ -144,7 +144,7 @@ bool QTBackEnd::setBoolConfig(const QString &xml_tag, const bool &value){
 /***********************************************************************************************************************/
 
 
-int QTBackEnd::CountSelectedInfected() {
+int QTBackEnd::CountSelectedInfected() const {
 
     int counter = 0;
     for(auto& it : m_cities){
@@ -156,7 +156,7 @@ int QTBackEnd::CountSelectedInfected() {
     return counter;
 }
 
-int QTBackEnd::GetTotalInfected() {
+int QTBackEnd::GetTotalInfected() const{
     if(m_grid == nullptr){
         return 0;
     }

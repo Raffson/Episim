@@ -159,7 +159,7 @@ public:
 ///@{
     /// @brief Get's a QCity made in BackEnd.
     /// @param id Id of the needed city
-    Q_INVOKABLE QObject* getCity(unsigned int id); // Is used in QML. Clion just does not recognize this
+    Q_INVOKABLE QObject* getCity(unsigned int id) const; // Is used in QML. Clion just does not recognize this
 ///@}
 //Signals, are used to notify our views of change.
 /***********************************************************************************************************************/
@@ -212,19 +212,19 @@ public:
 ///@{
     /// @brief returns all QTCities.
     /// @return list of QTCities in the simulator.
-    QList<QObject*> GetCities(){return m_cities;}
+    QList<QObject*> GetCities()const {return m_cities;}
 
     /// @brief returns the center of the GeoGrid based on the longitude and latitude of the cities.
     /// @return A QGeoCoordiante that contains the latitude en longitude of the center of the grid.
-    QGeoCoordinate GetCenter();
+    QGeoCoordinate GetCenter() const;
 
     /// @brief returns the total infected in the grid.
     /// @return a integer value of the amount of infected.
-    int GetTotalInfected();
+    int GetTotalInfected() const;
 
     /// @brief Counts the selected infected
     /// @return a integer value of the amount of selected infected.
-    int CountSelectedInfected();
+    int CountSelectedInfected() const ;
 ///@}
 private:
 
