@@ -36,6 +36,8 @@ namespace viewers {
             string m_map_option;
             string m_png_option;
             QObject* m_item;
+
+            int m_snap = 0;
         };
 }
 }

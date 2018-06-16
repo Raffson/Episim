@@ -153,6 +153,8 @@ void MapViewer::LoadMap(bool showMap) {
                                       Q_ARG(QVariant, QVariant::fromValue(out_commuting_size)));
         }
     }
+    QMetaObject::invokeMethod(m_item, "saveToImage", Q_ARG(QVariant, QVariant::fromValue(m_snap)));
+    m_snap ++;
     if(showMap)
         application.exec();
 }
@@ -161,7 +163,7 @@ void MapViewer::ToPng(){
     stringstream s;
     s << m_output_prefix << m_step << ".png";
     QString fname(s.str().c_str());
-    QMetaObject::invokeMethod(m_item, "saveToImage", Q_ARG(QString, fname));
+    QMetaObject::invokeMethod(m_item, "saveToImage");
 }
 
 void MapViewer::Update(const sim_event::Id id) {
@@ -171,7 +173,7 @@ void MapViewer::Update(const sim_event::Id id) {
             if( m_png_option == "step" or showMap )
                 LoadMap(showMap);
             if( m_png_option == "step" )
-                ToPng();
+//                ToPng();
             break;
         }
         case Id::Stepped: {
@@ -180,7 +182,7 @@ void MapViewer::Update(const sim_event::Id id) {
             if( m_png_option == "step" or showMap )
                 LoadMap(showMap);
             if( m_png_option == "step" )
-                ToPng();
+//                ToPng();
             break;
         }
         case Id::Finished: {
@@ -190,7 +192,7 @@ void MapViewer::Update(const sim_event::Id id) {
             if( m_png_option != "none" or showMap )
                 LoadMap(false);
             if( m_png_option != "none" )
-                ToPng();
+//                ToPng();
             break;
         }
         default:

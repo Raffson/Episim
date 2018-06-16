@@ -70,6 +70,7 @@ ApplicationWindow {
     property var stride_paths: []
     property var infected: 0
     property variant selector_rect: 0
+    property variant snap: 0
 
 
     readonly property bool inPortrait: appWindow.width < appWindow.height
@@ -456,8 +457,12 @@ ApplicationWindow {
                                        , map)
     }
 
-    function saveToImage(filename){
+    function saveToImage(snapnmbr){
         console.warn("saving image")
+        var filename = "screenshot"
+        filename += String(snapnmbr)
+        filename += ".png"
+        console.warn(filename)
         if (map.grabToImage(function(result) {
                                result.saveToFile(filename);
                                     })){
