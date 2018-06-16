@@ -5,6 +5,7 @@
 
 #include "MapViewer.h"
 #include "popgen-Episim/util/DesignByContract.h"
+#include "util/FileSys.h"
 
 #include <iostream>
 #include <sstream>
@@ -24,7 +25,19 @@ using namespace stride::sim_event;
 namespace stride {
 namespace viewers {
 
-int MapViewer::LoadMap(bool showMap) {
+MapViewer::MapViewer(shared_ptr<GeoGrid> grid, const std::string &outputPrefix)
+    : m_grid(grid), m_output_prefix(outputPrefix), m_step(0)
+{
+    m_output_prefix += util::FileSys::IsDirectoryString(m_output_prefix) ? "png/" : "/png/";
+    boost::filesystem::path dir(m_output_prefix.c_str());
+    if (!(boost::filesystem::exists(dir))) {
+        boost::filesystem::create_directory(dir);
+    }
+    m_map_option = grid ? grid->GetConfigPtree().get("run.map_option", "none") : "none";
+    m_png_option = grid ? grid->GetConfigPtree().get("run.png_option", "none") : "none";
+}
+
+void MapViewer::LoadMap(bool showMap) {
     REQUIRE(m_grid, "GeoGrid must be intialized in order to load a map for it.");
     cout << "Loading map..." << endl;
 #if QT_CONFIG(library)
@@ -140,26 +153,43 @@ int MapViewer::LoadMap(bool showMap) {
                                       Q_ARG(QVariant, QVariant::fromValue(out_commuting_size)));
         }
     }
-    if(showMap) {
-        return application.exec();
-    }
-    else{return 0;}
+    if(showMap)
+        application.exec();
 }
 
 void MapViewer::ToPng(){
-    QMetaObject::invokeMethod(m_item, "saveToImage");
+    stringstream s;
+    s << m_output_prefix << m_step << ".png";
+    QString fname(s.str().c_str());
+    QMetaObject::invokeMethod(m_item, "saveToImage", Q_ARG(QString, fname));
 }
 
 void MapViewer::Update(const sim_event::Id id) {
     switch (id) {
         case Id::AtStart: {
+            bool showMap = (m_map_option == "step");
+            if( m_png_option == "step" or showMap )
+                LoadMap(showMap);
+            if( m_png_option == "step" )
+                ToPng();
             break;
         }
         case Id::Stepped: {
+            m_step++;
+            bool showMap = (m_map_option == "step");
+            if( m_png_option == "step" or showMap )
+                LoadMap(showMap);
+            if( m_png_option == "step" )
+                ToPng();
             break;
         }
         case Id::Finished: {
-            LoadMap(false);
+            m_step++;
+            bool showMap = (m_map_option != "none");
+            if( m_png_option != "none" or showMap )
+                LoadMap(false);
+            if( m_png_option != "none" )
+                ToPng();
             break;
         }
         default:

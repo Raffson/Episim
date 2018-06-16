@@ -73,10 +73,23 @@ int main(int argc, char** argv)
                             "stride install directories";
                 SwitchArg installedArg("i", "installed", si, cmd, true);
 
-                string sv = "Specifies whether a map should be initialized by using -m or --mapviewer. Note that this "
-                            "will automatically introduce a syntheticly generator population since the populations "
-                            "for the regular simulator do not have geographical information.";
-                SwitchArg mapArg("m", "mapviewer", sv, cmd, false);
+                vector<string>           opt1{"none", "step", "end"};
+                ValuesConstraint<string> vc2(opt1);
+                string sv = "Indicates which option should be passed to the mapviewer. By default, the mapviewer will "
+                            "not be used. When using the step option, a map will be showed during each step of the "
+                            "simulation. The end option will only show the map at the end of the simulation. "
+                            "Note that this will automatically introduce a syntheticly generator population "
+                            "since the populations for the regular simulator do not have geographical information.";
+                ValueArg<string> mapArg("m", "mapviewer", sv, false, "none", &vc2, cmd);
+
+                string sp = "Indicates whether or not snapshots should be taken from the map. By default, "
+                        "no snapshots will be taken. If step is chosen, an image will be written to the "
+                        "output folder within a seperate folder called 'png'. Each image will be called "
+                        "X.png where X represents the day that was simulated. The end option will only "
+                        "take a snapshot at the end of the simulation. "
+                        "Note that this will automatically introduce a syntheticly generator population "
+                        "since the populations for the regular simulator do not have geographical information.";
+                ValueArg<string> pngArg("p", "png", sp, false, "none", &vc2, cmd);
 
                 cmd.parse(argc, static_cast<const char* const*>(argv));
 
@@ -104,14 +117,16 @@ int main(int argc, char** argv)
                 // -----------------------------------------------------------------------------------------
                 // If geopop ...
                 // -----------------------------------------------------------------------------------------
-                if (execArg.getValue() == "geopop" or mapArg.getValue()) {
+                if (execArg.getValue() == "geopop" or mapArg.getValue() != "none" or pngArg.getValue() != "none") {
                         if (configPt.get<string>("run.output_prefix", "").empty()) {
                                 configPt.put("run.output_prefix", TimeStamp().ToTag().append("/"));
                         }
                         configPt.put("run.random_geopop", true);
+                        configPt.put("run.map_option", mapArg.getValue());
+                        configPt.put("run.png_option", pngArg.getValue());
                         configPt.sort();
 
-                        CliController(configPt, mapArg.getValue()).Control();
+                        CliController(configPt).Control();
                 }
                 // -----------------------------------------------------------------------------------------
                 // If run simulation in cli ...
