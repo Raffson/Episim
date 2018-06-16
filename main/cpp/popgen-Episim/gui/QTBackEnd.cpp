@@ -105,16 +105,16 @@ void QTBackEnd::runSimulator(unsigned int days) {
 //Config setters and getters
 /***********************************************************************************************************************/
 
-QString QTBackEnd::getConfig(QString xml_tag) {
+QString QTBackEnd::getConfig(const QString &xml_tag) const {
     return QString((m_geo_pt.get<string>(xml_tag.toStdString())).c_str());
 }
 
-void QTBackEnd::setConfig(QString xml_tag, QString val) {
+void QTBackEnd::setConfig(const QString &xml_tag, const QString &val) {
     m_geo_pt.put(xml_tag.toStdString(),val.toStdString() );
 
 }
 
-QString QTBackEnd::readPath(QString tag){
+QString QTBackEnd::readPath(const QString &tag) const{
 
     string complete_tag = "data_files." + tag.toStdString();
     auto file = m_geo_pt.get<string>(complete_tag);
@@ -122,7 +122,7 @@ QString QTBackEnd::readPath(QString tag){
 
 }
 
-QString QTBackEnd::setPath(QString tag, QString path) {
+QString QTBackEnd::setPath(const QString &tag, const QString &path) {
 
     string complete_tag = "data_files." + tag.toStdString();
     auto lst = path.split("/");
@@ -130,11 +130,11 @@ QString QTBackEnd::setPath(QString tag, QString path) {
     return lst.back();
 }
 
-bool QTBackEnd::getBoolConfig(QString xml_tag){
+bool QTBackEnd::getBoolConfig(const QString &xml_tag) const{
 
     return m_geo_pt.get<bool>(xml_tag.toStdString());
 }
-bool QTBackEnd::setBoolConfig(QString xml_tag, bool value){
+bool QTBackEnd::setBoolConfig(const QString &xml_tag, const bool &value){
 
     m_geo_pt.put(xml_tag.toStdString(), value);
 

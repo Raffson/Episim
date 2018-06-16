@@ -100,9 +100,9 @@ ApplicationWindow{
                                     maximumValue: fract ? 100 : Infinity
                                     //Layout.fillWidth: true
                                     Layout.alignment: Qt.AlignRight
-                                    value: fract? backend.get_config(xml) * 100 : backend.getConfig(xml)
+                                    value: fract? backend.getConfig(xml) * 100 : backend.getConfig(xml)
                                     suffix: fract ? "%" : ""
-                                    onValueChanged: fract? backend.set_config(xml, value / 100): backend.setConfig(xml, value)
+                                    onValueChanged: fract? backend.setConfig(xml, value / 100): backend.setConfig(xml, value)
                                 }
 
                             }

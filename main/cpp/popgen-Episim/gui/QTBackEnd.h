@@ -73,7 +73,7 @@ public:
     /// @brief tells QML if it should redraw the map items.
     /// This is needed if the population generator is rerun.
     /// @return inverse of pop_generated. If a pop is generated there should not be a redraw.
-    Q_INVOKABLE bool shouldRedraw(){return !m_pop_generated;};
+    Q_INVOKABLE bool shouldRedraw() const{ return !m_pop_generated;};
 
     /// @brief This flips the state of a list of cities. Flipping from clicked to unclicked and vice versa.
     ///        mainly used if we select multiple cities with rectangle select.
@@ -91,32 +91,32 @@ public:
     /// @brief this reads a element at xml_tag.
     /// @param xml_tag tag where we can find the element needed.
     /// @return Returns the needed element as Qstring
-    Q_INVOKABLE QString getConfig(QString xml_tag);
+    Q_INVOKABLE QString getConfig(const QString &xml_tag) const;
 
     /// @brief this sets a value in config at tag
     /// @param xml_tag the tag where we want to set our value.
     /// @param val the value that needs to be set in the config at tag as QString
-    Q_INVOKABLE void setConfig(QString xml_tag, QString val);
+    Q_INVOKABLE void setConfig(const QString &xml_tag, const QString &val);
 
     /// @brief reads a path out of config
     /// @param the tag where we find the path
     /// @return the path as a QString
-    Q_INVOKABLE QString readPath(QString tag);
+    Q_INVOKABLE QString readPath(const QString &tag) const;
 
     /// @brief sets a path at tag
     /// @param tag tag where we need to place path in config
     /// @param path path to be placed in config
-    Q_INVOKABLE QString setPath(QString tag, QString path);
+    Q_INVOKABLE QString setPath(const QString &tag, const QString &path);
 
     /// @brief gets a bool out of config at xml_tag
     /// @param xml_tag tag of the bool we need in config
     /// @return bool found in config
-    Q_INVOKABLE bool getBoolConfig(QString xml_tag);
+    Q_INVOKABLE bool getBoolConfig(const QString &xml_tag) const;
 
     /// @brief sets a bool in config file at xml_tag
     /// @param xml_tag the tag of our bool
     /// @param value the value as a bool we want to place
-    Q_INVOKABLE bool setBoolConfig(QString xml_tag, bool value);
+    Q_INVOKABLE bool setBoolConfig(const QString &xml_tag, const bool &value);
 
 ///@}
 // BackEnd Properties. Wraps getters and setters. if those are trivial read/write the member directly
