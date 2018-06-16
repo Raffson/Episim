@@ -23,31 +23,5 @@ void Household::AddMember(const Person* member) {
         }
 }
 
-void Household::GetSchoolAttendants(vector<Person*>& vec) const
-{
-        for (auto aMember : m_pool->GetPool()) {
-                if (aMember->GetAge() < 18 and aMember->GetAge() >= 3) {
-                        vec.emplace_back(aMember);
-                }
-        }
-}
-
-void Household::GetPossibleStudents(vector<Person*>& vec) const
-{
-        for (auto aMember : m_pool->GetPool()) {
-                if (aMember->GetAge() >= 18 && aMember->GetAge() < 26) {
-                        vec.emplace_back(aMember);
-                }
-        }
-}
-
-void Household::GetPossibleWorkers(vector<Person*>& vec) const
-{
-        for (auto aMember : m_pool->GetPool()) {
-                if (aMember->GetAge() >= 18 && aMember->GetAge() <= 64) {
-                        vec.emplace_back(aMember);
-                }
-        }
-}
 
 } // namespace stride

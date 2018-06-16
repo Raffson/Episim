@@ -63,11 +63,6 @@ constexpr std::array<Sizes, 6> SizeList{
 /// @retval: <bool> True if the file exists, False else.
 bool file_exists(const boost::filesystem::path& path);
 
-/// Converts a number in degrees to a number in radians.
-/// @param degrees a number in degrees
-/// @retval <double> a number in radians.
-double convert_to_radians(double degrees);
-
 /// Takes a distribution -> a vec of numbers and generates N random numbers given the distribution vector.
 /// @param pVec a vector representing our distribution, each entry contains a relative probability.
 ///              The probability to generate the number on that index (first entry is probability to
@@ -111,10 +106,8 @@ void ptreeToFile(const boost::property_tree::ptree& pt, const string& fname);
 namespace constants {
 
 /// Own defined EPSILON, to determine correctness of doubles
-// Changed to 10^(-12) after refactor to double...
+// Changed to 10^(-12) after refactor to double
 const double EPSILON = 0.000000000001;
-/// Radius of the earth ~= 6371.0 km
-const double EARTH_RADIUS = 6371.0; // in kilometer <- deprecated now that we use boost's geometry...
 
 } // namespace constants
 } // namespace stride
