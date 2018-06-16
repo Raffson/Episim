@@ -56,7 +56,7 @@ public:
         const string GetName() const { return m_name; };
 
         /// Get the number of all the communities
-        unsigned int GetNrOfCommunities() const { return m_communities.size(); }
+        size_t GetNrOfCommunities() const { return m_communities.size(); }
 
         /// Get the number of total commuters to the city
         const double& GetTotalInCommutersCount() const;
@@ -137,11 +137,12 @@ public:
 
         /// Increments the number of commuters to the destination
         /// @param destination the destination city
+        /// @param isStudent indicates whether or not this commuter is a student
         void AddEffectiveCommuterTo(const unsigned int destination, const bool isStudent);
 
         /// Returns the number of effective commuters to the destination city from this city
         /// @param destination the destination city of commuters
-        unsigned int GetEffectiveCommuterTo(const unsigned int destination);
+        unsigned int GetEffectiveCommuterTo(unsigned int destination);
 
 
 private:

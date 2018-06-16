@@ -106,7 +106,9 @@ private:
         /// Computes for each city the distances to all other cities and classifies them
         /// in exponential order, assigning this to m_neighbours_in_radius. The default initial search radius = 10km.
         void ClassifyNeighbours();
-        void ClassifyNeighbours2(); //for benchmarking purposes...
+
+        /// Version for benchmarking purposes
+        void ClassifyNeighbours2();
 
         /// Adds communities of the given type and their contact pools.
         /// @param cities A vector with pointers to all the cities in the GeoGrid.

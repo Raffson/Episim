@@ -137,14 +137,14 @@ void MapViewer::LoadMap(bool showMap) {
                 // it.first: id of other city
                 // it.second: number of commuters
                 in_commuting_id.push_back(it.first);
-                in_commuting_size.push_back(it.second);
+                in_commuting_size.push_back((int)it.second);
             }
             auto com_out = city.GetOutCommuting();
             for (auto it : com_out) {
                 // it.first: id of other city
                 // it.second: number of commuters
                 out_commuting_id.push_back(it.first);
-                out_commuting_size.push_back(it.second);
+                out_commuting_size.push_back((int)it.second);
             }
             QMetaObject::invokeMethod(m_item, "placeCity", Q_ARG(QVariant, QVariant::fromValue(vals)),
                                       Q_ARG(QVariant, QVariant::fromValue(in_commuting_id)),

@@ -39,7 +39,7 @@ public:
         Community(const size_t& id, CommunityType::Id type, City* city);
 
         /// Return the community's ID
-        const unsigned int GetID() const { return m_id; }
+        const size_t GetID() const { return m_id; }
 
         /// Return the community's type
         const CommunityType::Id& GetCommunityType() const { return m_type; }
