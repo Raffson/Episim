@@ -192,6 +192,64 @@ ApplicationWindow{
                 }
             }
 
+            Tab{
+                id: config_sim
+                title:"Config sim"
+                Rectangle{
+                    anchors.fill: parent
+                    color: Qt.rgba(0.9,0.9,0.9,0.5)
+                    GridLayout{
+                        id: alligner_run
+                        layoutDirection: Qt.LeftToRight
+                        flow: GridLayout.TopToBottom
+                        anchors.topMargin: parent.height / 50
+                        anchors.leftMargin: 50
+                        anchors.fill: parent
+                        columnSpacing: 5
+                        rowSpacing: 35
+                        rows: 15
+                        columns: 1
+
+
+                        Repeater{
+
+                            model:[{txt: "Behaviour policy", mdl:["NoBehaviour", "Vaccination" ]},
+                                   {txt: "Belief policy", mdl:["Belief", "HBM", "Imitation", "NoBelief", "Treshold"]}
+                                  ]
+
+                            delegate :RowLayout{
+                                z:5
+                                spacing: 50
+                                Layout.alignment: Qt.AlignTop
+                                Layout.maximumHeight: 4
+                                Label{
+                                    id: belief_polic
+                                    text: modelData.txt
+                                    //lineHeight: 0.9
+                                    verticalAlignment: Text.AlignVCenter
+                                    Layout.minimumWidth: 200
+                                    Layout.alignment: Qt.AlignLeft
+                                }
+
+                                ComboBox{
+                                    id: belief_txt
+                                    Layout.minimumWidth: 200
+                                    model: modelData.mdl
+                                    //Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignRight
+                                    Layout.maximumHeight: 25
+
+                                }
+
+                            }
+                        }
+
+                        RowLayout{
+                            Layout.fillHeight: true
+                        }
+                    }
+                }
+            }
         }
     }
 }
