@@ -11,9 +11,10 @@
 #include <sim/SimRunner.h>
 #include <fstream>
 using namespace std;
-
-QTBackEnd::QTBackEnd(QQmlApplicationEngine& engine, ptree& pt, QObject *parent):QObject(parent),
-                    m_pt(pt),m_engine(engine) {
+namespace stride {
+namespace gui{
+QTBackEnd::QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, QObject *parent) : QObject(parent),
+                                                                                  m_pt(pt), m_engine(engine) {
 
     string file(m_pt.get<string>("run.geopop_file"));
     string path = "config/" + file;
@@ -50,11 +51,11 @@ void QTBackEnd::MakeCityList() {
 
     m_cities.clear();
     m_commuters.clear();
-    for(auto& it: m_grid->GetCities()){
+    for (auto &it: m_grid->GetCities()) {
         m_cities.append(new QTCity(&it.second, this));
     }
-    for(auto& it: m_cities){ // Needs to happen when the full list is initialized
-        auto cty = dynamic_cast<QTCity*>(it);
+    for (auto &it: m_cities) { // Needs to happen when the full list is initialized
+        auto cty = dynamic_cast<QTCity *>(it);
 
         cty->CreateCommutingList(10);
     }
@@ -64,14 +65,14 @@ void QTBackEnd::MakeCityList() {
 QGeoCoordinate QTBackEnd::GetCenter() const {
 
     stride::Coordinate crd = m_grid->GetCenterOfGrid();
-    return QGeoCoordinate(crd.GetLatitude(),crd.GetLongitude() );
+    return QGeoCoordinate(crd.GetLatitude(), crd.GetLongitude());
 }
 
 
-QObject* QTBackEnd::getCity(unsigned int id) const {
+QObject *QTBackEnd::getCity(unsigned int id) const {
 
-    for(auto& it: m_cities){
-        if(id ==(unsigned int) dynamic_cast<QTCity *>(it)->GetId()){
+    for (auto &it: m_cities) {
+        if (id == (unsigned int) dynamic_cast<QTCity *>(it)->GetId()) {
             return it;
         }
     }
@@ -82,11 +83,11 @@ QObject* QTBackEnd::getCity(unsigned int id) const {
 
 void QTBackEnd::runSimulator(unsigned int days) {
 
-    if(!m_pop_generated){
+    if (!m_pop_generated) {
         genPop();
     }
 
-    if(m_grid == nullptr){
+    if (m_grid == nullptr) {
         cout << "run popgen first" << endl;
         return;
     }
@@ -95,7 +96,7 @@ void QTBackEnd::runSimulator(unsigned int days) {
     w.Run();
     m_pop_generated = false;
 
-    for(auto& it: m_cities){
+    for (auto &it: m_cities) {
         emit dynamic_cast<QTCity *>(it)->InfectedChanged();
     }
     emit SelectedInfectedChanged();
@@ -110,11 +111,11 @@ QString QTBackEnd::getConfig(const QString &xml_tag) const {
 }
 
 void QTBackEnd::setConfig(const QString &xml_tag, const QString &val) {
-    m_geo_pt.put(xml_tag.toStdString(),val.toStdString() );
+    m_geo_pt.put(xml_tag.toStdString(), val.toStdString());
 
 }
 
-QString QTBackEnd::readPath(const QString &tag) const{
+QString QTBackEnd::readPath(const QString &tag) const {
 
     string complete_tag = "data_files." + tag.toStdString();
     auto file = m_geo_pt.get<string>(complete_tag);
@@ -130,11 +131,12 @@ QString QTBackEnd::setPath(const QString &tag, const QString &path) {
     return lst.back();
 }
 
-bool QTBackEnd::getBoolConfig(const QString &xml_tag) const{
+bool QTBackEnd::getBoolConfig(const QString &xml_tag) const {
 
     return m_geo_pt.get<bool>(xml_tag.toStdString());
 }
-bool QTBackEnd::setBoolConfig(const QString &xml_tag, const bool &value){
+
+bool QTBackEnd::setBoolConfig(const QString &xml_tag, const bool &value) {
 
     m_geo_pt.put(xml_tag.toStdString(), value);
 
@@ -147,21 +149,21 @@ bool QTBackEnd::setBoolConfig(const QString &xml_tag, const bool &value){
 int QTBackEnd::CountSelectedInfected() const {
 
     int counter = 0;
-    for(auto& it : m_cities){
-        auto * cty = dynamic_cast<QTCity*>(it);
-        if(cty->IsClicked()){
+    for (auto &it : m_cities) {
+        auto *cty = dynamic_cast<QTCity *>(it);
+        if (cty->IsClicked()) {
             counter += cty->GetInfected();
         }
     }
     return counter;
 }
 
-int QTBackEnd::GetTotalInfected() const{
-    if(m_grid == nullptr){
+int QTBackEnd::GetTotalInfected() const {
+    if (m_grid == nullptr) {
         return 0;
     }
     int counter = 0;
-    for(auto& it : m_grid->GetCities() ){
+    for (auto &it : m_grid->GetCities()) {
         counter += it.second.GetInfectedCount();
     }
     return counter;
@@ -175,46 +177,45 @@ void QTBackEnd::AddSelectedPop(int amount) {
 
 void QTBackEnd::AddCommuteLines(const QList<QTCommuter *> &lst) {
 
-    for(auto& it: lst){
+    for (auto &it: lst) {
         m_commuters.append(it);
     }
     emit CommutersChanged();
 }
 
 void QTBackEnd::AddCommuteLineNoEmit(const QList<QTCommuter *> &lst) {
-    for(auto& it: lst){
+    for (auto &it: lst) {
         m_commuters.append(it);
     }
 }
 
 void QTBackEnd::RemoveCommuteLines(const QList<QTCommuter *> &lst) {
 
-    for(auto& it: lst){
+    for (auto &it: lst) {
         m_commuters.removeOne(it);
     }
     emit CommutersChanged();
 }
+
 void QTBackEnd::RemoveCommuteLinesNoEmit(const QList<QTCommuter *> &lst) {
 
-    for(auto& it: lst){
+    for (auto &it: lst) {
         m_commuters.removeOne(it);
     }
 }
 
 
-
 void QTBackEnd::flipItems(QList<QObject *> cities) {
-    for(auto& it: cities){
-        auto cty = dynamic_cast<QTCity*>(it);
-        if(cty != nullptr) {
+    for (auto &it: cities) {
+        auto cty = dynamic_cast<QTCity *>(it);
+        if (cty != nullptr) {
             if (cty->IsClicked()) {
                 RemoveCommuteLinesNoEmit(cty->GetCommuters());
             } else {
                 AddCommuteLineNoEmit(cty->GetCommuters());
             }
             cty->Flip();
-        }
-        else{
+        } else {
             cout << "Some Items are in Flip items not cities" << endl;
         }
 
@@ -223,7 +224,7 @@ void QTBackEnd::flipItems(QList<QObject *> cities) {
     emit SelectedPopChanged();
     emit SelectedInfectedChanged();
 }
-
-
+}
+}
 
 

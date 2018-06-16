@@ -20,7 +20,7 @@ int main(int argc, char** argv){
     QGuiApplication app(argc, argv); // main app
     QQmlApplicationEngine engine;
 
-    QScopedPointer<QTBackEnd> backend(new QTBackEnd(engine, pt));
+    QScopedPointer<stride::gui::QTBackEnd> backend(new stride::gui::QTBackEnd(engine, pt));
     engine.rootContext()->setContextProperty("backend", backend.data());
     engine.load(QStringLiteral("mapviewer/Gui.qml"));
 
