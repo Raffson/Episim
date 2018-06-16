@@ -206,9 +206,46 @@ ApplicationWindow{
                         anchors.leftMargin: 50
                         anchors.fill: parent
                         columnSpacing: 5
-                        rowSpacing: 30
-                        rows: 15
-                        columns: 1
+                        rowSpacing: 10
+                        rows: 13
+                        columns: 2
+
+                        Repeater{
+
+                            model:[ {txt: "Number of days"},
+                                    {txt: "Number participants survey"},
+                                    {txt: "number of threads"},
+                                    {txt: "RNG seed"},
+                                    {txt: "r0"},
+                                    {txt: "Seeding age min"},
+                                    {txt: "Seeding age max"},
+                                  ]
+
+                            delegate :RowLayout{
+                                z:5
+                                spacing: 50
+                                Layout.alignment: Qt.AlignTop
+                                Layout.maximumHeight: 4
+                                Label{
+                                    id: integer_spinnr_txt
+                                    text: modelData.txt
+                                    //lineHeight: 0.9
+                                    verticalAlignment: Text.AlignVCenter
+                                    Layout.minimumWidth: 200
+                                    Layout.alignment: Qt.AlignLeft
+                                }
+
+                                SpinBox{
+                                    id: integer_spinner
+                                    Layout.minimumWidth: 100
+                                    //Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignRight
+                                    Layout.maximumHeight: 25
+
+                                }
+
+                            }
+                        }
 
 
                         Repeater{

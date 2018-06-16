@@ -12,20 +12,20 @@
     <immunity_profile>None</immunity_profile> <!-- yes -->
     <immunity_rate>0.8</immunity_rate>
     <local_information_policy>NoLocalInformation</local_information_policy> <!-- yes -->
-    <num_days>50</num_days>
-    <num_participants_survey>10</num_participants_survey>
-    <num_threads>1</num_threads>
+    <num_days>50</num_days><!-- yes -->
+    <num_participants_survey>10</num_participants_survey><!-- yes -->
+    <num_threads>1</num_threads><!-- yes -->
     <output_adopted>false</output_adopted> <!-- yes -->
     <output_cases>true</output_cases> <!-- yes -->
     <output_persons>false</output_persons><!-- yes -->
     <output_prefix></output_prefix>
     <output_summary>false</output_summary><!-- yes -->
     <population_file>pop_flanders600.csv</population_file>
-    <rng_seed>1</rng_seed>
+    <rng_seed>1</rng_seed> <!-- yes -->
     <rng_type>mrg2</rng_type>
-    <r0>11</r0>
-    <seeding_age_max>99</seeding_age_max>
-    <seeding_age_min>1</seeding_age_min>
+    <r0>11</r0><!-- yes -->
+    <seeding_age_max>99</seeding_age_max><!-- yes -->
+    <seeding_age_min>1</seeding_age_min><!-- yes -->
     <seeding_rate>0.002</seeding_rate>
     <start_date>2017-01-01</start_date>
     <stride_log_level>info</stride_log_level>
