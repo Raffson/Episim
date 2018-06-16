@@ -42,57 +42,55 @@ public:
 /***********************************************************************************************************************/
     /// @brief Handler for QML to generate pop. Will do the genpop logic.
     Q_INVOKABLE void genPop();
-    Q_INVOKABLE QObject* get_city(unsigned int id);
-    Q_INVOKABLE void run_simulator(unsigned int days = 0);
-    Q_INVOKABLE bool should_redraw(){return !m_pop_generated;};
-    Q_INVOKABLE void flip_items(QList<QObject*>);
+    Q_INVOKABLE QObject* getCity(unsigned int id);
+    Q_INVOKABLE void runSimulator(unsigned int days = 0);
+    Q_INVOKABLE bool shouldRedraw(){return !m_pop_generated;};
+    Q_INVOKABLE void flipItems(QList<QObject *> cities);
 
 //Config Invokables
 /************************************************************************************************************************/
-    Q_INVOKABLE QString get_config(QString xml_tag);
-    Q_INVOKABLE void set_config(QString xml_tag, QString val);
-    Q_INVOKABLE QString read_path(QString tag);
-    Q_INVOKABLE QString set_path(QString tag, QString path);
-    Q_INVOKABLE bool get_bool_config(QString xml_tag);
-    Q_INVOKABLE bool set_bool_config(QString xml_tag, bool value);
+    Q_INVOKABLE QString getConfig(QString xml_tag);
+    Q_INVOKABLE void setConfig(QString xml_tag, QString val);
+    Q_INVOKABLE QString readPath(QString tag);
+    Q_INVOKABLE QString setPath(QString tag, QString path);
+    Q_INVOKABLE bool getBoolConfig(QString xml_tag);
+    Q_INVOKABLE bool setBoolConfig(QString xml_tag, bool value);
 
 
-    Q_PROPERTY(QList<QObject*> cities MEMBER m_cities NOTIFY citiesChanged)
-    Q_PROPERTY(QGeoCoordinate center READ get_center CONSTANT)
+    Q_PROPERTY(QList<QObject*> cities MEMBER m_cities NOTIFY CitiesChanged)
+    Q_PROPERTY(QGeoCoordinate center READ GetCenter CONSTANT)
 
-    Q_PROPERTY(int total_pop MEMBER m_total_pop NOTIFY popChanged);
-    Q_PROPERTY(int selected_pop MEMBER m_selected_pop NOTIFY selected_popChanged)
-    Q_PROPERTY(int selected_infected READ count_selected_infected NOTIFY selected_infectedChanged())
-    Q_PROPERTY(int total_infected READ get_total_infected NOTIFY total_infectedChanged)
-    Q_PROPERTY(QList<QObject*> commuters MEMBER m_commuters NOTIFY commutersChanged)
+    Q_PROPERTY(int total_pop MEMBER m_total_pop NOTIFY PopChanged);
+    Q_PROPERTY(int selected_pop MEMBER m_selected_pop NOTIFY SelectedPopChanged)
+    Q_PROPERTY(int selected_infected READ CountSelectedInfected NOTIFY
+                       SelectedInfectedChanged())
+    Q_PROPERTY(int total_infected READ GetTotalInfected NOTIFY TotalInfectedChanged)
+    Q_PROPERTY(QList<QObject*> commuters MEMBER m_commuters NOTIFY CommutersChanged)
 
 signals:
-    void selected_popChanged();
-    void popChanged();
-    void selected_infectedChanged();
-    void total_infectedChanged();
-    void citiesChanged();
-    void commutersChanged();
+    void SelectedPopChanged();
+    void PopChanged();
+    void SelectedInfectedChanged();
+    void TotalInfectedChanged();
+    void CitiesChanged();
+    void CommutersChanged();
 
 public:
-    void add_selected_pop(int amount);
-    QList<QObject*> get_cities(){return m_cities;}
+    void AddSelectedPop(int amount);
+    QList<QObject*> GetCities(){return m_cities;}
 
-    void add_commute_lines(const QList<QTCommuter*>& lst);
-    void remove_commute_lines(const QList<QTCommuter *> &lst);
-
-
-
+    void AddCommuteLines(const QList<QTCommuter *> &lst);
+    void RemoveCommuteLines(const QList<QTCommuter *> &lst);
 
 private:
-    void makeCityList();
+    void MakeCityList();
 
-    QGeoCoordinate get_center();
-    int count_selected_infected();
-    int get_total_infected();
+    QGeoCoordinate GetCenter();
+    int CountSelectedInfected();
+    int GetTotalInfected();
 
-    void add_commute_lines_no_emit(const QList<QTCommuter*>& lst);
-    void remove_commute_lines_no_emit(const QList<QTCommuter *> &lst);
+    void AddCommuteLineNoEmit(const QList<QTCommuter *> &lst);
+    void RemoveCommuteLinesNoEmit(const QList<QTCommuter *> &lst);
 
 
 

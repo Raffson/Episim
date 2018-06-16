@@ -8,8 +8,8 @@
 using namespace std;
 
 QTCommuter::QTCommuter(QTCity* city1, QTCity* city2, double outcommuting, double incommuting,  QObject* parent ):
-        QObject(parent),m_city1(city1), m_city2(city2), m_center_city1(city1->get_coordinates()),
-        m_center_city2(city2->get_coordinates()),m_out_count(outcommuting), m_in_count(incommuting){
+        QObject(parent),m_city1(city1), m_city2(city2), m_center_city1(city1->GetCoordinates()),
+        m_center_city2(city2->GetCoordinates()),m_out_count(outcommuting), m_in_count(incommuting){
 
 }
 /*QTCommuter::QTCommuter(const QTCommuter& obj):QObject(obj.parent()), m_city1(obj.m_city1), m_city2(obj.m_city2),
@@ -35,8 +35,8 @@ QTCity *QTCommuter::GetSecondCity() {
 double QTCommuter::CalculateLineWidth() {
 
     double biggest = max(m_in_count, m_out_count);
-    double biggest_total = max(m_city1->get_m_city()->GetTotalInCommutersCount(),
-            m_city1->get_m_city()->GetTotalOutCommutersCount());
+    double biggest_total = max(m_city1->GetModelCity()->GetTotalInCommutersCount(),
+                               m_city1->GetModelCity()->GetTotalOutCommutersCount());
 
     return  biggest / biggest_total * 50;
 }

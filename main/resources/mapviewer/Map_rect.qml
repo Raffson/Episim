@@ -83,11 +83,11 @@ Rectangle{
                 id: button_sim
                 text: qsTr("RUN sim")
                 onClicked:{
-                    if(backend.should_redraw()){
+                    if(backend.shouldRedraw()){
                         map.clearMapItems();
                     }
 
-                    backend.run_simulator();
+                    backend.runSimulator();
                 }
 
                 background: Rectangle {
@@ -322,7 +322,7 @@ Rectangle{
                         }
                     }
                 }
-               backend.flip_items(items)
+               backend.flipItems(items)
             }
         }
 
@@ -339,7 +339,7 @@ Rectangle{
         MapPolyline{
             line.width: modelData.width
             line.color: modelData.color
-            path:[modelData.center_city1,modelData.center_city2 ]
+            path:[modelData.center_city_1,modelData.center_city2 ]
         }
 
     }

@@ -17,8 +17,8 @@ class QTCommuter : public QObject {
 
 public:
 
-    Q_PROPERTY(QGeoCoordinate center_city1 MEMBER m_center_city1 CONSTANT)
-    Q_PROPERTY(QGeoCoordinate center_city2 MEMBER m_center_city2 CONSTANT)
+    Q_PROPERTY(QGeoCoordinate center_city_1 MEMBER m_center_city1 CONSTANT)
+    Q_PROPERTY(QGeoCoordinate center_city_2 MEMBER m_center_city2 CONSTANT)
     Q_PROPERTY(double width READ CalculateLineWidth CONSTANT)
     Q_PROPERTY(QColor color READ PickColor CONSTANT)
 

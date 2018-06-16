@@ -100,8 +100,6 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         unsigned int id_counter = m_cities.rbegin()->second.GetId();
         for (auto& it : defragCty) {
                 // We add 2 to the amount to defrag, bcs we want to defrag in atleast 2 parts
-                auto& outcommuters = it->GetOutCommuting();
-                auto& incommuters = it->GetInCommuting();
                 vector<City> commuters_temp;
                 for (unsigned int i = 0; i < amountToFrag[counter] + 2; i++) {
 

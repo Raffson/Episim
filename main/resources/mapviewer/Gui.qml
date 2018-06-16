@@ -100,9 +100,9 @@ ApplicationWindow{
                                     maximumValue: fract ? 100 : Infinity
                                     //Layout.fillWidth: true
                                     Layout.alignment: Qt.AlignRight
-                                    value: fract? backend.get_config(xml) * 100 : backend.get_config(xml)
+                                    value: fract? backend.get_config(xml) * 100 : backend.getConfig(xml)
                                     suffix: fract ? "%" : ""
-                                    onValueChanged: fract? backend.set_config(xml, value / 100): backend.set_config(xml, value)
+                                    onValueChanged: fract? backend.set_config(xml, value / 100): backend.setConfig(xml, value)
                                 }
 
                             }
@@ -139,7 +139,7 @@ ApplicationWindow{
                                     id: cty_config_text
                                     Layout.alignment: Qt.AlignRight
                                     Layout.minimumWidth: 300
-                                    text: backend.read_path(parent.tag)
+                                    text: backend.readPath(parent.tag)
 
 
                                 }
@@ -158,7 +158,7 @@ ApplicationWindow{
                                     folder: def_folder
                                     nameFilters: xml ?["*.xml"] : [ "*.csv"]
                                     onAccepted: {
-                                        cty_config_text.text = backend.set_path(cty_fil_select.tag, cty_file.fileUrls.toString());
+                                        cty_config_text.text = backend.setPath(cty_fil_select.tag, cty_file.fileUrls.toString());
 
                                     }
                                     onRejected: {
@@ -183,8 +183,8 @@ ApplicationWindow{
 
                             CheckBox{
                                 id: rndm_age
-                                checked: backend.get_bool_config("pop_info.random_ages")
-                                onClicked:backend.set_bool_config("pop_info.random_ages", checked);
+                                checked: backend.getBoolConfig("pop_info.random_ages")
+                                onClicked:backend.setBoolConfig("pop_info.random_ages", checked);
                             }
                         }
 

@@ -40,12 +40,12 @@ void QTBackEnd::genPop() {
     m_pop_generated = true;
 
     m_total_pop = m_grid->GetTotalPop();
-    emit popChanged();
+    emit PopChanged();
 
-    makeCityList();
+    MakeCityList();
 }
 
-void QTBackEnd::makeCityList() {
+void QTBackEnd::MakeCityList() {
 
 
     m_cities.clear();
@@ -56,22 +56,22 @@ void QTBackEnd::makeCityList() {
     for(auto& it: m_cities){ // Needs to happen when the full list is initialized
         auto cty = dynamic_cast<QTCity*>(it);
 
-        cty->create_commuting_lst(10);
+        cty->CreateCommutingList(10);
     }
-    emit citiesChanged();
+    emit CitiesChanged();
 }
 
-QGeoCoordinate QTBackEnd::get_center() {
+QGeoCoordinate QTBackEnd::GetCenter() {
 
     stride::Coordinate crd = m_grid->GetCenterOfGrid();
     return QGeoCoordinate(crd.GetLatitude(),crd.GetLongitude() );
 }
 
 
-QObject* QTBackEnd::get_city(unsigned int id) {
+QObject* QTBackEnd::getCity(unsigned int id) {
 
     for(auto& it: m_cities){
-        if(id ==(unsigned int) dynamic_cast<QTCity*>(it)->get_id()){
+        if(id ==(unsigned int) dynamic_cast<QTCity *>(it)->GetId()){
             return it;
         }
     }
@@ -80,7 +80,7 @@ QObject* QTBackEnd::get_city(unsigned int id) {
 
 }
 
-void QTBackEnd::run_simulator(unsigned int days) {
+void QTBackEnd::runSimulator(unsigned int days) {
 
     if(!m_pop_generated){
         genPop();
@@ -96,25 +96,25 @@ void QTBackEnd::run_simulator(unsigned int days) {
     m_pop_generated = false;
 
     for(auto& it: m_cities){
-        emit dynamic_cast<QTCity*>(it)->infectedChanged();
+        emit dynamic_cast<QTCity *>(it)->InfectedChanged();
     }
-    emit selected_infectedChanged();
-    emit total_infectedChanged();
+    emit SelectedInfectedChanged();
+    emit TotalInfectedChanged();
 }
 
 //Config setters and getters
 /***********************************************************************************************************************/
 
-QString QTBackEnd::get_config(QString xml_tag) {
+QString QTBackEnd::getConfig(QString xml_tag) {
     return QString((m_geo_pt.get<string>(xml_tag.toStdString())).c_str());
 }
 
-void QTBackEnd::set_config(QString xml_tag, QString val) {
+void QTBackEnd::setConfig(QString xml_tag, QString val) {
     m_geo_pt.put(xml_tag.toStdString(),val.toStdString() );
 
 }
 
-QString QTBackEnd::read_path(QString tag){
+QString QTBackEnd::readPath(QString tag){
 
     string complete_tag = "data_files." + tag.toStdString();
     auto file = m_geo_pt.get<string>(complete_tag);
@@ -122,7 +122,7 @@ QString QTBackEnd::read_path(QString tag){
 
 }
 
-QString QTBackEnd::set_path(QString tag, QString path) {
+QString QTBackEnd::setPath(QString tag, QString path) {
 
     string complete_tag = "data_files." + tag.toStdString();
     auto lst = path.split("/");
@@ -130,11 +130,11 @@ QString QTBackEnd::set_path(QString tag, QString path) {
     return lst.back();
 }
 
-bool QTBackEnd::get_bool_config(QString xml_tag){
+bool QTBackEnd::getBoolConfig(QString xml_tag){
 
     return m_geo_pt.get<bool>(xml_tag.toStdString());
 }
-bool QTBackEnd::set_bool_config(QString xml_tag, bool value){
+bool QTBackEnd::setBoolConfig(QString xml_tag, bool value){
 
     m_geo_pt.put(xml_tag.toStdString(), value);
 
@@ -144,19 +144,19 @@ bool QTBackEnd::set_bool_config(QString xml_tag, bool value){
 /***********************************************************************************************************************/
 
 
-int QTBackEnd::count_selected_infected() {
+int QTBackEnd::CountSelectedInfected() {
 
     int counter = 0;
     for(auto& it : m_cities){
         auto * cty = dynamic_cast<QTCity*>(it);
-        if(cty->get_clicked()){
-            counter += cty->get_infected();
+        if(cty->IsClicked()){
+            counter += cty->GetInfected();
         }
     }
     return counter;
 }
 
-int QTBackEnd::get_total_infected() {
+int QTBackEnd::GetTotalInfected() {
     if(m_grid == nullptr){
         return 0;
     }
@@ -167,34 +167,34 @@ int QTBackEnd::get_total_infected() {
     return counter;
 }
 
-void QTBackEnd::add_selected_pop(int amount) {
+void QTBackEnd::AddSelectedPop(int amount) {
 
     m_selected_pop += amount;
-    emit selected_popChanged();
+    emit SelectedPopChanged();
 }
 
-void QTBackEnd::add_commute_lines(const QList<QTCommuter*> &lst) {
+void QTBackEnd::AddCommuteLines(const QList<QTCommuter *> &lst) {
 
     for(auto& it: lst){
         m_commuters.append(it);
     }
-    emit commutersChanged();
+    emit CommutersChanged();
 }
 
-void QTBackEnd::add_commute_lines_no_emit(const QList<QTCommuter*> &lst) {
+void QTBackEnd::AddCommuteLineNoEmit(const QList<QTCommuter *> &lst) {
     for(auto& it: lst){
         m_commuters.append(it);
     }
 }
 
-void QTBackEnd::remove_commute_lines(const QList<QTCommuter*> &lst) {
+void QTBackEnd::RemoveCommuteLines(const QList<QTCommuter *> &lst) {
 
     for(auto& it: lst){
         m_commuters.removeOne(it);
     }
-    emit commutersChanged();
+    emit CommutersChanged();
 }
-void QTBackEnd::remove_commute_lines_no_emit(const QList<QTCommuter*> &lst) {
+void QTBackEnd::RemoveCommuteLinesNoEmit(const QList<QTCommuter *> &lst) {
 
     for(auto& it: lst){
         m_commuters.removeOne(it);
@@ -203,25 +203,25 @@ void QTBackEnd::remove_commute_lines_no_emit(const QList<QTCommuter*> &lst) {
 
 
 
-void QTBackEnd::flip_items(QList<QObject*> cities) {
+void QTBackEnd::flipItems(QList<QObject *> cities) {
     for(auto& it: cities){
         auto cty = dynamic_cast<QTCity*>(it);
         if(cty != nullptr) {
-            if (cty->get_clicked()) {
-                remove_commute_lines_no_emit(cty->get_commuters());
+            if (cty->IsClicked()) {
+                RemoveCommuteLinesNoEmit(cty->GetCommuters());
             } else {
-                add_commute_lines_no_emit(cty->get_commuters());
+                AddCommuteLineNoEmit(cty->GetCommuters());
             }
-            cty->flip();
+            cty->Flip();
         }
         else{
-            cout << "Some Items are in flip items not cities" << endl;
+            cout << "Some Items are in Flip items not cities" << endl;
         }
 
     }
-    emit commutersChanged();
-    emit selected_popChanged();
-    emit selected_infectedChanged();
+    emit CommutersChanged();
+    emit SelectedPopChanged();
+    emit SelectedInfectedChanged();
 }
 
 
