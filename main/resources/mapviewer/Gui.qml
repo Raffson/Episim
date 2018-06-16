@@ -206,15 +206,20 @@ ApplicationWindow{
                         anchors.leftMargin: 50
                         anchors.fill: parent
                         columnSpacing: 5
-                        rowSpacing: 35
+                        rowSpacing: 30
                         rows: 15
                         columns: 1
 
 
                         Repeater{
 
-                            model:[{txt: "Behaviour policy", mdl:["NoBehaviour", "Vaccination" ]},
-                                   {txt: "Belief policy", mdl:["Belief", "HBM", "Imitation", "NoBelief", "Treshold"]}
+                            model:[ {txt: "Behaviour policy", mdl:["NoBehaviour", "Vaccination" ]},
+                                    {txt: "Belief policy", mdl:["Belief", "HBM", "Imitation", "NoBelief", "Treshold"]},
+                                    {txt: "Information policy", mdl:["LocalDiscussion", "NoGlobalInformation", "NoLocalInformation"]},
+                                    {txt: "Contact log level", mdl: ["None", "Tansimissions", "All", "Susceptibles"]},
+                                    {txt: "Immunity profile", mdl:  ["None"]},
+                                    {txt: "Vaccine profile", mdl: ["Random"]}
+
                                   ]
 
                             delegate :RowLayout{
@@ -235,6 +240,43 @@ ApplicationWindow{
                                     id: belief_txt
                                     Layout.minimumWidth: 200
                                     model: modelData.mdl
+                                    //Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignRight
+                                    Layout.maximumHeight: 25
+
+                                }
+
+                            }
+                        }
+
+                        Repeater{
+
+                            model:[ {txt: "Contact output file"},
+                                    {txt: "Output adopted"},
+                                    {txt: "Output cases"},
+                                    {txt: "Output persons"},
+                                    {txt: "Output summary"},
+                                    {txt: "Track index case"},
+                                    {txt: "Use install dirs"}
+                                  ]
+
+                            delegate :RowLayout{
+                                z:5
+                                spacing: 50
+                                Layout.alignment: Qt.AlignTop
+                                Layout.maximumHeight: 4
+                                Label{
+                                    id: checkboxes
+                                    text: modelData.txt
+                                    //lineHeight: 0.9
+                                    verticalAlignment: Text.AlignVCenter
+                                    Layout.minimumWidth: 200
+                                    Layout.alignment: Qt.AlignLeft
+                                }
+
+                                CheckBox{
+                                    id: checkbox_box
+                                    Layout.minimumWidth: 200
                                     //Layout.fillWidth: true
                                     Layout.alignment: Qt.AlignRight
                                     Layout.maximumHeight: 25
