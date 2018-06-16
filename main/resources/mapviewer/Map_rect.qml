@@ -4,10 +4,20 @@ import QtPositioning 5.6
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 2.4
-//import episim.city 1.0
+
+
 
 
 Rectangle{
+    Plugin {
+        id: mapPlugin
+        name: "osm" //"mapbox"//", "esri", ...
+        /*PluginParameter{ name: "mapbox.access_token";
+            value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"*/
+        // }
+
+
+    }
     id: map_rect
 
     ToolBar {
@@ -58,6 +68,7 @@ Rectangle{
                 onClicked: {
                     map.clearMapItems();
                     backend.genPop();
+                    gc();
                     map.center_and_zoom();
 
                 }
@@ -89,19 +100,26 @@ Rectangle{
         }
     }
 
-    Rectangle{
-        id: sidebar
-        anchors.left: parent.left
-        anchors.top: toolBar.bottom
-        anchors .right: map.left
-        anchors.bottom: map.bottom
-        width: parent.width / 7
+     Rectangle{
+         id: sidebar
+         anchors.left: parent.left
+         anchors.top: toolBar.bottom
+         anchors .right: map.left
+         anchors.bottom: map.bottom
+         width: parent.width / 7
+
+         ScrollView{
+             focusPolicy: Qt.NoFocus
+             clip: true
+             anchors.fill: parent
         ColumnLayout{
             spacing: 5
             anchors.fill: parent
             RowLayout{
+                clip: true
                 Text{
                     text: "Selected Cities"
+                    clip: true
                     font.pointSize: 15
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -142,7 +160,7 @@ Rectangle{
                 Layout.fillHeight:true
             }
         }
-
+}
     }
 
     Map {
@@ -329,32 +347,31 @@ Rectangle{
     Component{
         id: mapCircleComponent
         MapCircle{
-            property var city : model.modelData
-            property var perc : city.popCount === 0 ? 0 : Math.round(city.infected/city.popCount * 100)
-            property var commuting_lst: []
+            property var city : modelData
+            property var perc : modelData.popCount === 0 ? 0 : Math.round(modelData.infected/modelData.popCount * 100)
             property bool circle : true
-            radius:  city.popCount/ backend.total_pop * 250000
-            color: cty_mouse.containsMouse ? Qt.rgba(1, 1, 1, 0.2) : city.clicked ? Qt.rgba(1 - perc / 50 ,0,0 + perc /50,0.2 + perc / 50) : Qt.rgba(0,1 - perc / 50,0 + perc / 50 ,0.2 + perc / 50 )
-            center: city.crd
-            z: backend.total_pop - city.popCount
+            radius:  modelData.popCount/ backend.total_pop * 250000
+            color: cty_mouse.containsMouse ? Qt.rgba(1, 1, 1, 0.2) : modelData.clicked ? Qt.rgba(1 - perc / 50 ,0,0 + perc /50,0.2 + perc / 50) : Qt.rgba(0,1 - perc / 50,0 + perc / 50 ,0.2 + perc / 50 )
+            center: modelData.crd
+            z: backend.total_pop - modelData.popCount
             
             MouseArea{
                 id: cty_mouse
                 anchors.fill: parent
                 hoverEnabled: true
-                ToolTip.text: "City: " + city.name + "\nPopulation: "
-                              + city.popCount + "\nInfected: " + city.infected
+                ToolTip.text: "City: " + modelData.name + "\nPopulation: "
+                              + modelData.popCount + "\nInfected: " + modelData.infected
                               + "|" + perc +"%"
                 ToolTip.visible: containsMouse ? true : false
                 
                 onClicked: {
-                    if(parent.city.clicked){
-                        parent.city.clicked = false
+                    if(modelData.clicked){
+                        modelData.clicked = false
                         //parent.remove_commuters();
 
                     }
                     else{
-                        parent.city.clicked = true
+                        modelData.clicked = true
                         //parent.draw_commuters()
                     }
                 }

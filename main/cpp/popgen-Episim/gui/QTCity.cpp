@@ -29,7 +29,12 @@ QGeoCoordinate QTCity::get_coordinates() const {
 }
 
 void QTCity::flip(){
-
+    if(m_is_clicked){
+        m_back_end->add_selected_pop(m_pop  * -1);
+    }
+    else{
+        m_back_end->add_selected_pop(m_pop);
+    }
     m_is_clicked = !m_is_clicked;
     emit clickedChanged();
 }

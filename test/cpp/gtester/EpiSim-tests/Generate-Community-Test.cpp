@@ -59,14 +59,14 @@ protected:
             // Do the test...
 
             //times 2 because we have to count both Primary and Secondary communities
-            double total_communities = 2 * ceil((double)grid->GetTotalPop() / grid->GetAvgSize(Sizes::COMMUNITIES));
+            double totalCommunities = 2 * ceil((double)grid->GetTotalPop() / grid->GetAvgSize(Sizes::COMMUNITIES));
             double margin = 0.01;
 
             for(auto& it: grid->GetCities()){
-                    City* a_city = &it.second;
-                    double target = (double)a_city->GetPopulation() / grid->GetTotalPopOfModel();
-                    double actual = (a_city->GetPrimaryCommunities().size() + a_city->GetSecondaryCommunities().size())
-                                    / total_communities;
+                    City* aCity = &it.second;
+                    double target = (double)aCity->GetPopulation() / grid->GetTotalPopOfModel();
+                    double actual = (aCity->GetPrimaryCommunities().size() + aCity->GetSecondaryCommunities().size())
+                                    / totalCommunities;
 
                     EXPECT_NEAR(actual, target, margin);
             }
@@ -87,25 +87,25 @@ TEST_P(CommunityTest, Run)
         // -----------------------------------------------------------------------------------------
 
         auto                              cities = grid->GetCities();
-        map<unsigned int, City>::iterator c_it2  = cities.begin();
+        map<unsigned int, City>::iterator cIt2  = cities.begin();
         /// Check if the communities are ditributed correctly.
-        for (map<unsigned int, City>::iterator c_it = cities.begin(); c_it != cities.end(); c_it++) {
+        for (map<unsigned int, City>::iterator cIt = cities.begin(); cIt != cities.end(); cIt++) {
                 try {
-                        if (c_it != cities.end()) {
-                                c_it2 = c_it++;
-                                c_it--;
+                        if (cIt != cities.end()) {
+                                cIt2 = cIt++;
+                                cIt--;
                         } else {
-                                c_it2 = cities.begin();
+                                cIt2 = cities.begin();
                         }
                         /// c_it.first is the ID of the city, c_it.second is a pointer to the city itself.
-                        if ((*c_it).first != (*c_it2).first) {
-                                if ((*c_it).second.GetPopulation() >= (*c_it2).second.GetPopulation()) {
-                                        EXPECT_GE((*c_it).second.GetNrOfCommunities(),
-                                                  (*c_it2).second.GetNrOfCommunities());
+                        if ((*cIt).first != (*cIt2).first) {
+                                if ((*cIt).second.GetPopulation() >= (*cIt2).second.GetPopulation()) {
+                                        EXPECT_GE((*cIt).second.GetNrOfCommunities(),
+                                                  (*cIt2).second.GetNrOfCommunities());
                                 }
-                                if ((*c_it).second.GetPopulation() <= (*c_it2).second.GetPopulation()) {
-                                        EXPECT_LE((*c_it).second.GetNrOfCommunities(),
-                                                  (*c_it2).second.GetNrOfCommunities());
+                                if ((*cIt).second.GetPopulation() <= (*cIt2).second.GetPopulation()) {
+                                        EXPECT_LE((*cIt).second.GetNrOfCommunities(),
+                                                  (*cIt2).second.GetNrOfCommunities());
                                 }
                         }
                 } catch (std::exception& e) {

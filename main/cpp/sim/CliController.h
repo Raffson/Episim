@@ -51,14 +51,17 @@ class CliController
 {
 public:
         /// Straight initialization.
-        explicit CliController(const boost::property_tree::ptree& configPt, const bool draw = false);
+        explicit CliController(const boost::property_tree::ptree& configPt);
 
         /// Actual run of the simulator.
         void Control();
 
+        /// Runs the gui.
+        void ControlGui();
+
 private:
         /// Empty controller: used as target for delegation.
-        explicit CliController(const bool draw = false);
+        explicit CliController();
 
         /// Check install environment.
         void CheckEnv();

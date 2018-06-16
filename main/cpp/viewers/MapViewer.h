@@ -19,17 +19,9 @@ namespace stride {
 namespace viewers {
         class MapViewer {
         public:
-            MapViewer(std::shared_ptr<SimRunner> runner, const std::string &outputPrefix, shared_ptr<stride::GeoGrid> grid)
-                    : m_grid(grid), m_summary_file(outputPrefix), m_runner(std::move(runner))
-            {
-            }
+            MapViewer(shared_ptr<GeoGrid> grid, const std::string &outputPrefix = "");
 
-            MapViewer(shared_ptr<stride::GeoGrid> grid, const std::string &outputPrefix = "")
-                    : m_grid(grid), m_summary_file(outputPrefix), m_runner(nullptr)
-            {
-            }
-
-            int LoadMap(bool showMap=true);
+            void LoadMap(bool showMap=true);
 
             /// Let viewer perform update.
             void Update(sim_event::Id id);
@@ -38,9 +30,11 @@ namespace viewers {
             void ToPng();
 
             shared_ptr<QQmlApplicationEngine> engine;
-            shared_ptr<stride::GeoGrid> m_grid;
-            output::SummaryFile m_summary_file;
-            std::shared_ptr<SimRunner> m_runner;
+            shared_ptr<GeoGrid> m_grid;
+            string m_output_prefix;
+            unsigned int m_step;
+            string m_map_option;
+            string m_png_option;
             QObject* m_item;
         };
 }

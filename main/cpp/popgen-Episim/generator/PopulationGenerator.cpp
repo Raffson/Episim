@@ -206,13 +206,13 @@ Person* PopulationGenerator::GeneratePerson(const double& age, const size_t& hid
 
         Person *person;
 
-#pragma omp critical(pop)
+        #pragma omp critical(pop)
     {
         person = pop.emplace_back(pop.size(), age, hid, schoolid, workid, pcid, scid);
     }
 
     // Add the person to the contactpools, if any...
-#pragma critical(contact_pool)
+        #pragma critical(contact_pool)
     {
         if (school)
             school->AddMember(person);
@@ -234,7 +234,7 @@ void PopulationGenerator::GenerateHousehold(unsigned int size, City& city)
         auto&        pool_sys      = pop.GetContactPoolSys();
         Household* theHousehold;
 
-#pragma omp critical(add_household)
+        #pragma omp critical(add_household)
         {
                 theHousehold = &city.AddHousehold(pool_sys);
         }
@@ -275,7 +275,7 @@ void PopulationGenerator::Generate()
         long long int remainingPop  = m_grid.GetTotalPop(); // long long to make sure the unsigned int fits
         long int threadedPop = remainingPop / omp_get_max_threads();
 
-#pragma omp parallel for schedule(static)
+        #pragma omp parallel for schedule(static)
         for(int i = 0; i < omp_get_max_threads(); i++) {
                 long int localThreadedPop = threadedPop;
                 while (localThreadedPop > 0) {
@@ -351,7 +351,7 @@ City& PopulationGenerator::GetRandomCommutingCity(City& origin, const bool stude
         auto                index = (const unsigned int)m_rng.GetGenerator(distr,(size_t)omp_get_thread_num())();
 
         const unsigned int  id    = student ? m_college_ids.at(index) : m_city_ids.at(index);
-        origin.AddEffectiveCommuterTo(id);
+        origin.AddEffectiveCommuterTo(id, student);
         return m_grid.GetCities().at(id);
 
 }

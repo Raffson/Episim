@@ -46,6 +46,9 @@ QGeoCoordinate m_center_city2;
 double m_out_count;
 double m_in_count;
 
+double m_total_out;
+double m_total_in;
+
 };
 
 
