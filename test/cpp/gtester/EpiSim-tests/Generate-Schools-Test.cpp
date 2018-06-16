@@ -64,9 +64,9 @@ TEST_P(SchoolTest, HappyDayScenario)
         double margin = 0.1;
 
         for(auto& it:grid->GetCities()){
-            City* a_city = &it.second;
-            double target = (double)a_city->GetPopulation() / grid->GetTotalPopOfModel();
-            double actual = (double)a_city->GetSchools().size() / grid->GetSchoolCount();
+            City* aCity = &it.second;
+            double target = (double)aCity->GetPopulation() / grid->GetTotalPopOfModel();
+            double actual = (double)aCity->GetSchools().size() / grid->GetSchoolCount();
             EXPECT_NEAR(actual, target, margin);
         }
 
@@ -84,28 +84,28 @@ TEST_P(SchoolTest, HighMoreLowLess)
 
         auto mp = grid->GetCities();
 
-        City*         highest_pop_c = &mp.begin()->second;
-        unsigned long highest_pop   = highest_pop_c->GetAllCommunities().size();
+        City*         highestPopC = &mp.begin()->second;
+        unsigned long highestPop   = highestPopC->GetAllCommunities().size();
 
-        City*         lowest_pop_c = &mp.begin()->second;
-        unsigned long lowest_pop   = lowest_pop_c->GetAllCommunities().size();
+        City*         lowestPopC = &mp.begin()->second;
+        unsigned long lowestPop   = lowestPopC->GetAllCommunities().size();
 
         for (auto& it : mp) {
-                City*        t_city = &it.second;
-                unsigned int pop    = t_city->GetPopulation();
+                City*        tCity = &it.second;
+                unsigned int pop    = tCity->GetPopulation();
 
-                if (highest_pop < pop) {
-                        highest_pop   = pop;
-                        highest_pop_c = t_city;
+                if (highestPop < pop) {
+                        highestPop   = pop;
+                        highestPopC = tCity;
                 }
 
-                if (lowest_pop > pop) {
-                        lowest_pop   = pop;
-                        lowest_pop_c = t_city;
+                if (lowestPop > pop) {
+                        lowestPop   = pop;
+                        lowestPopC = tCity;
                 }
         }
 
-        EXPECT_LE(lowest_pop_c->GetAllCommunities().size(), highest_pop_c->GetAllCommunities().size());
+        EXPECT_LE(lowestPopC->GetAllCommunities().size(), highestPopC->GetAllCommunities().size());
 }
 
 namespace {

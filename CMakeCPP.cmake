@@ -145,8 +145,7 @@ if (Qt5_FOUND)
 	set(CMAKE_AUTOMOC ON)
 	set(CMAKE_INCLUDE_CURRENT_DIR ON)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQt5_FOUND=true")
-	find_package(Qt5Positioning)
-	find_package(QtQml)
+	find_package(Qt5Positioning REQUIRED)
     set(QT_INCLUDES
         ${Qt5Core_INCLUDE_DIRS}
         ${Qt5Gui_INCLUDE_DIRS}
@@ -171,6 +170,7 @@ if (Qt5_FOUND)
         ${Qt5PrintSupport_LIBRARIES}
         ${QtQml_LIBRARIES}
         ${Qt5Widgets_LIBRARIES}
+		${Qt5Positioning_LIBRARIES}
         )
     if( CMAKE_BUILD_TYPE MATCHES "Release" )
         add_definitions( -DQT_NO_DEBUG_OUTPUT -DQT_NO_WARNING_OUTPUT )

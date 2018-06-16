@@ -67,6 +67,12 @@ public:
         /// Get the number of total commuters leaving the city
         const double& GetTotalOutCommutersCount() const;
 
+        /// Get the number of students who commutes
+        unsigned int GetStudentCommutersCount() const{return m_student_commuters_count;}
+
+        /// Get the number of workers who commutes
+        unsigned int GetWorkerCommutersCount() const{return m_worker_commuters_count;}
+
         bool HasCollege(){ return m_types_present[CommunityType::Id::College]; }
 
         /// Returns all the communities
@@ -108,7 +114,6 @@ public:
         /// @param: number_of_commuters the number of commuters entering to this city
         void SetInCommuters(unsigned int id, double number_of_commuters);
 
-
         /// Set the number of outgoing commuters from the city with the given id
         /// @param: id the id of the city that the commuters from this city goes to
         /// @param: number_of_commuters the number of commuters leaving this city
@@ -143,11 +148,12 @@ public:
 
         /// Increments the number of commuters to the destination
         /// @param destination the destination city
-        void AddEffectiveCommuterTo(unsigned int destination);
+        void AddEffectiveCommuterTo(const unsigned int destination, const bool isStudent);
 
         /// Returns the number of effective commuters to the destination city from this city
         /// @param destination the destination city of commuters
-        unsigned int GetEffectiveCommuterTo(unsigned int destination);
+        unsigned int GetEffectiveCommuterTo(const unsigned int destination);
+
 
 private:
         const unsigned int m_city_id;   ///< A unique ID of the city.
@@ -174,6 +180,9 @@ private:
         mutable bool m_out_commuting_changed;
 
         map<CommunityType::Id, bool> m_types_present; ///< This map keeps track of the community types present.
+
+        unsigned int m_student_commuters_count; ///< The number of the students commuting from this city
+        unsigned int m_worker_commuters_count; ///< The number of the workers commuting from this city
 };
 
 } // namespace stride

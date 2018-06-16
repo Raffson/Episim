@@ -119,17 +119,17 @@ TEST(GeoGridCtorTest, FaultyCityRow)
         // Parse cities.
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
-        map<unsigned int, City> cty_map;
+        map<unsigned int, City> ctyMap;
         unsigned int            totpop = 0;
         bgi::rtree<rtElem, bgi::quadratic<16>> rtree;
-        parser::ParseCities("data/flanders_cities_faulty_row.csv", cty_map, totpop, rtree);
+        parser::ParseCities("data/flanders_cities_faulty_row.csv", ctyMap, totpop, rtree);
         cout << "Done parsing cities." << endl;
 
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        EXPECT_EQ(326, cty_map.size());
+        EXPECT_EQ(326, ctyMap.size());
 }
 
 TEST(GeoGridCtorTest, FaultyCityColumn)
@@ -139,19 +139,19 @@ TEST(GeoGridCtorTest, FaultyCityColumn)
         // Parse cities.
         // -----------------------------------------------------------------------------------------
         cout << "Parsing cities." << endl;
-        map<unsigned int, City> cty_map;
+        map<unsigned int, City> ctyMap;
         unsigned int            totpop = 0;
         bgi::rtree<rtElem, bgi::quadratic<16>> rtree;
-        parser::ParseCities("data/flanders_cities_faulty_col.csv", cty_map, totpop, rtree);
+        parser::ParseCities("data/flanders_cities_faulty_col.csv", ctyMap, totpop, rtree);
         cout << "Done parsing cities." << endl;
 
         // -----------------------------------------------------------------------------------------
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        EXPECT_EQ(327, cty_map.size());
+        EXPECT_EQ(327, ctyMap.size());
 
-        City&      antwerp = cty_map.at(11002);
+        City&      antwerp = ctyMap.at(11002);
         Coordinate coord   = antwerp.GetCoordinates();
 
         EXPECT_EQ(1, antwerp.GetProvince());

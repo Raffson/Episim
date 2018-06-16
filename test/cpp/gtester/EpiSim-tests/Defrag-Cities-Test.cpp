@@ -37,69 +37,69 @@ protected:
 
 TEST_P(DefragCityTest, happy_defrag)
 {
-        auto cty_amount = (unsigned int) geo->GetCities().size();
+        auto ctyAmount = (unsigned int) geo->GetCities().size();
         double         X     = 0.5;  // We will fragment half of the chosen cities
         double         Y     = 1.0; // should be all cities
-        vector<double> p_vec = {1};
-        geo->DefragmentSmallestCities(X, Y, p_vec);
+        vector<double> pVec = {1};
+        geo->DefragmentSmallestCities(X, Y, pVec);
 
-        EXPECT_NEAR(cty_amount  + cty_amount / 2 , geo->GetCities().size(), 1);
+        EXPECT_NEAR(ctyAmount  + ctyAmount / 2 , geo->GetCities().size(), 1);
 }
 
 TEST_P(DefragCityTest, value_test)
 {
 
-        City* smallest_city = &geo->GetCities().begin()->second;
+        City* smallestCity = &geo->GetCities().begin()->second;
 
         for (auto& it : geo->GetCities()) {
 
-                if (smallest_city->GetPopulation() > it.second.GetPopulation()) {
-                        smallest_city = &it.second;
+                if (smallestCity->GetPopulation() > it.second.GetPopulation()) {
+                        smallestCity = &it.second;
                 }
         }
 
-        double         Y     = ((double)smallest_city->GetPopulation() / (double)geo->GetTotalPop());
+        double         Y     = ((double)smallestCity->GetPopulation() / (double)geo->GetTotalPop());
         double         X     = 1.0;
-        vector<double> p_vec = {1};
+        vector<double> pVec = {1};
 
-        Coordinate   old_coordinate = smallest_city->GetCoordinates();
-        string       old_name       = smallest_city->GetName();
-        unsigned int old_province   = smallest_city->GetProvince();
-        unsigned int old_last_id    = geo->GetCities().rbegin()->second.GetId();
-        unsigned int cty_count = geo->GetCities().size();
-        geo->DefragmentSmallestCities(X, Y, p_vec);
+        Coordinate   oldCoordinate = smallestCity->GetCoordinates();
+        string       oldName       = smallestCity->GetName();
+        unsigned int oldProvince   = smallestCity->GetProvince();
+        unsigned int oldLastId    = geo->GetCities().rbegin()->second.GetId();
+        unsigned int ctyCount = geo->GetCities().size();
+        geo->DefragmentSmallestCities(X, Y, pVec);
 
-        ASSERT_EQ(cty_count + 1, geo->GetCities().size()); // Test if we only fragmented one city
+        ASSERT_EQ(ctyCount + 1, geo->GetCities().size()); // Test if we only fragmented one city
 
-        City* last_city = &geo->GetCities().rbegin()->second;
-        auto  r_it      = geo->GetCities().rbegin();
-        r_it++;
-        City* second_last_city = &r_it->second;
-        ASSERT_NE(last_city, second_last_city);
+        City* lastCity = &geo->GetCities().rbegin()->second;
+        auto  rIt      = geo->GetCities().rbegin();
+        rIt++;
+        City* secondLastCity = &rIt->second;
+        ASSERT_NE(lastCity, secondLastCity);
 
         // Splitted in 2 cities. Coordinates of the first city should match the original city
-        EXPECT_FLOAT_EQ(old_coordinate.GetLongitude(), second_last_city->GetCoordinates().GetLongitude());
-        EXPECT_FLOAT_EQ(old_coordinate.GetLatitude(), second_last_city->GetCoordinates().GetLatitude());
-        EXPECT_FLOAT_EQ(old_coordinate.GetX(), second_last_city->GetCoordinates().GetX());
-        EXPECT_FLOAT_EQ(old_coordinate.GetY(), second_last_city->GetCoordinates().GetY());
+        EXPECT_FLOAT_EQ(oldCoordinate.GetLongitude(), secondLastCity->GetCoordinates().GetLongitude());
+        EXPECT_FLOAT_EQ(oldCoordinate.GetLatitude(), secondLastCity->GetCoordinates().GetLatitude());
+        EXPECT_FLOAT_EQ(oldCoordinate.GetX(), secondLastCity->GetCoordinates().GetX());
+        EXPECT_FLOAT_EQ(oldCoordinate.GetY(), secondLastCity->GetCoordinates().GetY());
 
         // Coordinates of the second city are 0.1 off the original
-        EXPECT_FLOAT_EQ(old_coordinate.GetLongitude() - 0.1, last_city->GetCoordinates().GetLongitude());
-        EXPECT_FLOAT_EQ(old_coordinate.GetLatitude() - 0.1, last_city->GetCoordinates().GetLatitude());
-        EXPECT_FLOAT_EQ(old_coordinate.GetX() - 0.1, last_city->GetCoordinates().GetX());
-        EXPECT_FLOAT_EQ(old_coordinate.GetY() - 0.1, last_city->GetCoordinates().GetY());
+        EXPECT_FLOAT_EQ(oldCoordinate.GetLongitude() - 0.1, lastCity->GetCoordinates().GetLongitude());
+        EXPECT_FLOAT_EQ(oldCoordinate.GetLatitude() - 0.1, lastCity->GetCoordinates().GetLatitude());
+        EXPECT_FLOAT_EQ(oldCoordinate.GetX() - 0.1, lastCity->GetCoordinates().GetX());
+        EXPECT_FLOAT_EQ(oldCoordinate.GetY() - 0.1, lastCity->GetCoordinates().GetY());
 
         // Province check, should be the same
-        EXPECT_EQ(old_province, second_last_city->GetProvince());
-        EXPECT_EQ(old_province, last_city->GetProvince());
+        EXPECT_EQ(oldProvince, secondLastCity->GetProvince());
+        EXPECT_EQ(oldProvince, lastCity->GetProvince());
 
         // New ID check
-        EXPECT_EQ(old_last_id + 1, second_last_city->GetId());
-        EXPECT_EQ(old_last_id + 2, last_city->GetId());
+        EXPECT_EQ(oldLastId + 1, secondLastCity->GetId());
+        EXPECT_EQ(oldLastId + 2, lastCity->GetId());
 
         // New names
-        EXPECT_EQ(old_name + "0", second_last_city->GetName());
-        EXPECT_EQ(old_name + "1", last_city->GetName());
+        EXPECT_EQ(oldName + "0", secondLastCity->GetName());
+        EXPECT_EQ(oldName + "1", lastCity->GetName());
 }
 
 namespace {

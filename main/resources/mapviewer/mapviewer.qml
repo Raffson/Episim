@@ -456,10 +456,10 @@ ApplicationWindow {
                                        , map)
     }
 
-    function saveToImage(){
+    function saveToImage(filename){
         console.warn("saving image")
         if (map.grabToImage(function(result) {
-                               result.saveToFile("something.png");
+                               result.saveToFile(filename);
                                     })){
                                     console.warn("succes")
                                     }
