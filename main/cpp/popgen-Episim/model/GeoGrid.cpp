@@ -108,8 +108,8 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                         auto newId    = id_counter;
                         id_counter++;
                         auto coords    = it->GetCoordinates();
-                        double newLat  = coords.GetLatitude() + pow(-1, i) * (0.001 * i);
-                        double newLong = coords.GetLongitude() + pow(-1, i) * (0.001 * i);
+                        double newLat  = coords.GetLatitude() + pow(-1, i) * (0.005 * i);
+                        double newLong = coords.GetLongitude() + pow(-1, i) * (0.005 * i);
                         double newX    = coords.GetX() + pow(-1, i) * (0.1 * i);
                         double newY    = coords.GetY() + pow(-1, i) * (0.1 * i);
                         auto newName = it->GetName();
@@ -177,15 +177,11 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                 for(auto& it_new: it.second){
                     it_new.SetOutCommuters(it_new.GetId(), 1);
                     it_new.SetInCommuters(it_new.GetId(), 1);
-                    //cout << it_new.GetName() << " " << to_string(it_new.GetId()) << endl;
                     m_cities.emplace(it_new.GetId(), move(it_new));
                 }
 
-
+            }
         }
-
-        }
-        // cout << m_cities.size() << endl;
 
 
 const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City& origin, unsigned int radius,

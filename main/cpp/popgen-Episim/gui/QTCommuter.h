@@ -19,22 +19,20 @@ public:
 
     Q_PROPERTY(QGeoCoordinate center_city1 MEMBER m_center_city1 CONSTANT)
     Q_PROPERTY(QGeoCoordinate center_city2 MEMBER m_center_city2 CONSTANT)
-    Q_PROPERTY(double width READ calculate_line_width CONSTANT)
-    Q_PROPERTY(QColor color READ pick_color CONSTANT)
-
-
+    Q_PROPERTY(double width READ CalculateLineWidth CONSTANT)
+    Q_PROPERTY(QColor color READ PickColor CONSTANT)
 
     explicit QTCommuter(QTCity* city1 = nullptr, QTCity* city2 = nullptr, double outcommuting = 0, double incommuting = 0, QObject* parent = nullptr);
     ~QTCommuter() override = default;
 
     void set_in_commuters(double amount);
-    QTCity* get_main_city();
-    QTCity* get_second_city();
+    QTCity* GetMainCity();
+    QTCity* GetSecondCity();
 
 private:
 
-    double calculate_line_width();
-    QColor pick_color();
+    double CalculateLineWidth();
+    QColor PickColor();
 private:
 
 QTCity* m_city1;

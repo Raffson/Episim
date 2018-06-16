@@ -24,15 +24,15 @@ void QTCommuter::set_in_commuters(double amount) {
         m_in_count = amount;
 }
 
-QTCity *QTCommuter::get_main_city() {
+QTCity *QTCommuter::GetMainCity() {
         return m_city1;
 }
-QTCity *QTCommuter::get_second_city() {
+QTCity *QTCommuter::GetSecondCity() {
     return m_city2;
 }
 
 
-double QTCommuter::calculate_line_width() {
+double QTCommuter::CalculateLineWidth() {
 
     double biggest = max(m_in_count, m_out_count);
     double biggest_total = max(m_city1->get_m_city()->GetTotalInCommutersCount(),
@@ -41,7 +41,7 @@ double QTCommuter::calculate_line_width() {
     return  biggest / biggest_total * 50;
 }
 
-QColor QTCommuter::pick_color() {
+QColor QTCommuter::PickColor() {
 
     if(m_in_count == 0){ // so it is an outcommuters line
         return QColor("green");
