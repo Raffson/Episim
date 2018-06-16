@@ -89,7 +89,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         auto toDefrag = (unsigned int)round(defragCty.size() * X);
         while (defragCty.size() > toDefrag) {
                 trng::uniform_int_dist distr(0, (unsigned int)defragCty.size() - 1);
-                defragCty.erase(defragCty.begin() + m_rng.GetGenerator(distr,omp_get_thread_num())());
+                defragCty.erase(defragCty.begin() + m_rng.GetGenerator(distr,(size_t)omp_get_thread_num())());
         }
 
         // Step 3: replace X% of these cities

@@ -395,13 +395,12 @@ void GeoGridGenerator::ClassifyNeighbours()
         auto cityA = cities.at(*ka);
         for (auto& cityB : cities) {
             // truncating distance on purpose to avoid using floor-function
-            unsigned int distance =
-                    cityB.second.GetCoordinates().GetDistance(cityA.GetCoordinates());
+            double distance = cityB.second.GetCoordinates().GetDistance(cityA.GetCoordinates());
             // mind that the categories go as follows [0, initial_radius), [initial_radius,
             // 2*initial_radius), etc.
-            unsigned int category = m_grid->m_initial_search_radius;
+            double category = m_grid->m_initial_search_radius;
             while ((distance / category) > 0)
-                category <<= 1; // equivalent to multiplying by 2, just more efficient...
+                category *= 2;
             for( auto type : CommunityType::IdList) {
                 if( cityB.second.HasCommunityType(type) )
 #pragma critical(nirmap_emplace)
