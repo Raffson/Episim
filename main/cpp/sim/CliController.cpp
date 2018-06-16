@@ -35,11 +35,10 @@
 #include "viewers/SummaryViewer.h"
 
 #ifdef USING_QT
-#include "popgen-Episim/gui//QTBackEnd.h"
 #include "viewers/MapViewer.h"
 #endif
 
-#include <boost/property_tree/xml_parser.hpp>
+#include "boost/property_tree/xml_parser.hpp"
 
 using namespace std;
 using namespace stride::util;
@@ -117,9 +116,7 @@ void CliController::ControlGui()
         int dummyArgc = 0;
         QGuiApplication app(dummyArgc, 0); // main app
         QQmlApplicationEngine engine;
-        shared_ptr<SimRunner> runner;
-        QScopedPointer<gui::QTBackEnd> backend(new gui::QTBackEnd(engine, m_config_pt, runner, nullptr));
-        RegisterViewers(runner);
+        QScopedPointer<gui::QTBackEnd> backend(new gui::QTBackEnd(engine, m_config_pt, this, nullptr));
         engine.rootContext()->setContextProperty("backend", backend.data());
         engine.load(QStringLiteral("mapviewer/Gui.qml"));
         app.exec();

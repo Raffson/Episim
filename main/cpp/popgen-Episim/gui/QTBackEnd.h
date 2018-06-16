@@ -15,27 +15,25 @@
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
 #include <QtPositioning/QGeoCoordinate>
-#include <sim/SimRunner.h>
 
+
+#include "sim/CliController.h"
 #include "boost/property_tree/ptree.hpp"
-
 #include "popgen-Episim/generator/GeoGridGenerator.h"
 #include "popgen-Episim/generator/PopulationGenerator.h"
-
 #include "pop/Population.h"
-#include "sim/Sim.h"
-
 #include "QTCity.h"
 
 using namespace boost::property_tree;
 using namespace std;
 
 namespace stride {
+class CliController;
 namespace gui {
 
 class QTCity;
-
 class QTCommuter;
+
 
 /*
 * Wraps the stride logic in a QML object.
@@ -55,10 +53,10 @@ public:
     /// @brief Constructor of BackEnd.
     /// @param engine the Qtquick engine.
     /// @param pt the config pt.
-    /// @param viewer Optinal the pointer to the viewer
+    /// @param clicontrol Optinal the pointer to the viewer
     /// @param parent Optional Used in QML to be a MetaObject of QT
-    explicit QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, shared_ptr<SimRunner> &viewer,
-                        QObject *parent = nullptr);
+    explicit QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *clicontrol,
+                       QObject *parent = nullptr);
 
     /// @brief default destructor
     ~QTBackEnd() override = default;
@@ -326,8 +324,8 @@ private:
     ///> Pop that is selected
     int m_selected_pop{0};
 
-    ///> shared ptr to the viewer simrunner
-    shared_ptr<SimRunner>& m_view_ptr;
+    ///> pointer to optinal controller -> used to registerViewers
+   CliController* m_cntrller;
 ///@}
 
 

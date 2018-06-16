@@ -5,16 +5,16 @@
 #include "QTBackEnd.h"
 #include <QtQuick/QQuickView>
 #include <string>
-#include <util/FileSys.h>
+#include "util/FileSys.h"
 #include "util/InstallDirs.h"
-#include <boost/filesystem/path.hpp>
-#include <sim/SimRunner.h>
+#include "boost/filesystem/path.hpp"
 #include <fstream>
+#include "sim/SimRunner.h"
 using namespace std;
 namespace stride {
 namespace gui{
-QTBackEnd::QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, shared_ptr<stride::SimRunner> &viewer, QObject *parent)
-        : QObject(parent), m_pt(pt), m_engine(engine),m_view_ptr(viewer) {
+QTBackEnd::QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *clicontrol, QObject *parent)
+        : QObject(parent), m_pt(pt), m_engine(engine),m_cntrller(clicontrol) {
 
     string file(m_pt.get<string>("run.geopop_file"));
     string path = "config/" + file;
@@ -92,8 +92,9 @@ void QTBackEnd::runSimulator(unsigned int days) {
         return;
     }
 
-    m_view_ptr = make_shared<SimRunner>(m_pt, m_grid->GetPopulation(), m_grid);
-    m_view_ptr->Run();
+    auto view_ptr = make_shared<SimRunner>(m_pt, m_grid->GetPopulation(), m_grid);
+    m_cntrller->RegisterViewers(view_ptr);
+    view_ptr->Run();
     m_pop_generated = false;
 
     for (auto &it: m_cities) {

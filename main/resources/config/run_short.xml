@@ -20,7 +20,7 @@
     <output_adopted>false</output_adopted>
     <output_cases>true</output_cases>
     <output_persons>false</output_persons>
-    <output_prefix></output_prefix>
+    <output_prefix>bin</output_prefix>
     <output_summary>false</output_summary>
     <population_file>pop_flanders600.csv</population_file>
     <rng_seed>1</rng_seed>
