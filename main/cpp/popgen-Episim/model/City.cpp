@@ -31,9 +31,9 @@ City::City(const unsigned int city_id, const unsigned int province, unsigned int
 
 City::City(const City& cty): m_city_id(cty.m_city_id), m_province(cty.m_province), m_population(cty.m_population),
                              m_coordinates(cty.m_coordinates), m_name(cty.m_name),m_in_commuter_count(cty.m_in_commuter_count),
-                             m_out_commuter_count(cty.m_in_commuter_count),
-                             m_in_commuting(cty.m_in_commuting), m_out_commuting(cty.m_out_commuting),
-                             m_in_commuting_changed(true), m_out_commuting_changed(true)
+                             m_out_commuter_count(cty.m_in_commuter_count), m_in_commuting_changed(true),
+                             m_out_commuting_changed(true), m_in_commuting(cty.m_in_commuting),
+                             m_out_commuting(cty.m_out_commuting)
 
 
 {

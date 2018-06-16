@@ -62,28 +62,61 @@ public:
     Q_PROPERTY(QColor color READ PickColor CONSTANT)
 ///@}
 
+// Modifiers
 /***********************************************************************************************************************/
+/**
+ * @name Modifers
+ * All modifiers of QTCommuter
+ */
+///@{
+    /// @brief Sets the in commuter count. Used for double commuter lines
+    /// @praram amoun a double the amount of in commuters to set
     void set_in_commuters(double amount);
-    QTCity* GetMainCity();
-    QTCity* GetSecondCity();
+///@}
 
+// Helpers
+/***********************************************************************************************************************/
 private:
-
+/**
+ * @name helpers
+ * helper functions of QTCommuter
+ */
+ ///@{
+    /// @brief  Calculates the Line Width used for visual representation
+    /// @return returns the width of the line
     double CalculateLineWidth();
-    QColor PickColor();
-private:
 
+    /// @brief Picks the color based on the line state
+    /// @return a QColor with the color representation of the line
+    QColor PickColor();
+///@}
+
+// DataMembers
+/***********************************************************************************************************************/
+private:
+/**
+ * @name Datamembers
+ * all datamember
+ */
+///@{
+///< the model of the main city
 QTCity* m_city1;
+
+///< the model of the secondary city
 QTCity* m_city2;
 
+///< QGeoCoordinate of the center of the main city
 QGeoCoordinate m_center_city1;
+
+///< QGeoCoordinate of the center of the cecondary city
 QGeoCoordinate m_center_city2;
 
+///< OutCommuter total count
 double m_out_count;
-double m_in_count;
 
-double m_total_out;
-double m_total_in;
+///< InCommuter total count
+double m_in_count;
+///@}
 
 };
 
