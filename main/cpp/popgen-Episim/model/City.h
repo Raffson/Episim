@@ -75,9 +75,6 @@ public:
         /// Returns all the communities
         util::SegmentedVector<Community>& GetAllCommunities() { return m_communities; }
 
-        /// Returns all the communities as a const reference.
-        const util::SegmentedVector<Community>& GetAllCommunities() const { return m_communities; }
-
         /// Returns all the colleges in the city
         const vector<Community*>& GetColleges() { return m_moc[CommunityType::Id::College]; }
 
@@ -86,9 +83,6 @@ public:
 
         /// Returns all the workplaces in the city
         const vector<Community*>& GetWorkplaces() { return m_moc[CommunityType::Id::Work]; }
-
-        /// Returns all the communities
-        //vector<Community*> GetCommunities(); //deprecated?
 
         /// Returns the primary communities
         const vector<Community*>& GetPrimaryCommunities() { return m_moc[CommunityType::Id::Primary]; }
@@ -138,13 +132,7 @@ public:
         /// Increments the number of commuters to the destination
         /// @param destination the destination city
 
-        void AddEffectiveCommuterTo(unsigned int destination);
         void AddEffectiveCommuterTo(const unsigned int destination, const bool isStudent);
-
-        /// Returns the number of effective commuters to the destination city from this city
-        /// @param destination the destination city of commuters
-        unsigned int GetEffectiveCommuterTo(unsigned int destination);
-
 
 private:
         const unsigned int m_city_id;   ///< A unique ID of the city.

@@ -123,15 +123,4 @@ void City::AddEffectiveCommuterTo(const unsigned int destination, const bool isS
     }
 }
 
-
-unsigned int City::GetEffectiveCommuterTo(const unsigned int destination)
-{
-    if(m_effective_out_commuting.find(destination) == m_effective_out_commuting.end()){
-        return 0;
-    }
-    else{
-        return m_effective_out_commuting[destination];
-    }
-}
-
 } // namespace stride
