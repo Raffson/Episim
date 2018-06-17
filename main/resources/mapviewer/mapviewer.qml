@@ -221,6 +221,11 @@ ApplicationWindow {
                         text: qsTr("Update rectangle")
                         onClicked: updateRectangle()
                     }
+
+                    ToolButton{
+                        text: qsTr("Hide rectangle")
+                        onClicked: hideRectangle()
+                    }
                 }
             }
 
@@ -333,6 +338,12 @@ ApplicationWindow {
         }
     }
 
+
+    function hideRectangle(){
+        selector_rect.height = 0
+        selector_rect.width = 0
+    }
+    
     function updateSelected(){
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
         var total_count = 0
