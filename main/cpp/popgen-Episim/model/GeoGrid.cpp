@@ -97,7 +97,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         defragCty.shrink_to_fit();
         unsigned int counter = 0;
         map<unsigned int,vector<City>> remember_commuters;
-        unsigned int id_counter = m_cities.rbegin()->second.GetId();
+        unsigned int id_counter = m_cities.rbegin()->second.GetId() + 1;
         for (auto& it : defragCty) {
                 // We add 2 to the amount to defrag, bcs we want to defrag in atleast 2 parts
                 vector<City> commuters_temp;
@@ -114,7 +114,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                         newName += " " + to_string(i);
 
                         commuters_temp.emplace_back(City(newId, it->GetProvince(),
-                                                                it->GetPopulation() / ((amountToFrag[counter] + 2)),
+                                                         (unsigned int)round(it->GetPopulation() / ((amountToFrag[counter] + 2))),
                                                                 Coordinate(newX, newY, newLong, newLat), newName) );
                     ;
 
@@ -171,7 +171,6 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
 
             for(auto& it: remember_commuters){
                 m_cities.erase(it.first);
-
                 for(auto& it_new: it.second){
                     it_new.SetOutCommuters(it_new.GetId(), 1);
                     it_new.SetInCommuters(it_new.GetId(), 1);
@@ -179,6 +178,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                 }
 
             }
+
         }
 
 
