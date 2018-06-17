@@ -53,7 +53,7 @@ public:
     /// @brief Constructor of BackEnd.
     /// @param engine the Qtquick engine.
     /// @param pt the config pt.
-    /// @param clicontrol Optinal the pointer to the viewer
+    /// @param clicontrol the pointer to the viewer
     /// @param parent Optional Used in QML to be a MetaObject of QT
     explicit QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *clicontrol,
                        QObject *parent = nullptr);
