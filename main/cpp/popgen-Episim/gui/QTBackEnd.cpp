@@ -2,14 +2,21 @@
 // Created by robbe on 03.06.18.
 //
 
+
+
 #include "QTBackEnd.h"
+
 #include <QtQuick/QQuickView>
-#include <string>
+
+#include <fstream>
+
+#include "sim/SimRunner.h"
 #include "util/FileSys.h"
 #include "util/InstallDirs.h"
+
 #include "boost/filesystem/path.hpp"
-#include <fstream>
-#include "sim/SimRunner.h"
+
+
 using namespace std;
 namespace stride {
 namespace gui{
@@ -116,11 +123,33 @@ void QTBackEnd::setConfig(const QString &xml_tag, const QString &val) {
 
 }
 
-QString QTBackEnd::readPath(const QString &tag) const {
+QString QTBackEnd::readPath(const QString &tag, bool geo_grid, bool data) const {
 
-    string complete_tag = "data_files." + tag.toStdString();
-    auto file = m_geo_pt.get<string>(complete_tag);
-    return QString(file.c_str());
+    boost::filesystem::path basePath = "";
+
+    if(m_pt.get<bool>("run.use_install_dirs", true)){
+
+        if(data){
+            basePath  = util::FileSys::GetDataDir();
+
+        }
+
+        else{
+            basePath = util::FileSys::GetConfigDir();
+        }
+    }
+
+    string file;
+    if(geo_grid){
+        file = m_geo_pt.get<string>(tag.toStdString());
+    }
+
+    else{
+        file = m_pt.get<string>(tag.toStdString());
+    }
+
+    basePath /= file;
+    return QString(basePath.c_str());
 
 }
 

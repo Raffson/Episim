@@ -104,10 +104,12 @@ public:
     /// @param val the value that needs to be set in the config at tag as QString
     Q_INVOKABLE void setConfig(const QString &xml_tag, const QString &val);
 
-    /// @brief reads a path out of config
-    /// @param the tag where we find the path
+    /// @brief reads a path out of config of a file that should be in the data folder if install path's are on.
+    /// @param tag tag where we find the path
+    /// @param geo_grid Config out of the GeoGrid file or GenPop file?
+    /// @param data Data file our config file?
     /// @return the path as a QString
-    Q_INVOKABLE QString readPath(const QString &tag) const;
+    Q_INVOKABLE QString readPath(const QString &tag, bool geo_grid = true, bool data = true) const;
 
     /// @brief sets a path at tag
     /// @param tag tag where we need to place path in config
@@ -133,53 +135,26 @@ public:
 */
     ///@{
     ///< list of QCities made available in QMl
-    Q_PROPERTY(QList<QObject *> cities
-                       MEMBER
-                               m_cities
-                       NOTIFY
-                       CitiesChanged)
+    Q_PROPERTY(QList<QObject *> cities MEMBER m_cities NOTIFY CitiesChanged)
 
     ///< the center of our grid. Needed for zooming
-    Q_PROPERTY(QGeoCoordinate center
-                       READ
-                               GetCenter
-                       CONSTANT)
+    Q_PROPERTY(QGeoCoordinate center READ GetCenter CONSTANT)
 
     ///< the total population in our simulator
-    Q_PROPERTY(int total_pop
-                       MEMBER
-                               m_total_pop
-                       NOTIFY
-                       PopChanged);
+    Q_PROPERTY(int total_pop MEMBER m_total_pop NOTIFY PopChanged);
 
     ///< the total pop of our selected cities
-    Q_PROPERTY(int selected_pop
-                       MEMBER
-                               m_selected_pop
-                       NOTIFY
-                       SelectedPopChanged)
+    Q_PROPERTY(int selected_pop MEMBER m_selected_pop NOTIFY SelectedPopChanged)
 
     ///< the total infected of our selected cities
-    Q_PROPERTY(int selected_infected
-                       READ
-                               CountSelectedInfected
-                       NOTIFY
-                       SelectedInfectedChanged())
+    Q_PROPERTY(int selected_infected READ CountSelectedInfected NOTIFY SelectedInfectedChanged())
 
     ///< The total amount of infected in our simulator
-    Q_PROPERTY(int total_infected
-                       READ
-                               GetTotalInfected
-                       NOTIFY
-                       TotalInfectedChanged)
+    Q_PROPERTY(int total_infected READ GetTotalInfected NOTIFY TotalInfectedChanged)
 
     ///< List of all commute lines. A bit non trivial but it was not possible to make a dynamic amount of views
     ///< a commute line object had the coordinates of 2 cities. and the in/out commuter on the line.
-    Q_PROPERTY(QList<QObject *> commuters
-                       MEMBER
-                               m_commuters
-                       NOTIFY
-                       CommutersChanged)
+    Q_PROPERTY(QList<QObject *> commuters MEMBER m_commuters NOTIFY CommutersChanged)
 
 ///@}
 

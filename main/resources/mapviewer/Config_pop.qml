@@ -75,9 +75,9 @@ Tab{
             
             ListModel{
                 id: search_file_model
-                ListElement{ tg: "cities"; txt: "City data file"; def_folder: "../data/"; xml: false}
-                ListElement{ tg: "commuting"; txt: "Commuters data file"; def_folder: "../data/";xml: false}
-                ListElement{ tg: "households"; txt: "Households data file"; def_folder: "../data/"; xml: true}
+                ListElement{ tg: "data_files.cities"; txt: "City data file"; def_folder: "../data/"; xml: false ; geo: true; data: true}
+                //ListElement{ tg: "commuting"; txt: "Commuters data file"; def_folder: "../data/";xml: false}
+                //ListElement{ tg: "households"; txt: "Households data file"; def_folder: "../data/"; xml: true}
                 
             }
             
@@ -86,12 +86,18 @@ Tab{
                 RowLayout{
                     id: cty_fil_select
                     Layout.alignment: Qt.AlignTop
-                    Layout.maximumHeight: 4
+                    Layout.maximumHeight: 6
+
                     property string tag : tg
-                    
+                    property string tit :  txt
+                    property string defo : def_folder
+                    property string is_xml : xml
+                    property bool geo: grid
+                    property bool dta: data
+
                     Label{
                         id: cty_file_label
-                        text: txt
+                        text: tit
                         verticalAlignment: Text.AlignVCenter
                         Layout.minimumWidth: 245
                         Layout.alignment: Qt.AlignLeft
@@ -102,6 +108,8 @@ Tab{
                         id: cty_config_text
                         Layout.alignment: Qt.AlignRight
                         Layout.minimumWidth: 300
+                        Layout.preferredWidth: 450
+                        Layout.maximumWidth: 600
                         text: backend.readPath(parent.tag)
                         
                         
