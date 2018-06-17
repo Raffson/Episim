@@ -23,7 +23,9 @@ using namespace std;
 namespace stride {
 
 PopulationGenerator::PopulationGenerator(GeoGrid& geogrid) :
-        m_grid(geogrid), m_rng(geogrid.GetRNG())
+        m_grid(geogrid), m_household_size_fracs(),
+        m_worker_commuting_fracs(), m_student_commuting_fracs(), m_city_ids(),
+        m_college_ids(), m_city_pop_fracs(), m_rng(geogrid.GetRNG())
 {
         InitializeHouseholdFractions();
         InitializeCommutingFractions();
@@ -146,7 +148,7 @@ ContactPool* PopulationGenerator::GetRandomContactPool(const vector<Community*>&
 }
 
 // Unfair, unless you pass frac=0.5
-const bool PopulationGenerator::FlipUnfairCoin(const double& frac)
+bool PopulationGenerator::FlipUnfairCoin(const double& frac)
 {
         vector<double> fracs;
         fracs.emplace_back(1 - frac);
@@ -155,19 +157,19 @@ const bool PopulationGenerator::FlipUnfairCoin(const double& frac)
         return (const bool)m_rng.GetGenerator(distr,(size_t)omp_get_thread_num())();
 }
 
-const bool PopulationGenerator::IsWorkingCommuter()
+bool PopulationGenerator::IsWorkingCommuter()
 {
         return FlipUnfairCoin(m_grid.GetFraction(Fractions::COMMUTING_WORKERS));
 }
 
-const bool PopulationGenerator::IsStudentCommuter()
+bool PopulationGenerator::IsStudentCommuter()
 {
         return FlipUnfairCoin(m_grid.GetFraction(Fractions::COMMUTING_STUDENTS));
 }
 
-const bool PopulationGenerator::IsStudent() { return FlipUnfairCoin(m_grid.GetFraction(Fractions::STUDENTS)); }
+bool PopulationGenerator::IsStudent() { return FlipUnfairCoin(m_grid.GetFraction(Fractions::STUDENTS)); }
 
-const bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_grid.GetFraction(Fractions::ACTIVE)); }
+bool PopulationGenerator::IsActive() { return FlipUnfairCoin(m_grid.GetFraction(Fractions::ACTIVE)); }
 
 ContactPool* PopulationGenerator::AssignWorkerAtRandom(City& origin)
 {

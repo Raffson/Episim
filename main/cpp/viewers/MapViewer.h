@@ -21,6 +21,9 @@ namespace viewers {
         public:
             MapViewer(shared_ptr<GeoGrid> grid, const std::string &outputPrefix = "");
 
+            MapViewer(const MapViewer&)=delete;
+            MapViewer& operator=(const MapViewer&)=delete;
+
             void LoadMap(bool showMap=true);
 
             /// Let viewer perform update.

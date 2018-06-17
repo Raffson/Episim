@@ -10,13 +10,13 @@ namespace stride {
 namespace gui {
 
 QTCity::QTCity(stride::City *model, QTBackEnd *back_end, QObject *parent) :
-        QObject(parent), m_city(model), m_back_end(back_end), m_id(model->GetId()),
+        QObject(parent), m_city(model), m_commuting_lst(),
+        m_back_end(back_end), m_id(model->GetId()),
         m_pop(model->GetEffectivePopulation()) {}
 
 
-QTCity::QTCity(const QTCity &obj) : QObject(obj.parent()), m_city(obj.GetModelCity()),
-                                    m_back_end(obj.GetBackEnd()),
-                                    m_id(obj.GetId()), m_pop(obj.GetModelCity()->GetEffectivePopulation()) {}
+QTCity::QTCity(const QTCity &obj) : QObject(obj.parent()), m_city(obj.GetModelCity()), m_commuting_lst(obj.m_commuting_lst),
+                                    m_back_end(obj.GetBackEnd()), m_id(obj.GetId()), m_pop(obj.GetModelCity()->GetEffectivePopulation()) {}
 
 
 QGeoCoordinate QTCity::GetCoordinates() const {

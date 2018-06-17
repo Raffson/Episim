@@ -42,6 +42,9 @@ public:
     explicit QTCommuter(QTCity *city1 = nullptr, QTCity *city2 = nullptr, double outcommuting = 0,
                         double incommuting = 0, QObject *parent = nullptr);
 
+    QTCommuter(const QTCommuter&)=delete;
+    QTCommuter& operator=(const QTCommuter&)=delete;
+
     /// Default destructor
     ~QTCommuter() override = default;
 ///@}

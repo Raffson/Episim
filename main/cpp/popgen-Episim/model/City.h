@@ -44,10 +44,10 @@ public:
         City(const City&);
 
         /// Get the id of the city.
-        const unsigned int GetId() const { return m_city_id; }
+        unsigned int GetId() const { return m_city_id; }
 
         /// Get the province.
-        const unsigned int GetProvince() const { return m_province; }
+        unsigned int GetProvince() const { return m_province; }
 
         /// Get the population of this city
         unsigned int GetPopulation() const { return m_population; }
@@ -56,7 +56,7 @@ public:
         const Coordinate& GetCoordinates() const { return m_coordinates; }
 
         /// Get the name of the city
-        const string GetName() const { return m_name; };
+        string GetName() const { return m_name; };
 
         /// Get the number of all the communities
         size_t GetNrOfCommunities() const { return m_communities.size(); }
@@ -79,23 +79,23 @@ public:
         util::SegmentedVector<Community>& GetAllCommunities() { return m_communities; }
 
         /// Returns all the colleges in the city
-        const vector<Community*>& GetColleges() { return m_moc[CommunityType::Id::College]; }
+        vector<Community*>& GetColleges() { return m_moc[CommunityType::Id::College]; }
 
         /// Returns all the schools in the city
-        const vector<Community*>& GetSchools() { return m_moc[CommunityType::Id::School]; }
+        vector<Community*>& GetSchools() { return m_moc[CommunityType::Id::School]; }
 
         /// Returns all the workplaces in the city
-        const vector<Community*>& GetWorkplaces() { return m_moc[CommunityType::Id::Work]; }
+        vector<Community*>& GetWorkplaces() { return m_moc[CommunityType::Id::Work]; }
 
         /// Returns the primary communities
-        const vector<Community*>& GetPrimaryCommunities() { return m_moc[CommunityType::Id::Primary]; }
+        vector<Community*>& GetPrimaryCommunities() { return m_moc[CommunityType::Id::Primary]; }
 
         /// Returns the secondary communities
-        const vector<Community*>& GetSecondaryCommunities() { return m_moc[CommunityType::Id::Secondary]; }
+        vector<Community*>& GetSecondaryCommunities() { return m_moc[CommunityType::Id::Secondary]; }
 
         /// Returns the communities of the given type
         /// @param: ct type of the community
-        const vector<Community*>& GetCommunitiesOfType(CommunityType::Id ct) { return m_moc[ct]; }
+        vector<Community*>& GetCommunitiesOfType(CommunityType::Id ct) { return m_moc[ct]; }
 
         /// Adds a new community of the given type to the city.
         /// @param: id The ID of the community to be added
@@ -135,7 +135,7 @@ public:
         util::SegmentedVector<Household>& GetHouseholds() { return m_households; }
 
         /// Returns whether or not the given type of community is present in this city.
-        const bool HasCommunityType(CommunityType::Id type) const { return m_types_present.at(type); }
+        bool HasCommunityType(CommunityType::Id type) const { return m_types_present.at(type); }
 
         unsigned int GetEffectivePopulation() const;
         unsigned int GetInfectedCount() const;
