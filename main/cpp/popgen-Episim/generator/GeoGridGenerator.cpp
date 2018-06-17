@@ -154,7 +154,6 @@ void GeoGridGenerator::ReadDataFiles()
 
     parser::ParseCities(basePath / cityFile, m_grid->m_cities, m_grid->m_model_pop, m_grid->m_rtree);
     parser::ParseCommuting(basePath / commutingFile, m_grid->m_cities, m_grid->m_fract_map);
-
 }
 
 void GeoGridGenerator::EnsureConsistency()

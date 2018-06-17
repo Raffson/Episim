@@ -90,7 +90,7 @@ void CSV::ReadFromStream(istream& inputStream)
         string line;
 
         // process header, get labels and columnCount
-        getline(inputStream, line);
+        safeGetline(inputStream, line);
         line                        = Trim(line);
         vector<string> headerLabels = Split(line, ",");
         for (const string& label : headerLabels) {
@@ -99,7 +99,7 @@ void CSV::ReadFromStream(istream& inputStream)
         m_column_count = m_labels.size();
 
         // body
-        while (getline(inputStream, line)) {
+        while (safeGetline(inputStream, line)) {
                 line = Trim(line);
                 if (!line.empty()) {
                         vector<string> values = Split(line, ",");
