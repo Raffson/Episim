@@ -29,6 +29,20 @@ City::City(const unsigned int city_id, const unsigned int province, unsigned int
 
 }
 
+City::City(const City& cty): m_city_id(cty.m_city_id), m_province(cty.m_province), m_population(cty.m_population),
+                             m_coordinates(cty.m_coordinates), m_name(cty.m_name),m_in_commuter_count(cty.m_in_commuter_count),
+                             m_out_commuter_count(cty.m_in_commuter_count),m_in_commuting_changed(true),
+                             m_out_commuting_changed(true), m_student_commuters_count(cty.m_student_commuters_count),
+                             m_worker_commuters_count(cty.m_worker_commuters_count)
+
+{
+    m_in_commuting = cty.m_in_commuting;
+    m_out_commuting = cty.m_out_commuting;
+    m_types_present = cty.m_types_present;
+
+}
+
+
 Community& City::AddCommunity(const size_t& id, CommunityType::Id type)
 {
         m_communities.emplace_back(id, type, this);
@@ -121,6 +135,28 @@ void City::AddEffectiveCommuterTo(const unsigned int destination, const bool isS
             m_worker_commuters_count++;
         }
     }
+}
+
+unsigned int City::GetEffectiveCommuterTo(const unsigned int destination)
+{
+    if(m_effective_out_commuting.find(destination) == m_effective_out_commuting.end()){
+        return 0;
+    }
+    else{
+        return m_effective_out_commuting[destination];
+    }
+}
+
+void City::RemoveInCommuters(unsigned int id) {
+
+    m_in_commuting.erase(id);
+    m_in_commuting_changed = true;
+
+}
+
+void City::RemoveOutCommuters(unsigned int id) {
+    m_out_commuting.erase(id);
+    m_out_commuting_changed = true;
 }
 
 } // namespace stride

@@ -21,15 +21,26 @@
 
 #include "util/Stopwatch.h"
 
-#include <boost/property_tree/ptree.hpp>
+#include "boost/property_tree/ptree.hpp"
 #include <memory>
-#include <spdlog/spdlog.h>
+#include "spdlog/spdlog.h"
 #include <string>
+
+
+#ifdef USING_QT
+#include "popgen-Episim/gui/QTBackEnd.h"
+#endif
+
 
 namespace stride {
 
+namespace gui{
+class QTBackEnd;
+}
+
 class SimRunner;
 class GeoGrid;
+
 
 /**
  * Controls a simulation run initiated with the command line interface (cli).
@@ -87,6 +98,8 @@ private:
         bool                            m_use_install_dirs; ///< Working dir or install dir mode.
         std::shared_ptr<GeoGrid>        m_geogrid;          ///< The GeoGrid.
         bool                            m_draw_map;         ///< Draw or don't draw a map of the GeoGrid.
+
+        friend class gui::QTBackEnd;
 };
 
 } // namespace stride

@@ -6,6 +6,7 @@
 #include "popgen-Episim/model/GeoGrid.h"
 
 #include <boost/filesystem.hpp>
+#include "boost/property_tree/ptree.hpp"
 
 
 namespace stride {
@@ -115,6 +116,11 @@ private:
         /// @param indices A vector with random indices for 'cities'.
         /// @param type The type of the communities to be added.
         void AddCommunities(const vector<City*>& cities, const vector<unsigned int>& indices, CommunityType::Id type);
+
+        /// @Brief Reads the parameters for defragmentation of cities. Then calls defragcities in m_grid.
+        ///        Will do nothing if is_defrag property = false.
+        /// @param p_grid_tree a p_tree that is populated with geogen config information.
+        void DefragCities();
 
 private:
         std::shared_ptr<GeoGrid> m_grid;          ///< The GeoGrid object.

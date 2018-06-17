@@ -78,7 +78,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
 {
         // Step 1: find all cities that have less then Y% of the population
         // popCap: if the population of a city are smaller or equal to this number we defragment them
-        auto          popCap = (unsigned int)round(m_total_pop * Y);
+        auto          popCap = (unsigned int)round(m_model_pop * Y);
         vector<City*> defragCty;
         for (auto& it : m_cities) {
                 if (it.second.GetPopulation() <= popCap)
@@ -96,27 +96,91 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         vector<unsigned int> amountToFrag = generate_random(pVec, m_rng, (unsigned int)defragCty.size());
         defragCty.shrink_to_fit();
         unsigned int counter = 0;
+        map<unsigned int,vector<City>> remember_commuters;
+        unsigned int id_counter = m_cities.rbegin()->second.GetId();
         for (auto& it : defragCty) {
                 // We add 2 to the amount to defrag, bcs we want to defrag in atleast 2 parts
+                vector<City> commuters_temp;
                 for (unsigned int i = 0; i < amountToFrag[counter] + 2; i++) {
 
-                        auto newId    = m_cities.rbegin()->first + 1;
+                        auto newId    = id_counter;
+                        id_counter++;
                         auto coords    = it->GetCoordinates();
-                        double newLat  = coords.GetLatitude() + pow(-1, i) * (0.1 * i);
-                        double newLong = coords.GetLongitude() + pow(-1, i) * (0.1 * i);
+                        double newLat  = coords.GetLatitude() + pow(-1, i) * (0.005 * i);
+                        double newLong = coords.GetLongitude() + pow(-1, i) * (0.005 * i);
                         double newX    = coords.GetX() + pow(-1, i) * (0.1 * i);
                         double newY    = coords.GetY() + pow(-1, i) * (0.1 * i);
                         auto newName = it->GetName();
-                        newName += to_string(i);
-                        m_cities.emplace(newId,
-                                         City(newId, it->GetProvince(), it->GetPopulation() / (amountToFrag[counter] + 2),
-                                         Coordinate(newX, newY, newLong, newLat), newName) );
+                        newName += " " + to_string(i);
+
+                        commuters_temp.emplace_back(City(newId, it->GetProvince(),
+                                                                it->GetPopulation() / ((amountToFrag[counter] + 2)),
+                                                                Coordinate(newX, newY, newLong, newLat), newName) );
+                    ;
+
                 }
+                remember_commuters[it->GetId()] = move(commuters_temp);
                 counter++;
-                m_cities.erase(it->GetId());
+            }
+
+            for( auto& it: remember_commuters){
+                stride::City* old_city  = &m_cities.at(it.first);
+                //m_cities.erase(old_city->GetId());
+
+                for(auto& nw_city: it.second){
+
+                    for(auto& other_old_city: m_cities){
+                        if(remember_commuters.count(other_old_city.first) == 0) {
+
+                            //All old cities get an entry to the new city
+                            double outcommuting_to = old_city->GetOutCommuting().at(other_old_city.second.GetId());
+                            other_old_city.second.SetOutCommuters(nw_city.GetId(),
+                                                                  ceil(outcommuting_to / (double)(amountToFrag[counter] + 2)));
+
+                            double incommuting_to = old_city->GetInCommuting().at(other_old_city.second.GetId());
+                            other_old_city.second.SetInCommuters(nw_city.GetId(),
+                                                                 ceil(incommuting_to / (double)(amountToFrag[counter] + 2)));
+
+
+
+                            //the new city gets all entries to the old city
+                            outcommuting_to = other_old_city.second.GetOutCommuting().at(old_city->GetId());
+                            nw_city.SetOutCommuters(other_old_city.first,
+                                                     ceil(outcommuting_to / (double)(amountToFrag[counter] + 2)));
+
+                            incommuting_to = other_old_city.second.GetInCommuting().at(old_city->GetId());
+                            nw_city.SetInCommuters(other_old_city.first, ceil(incommuting_to / (double)(amountToFrag[counter] + 2)));
+
+
+                        }
+                    }
+
+                    for (auto& it2: remember_commuters) {
+                        for (auto &nw_city2: it2.second) {
+                            nw_city.SetOutCommuters(nw_city2.GetId(), 1);
+                            nw_city.SetInCommuters(nw_city2.GetId(), 1);
+                        }
+                    }
+                }
+
+                for(auto& it2: m_cities){
+                    it2.second.RemoveInCommuters(it.first);
+                    it2.second.RemoveOutCommuters(it.first);
+                }
+            }
+
+            for(auto& it: remember_commuters){
+                m_cities.erase(it.first);
+
+                for(auto& it_new: it.second){
+                    it_new.SetOutCommuters(it_new.GetId(), 1);
+                    it_new.SetInCommuters(it_new.GetId(), 1);
+                    m_cities.emplace(it_new.GetId(), move(it_new));
+                }
+
+            }
         }
-        // cout << m_cities.size() << endl;
-}
+
 
 const vector<City*>& GeoGrid::GetCitiesWithinRadiusWithCommunityType(const City& origin, unsigned int radius,
                                                                      CommunityType::Id type)

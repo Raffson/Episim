@@ -128,8 +128,7 @@ if(Qt5_FOUND)
 			popgen-Episim/gui/QTBackEnd.cpp
 			popgen-Episim/gui/QTCity.cpp
 			popgen-Episim/gui/QTCommuter.cpp
-			popgen-Episim/gui/QTCommuterModel.cpp
-		)
+            )
 endif()
 
 #============================================================================

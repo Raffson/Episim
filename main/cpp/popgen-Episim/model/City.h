@@ -40,6 +40,9 @@ public:
         /// @param name The name of this city.
         City(unsigned int city_id, unsigned int province, unsigned int population, Coordinate coordinates, string name);
 
+        /// Copy constructor
+        City(const City&);
+
         /// Get the id of the city.
         const unsigned int GetId() const { return m_city_id; }
 
@@ -110,6 +113,14 @@ public:
         /// @param: number_of_commuters the number of commuters leaving this city
         void SetOutCommuters(unsigned int id, double number_of_commuters);
 
+        /// Removes an incommuter from the outcommuter list
+        /// @param id city id of the city that needs to be removed
+        void RemoveInCommuters(unsigned int id);
+
+        /// Removes an outcommuter from the outcommuter list
+        /// @param id city of the city that needs to be removed
+        void RemoveOutCommuters(unsigned int id);
+
         /// Get all the incoming commuters
         const map<unsigned int, double>& GetInCommuting() const { return m_in_commuting; };
 
@@ -133,6 +144,10 @@ public:
         /// @param destination the destination city
         /// @param isStudent indicates whether or not this commuter is a student
         void AddEffectiveCommuterTo(unsigned int destination, bool isStudent);
+
+        /// Returns the number of effective commuters to the destination city from this city
+        /// @param destination the destination city of commuters
+        unsigned int GetEffectiveCommuterTo(unsigned int destination);
 
 private:
         const unsigned int m_city_id;   ///< A unique ID of the city.

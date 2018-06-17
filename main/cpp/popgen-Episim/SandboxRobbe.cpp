@@ -2,6 +2,7 @@
 // Created by robbe on 03.06.18.
 //
 #include "stdlib.h"
+
 #ifdef USING_QT
 #include "gui/QTBackEnd.h"
 #endif
@@ -17,14 +18,8 @@ int main(int argc, char** argv){
     system("rm -r *_*");
 
 #ifdef USING_QT
-    QGuiApplication app(argc, argv); // main app
-    QQmlApplicationEngine engine;
 
-    QScopedPointer<QTBackEnd> backend(new QTBackEnd(engine, pt));
-    engine.rootContext()->setContextProperty("backend", backend.data());
-    engine.load(QStringLiteral("mapviewer/Gui.qml"));
-
-
-    return app.exec();
+    stride::CliController ctrl(pt);
+    ctrl.ControlGui();
 #endif
 }
