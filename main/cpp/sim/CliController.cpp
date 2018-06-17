@@ -90,7 +90,7 @@ void CliController::ControlGui()
         engine.load(QStringLiteral("mapviewer/Gui.qml"));
         app.exec();
 
-        m_stride_logger->info("CliController shutting down.");
+        LogShutdown();
         spdlog::drop_all();
 #else
         cout << "Qt was not found, unable to start GUI..." << endl;

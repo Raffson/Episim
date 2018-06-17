@@ -9,7 +9,7 @@ using namespace std;
 namespace stride {
 
 Household::Household(City* city, ContactPoolSys& poolSys) :
-        m_id(poolSys[ContactPoolType::Id::Household].size()+1), m_city(city)
+        m_id(poolSys[ContactPoolType::Id::Household].size()+1), m_city(city), m_pool(nullptr)
 {
         ContactPoolType::Id type = ContactPoolType::Id::Household;
         poolSys[type].emplace_back(m_id, type, this);

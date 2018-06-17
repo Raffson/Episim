@@ -22,7 +22,9 @@ using namespace std;
 namespace stride {
 namespace gui{
 QTBackEnd::QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *clicontrol, QObject *parent)
-        : QObject(parent), m_pt(pt), m_engine(engine),m_cntrller(clicontrol) {
+        : QObject(parent), m_grid(nullptr), m_cities(), m_commuters(),
+          m_pt(pt), m_geo_pt(), m_engine(engine),m_cntrller(clicontrol)
+{
 
     string file(m_pt.get<string>("run.geopop_file"));
     string path = "config/" + file;
@@ -90,7 +92,7 @@ QObject *QTBackEnd::getCity(unsigned int id) const {
 
 }
 
-void QTBackEnd::runSimulator(unsigned int days) {
+void QTBackEnd::runSimulator() {
 
     if (!m_pop_generated) {
         genPop();

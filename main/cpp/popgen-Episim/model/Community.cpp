@@ -23,9 +23,10 @@ using namespace std;
 namespace stride {
 
 Community::Community(const size_t& id, CommunityType::Id type, City* city)
-    : m_id(id), m_type(type), m_city(city)
+    : m_id(id), m_type(type), m_city(city), m_contact_pools()
 {
 }
+
 
 stride::ContactPool& Community::AddContactPool(ContactPoolSys& poolSys)
 {

@@ -40,6 +40,8 @@ public:
     /// @param object QTCity to be copied
     QTCity(const QTCity &object);
 
+    QTCity& operator=(const QTCity&)=delete;
+
     /// @brief Default destructor
     ~QTCity() override = default;
 ///@}

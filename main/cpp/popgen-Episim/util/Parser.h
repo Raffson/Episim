@@ -40,8 +40,6 @@ void ParseCities(const boost::filesystem::path&, map<unsigned int, City>& cities
 /// @param: fracs distribution of different age-group, working and commuting-behaviour
 void ParseCommuting(const boost::filesystem::path&, map<unsigned int, City>&, const map<Fractions, double>& fracs);
 
-vector<City> DefragmentCity(const City& ct, vector<double> distr, util::RNManager& rndm);
-
 /// Parse the household information
 /// @param: path to the file containing information about the commuting behaviour
 /// @retval vector<vector<double>> composition of the model households
