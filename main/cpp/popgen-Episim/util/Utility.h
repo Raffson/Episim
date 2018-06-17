@@ -75,6 +75,15 @@ bool file_exists(const boost::filesystem::path& path);
 ///          3 numbers out of the interval [0,3] with chance on p(0) = 1/15, p(1) = 4/15, p(2) = 8/15, p(3) = 2/15
 vector<unsigned int> generate_random(const vector<double>& pVec, util::RNManager& rng, unsigned int amount = 1);
 
+/// Generates the 'amount' of random unsigned ints between 'begin' and 'end' using 'rng'.
+/// @param begin an unsigned int marking the beginning of the random interval
+/// @param end an unsigned int marking the end of a random interval, with 'end' not included).
+/// @param rng  a reference to a RNMmanager object. See "RNMmanger".h for more info.
+/// @param amount default = 1 The amount of random numbers we will generate.
+/// @retval <vector<unsigned int>> a vector of unsigned ints of length == amount. Each number is between
+///                                [begin and end - 1 ]
+vector<unsigned int> generate_random(unsigned int begin, unsigned int end, util::RNManager& rng, unsigned int amount);
+
 /// Checks the given distribution if all elements are zero. If this is the case,
 /// we transform to a uniform distribution. This is needed to take students into account from cities
 /// that have no commuters to the largest cities that have a college. Obviously these students need to be

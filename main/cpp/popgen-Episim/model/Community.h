@@ -51,19 +51,22 @@ public:
         /// Return a const reference of the city,
         City* GetCity() const { return m_city; }
 
-//        /// Return a reference of the city,
-//        City* GetCity() { return m_city; }
+        /// Return a reference of the city,
+        City* GetCity() { return m_city; }
 
         /// Adds a new contact pool to the community
         /// @param: poolSys A reference to the ContactPoolSys needed for stride, passed from GeoGrid.
         /// @retval: <ContactPool> The recently added contactpool
         ContactPool& AddContactPool(ContactPoolSys& poolSys);
 
-//        /// Get all the contactpools
-//        const std::vector<ContactPool*>& GetContactPools() const { return m_contact_pools; }
+        /// Get all the contactpools
+        const std::vector<ContactPool*>& GetContactPools() const { return m_contact_pools; }
 
         /// Get all the contactpools
         std::vector<ContactPool*>& GetContactPools() { return m_contact_pools; }
+
+        /// Get the total number members of all contactpools for this community
+        unsigned int GetSize() const;
 
 private:
         const size_t m_id; ///< A unique ID for the community

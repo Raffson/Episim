@@ -29,10 +29,12 @@ Coordinate::Coordinate(double x, double y, double longitude, double latitude)
 
 double Coordinate::GetDistance(const Coordinate& c1, const bool cartesian) const
 {
+        //may want to have a parameter that defines the strategy,
+        // depending on that strategy we'll need to know whether we use xy or longlat...
         if( cartesian )
-                return (bg::distance(xy, c1.xy) / 1000);
+                return (bg::distance(xy, c1.xy) / 1000); //uses Pythagoras' strategy by default
         else
-                return (bg::distance(longlat, c1.longlat) / 1000);
+                return (bg::distance(longlat, c1.longlat) / 1000); //uses Andoyer's strategy be default
 }
 
 } // namespace stride

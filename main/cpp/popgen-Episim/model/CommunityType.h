@@ -40,6 +40,15 @@ enum class Id : std::size_t
         Secondary,
 };
 
+/// Number of Community types.
+inline constexpr unsigned int NumOfTypes() { return 5U; }
+
+/// Check whether string is name of a CommunityType::Id.
+bool IsType(const std::string& s);
+
+/// Cast to size_t for indexing.
+inline constexpr std::size_t ToSizeT(Id id) { return static_cast<std::size_t>(id); }
+
 /// Converts a ContactPoolType::Id value to corresponding name.
 std::string ToString(Id c);
 

@@ -34,6 +34,16 @@ vector<unsigned int> generate_random(const vector<double>& pVec, util::RNManager
         return retVec;
 }
 
+vector<unsigned int> generate_random(unsigned int begin, unsigned int end, util::RNManager& rng, unsigned int amount)
+{
+        trng::uniform_int_dist dist(begin, end);
+        vector<unsigned int>   retVec;
+        for (unsigned int i = 0; i < amount; i++) {
+                retVec.emplace_back((unsigned int)rng.GetGenerator(dist, (size_t )omp_get_thread_num())());
+        }
+        return retVec;
+}
+
 void check_distribution(vector<double>& pVec)
 {
         bool allzero = true;

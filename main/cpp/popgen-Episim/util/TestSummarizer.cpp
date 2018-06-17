@@ -7,7 +7,6 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "TestSummarizer.h"
-#include "util/FileSys.h"
 
 using namespace std;
 
