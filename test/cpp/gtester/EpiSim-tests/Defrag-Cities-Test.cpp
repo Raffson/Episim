@@ -84,8 +84,8 @@ TEST_P(DefragCityTest, value_test)
         EXPECT_FLOAT_EQ(oldCoordinate.GetY(), secondLastCity->GetCoordinates().GetY());
 
         // Coordinates of the second city are 0.1 off the original
-        EXPECT_FLOAT_EQ(oldCoordinate.GetLongitude() - 0.1, lastCity->GetCoordinates().GetLongitude());
-        EXPECT_FLOAT_EQ(oldCoordinate.GetLatitude() - 0.1, lastCity->GetCoordinates().GetLatitude());
+        EXPECT_FLOAT_EQ(oldCoordinate.GetLongitude() - 0.005, lastCity->GetCoordinates().GetLongitude());
+        EXPECT_FLOAT_EQ(oldCoordinate.GetLatitude() - 0.005, lastCity->GetCoordinates().GetLatitude());
         EXPECT_FLOAT_EQ(oldCoordinate.GetX() - 0.1, lastCity->GetCoordinates().GetX());
         EXPECT_FLOAT_EQ(oldCoordinate.GetY() - 0.1, lastCity->GetCoordinates().GetY());
 
@@ -98,8 +98,8 @@ TEST_P(DefragCityTest, value_test)
         EXPECT_EQ(oldLastId + 2, lastCity->GetId());
 
         // New names
-        EXPECT_EQ(oldName + "0", secondLastCity->GetName());
-        EXPECT_EQ(oldName + "1", lastCity->GetName());
+        EXPECT_EQ(oldName + " 0", secondLastCity->GetName());
+        EXPECT_EQ(oldName + " 1", lastCity->GetName());
 }
 
 namespace {
