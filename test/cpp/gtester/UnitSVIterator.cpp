@@ -28,15 +28,14 @@
 using namespace std;
 using namespace stride::util;
 
-namespace SimPT_Sim {
-namespace Container {
-namespace Tests {
+namespace stride {
+namespace tests {
 
 class Base
 {
 public:
         virtual size_t Get1() const { return 0; }
-        virtual ~Base() {}
+        virtual ~Base() = default;
 };
 
 class Derived : public Base
@@ -82,7 +81,8 @@ TEST(UnitSVIterator, Loop1)
 
         int i = 0;
         for (auto it = c.begin(); it < c.end(); ++it) {
-                EXPECT_EQ(i++, *it);
+                EXPECT_EQ(i, *it);
+                i++;
         }
 }
 
@@ -93,7 +93,8 @@ TEST(UnitSVIterator, Loop2)
 
         int i = 0;
         for (auto e : c) {
-                EXPECT_EQ(i++, e);
+                EXPECT_EQ(i, e);
+                i++;
         }
 }
 
@@ -142,6 +143,5 @@ TEST(UnitSVIterator, Direct1)
         EXPECT_EQ(c.begin() + 2, it);
 }
 
-} // namespace Tests
-} // namespace Container
-} // namespace SimPT_Sim
+} // namespace tests
+} // namespace stride

@@ -30,6 +30,7 @@ file(GLOB DEPLOY_FILES "config/*")
 INSTALL( FILES ${DEPLOY_FILES} DESTINATION ${CONFIG_INSTALL_LOCATION} )
 file(GLOB DEPLOY_FILES "EpiSim-test-files/config/*")
 INSTALL( FILES ${DEPLOY_FILES} DESTINATION ${CONFIG_INSTALL_LOCATION} )
+unset(DEPLOY_FILES)
 
 #============================================================================
 # Add subdirs:
