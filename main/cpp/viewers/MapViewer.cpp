@@ -48,7 +48,7 @@ void MapViewer::LoadMap(bool showMap) {
 #endif
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     int             dummyargc = 0;
-    QGuiApplication application(dummyargc, 0);
+    QGuiApplication application(dummyargc, nullptr);
     application.mouseButtons();
 
     QVariantMap parameters;
@@ -93,10 +93,10 @@ void MapViewer::LoadMap(bool showMap) {
     /// To add cities on the map: use following.
     auto cities = m_grid->GetCities();
     map<unsigned int, vector<stride::City>> sorted;
-    for( auto& city : cities)
+    for( const auto& city : cities)
         sorted[-city.second.GetPopulation()].emplace_back(city.second);
-    for (auto c_it = sorted.begin(); c_it != sorted.end(); c_it++) {
-        for (auto city : (*c_it).second) {
+    for (const auto& pair : sorted) {
+        for (const auto& city : pair.second) {
             std::stringstream ss;
             string s;
             string temp;

@@ -83,7 +83,7 @@ void CliController::ControlGui()
         LogStartup();
 
         int dummyArgc = 0;
-        QGuiApplication app(dummyArgc, 0); // main app
+        QGuiApplication app(dummyArgc, nullptr); // main app
         QQmlApplicationEngine engine;
         QScopedPointer<gui::QTBackEnd> backend(new gui::QTBackEnd(engine, m_config_pt, this, nullptr));
         engine.rootContext()->setContextProperty("backend", backend.data());

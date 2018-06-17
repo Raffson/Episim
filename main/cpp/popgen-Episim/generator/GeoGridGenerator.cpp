@@ -394,12 +394,12 @@ void GeoGridGenerator::ClassifyNeighbours()
         auto cityA = cities.at(*ka);
         for (auto& cityB : cities) {
             // truncating distance on purpose to avoid using floor-function
-            double distance = cityB.second.GetCoordinates().GetDistance(cityA.GetCoordinates());
+            auto distance = (unsigned int)cityB.second.GetCoordinates().GetDistance(cityA.GetCoordinates());
             // mind that the categories go as follows [0, initial_radius), [initial_radius,
             // 2*initial_radius), etc.
-            double category = m_grid->m_initial_search_radius;
+            auto category = m_grid->m_initial_search_radius;
             while ((distance / category) > 0)
-                category *= 2;
+                category <<= 1; // equivalent to multiplying by 2, just more efficient...
             for( auto type : CommunityType::IdList) {
                 if( cityB.second.HasCommunityType(type) )
 #pragma critical(nirmap_emplace)
@@ -473,8 +473,8 @@ void GeoGridGenerator::AddCommunities(const vector<City *>& cities, const vector
         boost::property_tree::ptree ptree = m_grid->GetConfigPtree();
         if(ptree.get("run.popgen.defrag_cities.is_defrag", false)){
 
-            float X = ptree.get<float>("run.popgen.defrag_cities.X");
-            float Y = ptree.get<float>("run.popgen.defrag_cities.Y");
+            auto X = ptree.get<double>("run.popgen.defrag_cities.X");
+            auto Y = ptree.get<double>("run.popgen.defrag_cities.Y");
 
             vector<double> p_vec;
             BOOST_FOREACH(boost::property_tree::ptree::value_type &it, ptree.get_child("run.popgen.defrag_cities.p_vec")) {

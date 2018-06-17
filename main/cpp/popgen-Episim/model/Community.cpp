@@ -39,4 +39,15 @@ stride::ContactPool& Community::AddContactPool(ContactPoolSys& poolSys)
         return (*m_contact_pools.back());
 }
 
+unsigned int Community::GetSize() const
+{
+        unsigned int result = 0;
+#pragma omp parallel for reduction(+: result)
+        for (auto contactPool = m_contact_pools.begin() ; contactPool < m_contact_pools.end();contactPool++) {
+                result += (*contactPool)->GetSize();
+        }
+
+        return result;
+}
+
 } // namespace stride
