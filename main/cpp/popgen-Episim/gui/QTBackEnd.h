@@ -58,6 +58,9 @@ public:
     explicit QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *clicontrol,
                        QObject *parent = nullptr);
 
+    QTBackEnd(const QTBackEnd&)=delete;
+    QTBackEnd& operator=(const QTBackEnd&)=delete;
+
     /// @brief default destructor
     ~QTBackEnd() override = default;
 
@@ -74,7 +77,7 @@ public:
 
     /// @brief Runs the simulator in n steps.
     /// @param days the amount of steps (days) to be run.
-    Q_INVOKABLE void runSimulator(unsigned int days = 0);
+    Q_INVOKABLE void runSimulator();
 
     /// @brief tells QML if it should redraw the map items.
     /// This is needed if the population generator is rerun.
@@ -168,7 +171,7 @@ public:
     Q_PROPERTY(QGeoCoordinate center READ GetCenter CONSTANT)
 
     ///< the total population in our simulator
-    Q_PROPERTY(int total_pop MEMBER m_total_pop NOTIFY PopChanged);
+    Q_PROPERTY(int total_pop MEMBER m_total_pop NOTIFY PopChanged)
 
     ///< the total pop of our selected cities
     Q_PROPERTY(int selected_pop MEMBER m_selected_pop NOTIFY SelectedPopChanged)

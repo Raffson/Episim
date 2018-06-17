@@ -78,19 +78,19 @@ private:
         /// A random functions which flips an unfair coin, unless you pass 'frac' = 0.5
         /// @param frac The fraction of chance that you will get 'true' as a result.
         /// @retval <const bool> A contact boolean value indicating the result.
-        const bool FlipUnfairCoin(const double& frac);
+        bool FlipUnfairCoin(const double& frac);
 
         /// A random function which will flip a coin to determine if a person is a working commuter.
-        const bool IsWorkingCommuter();
+        bool IsWorkingCommuter();
 
         /// A random function which will flip a coin to determine if a person is a commuting student.
-        const bool IsStudentCommuter();
+        bool IsStudentCommuter();
 
         /// A random function which will flip a coin to determine if we're dealing with a student.
-        const bool IsStudent();
+        bool IsStudent();
 
         /// A random function which will flip a coin to determine if we're dealing with an active worker.
-        const bool IsActive();
+        bool IsActive();
 
         /// Returns a  reference to a random city for a commuter according to the commuting distribution.
         /// @param city The city from which we assume the commuter is coming from.

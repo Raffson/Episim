@@ -26,7 +26,8 @@ namespace stride {
 namespace viewers {
 
 MapViewer::MapViewer(shared_ptr<GeoGrid> grid, const std::string &outputPrefix)
-    : m_grid(grid), m_output_prefix(outputPrefix), m_step(0)
+    : engine(nullptr), m_grid(grid), m_output_prefix(outputPrefix), m_step(0),
+      m_map_option(), m_png_option(), m_item(nullptr)
 {
     m_output_prefix += util::FileSys::IsDirectoryString(m_output_prefix) ? "png/" : "/png/";
     boost::filesystem::path dir(m_output_prefix.c_str());
