@@ -9,6 +9,7 @@
 #include <QtQuick/QQuickView>
 
 #include <fstream>
+#include <cstddef>
 
 #include "sim/SimRunner.h"
 #include "util/FileSys.h"
@@ -27,7 +28,8 @@ QTBackEnd::QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *cl
     string path = "config/" + file;
     fstream filestr;
     filestr.open(path);
-    read_xml(path, m_geo_pt);
+    using namespace boost::property_tree::xml_parser;
+    read_xml(path, m_geo_pt, trim_whitespace | no_comments);
     filestr.close();
 }
 
@@ -185,7 +187,6 @@ bool QTBackEnd::getBoolConfig(const QString &xml_tag) const {
 bool QTBackEnd::setBoolConfig(const QString &xml_tag, const bool &value) {
 
     m_geo_pt.put(xml_tag.toStdString(), value);
-
     return !value;
 }
 
@@ -197,6 +198,35 @@ QUrl QTBackEnd::getDataPath() const {
 QUrl QTBackEnd::getConfigPath() const{
             return QUrl(util::FileSys::GetConfigDir().c_str());
         }
+
+int QTBackEnd::countConfigChildren(const QString &xml_tag, bool geo) const{
+
+
+    if(geo){
+        return (int) m_geo_pt.get_child(xml_tag.toStdString()).size();
+    }
+
+    else{
+        return (int) m_pt.get_child(xml_tag.toStdString()).size();
+    }
+
+
+}
+
+double QTBackEnd::getChildAtIndex(const QString &xml_tag, int index, bool geo) const{
+
+    if(geo){
+
+        auto child = m_geo_pt.get_child(xml_tag.toStdString());
+        return std::next(child.find("value"),index)->second.get_value<double>();
+    }
+
+    else{
+
+        auto child = m_geo_pt.get_child(xml_tag.toStdString());
+        return std::next(child.find("value"),index)->second.get_value<double>();
+    }
+}
 
 /***********************************************************************************************************************/
 

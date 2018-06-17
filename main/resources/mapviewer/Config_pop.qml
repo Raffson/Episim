@@ -20,7 +20,7 @@ Tab{
             anchors.fill: parent
             columnSpacing: 5
             rowSpacing: 1
-            rows: 15
+            rows: 16
             columns: 1
             ListModel{
                 id: num_bttns
@@ -28,16 +28,14 @@ Tab{
                 ListElement { txt: "Population"; tagi: "pop_info.pop_total"; decims: 0; stpsize: 1; mn: 0; mx : -1}
                 ListElement { txt: "Fraction students"; tagi: "pop_info.fraction_students"; decims: 2; stpsize: 0.1; mn: 0; mx : 1}
                 ListElement { txt: "Fraction active workers"; tagi: "pop_info.fraction_active_workers"; decims: 2; stpsize: 0.1; mn: 0; mx : 1}
-                /*
-
-                ListElement { tag: "Fraction commuting students"; xml: "pop_info.fraction_commuting_workers"; fract: true}
-                ListElement { tag: "Fraction commuting workers"; xml: "pop_info.fraction_commuting_workers"; fract: true}
-                ListElement { tag: "Average size"; xml:"contactpool_info.average_size"; fract: false }
-                ListElement { tag: "School Size";  xml:"contactpool_info.school.size";fract: false }
-                ListElement { tag: "College Size"; xml:"contactpool_info.college.size";fract: false }
-                ListElement { tag: "Workplace Size";  xml:"contactpool_info.workplace.size";fract: false }
-                ListElement { tag: "Nr cities with colleges"; xml:"contactpool_info.college.cities"; fract: false}
-                ListElement { tag: "Community size";  xml:"contactpool_info.community.size"; fract: false}*/
+                ListElement { txt: "Fraction commuting students"; tagi: "pop_info.fraction_commuting_workers"; decims: 2; stpsize: 0.1; mn: 0; mx : 1}
+                ListElement { txt: "Fraction commuting workers"; tagi: "pop_info.fraction_commuting_workers"; decims: 2; stpsize: 0.1; mn: 0; mx : 1 }
+                ListElement { txt: "Average size"; tagi:"contactpool_info.average_size"; decims: 0; stpsize: 1; mn: 0; mx : -1}
+                ListElement { txt: "School Size";  tagi:"contactpool_info.school.size";decims: 0; stpsize: 1; mn: 0; mx : -1 }
+                ListElement { txt: "College Size"; tagi:"contactpool_info.college.size";decims: 0; stpsize: 1; mn: 0; mx : -1 }
+                ListElement { txt: "Workplace Size"; tagi:"contactpool_info.workplace.size";decims: 0; stpsize: 1; mn: 0; mx : -1}
+                ListElement { txt: "Nr cities with colleges"; tagi:"contactpool_info.college.cities"; decims: 0; stpsize: 1; mn: 0; mx : -1}
+                ListElement { txt: "Community size";  tagi:"contactpool_info.community.size"; decims: 0; stpsize: 1; mn: 0; mx : -1}
                      
             }
             
@@ -62,7 +60,21 @@ Tab{
                 }
                 
             }
+
+            ListModel{
+                id: check_rndm_ages
+                ListElement{ txt: "Random ages"; tagi: "pop_info.random_ages"}
+            }
             
+            Repeater{
+                model: check_rndm_ages
+
+                Checker {
+                    id: checkRandomAges
+                }
+
+            }
+
             RowLayout{
                 Layout.alignment: Qt.AlignTop
                 Layout.maximumHeight: 4
@@ -71,16 +83,112 @@ Tab{
                     verticalAlignment: Text.AlignVCenter
                     Layout.minimumWidth: 245
                     Layout.alignment: Qt.AlignLeft
-                    text: "Random ages"
+                    text: "Defrag cities"
                 }
-                
+
+                Label{
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.alignment: Qt.AlignLeft
+                    text: "Enabled"
+                }
+
                 CheckBox{
-                    id: rndm_age
-                    checked: backend.getBoolConfig("pop_info.random_ages")
-                    onClicked:backend.setBoolConfig("pop_info.random_ages", checked);
+                    id: c
+                    checked: backend.getBoolConfig("defrag_cities.is_defrag")
+                    onClicked:{
+                        backend.setBoolConfig("defrag_cities.is_defrag", checked);
+                        rep.model = p_vec_size.value;
+                    }
+                }
+
+                Label{
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.alignment: Qt.AlignLeft
+                    text: "X"
+                }
+
+
+                SpinBox {
+                    id: spinBox9
+                    font.pointSize: 10
+                    Layout.minimumWidth: 100
+                    Layout.alignment: Qt.AlignRight
+                    enabled: c.checked ? true: false
+                    stepSize: 0.1
+                    decimals: 2
+                    minimumValue: 0
+                    maximumValue: 1
+                    value:backend.getConfig("defrag_cities.X")
+                    onValueChanged: {backend.setConfig("defrag_cities.X", value) }
+                }
+
+                Label{
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.alignment: Qt.AlignLeft
+                    text: "Y"
+                }
+
+                SpinBox {
+                    font.pointSize: 10
+                    Layout.minimumWidth: 100
+                    Layout.alignment: Qt.AlignRight
+                    enabled: c.checked ? true: false
+                    stepSize: 0.1
+                    decimals: 2
+                    minimumValue: 0
+                    maximumValue: 1
+                    value:backend.getConfig("defrag_cities.Y")
+                    onValueChanged: backend.setConfig("defrag_cities.Y", value)
+                }
+
+                Label{
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.alignment: Qt.AlignLeft
+                    text: "p_vec size"
+                }
+
+                SpinBox {
+                    id: p_vec_size
+                    font.pointSize: 10
+                    Layout.minimumWidth: 100
+                    Layout.alignment: Qt.AlignTop
+                    enabled: c.checked ? true: false
+                    stepSize: 1
+                    decimals: 0
+                    minimumValue: 2
+                    maximumValue: Infinity
+                    value:{(backend.countConfigChildren("defrag_cities.p_vec", true) ) }
+                    onValueChanged: rep.model = value
+                }
+
+
+                Repeater{
+                    id: rep
+                    model:{ (p_vec_size.value - 1 )}
+
+                RowLayout{
+                    property int ind: index
+                    Label{
+                        verticalAlignment: Text.AlignVCenter
+                        Layout.alignment: Qt.AlignLeft
+                        text: "p_val " + (ind + 2) + " cities"
+                        enabled: c.checked ? true: false
+                    }
+
+                    SpinBox {
+                        font.pointSize: 10
+                        Layout.minimumWidth: 50
+                        Layout.alignment: Qt.AlignRight
+                        enabled: c.checked ? true: false
+                        stepSize: 0.1
+                        decimals: 2
+                        minimumValue: 0
+                        maximumValue: 1
+                        value:{ backend.countConfigChildren("defrag_cities.p_vec", true) + 1 }
+                    }
+                }
                 }
             }
-            
         }
     }
 }

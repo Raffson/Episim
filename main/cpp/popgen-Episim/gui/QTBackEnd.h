@@ -135,6 +135,12 @@ public:
     /// @return returns a Qurl path to the config folder
     Q_INVOKABLE QUrl getConfigPath() const ;
 
+    /// @brief counts the children of a certain p_tree element
+    /// @param xml_tag tag of p_tree we want to count our childen from
+    Q_INVOKABLE int countConfigChildren(const QString &xml_tag, bool geo) const;
+
+    Q_INVOKABLE double getChildAtIndex(const QString &xml_tag, int index, bool geo) const;
+
 
 ///@}
 // BackEnd Properties. Wraps getters and setters. if those are trivial read/write the member directly
