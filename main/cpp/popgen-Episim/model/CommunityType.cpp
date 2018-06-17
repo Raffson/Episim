@@ -28,20 +28,6 @@ namespace CommunityType {
 using namespace std;
 using boost::to_upper;
 
-bool IsType(const string& s)
-{
-        static map<string, Id> ids{
-            make_pair("COLLEGE", Id::College),
-            make_pair("SCHOOL", Id::School),
-            make_pair("WORK", Id::Work),
-            make_pair("PRIMARY", Id::Primary),
-            make_pair("SECONDARY", Id::Secondary),
-        };
-        string t{s};
-        to_upper(t);
-        return (ids.count(t) == 1);
-}
-
 string ToString(Id c)
 {
         static map<Id, string> names{
