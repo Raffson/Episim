@@ -266,61 +266,21 @@ Tab{
                 }
                 
             }
+
+            ListModel{
+                id: sim_cnfg_file
+                ListElement{ tg: "run.age_contact_matrix_file"; txt: "Age contact matrix file"; xml: true ; grid: false; dta: true}
+                ListElement{ tg: "run.disease_config_file"; txt: "Disease config file"; xml: true ; grid: false; dta: true}
+                ListElement{ tg: "run.geopop_file"; txt: "Geopop config file"; xml: true ; grid: false; dta: false}
+                ListElement{ tg: "run.population_file"; txt: "Population file"; xml: true ; grid: false; dta: false}
+
+            }
             
             Repeater{
-                model:
-                    [
-                    {txt: "Age contact matrix file"},
-                    {txt: "Disease config file"},
-                    {txt: "Geopop config file"},
-                    {txt: "Population file"}
-                ]
-                RowLayout{
-                    id: cty_fil_selector
-                    Layout.alignment: Qt.AlignTop
-                    Layout.maximumHeight: 4
-                    //property string tag : tg
-                    
-                    Label{
-                        id: run_config_files
-                        text: modelData.txt
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.minimumWidth: 245
-                        Layout.alignment: Qt.AlignLeft
-                        
-                    }
-                    
-                    TextField{
-                        id: run_config_txt
-                        Layout.alignment: Qt.AlignRight
-                        Layout.minimumWidth: 300
-                        text: backend.readPath(parent.tag)
-                        
-                        
-                    }
-                    
-                    Button{
-                        text: "..."
-                        onClicked:{
-                            //cty_file.visible = true
-                        }
-                        Layout.maximumWidth: 20
-                    }
-                    
-                    FileDialog{
-                        id: run_file
-                        title: "Please choose a file"
-                        //folder: def_folder
-                        //nameFilters: xml ?["*.xml"] : [ "*.csv"]
-                        onAccepted: {
-                            //cty_config_text.text = backend.setPath(cty_fil_select.tag, cty_file.fileUrls.toString());
-                            
-                        }
-                        onRejected: {
-                            
-                        }
-                        
-                    }
+                model: sim_cnfg_file
+
+                File_select{
+                    id: cty_fil_select
                 }
                 
             }

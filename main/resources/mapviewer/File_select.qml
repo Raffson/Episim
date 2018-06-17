@@ -9,14 +9,13 @@ import QtQuick.Dialogs 1.3
 RowLayout{
     id: cty_fil_select
     Layout.alignment: Qt.AlignTop
-    Layout.maximumHeight: 6
+    Layout.maximumHeight: 4
     
-    property string tag : tg
+    property string tag :  tg
     property string tit :  txt
-    property string defo : def_folder
     property string is_xml : xml
     property bool geo: grid
-    property bool dta: dta
+    property bool dtas: dta
     
     Label{
         id: cty_file_label
@@ -33,9 +32,7 @@ RowLayout{
         Layout.minimumWidth: 300
         Layout.preferredWidth: 450
         Layout.maximumWidth: 600
-        text: backend.readPath(parent.tag, geo, dta)
-        
-        
+        text: backend.readPath(parent.tag, parent.geo, dtas)
     }
     
     Button{
@@ -49,10 +46,11 @@ RowLayout{
     FileDialog{
         id: cty_file
         title: "Please choose a file"
-        folder: def_folder
+        folder: dtas ? backend.getDataPath() : backend.getConfigPath()
         nameFilters: xml ?["*.xml"] : [ "*.csv"]
         onAccepted: {
-            cty_config_text.text = backend.setPath(cty_fil_select.tag, cty_file.fileUrls.toString());
+            backend.setPath(cty_fil_select.tag, cty_file.fileUrls.toString(), geo);
+            cty_config_text.text = backend.readPath(cty_fil_select.tag, geo, dtas)
             
         }
         onRejected: {

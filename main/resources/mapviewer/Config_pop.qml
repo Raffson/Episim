@@ -24,9 +24,12 @@ Tab{
             columns: 1
             ListModel{
                 id: num_bttns
-                ListElement { tag: "Population"; xml: "pop_info.pop_total"; fract: false}
-                ListElement { tag: "Fraction students"; xml: "pop_info.fraction_students"; fract: true}
-                ListElement { tag: "Fraction active workers"; xml: "pop_info.fraction_active_workers"; fract: true}
+
+                ListElement { txt: "Population"; tagi: "pop_info.pop_total"; decims: 0; stpsize: 1; mn: 0; mx : -1}
+                ListElement { txt: "Fraction students"; tagi: "pop_info.fraction_students"; decims: 2; stpsize: 0.1; mn: 0; mx : 1}
+                ListElement { txt: "Fraction active workers"; tagi: "pop_info.fraction_active_workers"; decims: 2; stpsize: 0.1; mn: 0; mx : 1}
+                /*
+
                 ListElement { tag: "Fraction commuting students"; xml: "pop_info.fraction_commuting_workers"; fract: true}
                 ListElement { tag: "Fraction commuting workers"; xml: "pop_info.fraction_commuting_workers"; fract: true}
                 ListElement { tag: "Average size"; xml:"contactpool_info.average_size"; fract: false }
@@ -34,50 +37,21 @@ Tab{
                 ListElement { tag: "College Size"; xml:"contactpool_info.college.size";fract: false }
                 ListElement { tag: "Workplace Size";  xml:"contactpool_info.workplace.size";fract: false }
                 ListElement { tag: "Nr cities with colleges"; xml:"contactpool_info.college.cities"; fract: false}
-                ListElement { tag: "Community size";  xml:"contactpool_info.community.size"; fract: false}
-                
-                
+                ListElement { tag: "Community size";  xml:"contactpool_info.community.size"; fract: false}*/
+                     
             }
             
             Repeater{
                 model: num_bttns
-                RowLayout{
-                    z:5
-                    spacing: 50
-                    Layout.alignment: Qt.AlignTop
-                    Layout.maximumHeight: 4
-                    Label{
-                        id: label
-                        text: tag
-                        //lineHeight: 0.9
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.minimumWidth: 200
-                        Layout.alignment: Qt.AlignLeft
-                    }
-                    
-                    SpinBox {
-                        id: spinBox9
-                        font.pointSize: 10
-                        Layout.minimumWidth: 100
-                        stepSize: 1
-                        maximumValue: fract ? 100 : Infinity
-                        //Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignRight
-                        value: fract? backend.getConfig(xml) * 100 : backend.getConfig(xml)
-                        suffix: fract ? "%" : ""
-                        onValueChanged: fract? backend.setConfig(xml, value / 100): backend.setConfig(xml, value)
-                    }
-                    
+                Spnner_label {
                 }
             }
-            
-            
-            
+
             ListModel{
                 id: search_file_model
-                ListElement{ tg: "data_files.cities"; txt: "City data file"; def_folder: "../data/"; xml: false ; grid: true; dta: true}
-                //ListElement{ tg: "commuting"; txt: "Commuters data file"; def_folder: "../data/";xml: false}
-                //ListElement{ tg: "households"; txt: "Households data file"; def_folder: "../data/"; xml: true}
+                ListElement{ tg: "data_files.cities"; txt: "City data file"; xml: false ; grid: true; dta: true}
+                ListElement{ tg: "data_files.commuting"; txt: "Commuters data file"; xml: false; grid:true; dta: true}
+                ListElement{ tg: "data_files.households"; txt: "Households data file"; xml: true; grid:true; dta: true}
                 
             }
             

@@ -8,8 +8,8 @@ import QtQuick.Dialogs 1.3
 
 ApplicationWindow{
     id: window
-    width: 1200
-    height: 500
+    width: 1400
+    height: 800
     title: "Simulator"
     visible: true
     //visibility: "FullScreen"

@@ -126,7 +126,6 @@ void QTBackEnd::setConfig(const QString &xml_tag, const QString &val) {
 QString QTBackEnd::readPath(const QString &tag, bool geo_grid, bool data) const {
 
     boost::filesystem::path basePath = "";
-
     if(m_pt.get<bool>("run.use_install_dirs", true)){
 
         if(data){
@@ -153,12 +152,29 @@ QString QTBackEnd::readPath(const QString &tag, bool geo_grid, bool data) const 
 
 }
 
-QString QTBackEnd::setPath(const QString &tag, const QString &path) {
+void QTBackEnd::setPath(const QString &tag, const QString &path, bool geoGrid) {
 
-    string complete_tag = "data_files." + tag.toStdString();
-    auto lst = path.split("/");
-    m_geo_pt.put(complete_tag, lst.back().toStdString());
-    return lst.back();
+    string placer = "";
+
+    if(m_pt.get<bool>("run.use_install_dirs", true)){
+        placer = path.split("/").back().toStdString();
+        cout<< placer << endl;
+        cout<< tag.toStdString();
+    }
+
+    else{
+        placer = path.toStdString();
+    }
+    if(geoGrid){
+        m_geo_pt.put(tag.toStdString(), placer);
+    }
+
+    else{
+        m_pt.put(tag.toStdString(), placer);
+    }
+
+
+
 }
 
 bool QTBackEnd::getBoolConfig(const QString &xml_tag) const {
@@ -172,6 +188,15 @@ bool QTBackEnd::setBoolConfig(const QString &xml_tag, const bool &value) {
 
     return !value;
 }
+
+QUrl QTBackEnd::getDataPath() const {
+
+    return QUrl(util::FileSys::GetDataDir().c_str());
+}
+
+QUrl QTBackEnd::getConfigPath() const{
+            return QUrl(util::FileSys::GetConfigDir().c_str());
+        }
 
 /***********************************************************************************************************************/
 

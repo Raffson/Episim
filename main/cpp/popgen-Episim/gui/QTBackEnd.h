@@ -91,7 +91,7 @@ public:
 /***********************************************************************************************************************/
 /**
 * @name: Config Invokables
-* All invokables to get_set the configuration.
+* All invokables to get_set the configuration. If there was a way to use templates in QML this would be alot shorter.
 */
 ///@{
     /// @brief this reads a element at xml_tag.
@@ -114,7 +114,8 @@ public:
     /// @brief sets a path at tag
     /// @param tag tag where we need to place path in config
     /// @param path path to be placed in config
-    Q_INVOKABLE QString setPath(const QString &tag, const QString &path);
+    /// @param geo_grid Config out of the GeoGrid file or GenPop file?
+    Q_INVOKABLE void setPath(const QString &tag, const QString &path, bool geoGrid = true);
 
     /// @brief gets a bool out of config at xml_tag
     /// @param xml_tag tag of the bool we need in config
@@ -125,6 +126,15 @@ public:
     /// @param xml_tag the tag of our bool
     /// @param value the value as a bool we want to place
     Q_INVOKABLE bool setBoolConfig(const QString &xml_tag, const bool &value);
+
+    /// @brief Wrapper to get the path to data
+    /// @return returns a Qurl path to the Data folder
+    Q_INVOKABLE QUrl getDataPath() const ;
+
+    /// @brief wrapper to get the pat do config
+    /// @return returns a Qurl path to the config folder
+    Q_INVOKABLE QUrl getConfigPath() const ;
+
 
 ///@}
 // BackEnd Properties. Wraps getters and setters. if those are trivial read/write the member directly
