@@ -79,7 +79,7 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
 
                 // so when looping over a row's columns, we're looking the origins...
                 for (unsigned int i = 0; i < readIn.GetColumnCount(); i++) {
-                        double commuters = it.GetValue<double>(i);
+                        auto commuters = it.GetValue<double>(i);
 
                         auto originId = (unsigned int)stoi(cityIds.at(i));
 

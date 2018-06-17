@@ -1,17 +1,18 @@
 /*
- * Copyright 2011-2016 Universiteit Antwerpen
+ *  This is free software: you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *  The software is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *  You should have received a copy of the GNU General Public License
+ *  along with the software. If not, see <http://www.gnu.org/licenses/>.
  *
- * Licensed under the EUPL, Version 1.1 or  as soon they will be approved by
- * the European Commission - subsequent versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl5
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing
- * permissions and limitations under the Licence.
+ *  Copyright 2017, 2018 Willem L, Kuylen E, Stijven S & Broeckhove J
  */
+
 /**
  * @file
  * Unit tests of SegmentedVector.
@@ -27,9 +28,8 @@
 using namespace std;
 using namespace stride::util;
 
-namespace SimPT_Sim {
-namespace Container {
-namespace Tests {
+namespace stride {
+namespace tests {
 
 namespace {
 class TraceMemory
@@ -45,7 +45,7 @@ public:
 
         using EventList = std::vector<EventType>;
 
-        TraceMemory() : m_counter(0) {}
+        TraceMemory() : m_counter(0), m_event_list() {}
 
         void Allocated()
         {
@@ -90,13 +90,13 @@ public:
 class TestType
 {
 public:
-        TestType(int i, std::string str, TraceMemory& t) : m_i(i), m_str(std::move(str)), m_t(t)
+        TestType(int i, std::string str, TraceMemory& t) : m_array{nullptr}, m_i(i), m_str(std::move(str)), m_t(t)
         {
                 m_t.Allocated();
                 m_array = new int[10];
         }
 
-        TestType(const TestType& other) : m_i(other.m_i), m_str(other.m_str), m_t(other.m_t)
+        TestType(const TestType& other) : m_array{nullptr}, m_i(other.m_i), m_str(other.m_str), m_t(other.m_t)
         {
                 m_t.Copied();
                 m_array = new int[10];
@@ -108,6 +108,8 @@ public:
                 m_t.Moved();
                 other.m_array = nullptr;
         }
+
+        TestType& operator=(const TestType& rhs) = delete;
 
         ~TestType()
         {
@@ -662,6 +664,5 @@ TEST(UnitSegmentedVector, Resize3)
         }
 }
 
-} // namespace Tests
-} // namespace Container
-} // namespace SimPT_Sim
+} // namespace tests
+} // namespace stride

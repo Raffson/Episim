@@ -98,7 +98,7 @@ unsigned int PopulationGenerator::GetRandomHouseholdSize()
 const vector<double>& PopulationGenerator::GetRandomModelHouseholdOfSize(unsigned int size)
 {
     const auto& households = m_grid.GetModelHouseholds().at(size);
-    trng::uniform_int_dist distr(0, households.size());
+    trng::uniform_int_dist distr(0, (int)households.size());
     return households[m_rng.GetGenerator(distr,(size_t)omp_get_thread_num())()];
 }
 
@@ -134,11 +134,11 @@ ContactPool* PopulationGenerator::GetRandomContactPool(const vector<Community*>&
         if (comms.empty())
                 return nullptr;
 
-        trng::uniform_int_dist distr(0, comms.size());
+        trng::uniform_int_dist distr(0, (int)comms.size());
         unsigned int           index = (unsigned int)m_rng.GetGenerator(distr, (size_t)omp_get_thread_num())();
         auto&                  pools = comms.at(index)->GetContactPools();
         if (!pools.empty()) {
-                trng::uniform_int_dist pdistr(0, pools.size());
+                trng::uniform_int_dist pdistr(0, (int)pools.size());
                 unsigned int           index2 = (unsigned int)m_rng.GetGenerator(pdistr, (size_t)omp_get_thread_num())();
                 return pools[index2];
         } else
@@ -315,7 +315,7 @@ const vector<Community*>& PopulationGenerator::GetRandomCommunities(const City& 
                 const vector<City *> &cities = m_grid.GetCitiesWithinRadiusWithCommunityType(city, radius, type);
 
                 if (!cities.empty()) {
-                        auto index = (unsigned int)m_rng.GetGenerator(trng::uniform_int_dist(0, cities.size()),
+                        auto index = (unsigned int)m_rng.GetGenerator(trng::uniform_int_dist(0, (int)cities.size()),
                                                                       (size_t)omp_get_thread_num())();
                         return cities[index]->GetCommunitiesOfType(type);
                 }

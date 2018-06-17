@@ -137,7 +137,6 @@ void City::AddEffectiveCommuterTo(const unsigned int destination, const bool isS
     }
 }
 
-
 unsigned int City::GetEffectiveCommuterTo(const unsigned int destination)
 {
     if(m_effective_out_commuting.find(destination) == m_effective_out_commuting.end()){
@@ -148,16 +147,16 @@ unsigned int City::GetEffectiveCommuterTo(const unsigned int destination)
     }
 }
 
-    void City::RemoveInCommuters(unsigned int id) {
+void City::RemoveInCommuters(unsigned int id) {
 
-        m_in_commuting.erase(id);
-        m_in_commuting_changed = true;
+    m_in_commuting.erase(id);
+    m_in_commuting_changed = true;
 
-    }
+}
 
-    void City::RemoveOutCommuters(unsigned int id) {
-        m_out_commuting.erase(id);
-        m_out_commuting_changed = true;
-    }
+void City::RemoveOutCommuters(unsigned int id) {
+    m_out_commuting.erase(id);
+    m_out_commuting_changed = true;
+}
 
 } // namespace stride
