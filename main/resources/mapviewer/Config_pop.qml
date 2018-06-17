@@ -75,7 +75,7 @@ Tab{
             
             ListModel{
                 id: search_file_model
-                ListElement{ tg: "data_files.cities"; txt: "City data file"; def_folder: "../data/"; xml: false ; geo: true; data: true}
+                ListElement{ tg: "data_files.cities"; txt: "City data file"; def_folder: "../data/"; xml: false ; grid: true; dta: true}
                 //ListElement{ tg: "commuting"; txt: "Commuters data file"; def_folder: "../data/";xml: false}
                 //ListElement{ tg: "households"; txt: "Households data file"; def_folder: "../data/"; xml: true}
                 
@@ -83,60 +83,8 @@ Tab{
             
             Repeater{
                 model: search_file_model
-                RowLayout{
+                File_select {
                     id: cty_fil_select
-                    Layout.alignment: Qt.AlignTop
-                    Layout.maximumHeight: 6
-
-                    property string tag : tg
-                    property string tit :  txt
-                    property string defo : def_folder
-                    property string is_xml : xml
-                    property bool geo: grid
-                    property bool dta: data
-
-                    Label{
-                        id: cty_file_label
-                        text: tit
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.minimumWidth: 245
-                        Layout.alignment: Qt.AlignLeft
-                        
-                    }
-                    
-                    TextField{
-                        id: cty_config_text
-                        Layout.alignment: Qt.AlignRight
-                        Layout.minimumWidth: 300
-                        Layout.preferredWidth: 450
-                        Layout.maximumWidth: 600
-                        text: backend.readPath(parent.tag)
-                        
-                        
-                    }
-                    
-                    Button{
-                        text: "..."
-                        onClicked:{
-                            cty_file.visible = true
-                        }
-                        Layout.maximumWidth: 20
-                    }
-                    
-                    FileDialog{
-                        id: cty_file
-                        title: "Please choose a file"
-                        folder: def_folder
-                        nameFilters: xml ?["*.xml"] : [ "*.csv"]
-                        onAccepted: {
-                            cty_config_text.text = backend.setPath(cty_fil_select.tag, cty_file.fileUrls.toString());
-                            
-                        }
-                        onRejected: {
-                            
-                        }
-                        
-                    }
                 }
                 
             }
