@@ -111,7 +111,7 @@ Tab{
                 SpinBox {
                     id: spinBox9
                     font.pointSize: 10
-                    Layout.minimumWidth: 100
+                    Layout.minimumWidth: 25
                     Layout.alignment: Qt.AlignRight
                     enabled: c.checked ? true: false
                     stepSize: 0.1
@@ -130,7 +130,7 @@ Tab{
 
                 SpinBox {
                     font.pointSize: 10
-                    Layout.minimumWidth: 100
+                    Layout.minimumWidth: 25
                     Layout.alignment: Qt.AlignRight
                     enabled: c.checked ? true: false
                     stepSize: 0.1
@@ -150,7 +150,7 @@ Tab{
                 SpinBox {
                     id: p_vec_size
                     font.pointSize: 10
-                    Layout.minimumWidth: 100
+                    Layout.minimumWidth: 50
                     Layout.alignment: Qt.AlignTop
                     enabled: c.checked ? true: false
                     stepSize: 1
@@ -167,11 +167,10 @@ Tab{
                     model:{ (p_vec_size.value - 1 )}
 
                 RowLayout{
-                    property int ind: index
                     Label{
                         verticalAlignment: Text.AlignVCenter
                         Layout.alignment: Qt.AlignLeft
-                        text: "p_val " + (ind + 2) + " cities"
+                        text: "p_val " + (index + 2) + " cities"
                         enabled: c.checked ? true: false
                     }
 
@@ -184,7 +183,8 @@ Tab{
                         decimals: 2
                         minimumValue: 0
                         maximumValue: 1
-                        value:{ backend.countConfigChildren("defrag_cities.p_vec", true) + 1 }
+                        value:{ backend.getChildAtIndex("defrag_cities.p_vec", index, true)}
+                        onValueChanged: backend.setChildAtIndex("defrag_cities.p_vec", index, value,true)
                     }
                 }
                 }

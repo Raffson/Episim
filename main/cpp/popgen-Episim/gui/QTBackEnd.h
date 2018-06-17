@@ -139,7 +139,18 @@ public:
     /// @param xml_tag tag of p_tree we want to count our childen from
     Q_INVOKABLE int countConfigChildren(const QString &xml_tag, bool geo) const;
 
-    Q_INVOKABLE double getChildAtIndex(const QString &xml_tag, int index, bool geo) const;
+    /// @brief gets a child at index. Due to Keeping logic out of QML it will add an item with 0 value at the end
+    ///        if the index > then the amount of children at the tag
+    /// @param xml_tag tag to read the children from
+    /// @param index the index to get the child from
+    /// @param geo read out of geogrid config or stride config
+    Q_INVOKABLE double getChildAtIndex(const QString &xml_tag, int index, bool geo);
+
+    /// @brief sets the value at index of a child of the xml tag.
+    /// @param xml_tag the tag of the childeren we are working on.
+    /// @param index the index we want to update
+    /// @param geo using geo or stride config
+    Q_INVOKABLE void setChildAtIndex(const QString &xml_tag, int index, double value, bool geo);
 
 
 ///@}

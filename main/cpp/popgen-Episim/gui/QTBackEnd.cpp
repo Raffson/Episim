@@ -213,18 +213,35 @@ int QTBackEnd::countConfigChildren(const QString &xml_tag, bool geo) const{
 
 }
 
-double QTBackEnd::getChildAtIndex(const QString &xml_tag, int index, bool geo) const{
+double QTBackEnd::getChildAtIndex(const QString &xml_tag, int index, bool geo){
 
     if(geo){
 
+        while(countConfigChildren(xml_tag, geo) - 1 <= index){
+            m_geo_pt.add(xml_tag.toStdString() + ".value", 0);
+        }
         auto child = m_geo_pt.get_child(xml_tag.toStdString());
         return std::next(child.find("value"),index)->second.get_value<double>();
     }
 
     else{
-
-        auto child = m_geo_pt.get_child(xml_tag.toStdString());
+        while(countConfigChildren(xml_tag, geo) - 1 <= index){
+          m_pt.add(xml_tag.toStdString() + ".value", 0);
+        }
+        auto child = m_pt.get_child(xml_tag.toStdString());
         return std::next(child.find("value"),index)->second.get_value<double>();
+    }
+}
+
+void QTBackEnd::setChildAtIndex(const QString &xml_tag, int index, double value, bool geo) {
+
+    if(geo) {
+        auto &child = m_geo_pt.get_child(xml_tag.toStdString());
+        auto forwrd = std::next(child.find("value"), index);
+        forwrd->second.put("", value);
+    }
+    else{
+
     }
 }
 
@@ -309,6 +326,8 @@ void QTBackEnd::flipItems(QList<QObject *> cities) {
     emit SelectedPopChanged();
     emit SelectedInfectedChanged();
 }
+
+
 }
 }
 
