@@ -24,7 +24,7 @@ namespace viewers {
             MapViewer(const MapViewer&)=delete;
             MapViewer& operator=(const MapViewer&)=delete;
 
-            void LoadMap(bool showMap=true);
+            void LoadMap(bool showMap=true, bool makePng=false);
 
             /// Let viewer perform update.
             void Update(sim_event::Id id);

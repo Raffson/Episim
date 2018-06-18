@@ -19,6 +19,7 @@ RowLayout{
     property real stps: stpsize
     property int mini: mn
     property int maxi: mx
+    property bool gg : geo
     
     Label{
         id: label
@@ -38,8 +39,8 @@ RowLayout{
         decimals: decis
         minimumValue: mn
         maximumValue: mx === -1 ? Infinity : mx
-        value:backend.getConfig(tg)
-        onValueChanged: backend.setConfig(tg, value)
+        value:backend.getConfig(tg, gg)
+        onValueChanged: backend.setConfig(tg, value, gg)
     }
     
 }
