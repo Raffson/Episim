@@ -12,7 +12,9 @@ Rectangle {
         property variant infected: 0
         property variant is_clicked: false
         property variant in_commuting: 0
+        property variant in_commuting_size: 0
         property variant out_commuting: 0
+        property variant out_commuting_size: 0
         property variant longi: 0
         property variant lati: 0
         property variant xco: 0
