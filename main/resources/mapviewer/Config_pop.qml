@@ -25,17 +25,17 @@ Tab{
             ListModel{
                 id: num_bttns
 
-                ListElement { txt: "Population"; tagi: "pop_info.pop_total"; decims: 0; stpsize: 1; mn: 0; mx : -1}
-                ListElement { txt: "Fraction students"; tagi: "pop_info.fraction_students"; decims: 2; stpsize: 0.1; mn: 0; mx : 1}
-                ListElement { txt: "Fraction active workers"; tagi: "pop_info.fraction_active_workers"; decims: 2; stpsize: 0.1; mn: 0; mx : 1}
-                ListElement { txt: "Fraction commuting students"; tagi: "pop_info.fraction_commuting_workers"; decims: 2; stpsize: 0.1; mn: 0; mx : 1}
-                ListElement { txt: "Fraction commuting workers"; tagi: "pop_info.fraction_commuting_workers"; decims: 2; stpsize: 0.1; mn: 0; mx : 1 }
-                ListElement { txt: "Average size"; tagi:"contactpool_info.average_size"; decims: 0; stpsize: 1; mn: 0; mx : -1}
-                ListElement { txt: "School Size";  tagi:"contactpool_info.school.size";decims: 0; stpsize: 1; mn: 0; mx : -1 }
-                ListElement { txt: "College Size"; tagi:"contactpool_info.college.size";decims: 0; stpsize: 1; mn: 0; mx : -1 }
-                ListElement { txt: "Workplace Size"; tagi:"contactpool_info.workplace.size";decims: 0; stpsize: 1; mn: 0; mx : -1}
-                ListElement { txt: "Nr cities with colleges"; tagi:"contactpool_info.college.cities"; decims: 0; stpsize: 1; mn: 0; mx : -1}
-                ListElement { txt: "Community size";  tagi:"contactpool_info.community.size"; decims: 0; stpsize: 1; mn: 0; mx : -1}
+                ListElement { txt: "Population"; tagi: "pop_info.pop_total"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: true}
+                ListElement { txt: "Fraction students"; tagi: "pop_info.fraction_students"; decims: 2; stpsize: 0.1; mn: 0; mx : 1; geo: true}
+                ListElement { txt: "Fraction active workers"; tagi: "pop_info.fraction_active_workers"; decims: 2; stpsize: 0.1; mn: 0; mx : 1; geo: true}
+                ListElement { txt: "Fraction commuting students"; tagi: "pop_info.fraction_commuting_workers"; decims: 2; stpsize: 0.1; mn: 0; mx : 1; geo: true}
+                ListElement { txt: "Fraction commuting workers"; tagi: "pop_info.fraction_commuting_workers"; decims: 2; stpsize: 0.1; mn: 0; mx : 1; geo: true }
+                ListElement { txt: "Average size"; tagi:"contactpool_info.average_size"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: true}
+                ListElement { txt: "School Size";  tagi:"contactpool_info.school.size";decims: 0; stpsize: 1; mn: 0; mx : -1; geo: true }
+                ListElement { txt: "College Size"; tagi:"contactpool_info.college.size";decims: 0; stpsize: 1; mn: 0; mx : -1; geo: true }
+                ListElement { txt: "Workplace Size"; tagi:"contactpool_info.workplace.size";decims: 0; stpsize: 1; mn: 0; mx : -1; geo: true}
+                ListElement { txt: "Nr cities with colleges"; tagi:"contactpool_info.college.cities"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: true}
+                ListElement { txt: "Community size";  tagi:"contactpool_info.community.size"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: true}
                      
             }
             

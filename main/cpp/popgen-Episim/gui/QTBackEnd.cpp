@@ -118,13 +118,24 @@ void QTBackEnd::runSimulator() {
 //Config setters and getters
 /***********************************************************************************************************************/
 
-QString QTBackEnd::getConfig(const QString &xml_tag) const {
-    return QString((m_geo_pt.get<string>(xml_tag.toStdString())).c_str());
+QString QTBackEnd::getConfig(const QString &xml_tag, bool geo) const {
+
+    if(geo){
+        return QString((m_geo_pt.get<string>(xml_tag.toStdString())).c_str());
+    }
+
+    return QString((m_pt.get<string>(xml_tag.toStdString())).c_str());
 }
 
-void QTBackEnd::setConfig(const QString &xml_tag, const QString &val) {
-    m_geo_pt.put(xml_tag.toStdString(), val.toStdString());
+void QTBackEnd::setConfig(const QString &xml_tag, const QString &val, bool geo) {
 
+    if(geo){
+        m_geo_pt.put(xml_tag.toStdString(), val.toStdString());
+    }
+
+    else{
+        m_pt.put(xml_tag.toStdString(), val.toStdString());
+    }
 }
 
 QString QTBackEnd::readPath(const QString &tag, bool geo_grid, bool data) const {
@@ -261,7 +272,7 @@ void QTBackEnd::cleanChildren (const QString& xml_tag, int size, bool geo){
         child = &m_pt.get_child(xml_tag.toStdString());
     }
 
-    while((unsigned int) child->size() > size){
+    while(child->size() > (unsigned int)  size){
         child->pop_back();
     }
 

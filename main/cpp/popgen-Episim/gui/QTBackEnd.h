@@ -99,13 +99,15 @@ public:
 ///@{
     /// @brief this reads a element at xml_tag.
     /// @param xml_tag tag where we can find the element needed.
+    /// @param geo Optional read out of geo or stride ptree
     /// @return Returns the needed element as Qstring
-    Q_INVOKABLE QString getConfig(const QString &xml_tag) const;
+    Q_INVOKABLE QString getConfig(const QString &xml_tag, bool geo = true) const;
 
     /// @brief this sets a value in config at tag
     /// @param xml_tag the tag where we want to set our value.
     /// @param val the value that needs to be set in the config at tag as QString
-    Q_INVOKABLE void setConfig(const QString &xml_tag, const QString &val);
+    /// @param geo Optional read out of geo or stride ptree
+    Q_INVOKABLE void setConfig(const QString &xml_tag, const QString &val, bool geo = true);
 
     /// @brief reads a path out of config of a file that should be in the data folder if install path's are on.
     /// @param tag tag where we find the path

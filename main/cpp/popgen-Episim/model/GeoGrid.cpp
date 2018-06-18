@@ -101,6 +101,7 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
         for (auto& it : defragCty) {
                 // We add 2 to the amount to defrag, bcs we want to defrag in atleast 2 parts
                 vector<City> commuters_temp;
+                auto nw_pop =  (unsigned int) round(it->GetPopulation() /(amountToFrag[counter] + 2));
                 for (unsigned int i = 0; i < amountToFrag[counter] + 2; i++) {
 
                         auto newId    = id_counter;
@@ -113,9 +114,8 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                         auto newName = it->GetName();
                         newName += " " + to_string(i);
 
-                        commuters_temp.emplace_back(City(newId, it->GetProvince(),
-                                                         (unsigned int)round(it->GetPopulation() / ((amountToFrag[counter] + 2))),
-                                                                Coordinate(newX, newY, newLong, newLat), newName) );
+                        commuters_temp.emplace_back(City(newId, it->GetProvince(),nw_pop, Coordinate(newX, newY, newLong,
+                                                                                                     newLat), newName) );
                     ;
 
                 }
@@ -123,25 +123,26 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                 counter++;
             }
 
+
+            // We had a book keepinng, remember_commuters is a map with an id of the fragmented cities and the corresponding
+            // fragmented cities. Now we just need to divide the commuters
             for( auto& it: remember_commuters){
                 stride::City* old_city  = &m_cities.at(it.first);
                 //m_cities.erase(old_city->GetId());
+                for(auto& nw_city: it.second){ // all the new cities of the old city
+                    for(auto& other_old_city: m_cities){ // we loop against al previous old cities
 
-                for(auto& nw_city: it.second){
-
-                    for(auto& other_old_city: m_cities){
-                        if(remember_commuters.count(other_old_city.first) == 0) {
-
+                        double outcommuting_to = old_city->GetOutCommuting().at(other_old_city.second.GetId());
+                        double incommuting_to = old_city->GetInCommuting().at(other_old_city.second.GetId());
+                        if(remember_commuters.count(other_old_city.first) == 0) { // if the old city is in our to be removed map this shouldn't be happening
                             //All old cities get an entry to the new city
-                            double outcommuting_to = old_city->GetOutCommuting().at(other_old_city.second.GetId());
+
                             other_old_city.second.SetOutCommuters(nw_city.GetId(),
                                                                   ceil(outcommuting_to / (double)(amountToFrag[counter] + 2)));
 
-                            double incommuting_to = old_city->GetInCommuting().at(other_old_city.second.GetId());
+
                             other_old_city.second.SetInCommuters(nw_city.GetId(),
                                                                  ceil(incommuting_to / (double)(amountToFrag[counter] + 2)));
-
-
 
                             //the new city gets all entries to the old city
                             outcommuting_to = other_old_city.second.GetOutCommuting().at(old_city->GetId());
@@ -151,6 +152,9 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                             incommuting_to = other_old_city.second.GetInCommuting().at(old_city->GetId());
                             nw_city.SetInCommuters(other_old_city.first, ceil(incommuting_to / (double)(amountToFrag[counter] + 2)));
 
+                        }
+
+                        else{
 
                         }
                     }

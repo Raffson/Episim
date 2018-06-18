@@ -23,42 +23,24 @@ Tab{
             rowSpacing: 5
             rows: 19
             columns: 2
+
+            ListModel{
+                id: sim_spnners
+                ListElement { txt: "Number of days"; tagi: "run.num_days"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "Number of threads"; tagi: "run.num_threads"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "Number participants survey"; tagi: "run.num_participants_survey"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "RNG seed"; tagi: "run.rng_seed"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "r0"; tagi: "run.r0"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "Seeding age min"; tagi: "run.seeding_age_min"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "Seeding age max"; tagi: "run.seeding_age_max"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+
+            }
             
             Repeater{
-                
-                model:[ {txt: "Number of days"},
-                    {txt: "Number participants survey"},
-                    {txt: "number of threads"},
-                    {txt: "RNG seed"},
-                    {txt: "r0"},
-                    {txt: "Seeding age min"},
-                    {txt: "Seeding age max"},
-                ]
-                
-                delegate :RowLayout{
-                    z:5
-                    spacing: 50
-                    Layout.alignment: Qt.AlignTop
-                    Layout.maximumHeight: 4
-                    Label{
-                        id: integer_spinnr_txt
-                        text: modelData.txt
-                        //lineHeight: 0.9
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.minimumWidth: 200
-                        Layout.alignment: Qt.AlignLeft
-                    }
-                    
-                    SpinBox{
-                        id: integer_spinner
-                        Layout.minimumWidth: 100
-                        //Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignRight
-                        Layout.maximumHeight: 25
-                        
-                    }
-                    
-                }
+               model:sim_spnners
+               Spnner_label{
+
+               }
             }
             
             Repeater{
