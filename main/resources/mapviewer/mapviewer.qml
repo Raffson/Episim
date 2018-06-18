@@ -111,12 +111,7 @@ ApplicationWindow {
                 onClicked: selectMultiple()
             }
             ToolButton {
-                text: qsTr("future function")
-                onClicked: menu.open()
-            }
-            ToolButton {
                 text: qsTr("⋮")
-                onClicked: menu.open()
             }
         }
     }
