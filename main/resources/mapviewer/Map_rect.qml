@@ -87,7 +87,7 @@ Rectangle{
                         map.clearMapItems();
                     }
 
-                    backend.runSimulator();
+                    backend.runSimulator(run_sim_days.value, rn_checker.checked);
                     map.center_and_zoom();
                 }
 
@@ -98,16 +98,26 @@ Rectangle{
                 }
 
             }
+            RowLayout{
+                Label{
+                    text: "All:"
+                }
+            CheckBox{
+                id: rn_checker
+                Layout.fillHeight: true
+            }
+            }
+            RowLayout{
             Label{
                 text: "Days:"
             }
 
-            ComboBox{
+            SpinBox{
                 id: run_sim_days
                 Layout.fillHeight: true
-                model: ["All", "1", "5", "10", "50", "100"]
                 editable: true
-
+                enabled: !rn_checker.checked
+            }
             }
         }
     }

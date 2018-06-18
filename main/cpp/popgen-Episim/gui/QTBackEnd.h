@@ -77,7 +77,7 @@ public:
 
     /// @brief Runs the simulator in n steps.
     /// @param days the amount of steps (days) to be run.
-    Q_INVOKABLE void runSimulator();
+    Q_INVOKABLE void runSimulator(int run_val, bool all);
 
     /// @brief tells QML if it should redraw the map items.
     /// This is needed if the population generator is rerun.
@@ -356,6 +356,9 @@ private:
 
     ///> pointer to optinal controller -> used to registerViewers
    CliController* m_cntrller;
+
+   ///> Pointer to the current runner
+   shared_ptr<SimRunner> m_runner{nullptr};
 ///@}
 
 

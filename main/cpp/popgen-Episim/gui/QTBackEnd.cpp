@@ -34,22 +34,57 @@ QTBackEnd::QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *cl
 
 void QTBackEnd::genPop() {
 
+    // Saving config info. config tree get's concatinated in Geogenerator
     string file(m_pt.get<string>("run.geopop_file"));
     auto path = (m_pt.get<bool>("run.use_install_dirs", true) ? util::FileSys::GetConfigDir() : "") /=  file;
     util::FileSys::WritePtreeFile(path, m_geo_pt);
-    util::FileSys::WritePtreeFile(string("config/run_short.xml"), m_pt);
+    util::FileSys::WritePtreeFile(string("config/run_short.xml"), m_pt); // Do not have the info of original read file
 
+    // Generation of the population
     m_grid = stride::GeoGridGenerator().Generate(m_pt);
     stride::PopulationGenerator(*m_grid).Generate();
-
     m_pop_generated = true;
-
     m_total_pop = m_grid->GetTotalPop();
+    MakeCityList(); // Helper to make QCity wrappers for our cities
+
+    //Initialize our simrunner.
+    m_runner = make_shared<SimRunner>(m_pt, m_grid->GetPopulation(), m_grid);
+    m_cntrller->RegisterViewers(m_runner);
+
+    // Signal block
     emit PopChanged();
-
-    MakeCityList();
 }
+// Logic invokables
+/***********************************************************************************************************************/
+void QTBackEnd::runSimulator(int run_val, bool all) {
 
+    if (!m_pop_generated){ // We need a pop to run our simulator on
+        genPop();
+    }
+
+    if (m_grid == nullptr || m_runner == nullptr) { // Sanity check
+        cout << "run popgen first" << endl;
+        return;
+    }
+
+    // Running all our steps given in config
+    if(all){
+        m_runner->Run();
+    }
+
+    else {
+
+        m_runner->Run((unsigned int)run_val);
+    }
+
+
+    for (auto &it: m_cities) {
+        emit dynamic_cast<QTCity *>(it)->InfectedChanged();
+    }
+    emit SelectedInfectedChanged();
+    emit TotalInfectedChanged();
+}
+/***********************************************************************************************************************/
 void QTBackEnd::MakeCityList() {
 
 
@@ -83,29 +118,6 @@ QObject *QTBackEnd::getCity(unsigned int id) const {
     cout << "Could not find city with id: " << id << endl;
     return nullptr;
 
-}
-
-void QTBackEnd::runSimulator() {
-
-    if (!m_pop_generated) {
-        genPop();
-    }
-
-    if (m_grid == nullptr) {
-        cout << "run popgen first" << endl;
-        return;
-    }
-
-    auto view_ptr = make_shared<SimRunner>(m_pt, m_grid->GetPopulation(), m_grid);
-    m_cntrller->RegisterViewers(view_ptr);
-    view_ptr->Run();
-    m_pop_generated = false;
-
-    for (auto &it: m_cities) {
-        emit dynamic_cast<QTCity *>(it)->InfectedChanged();
-    }
-    emit SelectedInfectedChanged();
-    emit TotalInfectedChanged();
 }
 
 //Config setters and getters
