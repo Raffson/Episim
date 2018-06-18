@@ -165,6 +165,19 @@ public:
     /// @param geo is this tag in the geo or m pt
     Q_INVOKABLE void cleanChildren (const QString& xml_tag, int size, bool geo);
 
+    /// @brief returns a day, month, year of a date at xml tag
+    /// @param xml_tag where to find date.
+    /// @param index for day = 0, month = 1, year = 2
+    /// @param bool in geo or stride
+    Q_INVOKABLE int getDate(const QString& xml_tag, int index, bool geo);
+
+    /// @brief puts a date at xml_tag
+    /// @param day the day of the date
+    /// @param month the month of the date
+    /// @param year the year of he date
+    /// @param geo in geo or stride?
+    Q_INVOKABLE void setDate(const QString& xml_tag, int day, int month, int year, bool geo);
+
 
 ///@}
 // BackEnd Properties. Wraps getters and setters. if those are trivial read/write the member directly

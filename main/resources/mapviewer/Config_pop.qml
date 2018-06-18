@@ -8,10 +8,13 @@ import QtQuick.Dialogs 1.3
 
 Tab{
     id: config_pop
+
     Rectangle{
         anchors.fill: parent
         color: Qt.rgba(0.9,0.9,0.9,0.5)
+
         GridLayout{
+
             id: alligner
             layoutDirection: Qt.LeftToRight
             flow: GridLayout.TopToBottom
@@ -19,9 +22,9 @@ Tab{
             anchors.leftMargin: 50
             anchors.fill: parent
             columnSpacing: 5
-            rowSpacing: 1
-            rows: 16
-            columns: 1
+            rowSpacing: 25
+            rows: 8
+            columns: 2
             ListModel{
                 id: num_bttns
 
@@ -96,7 +99,7 @@ Tab{
                     id: c
                     checked: backend.getBoolConfig("defrag_cities.is_defrag")
                     onClicked:{
-                        backend.setBoolConfig("defrag_cities.is_defrag", checked);
+                        backend.setBoolConfig("defrag_cities.is_defrag", checked, true);
                         rep.model = p_vec_size.value;
                     }
                 }
@@ -194,3 +197,5 @@ Tab{
         }
     }
 }
+
+

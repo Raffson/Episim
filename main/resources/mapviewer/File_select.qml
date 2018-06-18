@@ -33,6 +33,7 @@ RowLayout{
         Layout.preferredWidth: 450
         Layout.maximumWidth: 600
         text: backend.readPath(parent.tag, parent.geo, dtas)
+        onEditingFinished: backend.setPath(cty_fil_select.tag, text, geo)
     }
     
     Button{

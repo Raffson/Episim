@@ -21,7 +21,7 @@ Tab{
             anchors.fill: parent
             columnSpacing: 50
             rowSpacing: 5
-            rows: 15
+            rows: 16
             columns: 2
 
             ListModel{
@@ -115,6 +115,7 @@ Tab{
             
             RowLayout{
                 
+                property string tg: "run.start_date"
                 z:5
                 spacing: 5
                 Layout.alignment: Qt.AlignTop
@@ -148,7 +149,8 @@ Tab{
                     maximumValue: 31
                     stepSize: 1
                     decimals: 0
-                    
+                    value: backend.getDate(parent.tg, 2, false)
+                    onValueChanged: backend.setDate(parent.tg, day_spnner.value, month_spnner.value, year_spnner.value, false)
                 }
                 
                 Label{
@@ -171,6 +173,8 @@ Tab{
                     maximumValue: 12
                     stepSize: 1
                     decimals: 0
+                    value: backend.getDate(parent.tg, 1, false)
+                    onValueChanged: backend.setDate(parent.tg, day_spnner.value, month_spnner.value, year_spnner.value, false)
                     
                 }
                 
@@ -182,6 +186,7 @@ Tab{
                     Layout.minimumWidth: 30
                     Layout.maximumWidth: 30
                     Layout.alignment: Qt.AlignLeft
+
                 }
                 SpinBox{
                     id: year_spnner
@@ -194,6 +199,8 @@ Tab{
                     maximumValue: Infinity
                     stepSize: 1
                     decimals: 0
+                    value: backend.getDate(parent.tg, 0, false)
+                    onValueChanged: backend.setDate(parent.tg, day_spnner.value, month_spnner.value, year_spnner.value, false)
                     
                 }
                 
@@ -215,6 +222,31 @@ Tab{
                     id: cty_fil_select
                 }
                 
+            }
+
+            RowLayout{
+                id: output_prefix
+                Layout.alignment: Qt.AlignTop
+                Layout.maximumHeight: 4
+                property string tag: "run.output_prefix"
+                Label{
+                    id: cty_file_label
+                    text: "Output prefix"
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.minimumWidth: 245
+                    Layout.alignment: Qt.AlignLeft
+
+                }
+
+                TextField{
+                    id: cty_config_text
+                    Layout.alignment: Qt.AlignRight
+                    Layout.minimumWidth: 300
+                    Layout.preferredWidth: 450
+                    Layout.maximumWidth: 600
+                    text: backend.getConfig(parent.tag,false)
+                    onEditingFinished: backend.setConfig(parent.tag, text, false)
+                }
             }
         }
     }

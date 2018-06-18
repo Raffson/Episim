@@ -276,8 +276,38 @@ void QTBackEnd::cleanChildren (const QString& xml_tag, int size, bool geo){
     while(child->size() > (unsigned int)  size){
         child->pop_back();
     }
+}
+
+int QTBackEnd::getDate(const QString& xml_tag, int index, bool geo){
+
+    boost::property_tree::ptree* child;
+
+    if(geo){
+        child = &m_geo_pt;
+    }
+    else{
+        child = &m_pt;
+    }
+
+    string date = child->get<string>(xml_tag.toStdString());
+    return QString(date.c_str()).split("-")[index].toInt();
+}
+
+void QTBackEnd::setDate(const QString& xml_tag, int day, int month, int year, bool geo){
+    boost::property_tree::ptree* child;
+
+    if(geo){
+        child = &m_geo_pt;
+    }
+    else{
+        child = &m_pt;
+    }
+
+    string putter =  to_string(year)+ "-" + to_string(month)+ "-" + to_string(day) ;
+    child->put(xml_tag.toStdString(),putter);
 
 }
+
 
 /***********************************************************************************************************************/
 
