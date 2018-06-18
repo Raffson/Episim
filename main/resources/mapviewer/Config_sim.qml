@@ -21,7 +21,7 @@ Tab{
             anchors.fill: parent
             columnSpacing: 50
             rowSpacing: 5
-            rows: 19
+            rows: 15
             columns: 2
 
             ListModel{
@@ -48,13 +48,13 @@ Tab{
             Repeater{
                 
                 model:[ {txt: "Behaviour policy", tg: "run.behaviour_policy", mdl:["Vaccination" ,"NoBehaviour"]},
-                    /*{txt: "Belief policy", mdl:["Belief", "HBM", "Imitation", "NoBelief", "Treshold"]},
-                    {txt: "Information policy", mdl:["LocalDiscussion", "NoGlobalInformation", "NoLocalInformation"]},
-                    {txt: "Contact log level", mdl: ["None", "Tansimissions", "All", "Susceptibles"]},
-                    {txt: "Immunity profile", mdl:  ["None"]},
-                    {txt: "Vaccine profile", mdl: ["Random"]},
-                    {txt: "Rng type", mdl: ["mrg2", "mrg3", "lgc64", "lcg64_shift", "yarn2", "yarn3"]},
-                    {txt: "Stride log level", mdl:["Info"]}*/
+                    {txt: "Belief policy",tg: "run.belief_policy", mdl:["Belief", "HBM", "Imitation", "NoBelief", "Treshold"]},
+                    {txt: "Global information policy",tg: "run.global_information_policy", mdl:["LocalDiscussion", "NoGlobalInformation", "NoLocalInformation"]},
+                    {txt: "Contact log level", tg: "run.contact_log_level", mdl: ["None", "Tansimissions", "All", "Susceptibles"]},
+                    {txt: "Immunity profile",tg: "run.immunity_profile", mdl:  ["None"]},
+                    {txt: "Vaccine profile", tg: "run.vaccine_profile", mdl: ["Random"]},
+                    {txt: "Rng type", tg: "run.rng_type", mdl: ["mrg2", "mrg3", "lgc64", "lcg64_shift", "yarn2", "yarn3"]},
+                    {txt: "Stride log level", tg: "run.stride_log_level", mdl:["Info"]}
                     
                 ]
                 
@@ -90,44 +90,26 @@ Tab{
                     
                 }
             }
+
+            ListModel{
+                id: stride_checkers
+                ListElement{ txt: "Contact output file"; tagi: "run.contact_output_file"; geo: false}
+                ListElement{ txt: "Output adopted"; tagi: "run.output_adopted"; geo: false}
+                ListElement{ txt: "Output cases"; tagi: "run.output_cases"; geo: false}
+                ListElement{ txt: "Output persons"; tagi: "run.output_persons"; geo: false}
+                ListElement{ txt: "Output summary"; tagi: "run.output_summary"; geo: false}
+                ListElement{ txt: "Track index case"; tagi: "run.track_index_case"; geo: false}
+                ListElement{ txt: "Use install dirs"; tagi: "run.use_install_dirs"; geo: false}
+            }
             
             Repeater{
                 
-                model:[ {txt: "Contact output file"},
-                    {txt: "Output adopted"},
-                    {txt: "Output cases"},
-                    {txt: "Output persons"},
-                    {txt: "Output summary"},
-                    {txt: "Track index case"},
-                    {txt: "Use install dirs"}
-                ]
-                
-                delegate :RowLayout{
-                    z:5
-                    spacing: 50
-                    Layout.alignment: Qt.AlignTop
-                    Layout.maximumHeight: 4
-                    Label{
-                        id: checkboxes
-                        text: modelData.txt
-                        //lineHeight: 0.9
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.minimumWidth: 200
-                        Layout.alignment: Qt.AlignLeft
-                    }
-                    
-                    CheckBox{
-                        id: checkbox_box
-                        Layout.minimumWidth: 200
-                        //Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignRight
-                        Layout.maximumHeight: 25
-                        
-                    }
-                    
+                model: stride_checkers
+
+                Checker{
+
                 }
-                
-                
+
             }
             
             

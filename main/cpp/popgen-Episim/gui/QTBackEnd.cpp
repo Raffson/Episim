@@ -27,26 +27,17 @@ QTBackEnd::QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *cl
 {
 
     string file(m_pt.get<string>("run.geopop_file"));
-    string path = "config/" + file;
-    fstream filestr;
-    filestr.open(path);
-    using namespace boost::property_tree::xml_parser;
-    read_xml(path, m_geo_pt, trim_whitespace | no_comments);
-    filestr.close();
+    auto path = (m_pt.get<bool>("run.use_install_dirs", true) ? util::FileSys::GetConfigDir() : "") /=  file;
+    m_geo_pt = util::FileSys::ReadPtreeFile(path);
 }
 
 
 void QTBackEnd::genPop() {
 
-
     string file(m_pt.get<string>("run.geopop_file"));
-    string path = "config/" + file;
-    fstream filestr;
-    filestr.open(path);
-
-    boost::property_tree::xml_writer_settings<string> w( ' ', 2 );
-    write_xml( path, m_geo_pt, std::locale(), w );
-    filestr.close();
+    auto path = (m_pt.get<bool>("run.use_install_dirs", true) ? util::FileSys::GetConfigDir() : "") /=  file;
+    util::FileSys::WritePtreeFile(path, m_geo_pt);
+    util::FileSys::WritePtreeFile(string("config/run_short.xml"), m_pt);
 
     m_grid = stride::GeoGridGenerator().Generate(m_pt);
     stride::PopulationGenerator(*m_grid).Generate();
@@ -194,14 +185,22 @@ void QTBackEnd::setPath(const QString &tag, const QString &path, bool geoGrid) {
 
 }
 
-bool QTBackEnd::getBoolConfig(const QString &xml_tag) const {
+bool QTBackEnd::getBoolConfig(const QString &xml_tag, bool geo) const {
 
-    return m_geo_pt.get<bool>(xml_tag.toStdString());
+    if(geo) {
+        return m_geo_pt.get<bool>(xml_tag.toStdString());
+    }
+    return m_pt.get<bool>(xml_tag.toStdString());
 }
 
-bool QTBackEnd::setBoolConfig(const QString &xml_tag, const bool &value) {
+bool QTBackEnd::setBoolConfig(const QString &xml_tag, const bool &value, bool geo) {
 
-    m_geo_pt.put(xml_tag.toStdString(), value);
+    if(geo) {
+        m_geo_pt.put(xml_tag.toStdString(), value);
+        return !value;
+    }
+
+    m_pt.put(xml_tag.toStdString(), value);
     return !value;
 }
 

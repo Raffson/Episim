@@ -63,7 +63,7 @@ Tab{
 
             ListModel{
                 id: check_rndm_ages
-                ListElement{ txt: "Random ages"; tagi: "pop_info.random_ages"}
+                ListElement{ txt: "Random ages"; tagi: "pop_info.random_ages"; geo: true}
             }
             
             Repeater{

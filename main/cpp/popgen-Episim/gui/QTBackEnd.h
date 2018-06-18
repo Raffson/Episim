@@ -124,13 +124,15 @@ public:
 
     /// @brief gets a bool out of config at xml_tag
     /// @param xml_tag tag of the bool we need in config
+    /// @param geo tag if we write in geo or stride config
     /// @return bool found in config
-    Q_INVOKABLE bool getBoolConfig(const QString &xml_tag) const;
+    Q_INVOKABLE bool getBoolConfig(const QString &xml_tag, bool geo = true) const;
 
     /// @brief sets a bool in config file at xml_tag
     /// @param xml_tag the tag of our bool
     /// @param value the value as a bool we want to place
-    Q_INVOKABLE bool setBoolConfig(const QString &xml_tag, const bool &value);
+    /// @param geo in geo pr or stride pt
+    Q_INVOKABLE bool setBoolConfig(const QString &xml_tag, const bool &value, bool geo);
 
     /// @brief Wrapper to get the path to data
     /// @return returns a Qurl path to the Data folder
