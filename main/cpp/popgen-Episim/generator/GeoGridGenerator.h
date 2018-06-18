@@ -15,14 +15,14 @@ class GeoGridGenerator
 {
 
 public:
-        /// Default constructor
+        /// Default constructor.
         GeoGridGenerator() : m_grid(nullptr), m_cid_generator(1) {};
 
         /// Generates a GeoGrid according to the given configuration file.
         /// If the file is not found, 'run_default.xml' will be chosen loaded by default.
         /// @param config: A path to a geogen config file. This file contains
         ///             things like name of the city data file, information about
-        ///             the population...
+        ///             the population, ...
         /// @param contactFile: A boolean value indicating if we're overriding the 'output_contact_file' value
         /// of the given configuration. This is specifically to prevent output during the tests.
         /// @retval <std::shared_ptr<GeoGrid>> A shared pointer to the generated GeoGrid.
@@ -35,7 +35,7 @@ public:
         std::shared_ptr<GeoGrid> Generate(const boost::property_tree::ptree& pTree);
 
 private:
-        /// Assigns the main fractions: schooled, worker1, worker2 & rest
+        /// Assigns the main fractions: schooled, worker1, worker2 & rest.
         void GetMainFractions();
 
         /// Used by GeoGridGenerator::Generate to create an output-directory if needed.
@@ -72,18 +72,17 @@ private:
         ///     \li REQUIRE(m_school_size >= 0, "The initial school size can't be negative");
         ///
         /// Postconditions:\n
-        ///     \li ENSURE(Schools are placed in cities according to discrete distribution) -> enforced in test enviroment
+        ///     \li ENSURE(Schools are placed in cities according to discrete distribution) -> enforced in test enviroment.
         void GenerateSchools();
 
-        /// Returns index of city with smallest population from 'lc'
-        /// used by AdjustLargestCities(lc, city)
+        /// Returns index of city with smallest population from 'lc', used by AdjustLargestCities(lc, city).
         unsigned int FindSmallest(const vector<City*>& lc);
 
-        /// Adjusts 'lc' iff 'city' has more people than the city with the smallest population in 'lc'
-        /// used by GenerateColleges()
+        /// Adjusts 'lc' iff 'city' has more people than the city with the smallest population in 'lc',
+        /// used by GenerateColleges().
         void AdjustLargestCities(vector<City*>& lc, City& city);
 
-        /// Generates the colleges, places them into the cities
+        /// Generates the colleges, places them into the cities,
         /// using a discrete distribution.
         /// Preconditions:\n
         ///     \li REQUIRE(m_student_frac >= 0, "Student fractal can't be negative");\n
@@ -92,15 +91,15 @@ private:
         ///     \li REQUIRE(m_workers1_frac <= 1, "Worker fractal can't be more then 100%");
         ///
         /// Postconditions:\n
-        ///     \li ENSURE(colleges are placed in x biggest cities) -> enforced in test envirorement
+        ///     \li ENSURE(colleges are placed in x biggest cities) -> enforced in test envirorement.
         //          Need to enforce this ensure in the code as well...
         void GenerateColleges();
 
-        /// Generates the workplaces, places them into the cities a random with chances
+        /// Generates the workplaces, places them into the cities at random with chances
         /// discretly distributed according to size. Generates contactpools for the communities.
         void GenerateWorkplaces();
 
-        /// Generates the communties, places them into the cities a random with chances
+        /// Generates the communties, places them into the cities at random with chances
         /// discretly distributed according to size. Generates contactpools for the communities.
         void GenerateCommunities();
 
@@ -108,7 +107,7 @@ private:
         /// in exponential order, assigning this to m_neighbours_in_radius. The default initial search radius = 10km.
         void ClassifyNeighbours();
 
-        /// Version for benchmarking purposes
+        /// Version for benchmarking purposes.
         void ClassifyNeighbours2();
 
         /// Adds communities of the given type and their contact pools.
@@ -124,7 +123,7 @@ private:
 
 private:
         std::shared_ptr<GeoGrid> m_grid;          ///< The GeoGrid object.
-        size_t                   m_cid_generator; ///< ID generator for communities
+        size_t                   m_cid_generator; ///< ID generator for communities.
 
 };
 

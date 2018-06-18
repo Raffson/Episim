@@ -58,7 +58,7 @@ Id ToType(const std::string& s);
 /// Returns the average size for this community type.
 Sizes ToSizes(Id id);
 
-/// Converts to the corresponding ContactPool type
+/// Converts to the corresponding ContactPool type.
 ContactPoolType::Id ToContactPoolType(Id id);
 
 /// To allow iteration over the community types.

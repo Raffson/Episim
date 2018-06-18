@@ -51,24 +51,24 @@ public:
 */
 ///@{
     /// @brief Constructor of BackEnd.
-    /// @param engine the Qtquick engine.
-    /// @param pt the config pt.
-    /// @param clicontrol the pointer to the viewer
-    /// @param parent Optional Used in QML to be a MetaObject of QT
+    /// @param engine: The Qtquick engine.
+    /// @param pt: The config pt.
+    /// @param clicontrol: The pointer to the viewer.
+    /// @param parent: Optional Used in QML to be a MetaObject of QT.
     explicit QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *clicontrol,
                        QObject *parent = nullptr);
 
     QTBackEnd(const QTBackEnd&)=delete;
     QTBackEnd& operator=(const QTBackEnd&)=delete;
 
-    /// @brief default destructor
+    /// @brief Default destructor.
     ~QTBackEnd() override = default;
 
 ///@}
-// Logic Invokables
+// Logic Handlers
 /***********************************************************************************************************************/
 /**
-*  @name logic handlers.
+*  @name Logic Handlers
 *  Handlers for QML to initiate the logic in stride.
 */
     ///@{
@@ -76,17 +76,17 @@ public:
     Q_INVOKABLE void genPop();
 
     /// @brief Runs the simulator in n steps.
-    /// @param days the amount of steps (days) to be run.
+    /// @param days: The amount of steps (days) to be run.
     Q_INVOKABLE void runSimulator();
 
-    /// @brief tells QML if it should redraw the map items.
+    /// @brief Tells QML if it should redraw the map items.
     /// This is needed if the population generator is rerun.
-    /// @return inverse of pop_generated. If a pop is generated there should not be a redraw.
+    /// @return Inverse of pop_generated. If a pop is generated there should not be a redraw.
     Q_INVOKABLE bool shouldRedraw() const { return !m_pop_generated; };
 
     /// @brief This flips the state of a list of cities. Flipping from clicked to unclicked and vice versa.
-    ///        mainly used if we select multiple cities with rectangle select.
-    /// @param cities the list of cities to be flipped
+    ///        Mainly used if we select multiple cities with rectangle select.
+    /// @param cities: The list of cities to be flipped.
     Q_INVOKABLE void flipItems(QList<QObject *> cities);
 
 ///@}
@@ -97,62 +97,62 @@ public:
 * All invokables to get_set the configuration. If there was a way to use templates in QML this would be alot shorter.
 */
 ///@{
-    /// @brief this reads a element at xml_tag.
-    /// @param xml_tag tag where we can find the element needed.
-    /// @return Returns the needed element as Qstring
+    /// @brief Reads an element at xml_tag.
+    /// @param xml_tag: Tag where we can find the element needed.
+    /// @return Returns the needed element as Qstring.
     Q_INVOKABLE QString getConfig(const QString &xml_tag) const;
 
-    /// @brief this sets a value in config at tag
-    /// @param xml_tag the tag where we want to set our value.
-    /// @param val the value that needs to be set in the config at tag as QString
+    /// @brief Sets a value in config at tag.
+    /// @param xml_tag: The tag where we want to set our value.
+    /// @param val: The value that needs to be set in the config at tag as QString.
     Q_INVOKABLE void setConfig(const QString &xml_tag, const QString &val);
 
-    /// @brief reads a path out of config of a file that should be in the data folder if install path's are on.
-    /// @param tag tag where we find the path
-    /// @param geo_grid Config out of the GeoGrid file or GenPop file?
-    /// @param data Data file our config file?
-    /// @return the path as a QString
+    /// @brief Reads a path out of config of a file that should be in the data folder if install path's are on.
+    /// @param tag: Tag where we find the path.
+    /// @param geo_grid: Config out of the GeoGrid file or GenPop file?
+    /// @param data Data: file our config file?
+    /// @return The path as a QString.
     Q_INVOKABLE QString readPath(const QString &tag, bool geo_grid = true, bool data = true) const;
 
-    /// @brief sets a path at tag
-    /// @param tag tag where we need to place path in config
-    /// @param path path to be placed in config
-    /// @param geo_grid Config out of the GeoGrid file or GenPop file?
+    /// @brief Sets a path at tag.
+    /// @param tag: Tag where we need to place path in config.
+    /// @param path: Path to be placed in config.
+    /// @param geo_grid: Config out of the GeoGrid file or GenPop file?
     Q_INVOKABLE void setPath(const QString &tag, const QString &path, bool geoGrid = true);
 
-    /// @brief gets a bool out of config at xml_tag
-    /// @param xml_tag tag of the bool we need in config
-    /// @return bool found in config
+    /// @brief Gets a bool out of config at xml_tag.
+    /// @param xml_tag: Tag of the bool we need in config.
+    /// @return Bool found in config.
     Q_INVOKABLE bool getBoolConfig(const QString &xml_tag) const;
 
-    /// @brief sets a bool in config file at xml_tag
-    /// @param xml_tag the tag of our bool
+    /// @brief Sets a bool in config file at xml_tag.
+    /// @param xml_tag: The tag of our bool.
     /// @param value the value as a bool we want to place
     Q_INVOKABLE bool setBoolConfig(const QString &xml_tag, const bool &value);
 
-    /// @brief Wrapper to get the path to data
-    /// @return returns a Qurl path to the Data folder
+    /// @brief Wrapper to get the path to data.
+    /// @return Returns a QUrl path to the Data folder.
     Q_INVOKABLE QUrl getDataPath() const ;
 
-    /// @brief wrapper to get the pat do config
-    /// @return returns a Qurl path to the config folder
+    /// @brief Wrapper to get the pat do config.
+    /// @return Returns a QUrl path to the config folder.
     Q_INVOKABLE QUrl getConfigPath() const ;
 
-    /// @brief counts the children of a certain p_tree element
-    /// @param xml_tag tag of p_tree we want to count our childen from
+    /// @brief Counts the children of a certain p_tree element.
+    /// @param xml_tag: Tag of p_tree we want to count our childen from.
     Q_INVOKABLE int countConfigChildren(const QString &xml_tag, bool geo) const;
 
-    /// @brief gets a child at index. Due to Keeping logic out of QML it will add an item with 0 value at the end
-    ///        if the index > then the amount of children at the tag
-    /// @param xml_tag tag to read the children from
-    /// @param index the index to get the child from
-    /// @param geo read out of geogrid config or stride config
+    /// @brief Gets a child at index. Due to Keeping logic out of QML it will add an item with 0 value at the end
+    ///        if the index > then the amount of children at the tag.
+    /// @param xml_tag: Tag to read the children from.
+    /// @param index: The index to get the child from.
+    /// @param geo: Read out of geogrid config or stride config.
     Q_INVOKABLE double getChildAtIndex(const QString &xml_tag, int index, bool geo);
 
-    /// @brief sets the value at index of a child of the xml tag.
-    /// @param xml_tag the tag of the childeren we are working on.
-    /// @param index the index we want to update
-    /// @param geo using geo or stride config
+    /// @brief Sets the value at index of a child of the xml tag.
+    /// @param xml_tag: The tag of the childeren we are working on.
+    /// @param index: The index we want to update.
+    /// @param geo: Using geo or stride config.
     Q_INVOKABLE void setChildAtIndex(const QString &xml_tag, int index, double value, bool geo);
 
 
@@ -160,30 +160,30 @@ public:
 // BackEnd Properties. Wraps getters and setters. if those are trivial read/write the member directly
 /***********************************************************************************************************************/
 /**
-* @name properties
-* properties of backend in QML
+* @name BackEnd Properties
+* Properties of backend in QML.
 */
     ///@{
-    ///< list of QCities made available in QMl
+    ///< List of QCities made available in QMl.
     Q_PROPERTY(QList<QObject *> cities MEMBER m_cities NOTIFY CitiesChanged)
 
-    ///< the center of our grid. Needed for zooming
+    ///< The center of our grid. Needed for zooming.
     Q_PROPERTY(QGeoCoordinate center READ GetCenter CONSTANT)
 
-    ///< the total population in our simulator
+    ///< The total population in our simulator.
     Q_PROPERTY(int total_pop MEMBER m_total_pop NOTIFY PopChanged)
 
-    ///< the total pop of our selected cities
+    ///< The total population of our selected cities.
     Q_PROPERTY(int selected_pop MEMBER m_selected_pop NOTIFY SelectedPopChanged)
 
-    ///< the total infected of our selected cities
+    ///< The total amount of infected of our selected cities.
     Q_PROPERTY(int selected_infected READ CountSelectedInfected NOTIFY SelectedInfectedChanged())
 
-    ///< The total amount of infected in our simulator
+    ///< The total amount of infected in our simulator.
     Q_PROPERTY(int total_infected READ GetTotalInfected NOTIFY TotalInfectedChanged)
 
-    ///< List of all commute lines. A bit non trivial but it was not possible to make a dynamic amount of views
-    ///< a commute line object had the coordinates of 2 cities. and the in/out commuter on the line.
+    ///< List of all commute lines. A bit non trivial but it was not possible to make a dynamic amount of views.
+    ///< A commute line object has the coordinates of 2 cities and the in/out commuters on the line.
     Q_PROPERTY(QList<QObject *> commuters MEMBER m_commuters NOTIFY CommutersChanged)
 
 ///@}
@@ -192,7 +192,7 @@ public:
 /***********************************************************************************************************************/
 /**
 * @name Invokable getters
-* invokable getters in QML backend.
+* Invokable getters in QML backend.
 */
 ///@{
     /// @brief Get's a QCity made in BackEnd.
@@ -203,26 +203,26 @@ public:
 /***********************************************************************************************************************/
 signals:
 /**
-* @name: signals
+* @name: Signals
 * Signals used to update the data in QML.
 */
     ///@{
-    /// @brief tells QML that the selected pop needs to be updated.
+    /// @brief Tells QML that the selected pop needs to be updated.
     void SelectedPopChanged();
 
-    /// @brief tells QML that the total pop needs to be updated.
+    /// @brief Tells QML that the total pop needs to be updated.
     void PopChanged();
 
-    /// @brief tells QML that the selected infected needs to be updated.
+    /// @brief Tells QML that the selected infected needs to be updated.
     void SelectedInfectedChanged();
 
-    /// @brief tells QML that the selected infecteds needs to be updated.
+    /// @brief Tells QML that the selected infected needs to be updated.
     void TotalInfectedChanged();
 
-    /// @brief tells QML that the city list is changed and needs to be updated.
+    /// @brief Tells QML that the city list is changed and needs to be updated.
     void CitiesChanged();
 
-    /// @brief tells QML that the commuter lis is changed and needs to be updated.
+    /// @brief Tells QML that the commuter list is changed and needs to be updated.
     void CommutersChanged();
 ///@}
 public:
@@ -231,11 +231,11 @@ public:
 /***********************************************************************************************************************/
 /**
 * @name: Modifiers
-* Methods that modify BackEnd
+* Methods that modify BackEnd.
 */
     ///@{
-    /// @brief get's called by QTCities if they are selected. The pop_total get's updated.
-    /// @param amount the pop that needs to be in/decremented to the selected pop total.
+    /// @brief Get's called by QTCities if they are selected. The pop_total get's updated.
+    /// @param Amount the selected pop total needs to be in/decremented with
     void AddSelectedPop(int amount);
 
     void AddCommuteLines(const QList<QTCommuter *> &lst);
@@ -247,23 +247,23 @@ public:
 /***********************************************************************************************************************/
 /**
 * @name: Data Retrieval
-* Collection of getters for data retrieval
+* Collection of getters for data retrieval.
 */
 ///@{
-    /// @brief returns all QTCities.
+    /// @brief Returns all QTCities.
     /// @return list of QTCities in the simulator.
     QList<QObject *> GetCities() const { return m_cities; }
 
-    /// @brief returns the center of the GeoGrid based on the longitude and latitude of the cities.
+    /// @brief Returns the center of the GeoGrid based on the longitude and latitude of the cities.
     /// @return A QGeoCoordiante that contains the latitude en longitude of the center of the grid.
     QGeoCoordinate GetCenter() const;
 
-    /// @brief returns the total infected in the grid.
-    /// @return a integer value of the amount of infected.
+    /// @brief Returns the total infected in the grid.
+    /// @return An integer value of the amount of infected.
     int GetTotalInfected() const;
 
-    /// @brief Counts the selected infected
-    /// @return a integer value of the amount of selected infected.
+    /// @brief Counts the selected infected.
+    /// @return An integer value of the amount of selected infected.
     int CountSelectedInfected() const;
 ///@}
 private:
@@ -282,15 +282,15 @@ private:
 /***********************************************************************************************************************/
 /**
 * @name: Optimizers
-* Functions to optimize rectangle select by reducing the amount of signals emitted
+* Functions to optimize rectangle select by reducing the amount of signals emitted.
 */
     ///@{
     /// @brief Adds a list of commuter lines to the backend commuter lines. Doesn't emit any changes.
-    /// @param lst a list of QTCommuter, lines that should be drawn.
+    /// @param lst a list of QTCommuter, lines that should be drawn
     void AddCommuteLineNoEmit(const QList<QTCommuter *> &lst);
 
-    /// @brief removes a list of commuter lines in the backend commuter lines. Doesn't emit any changes.
-    /// @param lst list of Commuter lines to be removed.
+    /// @brief Removes a list of commuter lines in the backend commuter lines. Doesn't emit any changes.
+    /// @param lst list of Commuter lines to be removed
     void RemoveCommuteLinesNoEmit(const QList<QTCommuter *> &lst);
 ///@}
 
@@ -299,37 +299,37 @@ private:
 //**********************************************************************************************************************/
     /**
      * @name: Data members
-     * The data members
+     * The data members.
      */
 ///@{
-    ///> Represents our grid
+    ///> Represents our grid.
     shared_ptr<stride::GeoGrid> m_grid;
 
-    ///> A Qlist that contains our QTCity models
+    ///> A Qlist that contains our QTCity models.
     QList<QObject *> m_cities;
 
-    ///> List of commuting lines that need to be drawn on the map
+    ///> List of commuting lines that need to be drawn on the map.
     QList<QObject *> m_commuters; // Commuting lines to be drawn?
 
-    ///> property tree of stride config
+    ///> Property tree of stride config.
     ptree &m_pt;
 
-    ///> property tree of geo config
+    ///> Property tree of geo config.
     ptree m_geo_pt;
 
-    ///> application engine that runs our engine
+    ///> Application engine that runs our engine.
     QQmlApplicationEngine &m_engine;
 
-    ///> keeps track if there is a gnerated pop that can be used to run the simulator on
+    ///> Keeps track if there is a generated population that can be used to run the simulator on.
     bool m_pop_generated{false};
 
-    ///> Total pop in our grid
+    ///> Total population in our grid.
     int m_total_pop{0};
 
-    ///> Pop that is selected
+    ///> Population that is selected.
     int m_selected_pop{0};
 
-    ///> pointer to optinal controller -> used to registerViewers
+    ///> Pointer to optional controller -> used to registerViewers.
    CliController* m_cntrller;
 ///@}
 
