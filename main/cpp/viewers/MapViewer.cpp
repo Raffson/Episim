@@ -124,7 +124,14 @@ void MapViewer::LoadMap(bool showMap) {
             /// Infected
             vals["infected"] = city.GetInfectedCount();
             /// Info
-            ss << city.GetEffectivePopulation() << "<i>(" << city.GetInfectedCount() << ")</i><br>";
+            ss <<"Pop:"<< city.GetEffectivePopulation()<<"<br>";
+            ss<< "Infected:"<< city.GetInfectedCount() <<"<br>";
+            ss << "schools:" << city.GetSchools().size() << "<br>";
+            if(city.GetColleges().size() > 0)
+                ss << "collges:" << city.GetColleges().size() << "<br>";
+            ss << "workplaces:" << city.GetWorkplaces().size() << "<br>";
+            ss << "pc:" << city.GetPrimaryCommunities().size() << "<br>";
+            ss << "sc:" << city.GetSecondaryCommunities().size() << "<br>";
             ss >> s;
             s += "\n";
             s.append(city.GetName());

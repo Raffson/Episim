@@ -168,6 +168,7 @@ ApplicationWindow {
                         color: "steelblue"
 
                     }
+
                     ToolButton {
                         text: qsTr("update population")
                         onClicked: updateSelected()
@@ -343,7 +344,7 @@ ApplicationWindow {
         selector_rect.height = 0
         selector_rect.width = 0
     }
-    
+
     function updateSelected(){
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
         var total_count = 0

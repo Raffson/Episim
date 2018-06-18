@@ -55,7 +55,7 @@ Rectangle {
             enabled: true
             acceptedButtons: Qt.LeftButton
             onEntered:{
-                info.font.pointSize = 16;
+                info.font.pointSize = 12;
                 parent.opacity = 1;
             }
             onExited:{

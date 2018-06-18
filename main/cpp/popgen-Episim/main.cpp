@@ -18,8 +18,9 @@ int main(int argc, char** argv)
         stride::GeoGridFileWriter::WriteAll(*grid);
         stride::PopulationGenerator(*grid).Generate();
 
-        stride::TestSummarizer summarizer;
-        summarizer.GenerateHtml("all_tests_episim.xml", "../../testsummary.html");
+        //This can be uncommented to generate html summary of all the testcases
+        //stride::TestSummarizer summarizer;
+        //summarizer.GenerateHtml("all_tests_episim.xml", "../../testsummary.html");
 
 #ifdef USING_QT
         string outputPrefix = grid->GetConfigPtree().get<string>("run.output_prefix", "");
