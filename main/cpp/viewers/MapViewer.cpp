@@ -26,8 +26,8 @@ namespace stride {
 namespace viewers {
 
 MapViewer::MapViewer(shared_ptr<GeoGrid> grid, const std::string &outputPrefix)
-    : engine(nullptr), m_grid(grid), m_output_prefix(outputPrefix), m_step(0),
-      m_map_option(), m_png_option(), m_item(nullptr)
+    : m_grid(grid), m_output_prefix(outputPrefix), m_step(0),
+      m_map_option(), m_png_option()
 {
     m_output_prefix += util::FileSys::IsDirectoryString(m_output_prefix) ? "png/" : "/png/";
     boost::filesystem::path dir(m_output_prefix.c_str());
@@ -77,18 +77,18 @@ void MapViewer::LoadMap(bool showMap, bool makePng) {
     engine.load(QUrl::fromLocalFile("mapviewer/mapviewer.qml"));
     QObject::connect(&engine, SIGNAL(quit()), qApp, SLOT(quit()));
 
-    m_item = engine.rootObjects().first();
-    Q_ASSERT(m_item);
+    QObject* item = engine.rootObjects().first();
+    Q_ASSERT(item);
 
     /// Call a function from a qml file.
-    QMetaObject::invokeMethod(m_item, "initializeProviders", Q_ARG(QVariant, QVariant::fromValue(parameters)));
+    QMetaObject::invokeMethod(item, "initializeProviders", Q_ARG(QVariant, QVariant::fromValue(parameters)));
 
     /// To center the map on a specific location: use following code.
     QVariantList       coords;
     stride::Coordinate c = m_grid->GetCenterOfGrid();
     coords.push_back(c.GetLatitude());
     coords.push_back(c.GetLongitude());
-    QMetaObject::invokeMethod(m_item, "setCentre", Q_ARG(QVariant, QVariant::fromValue(coords)));
+    QMetaObject::invokeMethod(item, "setCentre", Q_ARG(QVariant, QVariant::fromValue(coords)));
 
     /// To add cities on the map: use following.
     auto cities = m_grid->GetCities();
@@ -146,7 +146,7 @@ void MapViewer::LoadMap(bool showMap, bool makePng) {
                 out_commuting_id.push_back(it.first);
                 out_commuting_size.push_back(it.second);
             }
-            QMetaObject::invokeMethod(m_item, "placeCity", Q_ARG(QVariant, QVariant::fromValue(vals)),
+            QMetaObject::invokeMethod(item, "placeCity", Q_ARG(QVariant, QVariant::fromValue(vals)),
                                       Q_ARG(QVariant, QVariant::fromValue(in_commuting_id)),
                                       Q_ARG(QVariant, QVariant::fromValue(in_commuting_size)),
                                       Q_ARG(QVariant, QVariant::fromValue(out_commuting_id)),
@@ -157,7 +157,7 @@ void MapViewer::LoadMap(bool showMap, bool makePng) {
         stringstream s;
         s << m_output_prefix << m_step << ".png";
         QString fname(s.str().c_str());
-        QMetaObject::invokeMethod(m_item, "saveToImage", Q_ARG(QVariant, QVariant::fromValue(fname)));
+        QMetaObject::invokeMethod(item, "saveToImage", Q_ARG(QVariant, QVariant::fromValue(fname)));
     }
     if(showMap)
         application.exec();

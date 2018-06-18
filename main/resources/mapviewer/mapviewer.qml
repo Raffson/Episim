@@ -70,7 +70,6 @@ ApplicationWindow {
     property var stride_paths: []
     property var infected: 0
     property variant selector_rect: 0
-    property variant snap: 0
 
 
     readonly property bool inPortrait: appWindow.width < appWindow.height
