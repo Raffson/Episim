@@ -178,6 +178,8 @@ private:
 
         unsigned int m_student_commuters_count; ///< The number of the students commuting from this city
         unsigned int m_worker_commuters_count; ///< The number of the workers commuting from this city
+
+
 };
 
 } // namespace stride

@@ -11,10 +11,10 @@ import QtQuick.Controls 2.4
 Rectangle{
     Plugin {
         id: mapPlugin
-        name: "osm" //"mapbox"//", "esri", ...
-        /*PluginParameter{ name: "mapbox.access_token";
-            value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"*/
-        // }
+        name: "mapbox"//", "esri", ...
+        PluginParameter{ name: "mapbox.access_token";
+            value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"
+         }
 
 
     }
@@ -83,12 +83,19 @@ Rectangle{
                 id: button_sim
                 text: qsTr("RUN sim")
                 onClicked:{
+                    var zm = false;
                     if(backend.shouldRedraw()){
                         map.clearMapItems();
+                        zm = true
                     }
 
                     backend.runSimulator(run_sim_days.value, rn_checker.checked);
-                    map.center_and_zoom();
+
+                    if(zm){
+                        map.center_and_zoom();
+                    }
+
+
                 }
 
                 background: Rectangle {
@@ -154,6 +161,9 @@ Rectangle{
                    visible: modelData.clicked ? true: false
                    Layout.maximumHeight: modelData.clicked ? 55 : 0
                    Layout.minimumHeight: modelData.clicked ? 55 : 0
+                Rectangle{
+
+                    color: "blue"
                    ColumnLayout{
                        Text{
                            enabled:modelData.clicked ? true : false
@@ -174,7 +184,7 @@ Rectangle{
                            text: "Infected: " + modelData.infected+ "|" + Math.round(modelData.infected/modelData.popCount*100)+"%"
                            font.pointSize: 10
                        }
-
+                     }
                    }
                 }
             }

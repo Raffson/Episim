@@ -216,6 +216,10 @@ private:
     /// population of the city
     const int m_pop;
 
+    QList<QObject*> m_schools;
+    QList<QObject*> m_schools;
+    QList<QObject*> m_schools;
+
 };
 
 }

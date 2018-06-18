@@ -77,7 +77,7 @@ public:
 
     /// @brief Runs the simulator in n steps.
     /// @param days the amount of steps (days) to be run.
-    Q_INVOKABLE void runSimulator(int run_val, bool all);
+    Q_INVOKABLE void runSimulator(int run_val, bool a);
 
     /// @brief tells QML if it should redraw the map items.
     /// This is needed if the population generator is rerun.
