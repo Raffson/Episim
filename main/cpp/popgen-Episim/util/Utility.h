@@ -16,7 +16,7 @@ using namespace std;
 
 namespace stride {
 
-/// Enum that represent indexes of Fractals map. That map contains all fraction data of our population
+/// Enum that represent indexes of Fractals map. That map contains all fraction data of our population.
 enum class Fractions
 {
         SCHOOLED,           // % of pop that is in school [3yrs, 18yrs),
@@ -41,8 +41,7 @@ constexpr std::array<Fractions, 9> FractionList{
                 Fractions::TODDLERS, Fractions::OLDIES, Fractions::STUDENTS,
                 Fractions::COMMUTING_STUDENTS, Fractions::COMMUTING_WORKERS}};
 
-    /// Enum that represent indexes of sizes map. That map contains all size data
-/// of our communities
+/// Enum that represent indexes of sizes map. That map contains all size data of our communities.
 enum class Sizes
 {
         SCHOOLS,     // Average size of a school.
@@ -58,30 +57,28 @@ constexpr std::array<Sizes, 6> SizeList{
         {Sizes::SCHOOLS, Sizes::COLLEGES, Sizes::COMMUNITIES, Sizes::WORKPLACES, Sizes::AVERAGE_CP, Sizes::MAXLC}};
 
 
-    /// Checks if a file exists.
-/// @param: path A path to a file.
-/// @retval: <bool> True if the file exists, False else.
+/// Checks if a file exists.
+/// @param path: A path to a file.
+/// @retval True if the file exists, False if it doesn't.
 bool file_exists(const boost::filesystem::path& path);
 
 /// Takes a distribution -> a vec of numbers and generates N random numbers given the distribution vector.
-/// @param pVec a vector representing our distribution, each entry contains a relative probability.
+/// @param pVec: A vector representing our distribution, each entry contains a relative probability.
 ///              The probability to generate the number on that index (first entry is probability to
-///              generate 0)
-/// @param rng  a reference to a RNMmanager object. See "RNMmanger".h for more info.
-/// @param amount default = 1 The amount of random numbers we will generate.
-/// @retval <vector<unsigned int>> a vector of unsigned ints of length == amount. Each number is between
-///                                [0 and p_vec.size() - 1 ]
-/// @example a vec with numbers [1,4,8,2] as relative probabillities, and amount = 3. Will generate
-///          3 numbers out of the interval [0,3] with chance on p(0) = 1/15, p(1) = 4/15, p(2) = 8/15, p(3) = 2/15
+///              generate 0).
+/// @param rng:  A reference to a RNMmanager object. See "RNMmanger".h for more info.
+/// @param amount: Default = 1, the amount of random numbers we will generate.
+/// @retval A vector of unsigned ints of length == amount. Each number is between [0 and p_vec.size() - 1 ].
+/// @example A vec with numbers [1,4,8,2] as relative probabillities, and amount = 3 will generate
+///          3 numbers out of the interval [0,3] with chance on p(0) = 1/15, p(1) = 4/15, p(2) = 8/15, p(3) = 2/15.
 vector<unsigned int> generate_random(const vector<double>& pVec, util::RNManager& rng, unsigned int amount = 1);
 
 /// Generates the 'amount' of random unsigned ints between 'begin' and 'end' using 'rng'.
-/// @param begin an unsigned int marking the beginning of the random interval
-/// @param end an unsigned int marking the end of a random interval, with 'end' not included).
-/// @param rng  a reference to a RNMmanager object. See "RNMmanger".h for more info.
-/// @param amount default = 1 The amount of random numbers we will generate.
-/// @retval <vector<unsigned int>> a vector of unsigned ints of length == amount. Each number is between
-///                                [begin and end - 1 ]
+/// @param begin: An unsigned integer marking the beginning of the random interval.
+/// @param end: An unsigned integer marking the end of a random interval, with 'end' not included.
+/// @param rng:  A reference to a RNMmanager object. See "RNMmanger".h for more info.
+/// @param amount: Default = 1, the amount of random numbers we will generate.
+/// @retval A vector of unsigned ints of length == amount. Each number is between [begin and end - 1 ].
 vector<unsigned int> generate_random(unsigned int begin, unsigned int end, util::RNManager& rng, unsigned int amount);
 
 /// Checks the given distribution if all elements are zero. If this is the case,
@@ -90,22 +87,22 @@ vector<unsigned int> generate_random(unsigned int begin, unsigned int end, util:
 /// commuting to one of these largest cities, therefore we transform to a uniform distribution since
 /// a distribution full of zeros will make the generator go bananas. The same can be said for workers, however
 /// it is unlikely this case will present itself.
-/// @param pVec A reference to the vector which represents the distribution.
+/// @param pVec: A reference to the vector which represents the distribution.
 void check_distribution(vector<double>& pVec);
 
 /// Returns the fraction-category in which 'age' falls.
-/// @param age The age for which we want to know the category
-/// @retval <Fractions> The corresponsing enum value which represents the category for the given age.
+/// @param age: The age for which we want to know the category.
+/// @retval The corresponsing enum value which represents the category for the given age.
 Fractions get_category(const double& age);
 
 /// Writes a property tree to an xml file.
-/// @param pt The boost property tree to be written to xml format.
-/// @param fname The name of the file to be be written.
+/// @param pt: The boost property tree to be written to xml format.
+/// @param fname: The name of the file to be be written.
 void ptreeToFile(const boost::property_tree::ptree& pt, const string& fname);
 
 namespace constants {
 
-/// Own defined EPSILON, to determine correctness of doubles
+/// Own defined EPSILON, to determine correctness of doubles.
 // Changed to 10^(-12) after refactor to double
 const double EPSILON = 0.000000000001;
 

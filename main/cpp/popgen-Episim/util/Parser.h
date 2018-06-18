@@ -26,23 +26,23 @@ using namespace std;
 namespace stride {
 namespace parser {
 
-/// Parse the information of cities
-/// @param: path to the file containing information about the city
-/// @param: cities map cityIds as key and City as the value
-/// @param: totalPop total population got from the sum of all the cities
-/// @param: rtree a boost rtree used for queries
+/// Parse the information of cities.
+/// @param path: Path to the file containing information about the city.
+/// @param cities: Map with cityIds as key and City as value.
+/// @param totalPop: Total population, i.e. the sum of the populations of all cities.
+/// @param rtree: A boost rtree used for queries.
 void ParseCities(const boost::filesystem::path&, map<unsigned int, City>& cities, unsigned int& totalPop,
                  bgi::rtree<rtElem, bgi::quadratic<16>>& rtree);
 
-/// Parse the commuting information
-/// @param: path to the file containing information about commuting
-/// @param: cities map cityIds as key and City as the value
-/// @param: fracs distribution of different age-group, working and commuting-behaviour
+/// Parse the commuting information.
+/// @param path: Path to the file containing information about commuting.
+/// @param cities: Map with cityIds as key and City as value.
+/// @param fracs: Distribution of different age-group, working and commuting-behaviour.
 void ParseCommuting(const boost::filesystem::path&, map<unsigned int, City>&, const map<Fractions, double>& fracs);
 
-/// Parse the household information
-/// @param: path to the file containing information about the commuting behaviour
-/// @retval vector<vector<double>> composition of the model households
+/// Parse the household information.
+/// @param path: Path to the file containing information about the commuting behaviour.
+/// @retval Composition of the model households.
 map<unsigned int, vector<vector<double>>> ParseHouseholds(const boost::filesystem::path& path);
 
 } // namespace parser

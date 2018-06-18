@@ -27,24 +27,23 @@ typedef bg::model::point<double, 2, bg::cs::geographic<bg::degree>> gPoint; //ge
 namespace stride {
 
 /*
- * Basic Coördinate class. container for x & y value's to represent a
- * position on a grid, map...
+ * Basic Coordinate class. container for x & y value's to represent a
+ * position on a grid, map, ...
  */
 class Coordinate
 {
 
 public:
-        /// Basic constructor
+        /// Basic constructor.
         Coordinate();
         Coordinate(double x, double y, double longitude, double latitude);
 
         /// Calculates the distance using boost's
-        /// @param: c1 The coordinate whose distance has to be calculated from this coordinate.
-        /// @param: cartesian A boolean value indicating whether or not we want the cartesian distance
-        /// using Pythagoras' theorem.
-        /// The default is set to false and thus by default we're looking at the geographical distance
+        /// @param c1: Coordinate whose distance has to be calculated from this coordinate.
+        /// @param cartesian: Boolean value indicating whether or not we want the cartesian distance
+        /// using Pythagoras' theorem, by default we're looking at the geographical distance
         /// using Andoyer's method.
-        /// @retval: <double> Distance between the two coordinates using the given method.
+        /// @retval Distance between the two coordinates using the given method.
         double GetDistance(const Coordinate& c1, const bool cartesian = false) const;
 
         /// Getter for the cartesian X coordinate.

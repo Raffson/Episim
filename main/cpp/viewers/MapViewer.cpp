@@ -105,26 +105,25 @@ void MapViewer::LoadMap(bool showMap, bool makePng) {
             QList<int> in_commuting_size;
             QList<int> out_commuting_id;
             QList<int> out_commuting_size;
-            /// ID of the city, used for the commuting details
+            // ID of the city, used for the commuting details
             vals["id"] = city.GetId();
-            /// Latitude
+            // Latitude
             vals["latitude"] = city.GetCoordinates().GetLatitude();
-            /// Longitude
+            // Longitude
             vals["longitude"] = city.GetCoordinates().GetLongitude();
-            /// X coordinate
+            // X coordinate
             vals["x"] = city.GetCoordinates().GetX();
-            /// Y coordinate
+            // Y coordinate
             vals["y"] = city.GetCoordinates().GetY();
-            /// Radius
+            // Radius
             vals["radius"] = city.GetEffectivePopulation() / (2 * M_PI);
-            /// Percentage
+            // Percentage
             vals["perc"] = city.GetEffectivePopulation() / (double) m_grid->GetTotalPop();
-            // cout << 50000 * (city.GetPopulation() / (double)m_grid->GetTotalPop()) << endl;
-            /// Population
+            // Population
             vals["population"] = city.GetEffectivePopulation();
-            /// Infected
+            // Infected
             vals["infected"] = city.GetInfectedCount();
-            /// Info
+            // Info
             ss << city.GetEffectivePopulation() << "<i>(" << city.GetInfectedCount() << ")</i><br>";
             ss >> s;
             s += "\n";
@@ -132,7 +131,7 @@ void MapViewer::LoadMap(bool showMap, bool makePng) {
             s += "\n";
             QString qs = QString(s.c_str());
             vals["info"] = qs;
-            /// Commuting information
+            // Commuting information
             auto com_in = city.GetInCommuting();
             for (auto it : com_in) {
                 // it.first: id of other city

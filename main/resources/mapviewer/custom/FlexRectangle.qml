@@ -9,13 +9,21 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
-        acceptedButtons: Qt.LeftButton
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
 
         drag.target: flexRectangle
         drag.axis: Drag.XAndYAxis
         drag.minimumX: 0
         drag.minimumY: 0
 
+        onClicked: {
+                    if (mouse.button == Qt.RightButton){
+                        parent.x = 0
+                        parent.y = 0
+                        parent.width = 0
+                        parent.height = 0
+                    }
+        }
     }
 
 }

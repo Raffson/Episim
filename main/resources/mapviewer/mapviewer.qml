@@ -355,7 +355,7 @@ ApplicationWindow {
         pop_info = total_count
     }
 
-
+    // Draws lines representing the commutings between cities, the factors 5000 and 10000 are arbitrarily chosen to show even small commutes
     function showCommutes(number){
         if(number === undefined) number = 10
         var count = 0;
@@ -365,15 +365,43 @@ ApplicationWindow {
                 var circle = map.children[i];
                 var startCoordinate = QtPositioning.coordinate(circle.sourceItem.lati, circle.sourceItem.longi);
 
+                // For the out-commuters
                 for (var j = 0; j < number; j++){
                     var out_id = circle.sourceItem.out_commuting[j];
+                    var out_size = circle.sourceItem.out_commuting_size[j];
                     for (var k = 0; k < map.children.length; k++){
                         if(map.children[k].objectName === "mqi"){
                             if(map.children[k].sourceItem.city_id === out_id){
+
                                 var endCoordinate = QtPositioning.coordinate(map.children[k].sourceItem.lati, map.children[k].sourceItem.longi);
+
                                 var path = Qt.createQmlObject('import "custom"; PathDraw{}', page);
                                 path.addCoordinate(startCoordinate);
                                 path.addCoordinate(endCoordinate);
+
+                                path.line.width = (out_size/circle.sourceItem.population)*5000
+                                map.addMapItem(path);
+                            }
+                        }
+                    }
+                }
+
+                // For the in-commuters
+                for (var j = 0; j < number; j++){
+                    var in_id = circle.sourceItem.in_commuting[j];
+                    var in_size = circle.sourceItem.in_commuting_size[j];
+                    for (var k = 0; k < map.children.length; k++){
+                        if(map.children[k].objectName === "mqi"){
+                            if(map.children[k].sourceItem.city_id === in_id){
+
+                                var endCoordinate = QtPositioning.coordinate(map.children[k].sourceItem.lati, map.children[k].sourceItem.longi);
+
+                                var path = Qt.createQmlObject('import "custom"; PathDraw{}', page);
+                                path.addCoordinate(startCoordinate);
+                                path.addCoordinate(endCoordinate);
+
+                                path.line.width = (out_size/circle.sourceItem.population)*10000
+                                path.line.color = 'blue'
                                 map.addMapItem(path);
                             }
                         }
@@ -477,7 +505,9 @@ ApplicationWindow {
         }
         circle.city_id = values["id"]
         circle.in_commuting = commuting_in_id
+        circle.in_commuting_size = commuting_in_size
         circle.out_commuting = commuting_out_id
+        circle.out_commuting_size = commuting_out_size
         circle.width = wh
         circle.height = wh
         circle.longi = values["longitude"]
