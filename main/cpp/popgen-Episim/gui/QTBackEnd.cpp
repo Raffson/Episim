@@ -243,8 +243,28 @@ void QTBackEnd::setChildAtIndex(const QString &xml_tag, int index, double value,
         forwrd->second.put("", value);
     }
     else{
+        auto &child = m_pt.get_child(xml_tag.toStdString());
+        auto forwrd = std::next(child.find("value"), index);
+        forwrd->second.put("", value);
+    }
+}
+
+void QTBackEnd::cleanChildren (const QString& xml_tag, int size, bool geo){
+
+    boost::property_tree::ptree* child;
+    if(geo) {
+        child = &m_geo_pt.get_child(xml_tag.toStdString());
+
 
     }
+    else{
+        child = &m_pt.get_child(xml_tag.toStdString());
+    }
+
+    while((unsigned int) child->size() > size){
+        child->pop_back();
+    }
+
 }
 
 /***********************************************************************************************************************/

@@ -155,6 +155,12 @@ public:
     /// @param geo using geo or stride config
     Q_INVOKABLE void setChildAtIndex(const QString &xml_tag, int index, double value, bool geo);
 
+    /// @brief cleans the children till the parent has as much children as size
+    /// @param xml_tag of the parent of the children we want ro remove
+    /// @param size how many children we want the parent to have
+    /// @param geo is this tag in the geo or m pt
+    Q_INVOKABLE void cleanChildren (const QString& xml_tag, int size, bool geo);
+
 
 ///@}
 // BackEnd Properties. Wraps getters and setters. if those are trivial read/write the member directly
@@ -292,6 +298,7 @@ private:
     /// @brief removes a list of commuter lines in the backend commuter lines. Doesn't emit any changes.
     /// @param lst list of Commuter lines to be removed.
     void RemoveCommuteLinesNoEmit(const QList<QTCommuter *> &lst);
+
 ///@}
 
 private:

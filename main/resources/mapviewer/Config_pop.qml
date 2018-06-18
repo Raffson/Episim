@@ -155,10 +155,12 @@ Tab{
                     enabled: c.checked ? true: false
                     stepSize: 1
                     decimals: 0
-                    minimumValue: 2
+                    minimumValue: 1
                     maximumValue: Infinity
                     value:{(backend.countConfigChildren("defrag_cities.p_vec", true) ) }
-                    onValueChanged: rep.model = value
+                    onValueChanged:{rep.model = value;
+                                    backend.cleanChildren("defrag_cities.p_vec", value, true)
+                                   }
                 }
 
 
