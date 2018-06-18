@@ -25,6 +25,8 @@ namespace Tests {
 
     class GenPopTest : public ::testing::TestWithParam<unsigned int> {
     public:
+        GenPopTest() : grid() {}
+
         /// TestCase set up.
         static void SetUpTestCase() {}
 

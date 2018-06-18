@@ -40,9 +40,6 @@ public:
         /// @param name The name of this city.
         City(unsigned int city_id, unsigned int province, unsigned int population, Coordinate coordinates, string name);
 
-        /// Copy constructor
-        City(const City&);
-
         /// Get the id of the city.
         unsigned int GetId() const { return m_city_id; }
 

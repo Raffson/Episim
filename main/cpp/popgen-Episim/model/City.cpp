@@ -21,6 +21,7 @@ namespace stride {
 City::City(const unsigned int city_id, const unsigned int province, unsigned int population,
            const Coordinate coordinates, const string name)
     : m_city_id(city_id), m_province(province), m_population(population), m_coordinates(coordinates), m_name(name),
+      m_communities(), m_moc(), m_households(), m_in_commuting(), m_out_commuting(), m_effective_out_commuting(),
       m_in_commuter_count(0), m_out_commuter_count(0), m_in_commuting_changed(false), m_out_commuting_changed(false),
       m_student_commuters_count(0), m_worker_commuters_count(0)
 {
@@ -28,20 +29,6 @@ City::City(const unsigned int city_id, const unsigned int province, unsigned int
                 m_types_present[type] = false;
 
 }
-
-City::City(const City& cty): m_city_id(cty.m_city_id), m_province(cty.m_province), m_population(cty.m_population),
-                             m_coordinates(cty.m_coordinates), m_name(cty.m_name),m_in_commuter_count(cty.m_in_commuter_count),
-                             m_out_commuter_count(cty.m_in_commuter_count),m_in_commuting_changed(true),
-                             m_out_commuting_changed(true), m_student_commuters_count(cty.m_student_commuters_count),
-                             m_worker_commuters_count(cty.m_worker_commuters_count)
-
-{
-    m_in_commuting = cty.m_in_commuting;
-    m_out_commuting = cty.m_out_commuting;
-    m_types_present = cty.m_types_present;
-
-}
-
 
 Community& City::AddCommunity(const size_t& id, CommunityType::Id type)
 {

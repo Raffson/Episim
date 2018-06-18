@@ -18,7 +18,7 @@ using boost::property_tree::ptree;
 class DefragCityTest : public ::testing::TestWithParam<unsigned int>
 {
 public:
-        DefragCityTest() = default;
+        DefragCityTest() : geo() {}
 
 protected:
         shared_ptr<GeoGrid> geo;

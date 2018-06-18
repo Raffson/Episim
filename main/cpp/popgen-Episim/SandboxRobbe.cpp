@@ -12,7 +12,7 @@
 using namespace boost::property_tree;
 
 
-int main(int argc, char** argv){
+int main(){
     ptree pt;
     read_xml("config/run_short.xml",pt);
     system("rm -r *_*");
