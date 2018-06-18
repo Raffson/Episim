@@ -458,15 +458,7 @@ ApplicationWindow {
     }
 
     function saveToImage(filename){
-        console.warn("saving image")
-        if (map.grabToImage(function(result) {
-                               result.saveToFile(filename);
-                                    })){
-                                    console.warn("succes")
-                                    }
-                                    else{
-                                    console.warn("fail")
-                                    }
+        map.grabToImage(function(result) { result.saveToFile(filename); })
     }
 
     function placeCity(values, commuting_in_id, commuting_in_size, commuting_out_id, commuting_out_size){
