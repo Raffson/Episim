@@ -138,16 +138,22 @@ Rectangle{
          width: parent.width / 7
          Rectangle{
              id: title
+             anchors.bottom: scrollie.top
+             anchors.top: parent.top
+             anchors.left: parent.left
+             anchors.right: parent.right
+             width: parent.width
+             height: 40
+             color: "#969697"
+             }
              Text{
-
+                 anchors.fill: parent
                  text: "Selected Cities"
                  font.pointSize: 15
                  horizontalAlignment: Text.AlignHCenter
-                 color: "blue"
-
              }
-         }
          ScrollView{
+             id: scrollie
              focusPolicy: Qt.NoFocus
              clip: true
              anchors.top: title.bottom
@@ -156,7 +162,7 @@ Rectangle{
              anchors.bottom: parent.bottom
         ColumnLayout{
 
-            spacing: 125
+            spacing: 10
             RowLayout{
                 clip: true
             }
@@ -166,8 +172,8 @@ Rectangle{
                     Layout.alignment: Qt.AlignTop
                     enabled:modelData.clicked ? true : false
                     visible: modelData.clicked ? true: false
-                    Layout.maximumHeight: modelData.clicked ? 55 : 0
-                    Layout.minimumHeight: modelData.clicked ? 55 : 0
+                    Layout.maximumHeight: modelData.clicked ? 175 : 0
+                    Layout.minimumHeight: modelData.clicked ? 175 : 0
                     Rectangle{
                         color: "blue"
                         ColumnLayout{
