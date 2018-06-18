@@ -8,13 +8,13 @@ import QtQuick.Dialogs 1.3
 
 Tab{
     id: config_pop
-
     Rectangle{
         anchors.fill: parent
         color: Qt.rgba(0.9,0.9,0.9,0.5)
-
-        GridLayout{
-
+        ScrollView{
+            anchors.fill: parent
+            z: 1000000
+        Grid{
             id: alligner
             layoutDirection: Qt.LeftToRight
             flow: GridLayout.TopToBottom
@@ -39,7 +39,7 @@ Tab{
                 ListElement { txt: "Workplace Size"; tagi:"contactpool_info.workplace.size";decims: 0; stpsize: 1; mn: 0; mx : -1; geo: true}
                 ListElement { txt: "Nr cities with colleges"; tagi:"contactpool_info.college.cities"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: true}
                 ListElement { txt: "Community size";  tagi:"contactpool_info.community.size"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: true}
-                     
+
             }
             
             Repeater{
@@ -162,8 +162,8 @@ Tab{
                     maximumValue: Infinity
                     value:{(backend.countConfigChildren("defrag_cities.p_vec", true) ) }
                     onValueChanged:{rep.model = value;
-                                    backend.cleanChildren("defrag_cities.p_vec", value, true)
-                                   }
+                        backend.cleanChildren("defrag_cities.p_vec", value, true)
+                    }
                 }
 
 
@@ -171,31 +171,33 @@ Tab{
                     id: rep
                     model:{ (p_vec_size.value - 1 )}
 
-                RowLayout{
-                    Label{
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.alignment: Qt.AlignLeft
-                        text: "p_val " + (index + 2) + " cities"
-                        enabled: c.checked ? true: false
-                    }
+                    RowLayout{
+                        Label{
+                            verticalAlignment: Text.AlignVCenter
+                            Layout.alignment: Qt.AlignLeft
+                            text: "p_val " + (index + 2) + " cities"
+                            enabled: c.checked ? true: false
+                        }
 
-                    SpinBox {
-                        font.pointSize: 10
-                        Layout.minimumWidth: 50
-                        Layout.alignment: Qt.AlignRight
-                        enabled: c.checked ? true: false
-                        stepSize: 0.1
-                        decimals: 2
-                        minimumValue: 0
-                        maximumValue: 1
-                        value:{ backend.getChildAtIndex("defrag_cities.p_vec", index, true)}
-                        onValueChanged: backend.setChildAtIndex("defrag_cities.p_vec", index, value,true)
+                        SpinBox {
+                            font.pointSize: 10
+                            Layout.minimumWidth: 50
+                            Layout.alignment: Qt.AlignRight
+                            enabled: c.checked ? true: false
+                            stepSize: 0.1
+                            decimals: 2
+                            minimumValue: 0
+                            maximumValue: 1
+                            value:{ backend.getChildAtIndex("defrag_cities.p_vec", index, true)}
+                            onValueChanged: backend.setChildAtIndex("defrag_cities.p_vec", index, value,true)
+                        }
                     }
-                }
                 }
             }
         }
     }
+    }
 }
+
 
 
