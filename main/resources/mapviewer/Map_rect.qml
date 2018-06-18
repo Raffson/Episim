@@ -136,64 +136,110 @@ Rectangle{
          anchors .right: map.left
          anchors.bottom: map.bottom
          width: parent.width / 7
+         Rectangle{
+             id: title
+             Text{
 
+                 text: "Selected Cities"
+                 font.pointSize: 15
+                 horizontalAlignment: Text.AlignHCenter
+                 color: "blue"
+
+             }
+         }
          ScrollView{
              focusPolicy: Qt.NoFocus
              clip: true
-             anchors.fill: parent
+             anchors.top: title.bottom
+             anchors.right: parent.right
+             anchors.left: parent.left
+             anchors.bottom: parent.bottom
         ColumnLayout{
-            spacing: 5
-            anchors.fill: parent
+
+            spacing: 125
             RowLayout{
                 clip: true
-                Text{
-                    text: "Selected Cities"
-                    clip: true
-                    font.pointSize: 15
-                    horizontalAlignment: Text.AlignHCenter
-                }
             }
-
             Repeater{
                 model: backend.cities
-               RowLayout{
-                   enabled:modelData.clicked ? true : false
-                   visible: modelData.clicked ? true: false
-                   Layout.maximumHeight: modelData.clicked ? 55 : 0
-                   Layout.minimumHeight: modelData.clicked ? 55 : 0
-                Rectangle{
+                RowLayout{
+                    Layout.alignment: Qt.AlignTop
+                    enabled:modelData.clicked ? true : false
+                    visible: modelData.clicked ? true: false
+                    Layout.maximumHeight: modelData.clicked ? 55 : 0
+                    Layout.minimumHeight: modelData.clicked ? 55 : 0
+                    Rectangle{
+                        color: "blue"
+                        ColumnLayout{
+                            RowLayout{
+                            Text{
+                                enabled:modelData.clicked ? true : false
+                                visible:modelData.clicked ? true : false
+                                text: modelData.name
+                            }
+                            }
 
-                    color: "blue"
-                   ColumnLayout{
-                       Text{
-                           enabled:modelData.clicked ? true : false
-                           visible:modelData.clicked ? true : false
-                           text: modelData.name
-                       }
+                            Text{
+                                enabled:modelData.clicked ? true : false
+                                visible:modelData.clicked ? true : false
+                                text: "Population: " + modelData.popCount
+                                font.pointSize: 10
+                            }
+                            RowLayout{
+                            Text{
+                                enabled:modelData.clicked ? true : false
+                                visible:modelData.clicked ? true : false
+                                text: "Infected: " + modelData.infected+ "|" + Math.round(modelData.infected/modelData.popCount*100)+"%"
+                                font.pointSize: 10
+                            }
+                            }
 
-                       Text{
-                           enabled:modelData.clicked ? true : false
-                           visible:modelData.clicked ? true : false
-                           text: "Population: " + modelData.popCount
-                           font.pointSize: 10
-                       }
+                            RowLayout{
+                            Text{
+                                enabled:modelData.clicked ? true : false
+                                visible:modelData.clicked ? true : false
+                                text: "School count: " + modelData.schools.length
+                                font.pointSize: 10
+                            }
+                            }
+                            Text{
+                                enabled:modelData.clicked ? true : false
+                                visible:modelData.clicked ? true : false
+                                text: "College count: " + modelData.colleges.length
+                                font.pointSize: 10
+                            }
 
-                       Text{
-                           enabled:modelData.clicked ? true : false
-                           visible:modelData.clicked ? true : false
-                           text: "Infected: " + modelData.infected+ "|" + Math.round(modelData.infected/modelData.popCount*100)+"%"
-                           font.pointSize: 10
-                       }
-                     }
-                   }
+                            Text{
+                                enabled:modelData.clicked ? true : false
+                                visible:modelData.clicked ? true : false
+                                text: "Workplace count: " + modelData.workplaces.length
+                                font.pointSize: 10
+                            }
+
+                            Text{
+                                enabled:modelData.clicked ? true : false
+                                visible:modelData.clicked ? true : false
+                                text: "Primary community count: " + modelData.primary_communities.length
+                                font.pointSize: 10
+                            }
+
+                            Text{
+                                enabled:modelData.clicked ? true : false
+                                visible:modelData.clicked ? true : false
+                                text: "Secondary community count: " + modelData.secondary_communities.length
+                                font.pointSize: 10
+                            }
+
+                        }
+                    }
                 }
             }
             Item{
                 Layout.fillHeight:true
             }
         }
-}
-    }
+         }
+     }
 
     Map {
         id: map

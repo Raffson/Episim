@@ -84,10 +84,10 @@ public:
     Q_PROPERTY(QList<QObject*> workplaces MEMBER m_workplaces NOTIFY CommunitiesChanged)
 
     ///< List of al primary communities
-    Q_PROPERTY(QList<QObject*> primary MEMBER m_primary NOTIFY CommunitiesChanged)
+    Q_PROPERTY(QList<QObject*> primary_communities MEMBER m_primary NOTIFY CommunitiesChanged)
 
     ///< List of all secondary communities
-    Q_PROPERTY(QList<QObject*> secondary MEMBER m_secondary NOTIFY CommunitiesChanged)
+    Q_PROPERTY(QList<QObject*> secondary_communities MEMBER m_secondary NOTIFY CommunitiesChanged)
 ///@}
 
 // City signals
