@@ -74,15 +74,20 @@ public:
     ///< clicked state of the city
     Q_PROPERTY(bool clicked READ IsClicked WRITE SetClicked NOTIFY ClickedChanged)
 
-
+    ///< List of all schools in city
     Q_PROPERTY(QList<QObject*> schools MEMBER m_schools NOTIFY CommunitiesChanged)
 
-    Q_PROPERTY(QList<QObject*> colleges MEMBER m_schools NOTIFY CommunitiesChanged)
+    ///< List of all colleges in city
+    Q_PROPERTY(QList<QObject*> colleges MEMBER m_colleges NOTIFY CommunitiesChanged)
 
-    Q_PROPERTY(QList<QObject*> workplaces MEMBER m_schools NOTIFY CommunitiesChanged)
+    ///< List of al workplaces in city
+    Q_PROPERTY(QList<QObject*> workplaces MEMBER m_workplaces NOTIFY CommunitiesChanged)
 
-    Q_PROPERTY(QList<QObject*> schools MEMBER m_schools NOTIFY CommunitiesChanged)
-    Q_PROPERTY(QList<QObject*> schools MEMBER m_schools NOTIFY CommunitiesChanged)
+    ///< List of al primary communities
+    Q_PROPERTY(QList<QObject*> primary MEMBER m_primary NOTIFY CommunitiesChanged)
+
+    ///< List of all secondary communities
+    Q_PROPERTY(QList<QObject*> secondary MEMBER m_secondary NOTIFY CommunitiesChanged)
 ///@}
 
 // City signals
@@ -98,6 +103,9 @@ signals:
 
     ///@brief Notifies QML that the clicked state changed
     void ClickedChanged();
+
+    ///@brief Notifies QMl Communitylists changed
+    void CommunitiesChanged();
 ///@}
 
 public:
