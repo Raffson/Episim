@@ -32,8 +32,10 @@ Tab{
                 ListElement { txt: "RNG seed"; tagi: "run.rng_seed"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
                 ListElement { txt: "r0"; tagi: "run.r0"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
                 ListElement { txt: "Seeding age min"; tagi: "run.seeding_age_min"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
-                ListElement { txt: "Seeding age max"; tagi: "run.seeding_age_max"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
-
+                ListElement { txt: "Immunity rate"; tagi: "run.immunity_rate"; decims: 2; stpsize: 0.1; mn: 0; mx : 1; geo: false}
+                ListElement { txt: "Seeding rate"; tagi: "run.seeding_rate"; decims: 3; stpsize: 0.001; mn: 0; mx : 1; geo: false}
+                ListElement { txt: "Vaccine link probability"; tagi: "run.vaccine_link_probability"; decims: 2; stpsize: 0.01; mn: 0; mx : 1; geo: false}
+                ListElement { txt: "Vaccine rate"; tagi: "run.vaccine_rate"; decims: 2; stpsize: 0.1; mn: 0; mx : 1; geo: false}
             }
             
             Repeater{
@@ -42,57 +44,17 @@ Tab{
 
                }
             }
-            
+
             Repeater{
                 
-                model:[{txt: "immunity rate"},
-                    {txt: "Seeding rate"},
-                    {txt: "Vaccine link probability"},
-                    {txt: "Vaccine rate"}
-                ]
-                
-                delegate :RowLayout{
-                    z:5
-                    spacing: 50
-                    Layout.alignment: Qt.AlignTop
-                    Layout.maximumHeight: 4
-                    Label{
-                        id: fract_spinnr_txt
-                        text: modelData.txt
-                        //lineHeight: 0.9
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.minimumWidth: 200
-                        Layout.alignment: Qt.AlignLeft
-                    }
-                    
-                    SpinBox{
-                        id: float_spinner
-                        Layout.minimumWidth: 100
-                        //Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignRight
-                        Layout.maximumHeight: 25
-                        
-                        minimumValue: 0.0
-                        maximumValue: 1.0
-                        stepSize: 0.1
-                        decimals: 3
-                        
-                    }
-                    
-                }
-            }
-            
-            
-            Repeater{
-                
-                model:[ {txt: "Behaviour policy", mdl:["NoBehaviour", "Vaccination" ]},
-                    {txt: "Belief policy", mdl:["Belief", "HBM", "Imitation", "NoBelief", "Treshold"]},
+                model:[ {txt: "Behaviour policy", tg: "run.behaviour_policy", mdl:["Vaccination" ,"NoBehaviour"]},
+                    /*{txt: "Belief policy", mdl:["Belief", "HBM", "Imitation", "NoBelief", "Treshold"]},
                     {txt: "Information policy", mdl:["LocalDiscussion", "NoGlobalInformation", "NoLocalInformation"]},
                     {txt: "Contact log level", mdl: ["None", "Tansimissions", "All", "Susceptibles"]},
                     {txt: "Immunity profile", mdl:  ["None"]},
                     {txt: "Vaccine profile", mdl: ["Random"]},
                     {txt: "Rng type", mdl: ["mrg2", "mrg3", "lgc64", "lcg64_shift", "yarn2", "yarn3"]},
-                    {txt: "Stride log level", mdl:["Info"]}
+                    {txt: "Stride log level", mdl:["Info"]}*/
                     
                 ]
                 
@@ -111,14 +73,20 @@ Tab{
                     }
                     
                     ComboBox{
+                        editable: true
                         id: belief_txt
                         Layout.minimumWidth: 200
                         model: modelData.mdl
+                        currentIndex: find(backend.getConfig(modelData.tg, false))
                         //Layout.fillWidth: true
                         Layout.alignment: Qt.AlignRight
                         Layout.maximumHeight: 25
+
+                        onCountChanged:currentIndex = find(backend.getConfig(modelData.tg, false))
+                        onCurrentTextChanged: backend.setConfig(modelData.tg, currentText, false)
                         
                     }
+
                     
                 }
             }

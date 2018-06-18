@@ -43,7 +43,9 @@ void QTBackEnd::genPop() {
     string path = "config/" + file;
     fstream filestr;
     filestr.open(path);
-    write_xml(path, m_geo_pt);
+
+    boost::property_tree::xml_writer_settings<string> w( ' ', 2 );
+    write_xml( path, m_geo_pt, std::locale(), w );
     filestr.close();
 
     m_grid = stride::GeoGridGenerator().Generate(m_pt);
