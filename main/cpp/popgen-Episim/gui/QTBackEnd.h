@@ -216,7 +216,8 @@ public:
 /**
 * @name Invokable getters
 * invokable getters in QML backend.
-*/
+*
+ */
 ///@{
     /// @brief Get's a QCity made in BackEnd.
     /// @param id Id of the needed city

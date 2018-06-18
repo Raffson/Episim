@@ -12,15 +12,19 @@ Tab{
     Rectangle{
         anchors.fill: parent
         color: Qt.rgba(0.9,0.9,0.9,0.5)
+        ScrollView{
+
+        anchors.margins: 25
+        anchors.fill: parent
+
         GridLayout{
             id: alligner_run
             layoutDirection: Qt.LeftToRight
             flow: GridLayout.TopToBottom
-            anchors.topMargin: parent.height / 50
+            anchors.topMargin: 50
             anchors.leftMargin: 50
-            anchors.fill: parent
             columnSpacing: 50
-            rowSpacing: 5
+            rowSpacing: 25
             rows: 16
             columns: 2
 
@@ -249,5 +253,6 @@ Tab{
                 }
             }
         }
+    }
     }
 }

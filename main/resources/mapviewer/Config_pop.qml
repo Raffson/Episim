@@ -6,22 +6,23 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.3
 
+
 Tab{
     id: config_pop
+
     Rectangle{
         anchors.fill: parent
         color: Qt.rgba(0.9,0.9,0.9,0.5)
         ScrollView{
             anchors.fill: parent
-            z: 1000000
+            anchors.margins: 25
         Grid{
             id: alligner
             layoutDirection: Qt.LeftToRight
             flow: GridLayout.TopToBottom
             anchors.topMargin: parent.height / 50
             anchors.leftMargin: 50
-            anchors.fill: parent
-            columnSpacing: 5
+            columnSpacing: 50
             rowSpacing: 25
             rows: 8
             columns: 2
@@ -167,11 +168,16 @@ Tab{
                 }
 
 
+                GridLayout{
+                    columns: 3
+                    rows: 5
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                 Repeater{
                     id: rep
                     model:{ (p_vec_size.value - 1 )}
 
-                    RowLayout{
+                        RowLayout{
                         Label{
                             verticalAlignment: Text.AlignVCenter
                             Layout.alignment: Qt.AlignLeft
@@ -191,12 +197,13 @@ Tab{
                             value:{ backend.getChildAtIndex("defrag_cities.p_vec", index, true)}
                             onValueChanged: backend.setChildAtIndex("defrag_cities.p_vec", index, value,true)
                         }
+                        }
                     }
                 }
             }
         }
     }
-    }
+}
 }
 
 
