@@ -12,7 +12,7 @@
 
 using namespace std;
 
-int main(int argc, char** argv)
+int main()
 {
         shared_ptr<stride::GeoGrid> grid = stride::GeoGridGenerator().Generate("run_default.xml", true);
         stride::GeoGridFileWriter::WriteAll(*grid);

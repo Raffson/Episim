@@ -26,7 +26,8 @@ namespace stride {
 namespace viewers {
 
 MapViewer::MapViewer(shared_ptr<GeoGrid> grid, const std::string &outputPrefix)
-    : m_grid(grid), m_output_prefix(outputPrefix), m_step(0)
+    : engine(nullptr), m_grid(grid), m_output_prefix(outputPrefix), m_step(0),
+      m_map_option(), m_png_option(), m_item(nullptr)
 {
     m_output_prefix += util::FileSys::IsDirectoryString(m_output_prefix) ? "png/" : "/png/";
     boost::filesystem::path dir(m_output_prefix.c_str());
@@ -47,7 +48,7 @@ void MapViewer::LoadMap(bool showMap) {
 #endif
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     int             dummyargc = 0;
-    QGuiApplication application(dummyargc, 0);
+    QGuiApplication application(dummyargc, nullptr);
     application.mouseButtons();
 
     QVariantMap parameters;
@@ -92,10 +93,10 @@ void MapViewer::LoadMap(bool showMap) {
     /// To add cities on the map: use following.
     auto cities = m_grid->GetCities();
     map<unsigned int, vector<stride::City>> sorted;
-    for( auto& city : cities)
+    for( const auto& city : cities)
         sorted[-city.second.GetPopulation()].emplace_back(city.second);
-    for (auto c_it = sorted.begin(); c_it != sorted.end(); c_it++) {
-        for (auto city : (*c_it).second) {
+    for (const auto& pair : sorted) {
+        for (const auto& city : pair.second) {
             std::stringstream ss;
             string s;
             string temp;
@@ -160,6 +161,10 @@ void MapViewer::LoadMap(bool showMap) {
                                       Q_ARG(QVariant, QVariant::fromValue(out_commuting_size)));
         }
     }
+    stringstream s;
+    s << m_output_prefix << m_step << ".png";
+    QString fname(s.str().c_str());
+    QMetaObject::invokeMethod(m_item, "saveToImage", Q_ARG(QVariant, QVariant::fromValue(fname)));
     if(showMap)
         application.exec();
 }
@@ -168,7 +173,7 @@ void MapViewer::ToPng(){
     stringstream s;
     s << m_output_prefix << m_step << ".png";
     QString fname(s.str().c_str());
-    QMetaObject::invokeMethod(m_item, "saveToImage", Q_ARG(QString, fname));
+    QMetaObject::invokeMethod(m_item, "saveToImage", Q_ARG(QVariant, QVariant::fromValue(fname)));
 }
 
 void MapViewer::Update(const sim_event::Id id) {
@@ -177,8 +182,8 @@ void MapViewer::Update(const sim_event::Id id) {
             bool showMap = (m_map_option == "step");
             if( m_png_option == "step" or showMap )
                 LoadMap(showMap);
-            if( m_png_option == "step" )
-                ToPng();
+//            if( m_png_option == "step" )
+//                ToPng();
             break;
         }
         case Id::Stepped: {
@@ -186,17 +191,17 @@ void MapViewer::Update(const sim_event::Id id) {
             bool showMap = (m_map_option == "step");
             if( m_png_option == "step" or showMap )
                 LoadMap(showMap);
-            if( m_png_option == "step" )
-                ToPng();
+//            if( m_png_option == "step" )
+//                ToPng();
             break;
         }
         case Id::Finished: {
             m_step++;
             bool showMap = (m_map_option != "none");
             if( m_png_option != "none" or showMap )
-                LoadMap(false);
-            if( m_png_option != "none" )
-                ToPng();
+                LoadMap(showMap);
+//            if( m_png_option != "none" )
+//                ToPng();
             break;
         }
         default:

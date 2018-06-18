@@ -30,7 +30,7 @@ public:
         void AddMember(const Person* member);
 
         /// A const reference to the city where this household is located.
-        const City* GetCity() const { return m_city; }
+        City* GetCity() const { return m_city; }
 
         /// A reference to the city where this household is located.
         City* GetCity() { return m_city; }
@@ -44,12 +44,6 @@ public:
         /// Number of members of the household.
         size_t GetSize() const { return m_pool->GetSize(); }
 
-        // do we need this?
-        void GetSchoolAttendants(vector<Person*>&) const;
-
-        void GetPossibleStudents(vector<Person*>&) const;
-
-        void GetPossibleWorkers(vector<Person*>&) const;
 
 private:
         const size_t m_id;   ///< A unique ID of the household.

@@ -38,14 +38,20 @@ public:
         /// @param city A pointer to the city in which this community is located
         Community(const size_t& id, CommunityType::Id type, City* city);
 
+        /// Delete copy constructor
+        Community(const Community&);
+
+        /// Delete assignment operator
+        Community& operator=(const Community&) = delete;
+
         /// Return the community's ID
-        const unsigned int GetID() const { return m_id; }
+        size_t GetID() const { return m_id; }
 
         /// Return the community's type
         const CommunityType::Id& GetCommunityType() const { return m_type; }
 
         /// Return a const reference of the city,
-        const City* GetCity() const { return m_city; }
+        City* GetCity() const { return m_city; }
 
         /// Return a reference of the city,
         City* GetCity() { return m_city; }

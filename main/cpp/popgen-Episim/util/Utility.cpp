@@ -23,15 +23,13 @@ bool file_exists(const boost::filesystem::path& path)
         return boost::filesystem::exists(path);
 }
 
-double convert_to_radians(double degrees) { return degrees * M_PI / 180.0; }
-
 vector<unsigned int> generate_random(const vector<double>& pVec, util::RNManager& rng, unsigned int amount)
 {
 
         trng::discrete_dist  dist(pVec.begin(), pVec.end());
         vector<unsigned int> retVec;
         for (unsigned int i = 0; i < amount; i++) {
-                retVec.emplace_back((unsigned int)rng.GetGenerator(dist, omp_get_thread_num())());
+                retVec.emplace_back((unsigned int)rng.GetGenerator(dist, (size_t )omp_get_thread_num())());
         }
         return retVec;
 }
@@ -41,7 +39,7 @@ vector<unsigned int> generate_random(unsigned int begin, unsigned int end, util:
         trng::uniform_int_dist dist(begin, end);
         vector<unsigned int>   retVec;
         for (unsigned int i = 0; i < amount; i++) {
-                retVec.emplace_back((unsigned int)rng.GetGenerator(dist, omp_get_thread_num())());
+                retVec.emplace_back((unsigned int)rng.GetGenerator(dist, (size_t )omp_get_thread_num())());
         }
         return retVec;
 }

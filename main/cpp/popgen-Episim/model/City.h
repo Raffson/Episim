@@ -41,10 +41,10 @@ public:
         City(unsigned int city_id, unsigned int province, unsigned int population, Coordinate coordinates, string name);
 
         /// Get the id of the city.
-        const unsigned int GetId() const { return m_city_id; }
+        unsigned int GetId() const { return m_city_id; }
 
         /// Get the province.
-        const unsigned int GetProvince() const { return m_province; }
+        unsigned int GetProvince() const { return m_province; }
 
         /// Get the population of this city
         unsigned int GetPopulation() const { return m_population; }
@@ -53,10 +53,10 @@ public:
         const Coordinate& GetCoordinates() const { return m_coordinates; }
 
         /// Get the name of the city
-        const string GetName() const { return m_name; };
+        string GetName() const { return m_name; };
 
         /// Get the number of all the communities
-        unsigned int GetNrOfCommunities() const { return m_communities.size(); }
+        size_t GetNrOfCommunities() const { return m_communities.size(); }
 
         /// Get the number of total commuters to the city
         const double& GetTotalInCommutersCount() const;
@@ -79,26 +79,23 @@ public:
         const util::SegmentedVector<Community>& GetAllCommunities() const { return m_communities; }
 
         /// Returns all the colleges in the city
-        const vector<Community*>& GetColleges() { return m_moc[CommunityType::Id::College]; }
+        vector<Community*>& GetColleges() { return m_moc[CommunityType::Id::College]; }
 
         /// Returns all the schools in the city
-        const vector<Community*>& GetSchools() { return m_moc[CommunityType::Id::School]; }
+        vector<Community*>& GetSchools() { return m_moc[CommunityType::Id::School]; }
 
         /// Returns all the workplaces in the city
-        const vector<Community*>& GetWorkplaces() { return m_moc[CommunityType::Id::Work]; }
-
-        /// Returns all the communities
-        //vector<Community*> GetCommunities(); //deprecated?
+        vector<Community*>& GetWorkplaces() { return m_moc[CommunityType::Id::Work]; }
 
         /// Returns the primary communities
-        const vector<Community*>& GetPrimaryCommunities() { return m_moc[CommunityType::Id::Primary]; }
+        vector<Community*>& GetPrimaryCommunities() { return m_moc[CommunityType::Id::Primary]; }
 
         /// Returns the secondary communities
-        const vector<Community*>& GetSecondaryCommunities() { return m_moc[CommunityType::Id::Secondary]; }
+        vector<Community*>& GetSecondaryCommunities() { return m_moc[CommunityType::Id::Secondary]; }
 
         /// Returns the communities of the given type
         /// @param: ct type of the community
-        const vector<Community*>& GetCommunitiesOfType(CommunityType::Id ct) { return m_moc[ct]; }
+        vector<Community*>& GetCommunitiesOfType(CommunityType::Id ct) { return m_moc[ct]; }
 
         /// Adds a new community of the given type to the city.
         /// @param: id The ID of the community to be added
@@ -116,6 +113,14 @@ public:
         /// @param: number_of_commuters the number of commuters leaving this city
         void SetOutCommuters(unsigned int id, double number_of_commuters);
 
+        /// Removes an incommuter from the outcommuter list
+        /// @param id city id of the city that needs to be removed
+        void RemoveInCommuters(unsigned int id);
+
+        /// Removes an outcommuter from the outcommuter list
+        /// @param id city of the city that needs to be removed
+        void RemoveOutCommuters(unsigned int id);
+
         /// Get all the incoming commuters
         const map<unsigned int, double>& GetInCommuting() const { return m_in_commuting; };
 
@@ -130,18 +135,19 @@ public:
         util::SegmentedVector<Household>& GetHouseholds() { return m_households; }
 
         /// Returns whether or not the given type of community is present in this city.
-        const bool HasCommunityType(CommunityType::Id type) const { return m_types_present.at(type); }
+        bool HasCommunityType(CommunityType::Id type) const { return m_types_present.at(type); }
 
         unsigned int GetEffectivePopulation() const;
         unsigned int GetInfectedCount() const;
 
         /// Increments the number of commuters to the destination
         /// @param destination the destination city
-        void AddEffectiveCommuterTo(const unsigned int destination, const bool isStudent);
+        /// @param isStudent indicates whether or not this commuter is a student
+        void AddEffectiveCommuterTo(unsigned int destination, bool isStudent);
 
         /// Returns the number of effective commuters to the destination city from this city
         /// @param destination the destination city of commuters
-        unsigned int GetEffectiveCommuterTo(const unsigned int destination);
+        unsigned int GetEffectiveCommuterTo(unsigned int destination);
 
 
 private:

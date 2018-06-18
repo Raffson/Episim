@@ -66,7 +66,7 @@ public:
 
         /// Getter
         /// @retval <const vector<City*>>> Returns the Cities that contain a College.
-        const vector<City*>& GetCitiesWithCollege() { return m_cities_with_college; }
+        vector<City*>& GetCitiesWithCollege() { return m_cities_with_college; }
 
         /// Getter
         /// @retval <Coordinate> Returns a coordinate representing the center of the grid
@@ -105,7 +105,7 @@ public:
 
         /// Getter
         /// @retval <const bool> Returns whether or not we're using random ages for the population builder.
-        const bool UsingRandomAges() const { return m_random_ages; }
+        bool UsingRandomAges() const { return m_random_ages; }
 
         /// Getter
         /// @retval <unsigned int> Returns the total population of the model.

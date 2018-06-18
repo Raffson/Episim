@@ -46,14 +46,20 @@ public:
         /// Initializing constructor for a contact pool that belongs to a household.
         ContactPool(std::size_t pool_id, ContactPoolType::Id type, Household* house);
 
-            /// Get the ID of the pool
+        /// Copy constructor.
+        ContactPool(const ContactPool&);
+
+        /// Delete assignment operator.
+        ContactPool& operator=(const ContactPool&) = delete;
+
+        /// Get the ID of the pool
         std::size_t GetID() const { return m_pool_id; }
 
         /// Get the community to which this pool belongs
-        const Community* GetCommunity() const { return m_community; }
+        Community* GetCommunity() const { return m_community; }
 
         /// Get the household to which this pool belongs
-        const Household* GetHousehold() const { return m_household; }
+        Household* GetHousehold() const { return m_household; }
 
         /// Add the given Person.
         void AddMember(const Person* p);

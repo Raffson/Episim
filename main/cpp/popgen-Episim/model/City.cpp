@@ -21,8 +21,9 @@ namespace stride {
 City::City(const unsigned int city_id, const unsigned int province, unsigned int population,
            const Coordinate coordinates, const string name)
     : m_city_id(city_id), m_province(province), m_population(population), m_coordinates(coordinates), m_name(name),
+      m_communities(), m_moc(), m_households(), m_in_commuting(), m_out_commuting(), m_effective_out_commuting(),
       m_in_commuter_count(0), m_out_commuter_count(0), m_in_commuting_changed(false), m_out_commuting_changed(false),
-      m_student_commuters_count(0), m_worker_commuters_count(0)
+      m_types_present(), m_student_commuters_count(0), m_worker_commuters_count(0)
 {
         for( auto type : CommunityType::IdList )
                 m_types_present[type] = false;
@@ -123,7 +124,6 @@ void City::AddEffectiveCommuterTo(const unsigned int destination, const bool isS
     }
 }
 
-
 unsigned int City::GetEffectiveCommuterTo(const unsigned int destination)
 {
     if(m_effective_out_commuting.find(destination) == m_effective_out_commuting.end()){
@@ -132,6 +132,18 @@ unsigned int City::GetEffectiveCommuterTo(const unsigned int destination)
     else{
         return m_effective_out_commuting[destination];
     }
+}
+
+void City::RemoveInCommuters(unsigned int id) {
+
+    m_in_commuting.erase(id);
+    m_in_commuting_changed = true;
+
+}
+
+void City::RemoveOutCommuters(unsigned int id) {
+    m_out_commuting.erase(id);
+    m_out_commuting_changed = true;
 }
 
 } // namespace stride

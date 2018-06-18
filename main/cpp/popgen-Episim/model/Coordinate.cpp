@@ -16,7 +16,6 @@
 #include "Coordinate.h"
 
 
-
 using namespace std;
 
 namespace stride {

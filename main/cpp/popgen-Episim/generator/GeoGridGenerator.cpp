@@ -14,6 +14,7 @@
 #include <boost/geometry/algorithms/distance.hpp>
 #include <boost/geometry/strategies/geographic/distance_andoyer.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <boost/foreach.hpp>
 
 using namespace std;
 
@@ -245,6 +246,7 @@ void GeoGridGenerator::PopulationFromFile(const string &fname)
 
 void GeoGridGenerator::GenerateAll()
 {
+    DefragCities();
     GenerateColleges();
     GenerateWorkplaces();
     GenerateSchools();
@@ -392,11 +394,10 @@ void GeoGridGenerator::ClassifyNeighbours()
         auto cityA = cities.at(*ka);
         for (auto& cityB : cities) {
             // truncating distance on purpose to avoid using floor-function
-            unsigned int distance =
-                    cityB.second.GetCoordinates().GetDistance(cityA.GetCoordinates());
+            auto distance = (unsigned int)cityB.second.GetCoordinates().GetDistance(cityA.GetCoordinates());
             // mind that the categories go as follows [0, initial_radius), [initial_radius,
             // 2*initial_radius), etc.
-            unsigned int category = m_grid->m_initial_search_radius;
+            auto category = m_grid->m_initial_search_radius;
             while ((distance / category) > 0)
                 category <<= 1; // equivalent to multiplying by 2, just more efficient...
             for( auto type : CommunityType::IdList) {
@@ -447,10 +448,10 @@ void GeoGridGenerator::AddCommunities(const vector<City *>& cities, const vector
     const auto& smap = m_grid->m_sizes_map;
     auto cps = ceil((double)smap.at(CommunityType::ToSizes(type)) / smap.at(Sizes::AVERAGE_CP));
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for (unsigned int i = 0; i < indices.size(); i++) {
 
-        Community* nwSchool;
+            Community* nwSchool;
 
             City &chosen_city = *cities[indices[i]];
 #pragma  omp critical(f)
@@ -466,5 +467,29 @@ void GeoGridGenerator::AddCommunities(const vector<City *>& cities, const vector
         }
     }
 }
+
+    void GeoGridGenerator::DefragCities() {
+
+        boost::property_tree::ptree ptree = m_grid->GetConfigPtree();
+        if(ptree.get("run.popgen.defrag_cities.is_defrag", false)){
+
+            auto X = ptree.get<double>("run.popgen.defrag_cities.X");
+            auto Y = ptree.get<double>("run.popgen.defrag_cities.Y");
+
+            vector<double> p_vec;
+            BOOST_FOREACH(boost::property_tree::ptree::value_type &it, ptree.get_child("run.popgen.defrag_cities.p_vec")) {
+                            // The data function is used to access the data stored in a node.
+                            try{
+                                p_vec.emplace_back(stod(it.second.data()));
+                            }
+                           catch (exception& e){
+                                cout << "invalid in p_vec config" << endl;
+                            }
+                        }
+
+            m_grid->DefragmentSmallestCities(X, Y, p_vec);
+        }
+
+    }
 
 } //namespace stride
