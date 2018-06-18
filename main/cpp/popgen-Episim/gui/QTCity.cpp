@@ -3,6 +3,7 @@
 //
 
 #include "QTCity.h"
+#include "QTCommunity.h"
 #include <algorithm>
 #include <boost/range/adaptor/reversed.hpp>
 
@@ -12,7 +13,10 @@ namespace gui {
 QTCity::QTCity(stride::City *model, QTBackEnd *back_end, QObject *parent) :
         QObject(parent), m_city(model), m_commuting_lst(),
         m_back_end(back_end), m_id(model->GetId()),
-        m_pop(model->GetEffectivePopulation()) {}
+        m_pop(model->GetEffectivePopulation()){
+
+    CreateCommunityLists();
+}
 
 
 QTCity::QTCity(const QTCity &obj) : QObject(obj.parent()), m_city(obj.GetModelCity()), m_commuting_lst(obj.m_commuting_lst),
@@ -113,6 +117,25 @@ void QTCity::CreateCommutingList(int amount) {
     }
 
 }
+
+void QTCity::CreateCommunityLists() {
+
+    m_schools = CreateCommunityList(CommunityType::Id::School);
+    m_colleges = CreateCommunityList(CommunityType::Id::College);
+    m_workplaces = CreateCommunityList(CommunityType::Id::Work);
+    m_primary = CreateCommunityList(CommunityType::Id::Primary);
+    m_secondary = CreateCommunityList(CommunityType::Id::Secondary);
+}
+
+    QList<QObject *> QTCity::CreateCommunityList(CommunityType::Id id) {
+        QList<QObject *> lst;
+        for(auto& it: m_city->GetCommunitiesOfType(id)){
+
+            QTCommunity* nw_community = new QTCommunity(it, nullptr);
+            lst.append(nw_community);
+        }
+        return lst;
+    }
 }
 }
 

@@ -41,9 +41,6 @@ public:
     QTCity(const QTCity &object);
 
     QTCity& operator=(const QTCity&)=delete;
-
-    /// @brief Default destructor
-    ~QTCity() override = default;
 ///@}
 
 /// Q Properties
@@ -54,56 +51,38 @@ public:
 */
 ///@{
     ///< The coordinate of our city center.
-    Q_PROPERTY(QGeoCoordinate crd
-                       READ
-                               GetCoordinates
-                       CONSTANT)
+    Q_PROPERTY(QGeoCoordinate crd READ GetCoordinates CONSTANT)
 
     ///< population amount in city
-    Q_PROPERTY(int popCount
-                       MEMBER
-                               m_pop
-                       CONSTANT)
+    Q_PROPERTY(int popCount MEMBER m_pop CONSTANT)
 
     ///< name of the city
-    Q_PROPERTY(QString name
-                       READ
-                               GetName
-                       CONSTANT)
+    Q_PROPERTY(QString name READ GetName CONSTANT)
 
     ///< id of the city
-    Q_PROPERTY(int id
-                       READ
-                               GetId
-                       CONSTANT)
+    Q_PROPERTY(int id READ GetId CONSTANT)
 
     ///< total commuters into the city
-    Q_PROPERTY(int total_in_commuters
-                       READ
-                               GetTotalCommutersIn
-                       CONSTANT)
+    Q_PROPERTY(int total_in_commuters READ GetTotalCommutersIn CONSTANT)
 
     ///< total commuters out of the city
-    Q_PROPERTY(int total_out_commuters
-                       READ
-                               GetTotalCommutersOut
-                       CONSTANT)
+    Q_PROPERTY(int total_out_commuters READ GetTotalCommutersOut CONSTANT)
 
     ///< infected in the city
-    Q_PROPERTY(int infected
-                       READ
-                               GetInfected
-                       NOTIFY
-                       InfectedChanged)
+    Q_PROPERTY(int infected READ GetInfected NOTIFY InfectedChanged)
 
     ///< clicked state of the city
-    Q_PROPERTY(bool clicked
-                       READ
-                               IsClicked
-                       WRITE
-                               SetClicked
-                       NOTIFY
-                       ClickedChanged)
+    Q_PROPERTY(bool clicked READ IsClicked WRITE SetClicked NOTIFY ClickedChanged)
+
+
+    Q_PROPERTY(QList<QObject*> schools MEMBER m_schools NOTIFY CommunitiesChanged)
+
+    Q_PROPERTY(QList<QObject*> colleges MEMBER m_schools NOTIFY CommunitiesChanged)
+
+    Q_PROPERTY(QList<QObject*> workplaces MEMBER m_schools NOTIFY CommunitiesChanged)
+
+    Q_PROPERTY(QList<QObject*> schools MEMBER m_schools NOTIFY CommunitiesChanged)
+    Q_PROPERTY(QList<QObject*> schools MEMBER m_schools NOTIFY CommunitiesChanged)
 ///@}
 
 // City signals
@@ -190,6 +169,18 @@ public:
     void CreateCommutingList(int amount);
 ///@}
 
+//Helper functions
+/***********************************************************************************************************************/
+private:
+///@{
+    /// @brief Will make wrappers for the communities in the cities
+    void CreateCommunityLists();
+
+    /// @brief Will fill in the list of given type
+    /// @param the type as CommunityType
+    /// @return returns a list of Qobjects of the given type.
+    QList<QObject *> CreateCommunityList(CommunityType::Id id);
+///@}
 // Data members
 /***********************************************************************************************************************/
 private:
@@ -216,9 +207,11 @@ private:
     /// population of the city
     const int m_pop;
 
-    QList<QObject*> m_schools;
-    QList<QObject*> m_schools;
-    QList<QObject*> m_schools;
+    QList<QObject*> m_schools{};
+    QList<QObject*> m_colleges{};
+    QList<QObject*> m_workplaces{};
+    QList<QObject*> m_primary{};
+    QList<QObject*> m_secondary{};
 
 };
 

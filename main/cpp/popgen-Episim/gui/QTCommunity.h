@@ -12,11 +12,18 @@ namespace gui {
 /**
  * Wrapper for the community class by QT
  */
-class QTCommunity {
+class QTCommunity: public QObject {
 Q_OBJECT
 
 public:
-    QTCommunity(Community* model_community);
+// Constructors, Destructor
+/***********************************************************************************************************************/
+    explicit QTCommunity(Community *model_community, QObject *parent = nullptr);
+    QTCommunity(const QTCommunity& object);
+
+
+/***********************************************************************************************************************/
+    QTCommunity& operator = (const QTCommunity& object);
 
 private:
     Community* m_community;
