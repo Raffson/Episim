@@ -12,105 +12,53 @@ Tab{
     Rectangle{
         anchors.fill: parent
         color: Qt.rgba(0.9,0.9,0.9,0.5)
+        ScrollView{
+
+        anchors.margins: 25
+        anchors.fill: parent
+
         GridLayout{
             id: alligner_run
             layoutDirection: Qt.LeftToRight
             flow: GridLayout.TopToBottom
-            anchors.topMargin: parent.height / 50
+            anchors.topMargin: 50
             anchors.leftMargin: 50
-            anchors.fill: parent
             columnSpacing: 50
-            rowSpacing: 5
-            rows: 19
+            rowSpacing: 25
+            rows: 16
             columns: 2
-            
-            Repeater{
-                
-                model:[ {txt: "Number of days"},
-                    {txt: "Number participants survey"},
-                    {txt: "number of threads"},
-                    {txt: "RNG seed"},
-                    {txt: "r0"},
-                    {txt: "Seeding age min"},
-                    {txt: "Seeding age max"},
-                ]
-                
-                delegate :RowLayout{
-                    z:5
-                    spacing: 50
-                    Layout.alignment: Qt.AlignTop
-                    Layout.maximumHeight: 4
-                    Label{
-                        id: integer_spinnr_txt
-                        text: modelData.txt
-                        //lineHeight: 0.9
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.minimumWidth: 200
-                        Layout.alignment: Qt.AlignLeft
-                    }
-                    
-                    SpinBox{
-                        id: integer_spinner
-                        Layout.minimumWidth: 100
-                        //Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignRight
-                        Layout.maximumHeight: 25
-                        
-                    }
-                    
-                }
+
+            ListModel{
+                id: sim_spnners
+                ListElement { txt: "Number of days"; tagi: "run.num_days"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "Number of threads"; tagi: "run.num_threads"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "Number participants survey"; tagi: "run.num_participants_survey"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "RNG seed"; tagi: "run.rng_seed"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "r0"; tagi: "run.r0"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "Seeding age min"; tagi: "run.seeding_age_min"; decims: 0; stpsize: 1; mn: 0; mx : -1; geo: false}
+                ListElement { txt: "Immunity rate"; tagi: "run.immunity_rate"; decims: 2; stpsize: 0.1; mn: 0; mx : 1; geo: false}
+                ListElement { txt: "Seeding rate"; tagi: "run.seeding_rate"; decims: 3; stpsize: 0.001; mn: 0; mx : 1; geo: false}
+                ListElement { txt: "Vaccine link probability"; tagi: "run.vaccine_link_probability"; decims: 2; stpsize: 0.01; mn: 0; mx : 1; geo: false}
+                ListElement { txt: "Vaccine rate"; tagi: "run.vaccine_rate"; decims: 2; stpsize: 0.1; mn: 0; mx : 1; geo: false}
             }
             
             Repeater{
-                
-                model:[{txt: "immunity rate"},
-                    {txt: "Seeding rate"},
-                    {txt: "Vaccine link probability"},
-                    {txt: "Vaccine rate"}
-                ]
-                
-                delegate :RowLayout{
-                    z:5
-                    spacing: 50
-                    Layout.alignment: Qt.AlignTop
-                    Layout.maximumHeight: 4
-                    Label{
-                        id: fract_spinnr_txt
-                        text: modelData.txt
-                        //lineHeight: 0.9
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.minimumWidth: 200
-                        Layout.alignment: Qt.AlignLeft
-                    }
-                    
-                    SpinBox{
-                        id: float_spinner
-                        Layout.minimumWidth: 100
-                        //Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignRight
-                        Layout.maximumHeight: 25
-                        
-                        minimumValue: 0.0
-                        maximumValue: 1.0
-                        stepSize: 0.1
-                        decimals: 3
-                        
-                    }
-                    
-                }
+               model:sim_spnners
+               Spnner_label{
+
+               }
             }
-            
-            
+
             Repeater{
                 
-                model:[ {txt: "Behaviour policy", mdl:["NoBehaviour", "Vaccination" ]},
-                    {txt: "Belief policy", mdl:["Belief", "HBM", "Imitation", "NoBelief", "Treshold"]},
-                    {txt: "Information policy", mdl:["LocalDiscussion", "NoGlobalInformation", "NoLocalInformation"]},
-                    {txt: "Contact log level", mdl: ["None", "Tansimissions", "All", "Susceptibles"]},
-                    {txt: "Immunity profile", mdl:  ["None"]},
-                    {txt: "Vaccine profile", mdl: ["Random"]},
-                    {txt: "Rng type", mdl: ["mrg2", "mrg3", "lgc64", "lcg64_shift", "yarn2", "yarn3"]},
-                    {txt: "Stride log level", mdl:["Info"]}
+                model:[ {txt: "Behaviour policy", tg: "run.behaviour_policy", mdl:["Vaccination" ,"NoBehaviour"]},
+                    {txt: "Belief policy",tg: "run.belief_policy", mdl:["Belief", "HBM", "Imitation", "NoBelief", "Treshold"]},
+                    {txt: "Global information policy",tg: "run.global_information_policy", mdl:["LocalDiscussion", "NoGlobalInformation", "NoLocalInformation"]},
+                    {txt: "Contact log level", tg: "run.contact_log_level", mdl: ["None", "Tansimissions", "All", "Susceptibles"]},
+                    {txt: "Immunity profile",tg: "run.immunity_profile", mdl:  ["None"]},
+                    {txt: "Vaccine profile", tg: "run.vaccine_profile", mdl: ["Random"]},
+                    {txt: "Rng type", tg: "run.rng_type", mdl: ["mrg2", "mrg3", "lgc64", "lcg64_shift", "yarn2", "yarn3"]},
+                    {txt: "Stride log level", tg: "run.stride_log_level", mdl:["Info"]}
                     
                 ]
                 
@@ -129,60 +77,49 @@ Tab{
                     }
                     
                     ComboBox{
+                        editable: true
                         id: belief_txt
                         Layout.minimumWidth: 200
                         model: modelData.mdl
+                        currentIndex: find(backend.getConfig(modelData.tg, false))
                         //Layout.fillWidth: true
                         Layout.alignment: Qt.AlignRight
                         Layout.maximumHeight: 25
+
+                        onCountChanged:currentIndex = find(backend.getConfig(modelData.tg, false))
+                        onCurrentTextChanged: backend.setConfig(modelData.tg, currentText, false)
                         
                     }
+
                     
                 }
+            }
+
+            ListModel{
+                id: stride_checkers
+                ListElement{ txt: "Contact output file"; tagi: "run.contact_output_file"; geo: false}
+                ListElement{ txt: "Output adopted"; tagi: "run.output_adopted"; geo: false}
+                ListElement{ txt: "Output cases"; tagi: "run.output_cases"; geo: false}
+                ListElement{ txt: "Output persons"; tagi: "run.output_persons"; geo: false}
+                ListElement{ txt: "Output summary"; tagi: "run.output_summary"; geo: false}
+                ListElement{ txt: "Track index case"; tagi: "run.track_index_case"; geo: false}
+                ListElement{ txt: "Use install dirs"; tagi: "run.use_install_dirs"; geo: false}
             }
             
             Repeater{
                 
-                model:[ {txt: "Contact output file"},
-                    {txt: "Output adopted"},
-                    {txt: "Output cases"},
-                    {txt: "Output persons"},
-                    {txt: "Output summary"},
-                    {txt: "Track index case"},
-                    {txt: "Use install dirs"}
-                ]
-                
-                delegate :RowLayout{
-                    z:5
-                    spacing: 50
-                    Layout.alignment: Qt.AlignTop
-                    Layout.maximumHeight: 4
-                    Label{
-                        id: checkboxes
-                        text: modelData.txt
-                        //lineHeight: 0.9
-                        verticalAlignment: Text.AlignVCenter
-                        Layout.minimumWidth: 200
-                        Layout.alignment: Qt.AlignLeft
-                    }
-                    
-                    CheckBox{
-                        id: checkbox_box
-                        Layout.minimumWidth: 200
-                        //Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignRight
-                        Layout.maximumHeight: 25
-                        
-                    }
-                    
+                model: stride_checkers
+
+                Checker{
+
                 }
-                
-                
+
             }
             
             
             RowLayout{
                 
+                property string tg: "run.start_date"
                 z:5
                 spacing: 5
                 Layout.alignment: Qt.AlignTop
@@ -216,7 +153,8 @@ Tab{
                     maximumValue: 31
                     stepSize: 1
                     decimals: 0
-                    
+                    value: backend.getDate(parent.tg, 2, false)
+                    onValueChanged: backend.setDate(parent.tg, day_spnner.value, month_spnner.value, year_spnner.value, false)
                 }
                 
                 Label{
@@ -239,6 +177,8 @@ Tab{
                     maximumValue: 12
                     stepSize: 1
                     decimals: 0
+                    value: backend.getDate(parent.tg, 1, false)
+                    onValueChanged: backend.setDate(parent.tg, day_spnner.value, month_spnner.value, year_spnner.value, false)
                     
                 }
                 
@@ -250,6 +190,7 @@ Tab{
                     Layout.minimumWidth: 30
                     Layout.maximumWidth: 30
                     Layout.alignment: Qt.AlignLeft
+
                 }
                 SpinBox{
                     id: year_spnner
@@ -262,6 +203,8 @@ Tab{
                     maximumValue: Infinity
                     stepSize: 1
                     decimals: 0
+                    value: backend.getDate(parent.tg, 0, false)
+                    onValueChanged: backend.setDate(parent.tg, day_spnner.value, month_spnner.value, year_spnner.value, false)
                     
                 }
                 
@@ -284,6 +227,32 @@ Tab{
                 }
                 
             }
+
+            RowLayout{
+                id: output_prefix
+                Layout.alignment: Qt.AlignTop
+                Layout.maximumHeight: 4
+                property string tag: "run.output_prefix"
+                Label{
+                    id: cty_file_label
+                    text: "Output prefix"
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.minimumWidth: 245
+                    Layout.alignment: Qt.AlignLeft
+
+                }
+
+                TextField{
+                    id: cty_config_text
+                    Layout.alignment: Qt.AlignRight
+                    Layout.minimumWidth: 300
+                    Layout.preferredWidth: 450
+                    Layout.maximumWidth: 600
+                    text: backend.getConfig(parent.tag,false)
+                    onEditingFinished: backend.setConfig(parent.tag, text, false)
+                }
+            }
         }
+    }
     }
 }

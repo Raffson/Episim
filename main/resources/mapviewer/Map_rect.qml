@@ -76,7 +76,7 @@ Rectangle{
                 background: Rectangle {
                     id: pop_b
                     opacity: enabled ? 1 : 0.3
-                    color: button.down ?  "red" : button.hovered ? "white" : "green"
+                    color: button.down ?  Qt.rgba(0,0,1,0.2) : button.hovered ? Qt.rgba(0,0,0,0.2) : Qt.rgba(0,1,0,0.2)
                 }
             }
             Button {
@@ -87,15 +87,37 @@ Rectangle{
                         map.clearMapItems();
                     }
 
-                    backend.runSimulator();
+                    backend.runSimulator(run_sim_days.value, rn_checker.checked);
+                    map.center_and_zoom();
                 }
 
                 background: Rectangle {
                     id: run_sim
                     opacity: enabled ? 1 : 0.3
-                    color: button_sim.down ?  "red" : button_sim.hovered ? "white" : "green"
+                    color: button_sim.down ?  Qt.rgba(0,0,1,0.2) : button_sim.hovered ? Qt.rgba(0,0,0,0.2) : Qt.rgba(0,1,0,0.2)
                 }
 
+            }
+            RowLayout{
+                Label{
+                    text: "All:"
+                }
+            CheckBox{
+                id: rn_checker
+                Layout.fillHeight: true
+            }
+            }
+            RowLayout{
+            Label{
+                text: "Days:"
+            }
+
+            SpinBox{
+                id: run_sim_days
+                Layout.fillHeight: true
+                editable: true
+                enabled: !rn_checker.checked
+            }
             }
         }
     }

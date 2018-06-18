@@ -77,7 +77,7 @@ public:
 
     /// @brief Runs the simulator in n steps.
     /// @param days: The amount of steps (days) to be run.
-    Q_INVOKABLE void runSimulator();
+    Q_INVOKABLE void runSimulator(int run_val, bool all);
 
     /// @brief Tells QML if it should redraw the map items.
     /// This is needed if the population generator is rerun.
@@ -99,13 +99,15 @@ public:
 ///@{
     /// @brief Reads an element at xml_tag.
     /// @param xml_tag: Tag where we can find the element needed.
+    /// @param geo: Optional read out of geo or stride ptree.
     /// @return Returns the needed element as Qstring.
-    Q_INVOKABLE QString getConfig(const QString &xml_tag) const;
+    Q_INVOKABLE QString getConfig(const QString &xml_tag, bool geo = true) const;
 
     /// @brief Sets a value in config at tag.
     /// @param xml_tag: The tag where we want to set our value.
     /// @param val: The value that needs to be set in the config at tag as QString.
-    Q_INVOKABLE void setConfig(const QString &xml_tag, const QString &val);
+    /// @param geo: Optional read out of geo or stride ptree.
+    Q_INVOKABLE void setConfig(const QString &xml_tag, const QString &val, bool geo = true);
 
     /// @brief Reads a path out of config of a file that should be in the data folder if install path's are on.
     /// @param tag: Tag where we find the path.
@@ -122,13 +124,15 @@ public:
 
     /// @brief Gets a bool out of config at xml_tag.
     /// @param xml_tag: Tag of the bool we need in config.
+    /// @param geo: Tag if we write in geo or stride config.
     /// @return Bool found in config.
-    Q_INVOKABLE bool getBoolConfig(const QString &xml_tag) const;
+    Q_INVOKABLE bool getBoolConfig(const QString &xml_tag, bool geo = true) const;
 
     /// @brief Sets a bool in config file at xml_tag.
     /// @param xml_tag: The tag of our bool.
     /// @param value the value as a bool we want to place
-    Q_INVOKABLE bool setBoolConfig(const QString &xml_tag, const bool &value);
+    /// @param geo in geo pr or stride pt
+    Q_INVOKABLE bool setBoolConfig(const QString &xml_tag, const bool &value, bool geo);
 
     /// @brief Wrapper to get the path to data.
     /// @return Returns a QUrl path to the Data folder.
@@ -154,6 +158,25 @@ public:
     /// @param index: The index we want to update.
     /// @param geo: Using geo or stride config.
     Q_INVOKABLE void setChildAtIndex(const QString &xml_tag, int index, double value, bool geo);
+
+    /// @brief cleans the children till the parent has as much children as size
+    /// @param xml_tag of the parent of the children we want ro remove
+    /// @param size how many children we want the parent to have
+    /// @param geo is this tag in the geo or m pt
+    Q_INVOKABLE void cleanChildren (const QString& xml_tag, int size, bool geo);
+
+    /// @brief returns a day, month, year of a date at xml tag
+    /// @param xml_tag where to find date.
+    /// @param index for day = 0, month = 1, year = 2
+    /// @param bool in geo or stride
+    Q_INVOKABLE int getDate(const QString& xml_tag, int index, bool geo);
+
+    /// @brief puts a date at xml_tag
+    /// @param day the day of the date
+    /// @param month the month of the date
+    /// @param year the year of he date
+    /// @param geo in geo or stride?
+    Q_INVOKABLE void setDate(const QString& xml_tag, int day, int month, int year, bool geo);
 
 
 ///@}
@@ -292,6 +315,7 @@ private:
     /// @brief Removes a list of commuter lines in the backend commuter lines. Doesn't emit any changes.
     /// @param lst list of Commuter lines to be removed
     void RemoveCommuteLinesNoEmit(const QList<QTCommuter *> &lst);
+
 ///@}
 
 private:
@@ -331,6 +355,9 @@ private:
 
     ///> Pointer to optional controller -> used to registerViewers.
    CliController* m_cntrller;
+
+   ///> Pointer to the current runner
+   shared_ptr<SimRunner> m_runner{nullptr};
 ///@}
 
 

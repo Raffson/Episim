@@ -10,6 +10,7 @@ RowLayout{
     id: checkRandomAges
     Layout.alignment: Qt.AlignTop
     Layout.maximumHeight: 4
+    property bool gg: geo
     Label{
         id: rndm_age_lbl
         verticalAlignment: Text.AlignVCenter
@@ -20,7 +21,7 @@ RowLayout{
     
     CheckBox{
         id: rndm_age
-        checked: backend.getBoolConfig(tagi)
-        onClicked:backend.setBoolConfig(tagi, checked);
+        checked: backend.getBoolConfig(tagi, gg)
+        onClicked:backend.setBoolConfig(tagi, checked, gg);
     }
 }
