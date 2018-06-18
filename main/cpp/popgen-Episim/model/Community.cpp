@@ -27,6 +27,10 @@ Community::Community(const size_t& id, CommunityType::Id type, City* city)
 {
 }
 
+Community::Community(const Community& old)
+    : m_id(old.m_id), m_type(old.m_type), m_city(old.m_city), m_contact_pools(old.m_contact_pools)
+{
+}
 
 stride::ContactPool& Community::AddContactPool(ContactPoolSys& poolSys)
 {
