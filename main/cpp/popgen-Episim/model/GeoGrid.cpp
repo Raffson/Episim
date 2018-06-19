@@ -129,9 +129,13 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                 //m_cities.erase(old_city->GetId());
                 for(auto& nw_city: it.second){ // all the new cities of the old city
                     for(auto& other_old_city: m_cities){ // we loop against al previous old cities
-
-                        double outcommuting_to = old_city->GetOutCommuting().at(other_old_city.second.GetId());
-                        double incommuting_to = old_city->GetInCommuting().at(other_old_city.second.GetId());
+                        double outcommuting_to  = 0;
+                        double incommuting_to = 0;
+                        try {
+                            old_city->GetOutCommuting().at(other_old_city.second.GetId());
+                            old_city->GetInCommuting().at(other_old_city.second.GetId());
+                        }catch(exception& e){
+                        }
                         if(remember_commuters.count(other_old_city.first) == 0) { // if the old city is in our to be removed map this shouldn't be happening
                             //All old cities get an entry to the new city
 

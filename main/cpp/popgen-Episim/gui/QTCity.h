@@ -90,8 +90,6 @@ public:
     ///< List of all secondary communities
     Q_PROPERTY(QList<QObject*> secondary_communities MEMBER m_secondary NOTIFY CommunitiesChanged)
 
-    ///< List of all Households
-    Q_PROPERTY(QList<QObject*> households MEMBER m_households NOTIFY HouseHoldsChanged())
 ///@}
 
 // City signals
@@ -196,8 +194,6 @@ private:
     /// @return returns a list of Qobjects of the given type.
     QList<QObject *> CreateCommunityList(CommunityType::Id id);
 
-    /// @brief creates the list of QT wrappers for this city.
-    void CreateHouseHoldList();
 ///@}
 // Data members
 /***********************************************************************************************************************/
@@ -239,9 +235,6 @@ private:
 
     ///< List of secondary communities
     QList<QObject*> m_secondary{};
-
-    ///< List of households
-    QList<QObject*> m_households{};
 
 };
 
