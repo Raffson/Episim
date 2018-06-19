@@ -2,6 +2,8 @@
 // Created by Nishchal Shrestha on 16/06/2018.
 //
 
+#ifdef USING_QT
+
 #include "QTPopulation.h"
 
 #include <QApplication>
@@ -216,3 +218,5 @@ void QTPopulation::PopulationDensityClicked()
     m_window->show();
 
 }
+
+#endif //USING_QT

@@ -2,6 +2,8 @@
 // Created by Nishchal Shrestha on 16/06/2018.
 //
 
+#ifdef USING_QT
+
 #ifndef STRIDE_QTPOPULATION_H
 #define STRIDE_QTPOPULATION_H
 
@@ -59,3 +61,5 @@ private:
 
 
 #endif //STRIDE_QTPOPULATION_H
+
+#endif //USING_QT

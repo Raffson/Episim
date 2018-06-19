@@ -118,7 +118,6 @@ void QTBackEnd::runSimulator() {
     emit TotalInfectedChanged();
 }
 
-
 //Config setters and getters
 /***********************************************************************************************************************/
 
