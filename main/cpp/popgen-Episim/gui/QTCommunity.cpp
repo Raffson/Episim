@@ -23,10 +23,7 @@ QTCommunity& stride::gui::QTCommunity::operator = (const QTCommunity& object) {
 }
 
 void QTCommunity::CountPopInfected() {
-    for(auto& contactpool: m_community->GetContactPools()){
-            m_population += contactpool->GetSize();
-    }
-
+    m_population = m_community->GetSize();
     emit PopChanged();
 
 }

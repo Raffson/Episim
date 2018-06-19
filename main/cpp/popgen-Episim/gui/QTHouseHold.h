@@ -19,6 +19,9 @@ Q_OBJECT
 public:
 // Constructor, copy and assignment
 ///*********************************************************************************************************************/
+/**
+ * @name Constructor, copy and assignment
+ */
 ///@{
     /// @brief Constructor
     /// @param model_household The model household this QTHousehold wraps around
@@ -29,8 +32,26 @@ public:
     QTHouseHold& operator = (const QTHouseHold& object) = delete;
 ///@}
 
+
+/// Properties
+/************************************************************************************************************************/
+        ///> pop Property of popularion
+        Q_PROPERTY(int pop READ CountPop CONSTANT)
+        ///> Property of id
+        Q_PROPERTY(int id READ GetId CONSTANT)
+
+
+public:
+/// Getters
+/***********************************************************************************************************************/
+    /// @brief Counts the size of the model
+    int CountPop(){return (int)m_household->GetSize();}
+
+    /// @brief returns the id of household
+    int GetId(){return (int) m_household->GetID();}
 private:
     Household* m_household;
+
 };
 
 }
