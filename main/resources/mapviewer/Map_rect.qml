@@ -171,11 +171,29 @@ Rectangle{
                         Layout.maximumHeight: modelData.clicked ? 175 : 0
                         Layout.minimumHeight: modelData.clicked ? 175 : 0
                         Layout.fillWidth: true
-                        onVisibleChanged: color = "blue"
                         ColumnLayout{
                             anchors.fill: parent
-                            Text{
-                                text: modelData.name
+                            RowLayout{
+                                Text{
+                                    text: modelData.name
+                                }
+                                Button{
+                                    id:b
+                                    Layout.maximumWidth: 10
+                                    Layout.maximumHeight: 10
+                                    text: qsTr("X")
+                                    flat: true
+                                    onClicked: modelData.clicked = false
+                                    contentItem: Text {
+                                        anchors.fill: parent
+                                        text: b.text
+                                        font: b.font
+                                        horizontalAlignment: Text.AlignVCenter
+                                        verticalAlignment:  Text.AlignVCenter
+                                        color: b.down ? "white": "red"
+                                    }
+
+                                }
                             }
 
                             Text{
