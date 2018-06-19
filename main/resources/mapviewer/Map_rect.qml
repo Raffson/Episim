@@ -169,13 +169,13 @@ Rectangle{
                         color: Qt.rgba(0.7,0.7,0.7)
                         visible: modelData.clicked ? true: false
                         width: sidebar.width
-                        height: modelData.clicked ? main_col.uncollapsed_height : 0
+                        height: modelData.clicked ? main_col.collapsed_height : 0
                         Column{
                             id: main_col
                             anchors.fill : parent
-                            property int uncollapsed_height: 180
+                            property int uncollapsed_height: 300
                             property int collapsed_height:30
-                            property bool collapsed: false
+                            property bool collapsed: true
                             spacing: 10
                             Item{
                                 height: parent.collapsed_height
@@ -239,14 +239,18 @@ Rectangle{
                                 id: sub_row
                                 height: main_col.uncollapsed_height - main_col.collapsed_height
                                 width: parent.width
+                                visible: false
                                 Column{
+                                    spacing: 20
                                     anchors.fill: parent
                                     //anchors.fill: parent
                                     Text{
+                                        height: parent.height / parent.children.length
                                         text: "Population: " + modelData.popCount
                                         font.pointSize: 13
                                     }
                                     Text{
+                                        height: parent.height / parent.children.length
                                         text: "Infected: " + modelData.infected+ "|" + Math.round(modelData.infected/modelData.popCount*100)+"%"
                                         font.pointSize: 13
                                     }
@@ -275,11 +279,11 @@ Rectangle{
                                                 selected = !selected
 
                                                 if(selected){
-                                                    base_rec.height += 15 * modelData.schools.length
+                                                    base_rec.height += 36 * modelData.schools.length
                                                 }
 
                                                 else{
-                                                   base_rec.height -= 15 * modelData.schools.length
+                                                   base_rec.height -= 36 * modelData.schools.length
                                                 }
                                             }
                                         }
@@ -293,42 +297,276 @@ Rectangle{
 
                                     Repeater{
                                         model: modelData.schools
-
                                         Text{
                                             anchors.left: parent.left
                                             anchors.right: parent.right
                                             width: parent.width
                                             anchors.leftMargin: 25
                                             visible: drpdown_schools.selected ? true : false
-                                            text: "ID: " + modelData.id + "    " + "Pop: " + modelData.pop
+                                            text: "ID: " + modelData.id + "    " + "Size: " + modelData.pop
                                             font.pointSize: 11//{parental_school_text.pointSize - 2}
                                         }
                                     }
 
-                                    Text{
-                                        text: "College count: " + modelData.colleges.length
-                                        font.pointSize: 10
+                                    Row{
+                                        id: college_select
+                                        height: parent.height / parent.children.length
+                                        width: parent.width
+
+                                        Button{
+                                            property bool selected: false
+                                            width: 15
+                                            height: 15
+                                            id:drpdown_college
+                                            flat: true
+                                            contentItem: Text {
+                                                anchors.fill: parent
+                                                text:parent.selected ? ">" : "^"
+                                                verticalAlignment: Text.AlignVCenter
+                                                font.pointSize: 15
+                                                //horizontalAlignment: Text.AlignVCenter
+                                                //verticalAlignment:  Text.AlignVCenter
+                                                color: drpdown_college.down ? "white": "green"
+                                            }
+
+                                            onClicked: {
+                                                selected = !selected
+
+                                                if(selected){
+                                                    base_rec.height += 36 * modelData.colleges.length
+                                                }
+
+                                                else{
+                                                   base_rec.height -= 36 * modelData.colleges.length
+                                                }
+                                            }
+                                        }
+                                        Text{
+                                            text: "College count: " + modelData.colleges.length
+                                            font.pointSize: 12
+                                        }
                                     }
 
-                                    Text{
-                                        text: "Workplace count: " + modelData.workplaces.length
-                                        font.pointSize: 10
+                                    Repeater{
+                                        model: modelData.colleges
+                                        Text{
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                            width: parent.width
+                                            anchors.leftMargin: 25
+                                            visible: drpdown_college.selected ? true : false
+                                            text: "ID: " + modelData.id + "    " + "Size: " + modelData.pop
+                                            font.pointSize: 11//{parental_school_text.pointSize - 2}
+                                        }
                                     }
 
-                                    Text{
-                                        text: "Primary community count: " + modelData.primary_communities.length
-                                        font.pointSize: 10
+                                    Row{
+                                        id: workplace_select
+                                        height: parent.height / parent.children.length
+                                        width: parent.width
+
+                                        Button{
+                                            property bool selected: false
+                                            width: 15
+                                            height: 15
+                                            id:drpdown_workplace
+                                            flat: true
+                                            contentItem: Text {
+                                                anchors.fill: parent
+                                                text:parent.selected ? ">" : "^"
+                                                verticalAlignment: Text.AlignVCenter
+                                                font.pointSize: 15
+                                                //horizontalAlignment: Text.AlignVCenter
+                                                //verticalAlignment:  Text.AlignVCenter
+                                                color: parent.down ? "white": "green"
+                                            }
+
+                                            onClicked: {
+                                                selected = !selected
+
+                                                if(selected){
+                                                    base_rec.height += 36 * modelData.workplaces.length
+                                                }
+
+                                                else{
+                                                    base_rec.height -= 36 * modelData.workplaces.length
+                                                }
+                                            }
+                                        }
+                                        Text{
+                                            text: "Workplace count: " + modelData.workplaces.length
+                                            font.pointSize: 12
+                                        }
                                     }
 
-                                    Text{
-                                        text: "Secondary community count: " + modelData.secondary_communities.length
-                                        font.pointSize: 10
+                                    Repeater{
+                                        model: modelData.workplaces
+                                        Text{
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                            width: parent.width
+                                            anchors.leftMargin: 25
+                                            visible: drpdown_workplace.selected ? true : false
+                                            text:"ID: " + modelData.id + "    " + "Size: " + modelData.pop
+                                            font.pointSize: 11//{parental_school_text.pointSize - 2}
+                                        }
+                                    }
+                                    Row{
+                                        height: parent.height / parent.children.length
+                                        width: parent.width
+
+                                        Button{
+                                            property bool selected: false
+                                            width: 15
+                                            height: 15
+                                            id:drpdown_primary
+                                            flat: true
+                                            contentItem: Text {
+                                                anchors.fill: parent
+                                                text:parent.selected ? ">" : "^"
+                                                verticalAlignment: Text.AlignVCenter
+                                                font.pointSize: 15
+                                                //horizontalAlignment: Text.AlignVCenter
+                                                //verticalAlignment:  Text.AlignVCenter
+                                                color: parent.down ? "white": "green"
+                                            }
+
+                                            onClicked: {
+                                                selected = !selected
+
+                                                if(selected){
+                                                    base_rec.height += 36 * modelData.primary_communities.length
+                                                }
+
+                                                else{
+                                                    base_rec.height -= 36 * modelData.primary_communities.length
+                                                }
+                                            }
+
+                                        }
+                                        Text{
+                                            text: "Primary community count: " + modelData.primary_communities.length
+                                            font.pointSize: 11
+                                        }
+                                    }
+                                    Repeater{
+                                        model: modelData.primary_communities
+                                        Text{
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                            width: parent.width
+                                            anchors.leftMargin: 25
+                                            visible: drpdown_primary.selected ? true : false
+                                            text: "ID: " + modelData.id + "    " + "Size: " + modelData.pop
+                                            font.pointSize: 11//{parental_school_text.pointSize - 2}
+                                        }
                                     }
 
-                                    Text{
-                                        text: "Household count: " + modelData.households.length
-                                        font.pointSize: 10
+                                    Row{
+                                        id: secondary_select
+                                        height: parent.height / parent.children.length
+                                        width: parent.width
+
+                                        Button{
+                                            property bool selected: false
+                                            width: 15
+                                            height: 15
+                                            id:drpdown_secondary
+                                            flat: true
+                                            contentItem: Text {
+                                                anchors.fill: parent
+                                                text:parent.selected ? ">" : "^"
+                                                verticalAlignment: Text.AlignVCenter
+                                                font.pointSize: 15
+                                                //horizontalAlignment: Text.AlignVCenter
+                                                //verticalAlignment:  Text.AlignVCenter
+                                                color: parent.down ? "white": "green"
+                                            }
+                                            onClicked: {
+                                                selected = !selected
+
+                                                if(selected){
+                                                    base_rec.height += 36 * modelData.secondary_communities.length
+                                                }
+
+                                                else{
+                                                    base_rec.height -= 36 * modelData.secondary_communities.length
+                                                }
+                                            }
+                                        }
+
+
+                                        Text{
+                                            text: "Secondary community count: " + modelData.secondary_communities.length
+                                            font.pointSize: 12
+                                        }
+
+
                                     }
+                                    Repeater{
+                                        model: modelData.secondary_communities
+                                        Text{
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                            width: parent.width
+                                            anchors.leftMargin: 25
+                                            visible: drpdown_secondary.selected ? true : false
+                                            text: "ID: " + modelData.id + "    " + "Size: " + modelData.pop
+                                            font.pointSize: 11//{parental_school_text.pointSize - 2}
+                                        }
+                                    }
+                                    Row{
+                                        id: hh_select
+                                        height: parent.height / parent.children.length
+                                        width: parent.width
+
+                                        Button{
+                                            property bool selected: false
+                                            width: 15
+                                            height: 15
+                                            id:drpdown_hh
+                                            flat: true
+                                            contentItem: Text {
+                                                anchors.fill: parent
+                                                text:parent.selected ? ">" : "^"
+                                                verticalAlignment: Text.AlignVCenter
+                                                font.pointSize: 15
+                                                //horizontalAlignment: Text.AlignVCenter
+                                                //verticalAlignment:  Text.AlignVCenter
+                                                color: parent.down ? "white": "green"
+                                            }
+                                            onClicked: {
+                                                selected = !selected
+
+                                                if(selected){
+                                                    base_rec.height += 36 * modelData.households.length
+                                                }
+
+                                                else{
+                                                    base_rec.height -= 36 * modelData.households.length
+                                                }
+                                            }
+                                        }
+
+
+                                        Text{
+                                            text: "Household count: " + modelData.households.length
+                                            font.pointSize: 12
+                                        }
+                                    }
+                                    Repeater{
+                                        model: modelData.households
+                                        Text{
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                            width: parent.width
+                                            anchors.leftMargin: 25
+                                            visible: drpdown_hh.selected ? true : false
+                                            text: "ID: " + modelData.id + "    " + "Size: " + modelData.pop
+                                            font.pointSize: 11//{parental_school_text.pointSize - 2}
+                                        }
+                                    }
+
                                 }
                             }
 
