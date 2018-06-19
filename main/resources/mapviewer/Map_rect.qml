@@ -515,58 +515,6 @@ Rectangle{
                                             font.pointSize: 11//{parental_school_text.pointSize - 2}
                                         }
                                     }
-                                    Row{
-                                        id: hh_select
-                                        height: parent.height / parent.children.length
-                                        width: parent.width
-
-                                        Button{
-                                            property bool selected: false
-                                            width: 15
-                                            height: 15
-                                            id:drpdown_hh
-                                            flat: true
-                                            contentItem: Text {
-                                                anchors.fill: parent
-                                                text:parent.selected ? ">" : "^"
-                                                verticalAlignment: Text.AlignVCenter
-                                                font.pointSize: 15
-                                                //horizontalAlignment: Text.AlignVCenter
-                                                //verticalAlignment:  Text.AlignVCenter
-                                                color: parent.down ? "white": "green"
-                                            }
-                                            onClicked: {
-                                                selected = !selected
-
-                                                if(selected){
-                                                    base_rec.height += 36 * modelData.households.length
-                                                }
-
-                                                else{
-                                                    base_rec.height -= 36 * modelData.households.length
-                                                }
-                                            }
-                                        }
-
-
-                                        Text{
-                                            text: "Household count: " + modelData.households.length
-                                            font.pointSize: 12
-                                        }
-                                    }
-                                    Repeater{
-                                        model: modelData.households
-                                        Text{
-                                            anchors.left: parent.left
-                                            anchors.right: parent.right
-                                            width: parent.width
-                                            anchors.leftMargin: 25
-                                            visible: drpdown_hh.selected ? true : false
-                                            text: "ID: " + modelData.id + "    " + "Size: " + modelData.pop
-                                            font.pointSize: 11//{parental_school_text.pointSize - 2}
-                                        }
-                                    }
-
                                 }
                             }
 

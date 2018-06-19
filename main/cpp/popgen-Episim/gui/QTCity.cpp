@@ -16,7 +16,6 @@ QTCity::QTCity(stride::City *model, QTBackEnd *back_end) :
         m_pop(model->GetEffectivePopulation()){
 
     CreateCommunityLists();
-    CreateHouseHoldList();
 }
 
 
@@ -138,15 +137,7 @@ void QTCity::CreateCommunityLists() {
         return lst;
     }
 
-void QTCity::CreateHouseHoldList() {
-
-    for(auto& it : m_city->GetHouseholds()){
-
-        auto household = new QTHouseHold(&it, this);
-        m_households.append(household);
-    }
-
-}
+    
 }
 }
 
