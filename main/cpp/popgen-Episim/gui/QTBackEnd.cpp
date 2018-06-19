@@ -45,6 +45,7 @@ void QTBackEnd::genPop() {
     stride::PopulationGenerator(*m_grid).Generate();
     m_pop_generated = true;
     m_total_pop = m_grid->GetTotalPop();
+    m_selected_pop = 0;
     MakeCityList(); // Helper to make QCity wrappers for our cities
 
     //Initialize our simrunner.
@@ -53,6 +54,9 @@ void QTBackEnd::genPop() {
 
     // Signal block
     emit PopChanged();
+    emit SelectedPopChanged();
+    emit SelectedInfectedChanged();
+    emit TotalInfectedChanged();
 }
 // Logic invokables
 /***********************************************************************************************************************/
@@ -87,9 +91,15 @@ void QTBackEnd::runSimulator(int run_val, bool all) {
 /***********************************************************************************************************************/
 void QTBackEnd::MakeCityList() {
 
+    // Free up memory
+    for(auto& it: m_cities){
+        it->deleteLater();
+
+    }
 
     m_cities.clear();
     m_commuters.clear();
+
     for (auto &it: m_grid->GetCities()) {
         m_cities.append(new QTCity(&it.second, this));
     }

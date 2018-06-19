@@ -8,6 +8,8 @@
 #include "popgen-Episim/model/City.h"
 #include "QTBackEnd.h"
 #include "QTCommuter.h"
+#include "QTCommunity.h"
+#include "QTHouseHold.h"
 
 using namespace std;
 
@@ -33,17 +35,13 @@ public:
     /// @brief Constructor of QCity. Note: could be used as QTCity() default so it can be a MetaObject in QML.
     /// @param m_city: The city model that corresponds to this QTCity.
     /// @param back_end: Pointer to the back_end that is a parent of QTCity.
-    /// @param parent: Qobject parent used in QML, we use it to call QObject constructor.
-    explicit QTCity(stride::City *m_city = nullptr, QTBackEnd *back_end = nullptr, QObject *parent = nullptr);
+    explicit QTCity(stride::City *m_city = nullptr, QTBackEnd *back_end =nullptr);
 
     /// @brief Copy constructor. Makes a non trivial deep copy of QTCity.
     /// @param object: QTCity to be copied.
     QTCity(const QTCity &object);
-
     QTCity& operator=(const QTCity&)=delete;
 
-    /// @brief Default destructor.
-    ~QTCity() override = default;
 ///@}
 
 /// Q Properties
@@ -54,56 +52,46 @@ public:
 */
 ///@{
     ///< The coordinate of our city center.
-    Q_PROPERTY(QGeoCoordinate crd
-                       READ
-                               GetCoordinates
-                       CONSTANT)
+    Q_PROPERTY(QGeoCoordinate crd READ GetCoordinates CONSTANT)
 
-    ///< Population amount in city.
-    Q_PROPERTY(int popCount
-                       MEMBER
-                               m_pop
-                       CONSTANT)
+    ///< population amount in city
+    Q_PROPERTY(int popCount MEMBER m_pop CONSTANT)
 
-    ///< Name of the city.
-    Q_PROPERTY(QString name
-                       READ
-                               GetName
-                       CONSTANT)
+    ///< name of the city
+    Q_PROPERTY(QString name READ GetName CONSTANT)
 
-    ///< Id of the city.
-    Q_PROPERTY(int id
-                       READ
-                               GetId
-                       CONSTANT)
+    ///< id of the city
+    Q_PROPERTY(int id READ GetId CONSTANT)
 
-    ///< Total commuters into the city.
-    Q_PROPERTY(int total_in_commuters
-                       READ
-                               GetTotalCommutersIn
-                       CONSTANT)
+    ///< total commuters into the city
+    Q_PROPERTY(int total_in_commuters READ GetTotalCommutersIn CONSTANT)
 
-    ///< Total commuters out of the city.
-    Q_PROPERTY(int total_out_commuters
-                       READ
-                               GetTotalCommutersOut
-                       CONSTANT)
+    ///< total commuters out of the city
+    Q_PROPERTY(int total_out_commuters READ GetTotalCommutersOut CONSTANT)
 
-    ///< Infected in the city.
-    Q_PROPERTY(int infected
-                       READ
-                               GetInfected
-                       NOTIFY
-                       InfectedChanged)
+    ///< infected in the city
+    Q_PROPERTY(int infected READ GetInfected NOTIFY InfectedChanged)
 
-    ///< Clicked state of the city.
-    Q_PROPERTY(bool clicked
-                       READ
-                               IsClicked
-                       WRITE
-                               SetClicked
-                       NOTIFY
-                       ClickedChanged)
+    ///< clicked state of the city
+    Q_PROPERTY(bool clicked READ IsClicked WRITE SetClicked NOTIFY ClickedChanged)
+
+    ///< List of all schools in city
+    Q_PROPERTY(QList<QObject*> schools MEMBER m_schools NOTIFY CommunitiesChanged)
+
+    ///< List of all colleges in city
+    Q_PROPERTY(QList<QObject*> colleges MEMBER m_colleges NOTIFY CommunitiesChanged)
+
+    ///< List of al workplaces in city
+    Q_PROPERTY(QList<QObject*> workplaces MEMBER m_workplaces NOTIFY CommunitiesChanged)
+
+    ///< List of al primary communities
+    Q_PROPERTY(QList<QObject*> primary_communities MEMBER m_primary NOTIFY CommunitiesChanged)
+
+    ///< List of all secondary communities
+    Q_PROPERTY(QList<QObject*> secondary_communities MEMBER m_secondary NOTIFY CommunitiesChanged)
+
+    ///< List of all Households
+    Q_PROPERTY(QList<QObject*> households MEMBER m_households NOTIFY HouseHoldsChanged())
 ///@}
 
 // City signals
@@ -119,6 +107,12 @@ signals:
 
     ///@brief Notifies QML that the clicked state changed.
     void ClickedChanged();
+
+    ///@brief Notifies QMl Communitylists changed
+    void CommunitiesChanged();
+
+    ///@brief Notifies QML Households changed
+    void HouseHoldsChanged();
 ///@}
 
 public:
@@ -190,6 +184,21 @@ public:
     void CreateCommutingList(int amount);
 ///@}
 
+//Helper functions
+/***********************************************************************************************************************/
+private:
+///@{
+    /// @brief Will make wrappers for the communities in the cities
+    void CreateCommunityLists();
+
+    /// @brief Will fill in the list of given type
+    /// @param the type as CommunityType
+    /// @return returns a list of Qobjects of the given type.
+    QList<QObject *> CreateCommunityList(CommunityType::Id id);
+
+    /// @brief creates the list of QT wrappers for this city.
+    void CreateHouseHoldList();
+///@}
 // Data members
 /***********************************************************************************************************************/
 private:
@@ -215,6 +224,24 @@ private:
 
     ///< Population of the city.
     const int m_pop;
+
+    ///< List of schools
+    QList<QObject*> m_schools{};
+
+    ///< List of colleges
+    QList<QObject*> m_colleges{};
+
+    ///< List of workplaces
+    QList<QObject*> m_workplaces{};
+
+    ///< List of primary communities
+    QList<QObject*> m_primary{};
+
+    ///< List of secondary communities
+    QList<QObject*> m_secondary{};
+
+    ///< List of households
+    QList<QObject*> m_households{};
 
 };
 

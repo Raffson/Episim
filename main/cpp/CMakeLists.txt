@@ -134,6 +134,8 @@ if(Qt5_FOUND)
 			popgen-Episim/gui/QTBackEnd.cpp
 			popgen-Episim/gui/QTCity.cpp
 			popgen-Episim/gui/QTCommuter.cpp
+			popgen-Episim/gui/QTCommunity.cpp
+			popgen-Episim/gui/QTHouseHold.cpp
             )
 endif()
 

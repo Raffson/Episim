@@ -11,14 +11,15 @@ import QtQuick.Controls 2.4
 Rectangle{
     Plugin {
         id: mapPlugin
-        name: "osm" //"mapbox"//", "esri", ...
-        /*PluginParameter{ name: "mapbox.access_token";
-            value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"*/
-        // }
+        name: "mapbox"//", "esri", ...
+        PluginParameter{ name: "mapbox.access_token";
+            value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"
+        }
 
 
     }
     id: map_rect
+    anchors.fill: parent
 
     ToolBar {
         id: toolBar
@@ -48,15 +49,15 @@ Rectangle{
             }
 
             Text{
-               verticalAlignment: Text.AlignVCenter
-               text: "Total pop: " + backend.total_pop
+                verticalAlignment: Text.AlignVCenter
+                text: "Total pop: " + backend.total_pop
 
             }
 
             Text{
-               verticalAlignment: Text.AlignVCenter
-               property real perc: backend.total_pop === 0 ? 0 : Math.round(backend.total_infected / backend.total_pop * 100)
-               text: "Total infected: " + backend.total_infected + "|" + perc + "%"
+                verticalAlignment: Text.AlignVCenter
+                property real perc: backend.total_pop === 0 ? 0 : Math.round(backend.total_infected / backend.total_pop * 100)
+                text: "Total infected: " + backend.total_infected + "|" + perc + "%"
             }
 
 
@@ -83,12 +84,19 @@ Rectangle{
                 id: button_sim
                 text: qsTr("RUN sim")
                 onClicked:{
+                    var zm = false;
                     if(backend.shouldRedraw()){
                         map.clearMapItems();
+                        zm = true
                     }
 
                     backend.runSimulator(run_sim_days.value, rn_checker.checked);
-                    map.center_and_zoom();
+
+                    if(zm){
+                        map.center_and_zoom();
+                    }
+
+
                 }
 
                 background: Rectangle {
@@ -102,88 +110,236 @@ Rectangle{
                 Label{
                     text: "All:"
                 }
-            CheckBox{
-                id: rn_checker
-                Layout.fillHeight: true
-            }
+                CheckBox{
+                    id: rn_checker
+                    Layout.fillHeight: true
+                }
             }
             RowLayout{
-            Label{
-                text: "Days:"
-            }
+                Label{
+                    text: "Days:"
+                }
 
-            SpinBox{
-                id: run_sim_days
-                Layout.fillHeight: true
-                editable: true
-                enabled: !rn_checker.checked
-            }
+                SpinBox{
+                    id: run_sim_days
+                    Layout.fillHeight: true
+                    editable: true
+                    enabled: !rn_checker.checked
+                }
             }
         }
     }
 
-     Rectangle{
-         id: sidebar
-         anchors.left: parent.left
-         anchors.top: toolBar.bottom
-         anchors .right: map.left
-         anchors.bottom: map.bottom
-         width: parent.width / 7
-
-         ScrollView{
-             focusPolicy: Qt.NoFocus
-             clip: true
-             anchors.fill: parent
-        ColumnLayout{
-            spacing: 5
+    Rectangle{
+        id: sidebar
+        anchors.left: parent.left
+        anchors.top: toolBar.bottom
+        anchors .right: map.left
+        anchors.bottom: map.bottom
+        width: parent.width / 5
+        Rectangle{
+            id: title
+            anchors.bottom: scrollie.top
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            width: parent.width
+            height: 30
+            color: Qt.rgba(0.2,0.2,0.2,0.2)
+        }
+        Text{
             anchors.fill: parent
-            RowLayout{
-                clip: true
-                Text{
-                    text: "Selected Cities"
-                    clip: true
-                    font.pointSize: 15
-                    horizontalAlignment: Text.AlignHCenter
+            text: "Selected Cities"
+            font.pointSize: 15
+            horizontalAlignment: Text.AlignHCenter
+        }
+        ScrollView{
+            id: scrollie
+            clip: true
+            anchors.top: title.bottom
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            Column{
+                spacing: 10
+                Repeater{
+                    model: backend.cities
+                    Rectangle{
+                        id: base_rec
+                        color: Qt.rgba(0.7,0.7,0.7)
+                        visible: modelData.clicked ? true: false
+                        width: sidebar.width
+                        height: modelData.clicked ? main_col.uncollapsed_height : 0
+                        Column{
+                            id: main_col
+                            anchors.fill : parent
+                            property int uncollapsed_height: 180
+                            property int collapsed_height:30
+                            property bool collapsed: false
+                            spacing: 10
+                            Item{
+                                height: parent.collapsed_height
+                                width : parent.width
+                                Row{
+                                    spacing: 5
+                                    anchors.fill: parent
+                                    Button{
+                                        width: 15
+                                        height: 15
+                                        id:drpdown_city
+                                        flat: true
+                                        onClicked:{
+                                            main_col.collapsed = !main_col.collapsed
+                                            if(main_col.collapsed){
+                                              base_rec.height -= sub_row.height
+                                              sub_row.height = 0
+                                              sub_row.visible = false
+
+                                            }
+                                            else{
+                                                sub_row.height = main_col.uncollapsed_height - main_col.collapsed_height
+                                                base_rec.height += sub_row.height
+                                                sub_row.visible = true
+                                            }
+                                        }
+                                        contentItem: Text {
+                                            anchors.fill: parent
+                                            text: main_col.collapsed ? "^" : ">"
+                                            verticalAlignment: Text.AlignVCenter
+                                            font.pointSize: 15
+                                            //horizontalAlignment: Text.AlignVCenter
+                                            //verticalAlignment:  Text.AlignVCenter
+                                            color: drpdown_city.down ? "white": "green"
+                                        }
+                                    }
+                                    Text{
+                                        text: modelData.name
+
+                                    }
+
+                                    Button{
+                                        width: 15
+                                        height: 15
+                                        id:b
+                                        flat: true
+                                        onClicked: modelData.clicked = false
+                                        contentItem: Text {
+                                            anchors.fill: parent
+                                            text: qsTr("x")
+                                            font.pointSize: 15
+                                            color: b.down ? "white": "red"
+                                            verticalAlignment: Text.AlignVCenter
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            Item{
+                                id: sub_row
+                                height: main_col.uncollapsed_height - main_col.collapsed_height
+                                width: parent.width
+                                Column{
+                                    anchors.fill: parent
+                                    //anchors.fill: parent
+                                    Text{
+                                        text: "Population: " + modelData.popCount
+                                        font.pointSize: 13
+                                    }
+                                    Text{
+                                        text: "Infected: " + modelData.infected+ "|" + Math.round(modelData.infected/modelData.popCount*100)+"%"
+                                        font.pointSize: 13
+                                    }
+                                    Row{
+                                        id: school_select
+                                        height: parent.height / parent.children.length
+                                        width: parent.width
+
+                                        Button{
+                                            property bool selected: false
+                                            width: 15
+                                            height: 15
+                                            id:drpdown_schools
+                                            flat: true
+                                            contentItem: Text {
+                                                anchors.fill: parent
+                                                text:parent.selected ? ">" : "^"
+                                                verticalAlignment: Text.AlignVCenter
+                                                font.pointSize: 15
+                                                //horizontalAlignment: Text.AlignVCenter
+                                                //verticalAlignment:  Text.AlignVCenter
+                                                color: drpdown_schools.down ? "white": "green"
+                                            }
+
+                                            onClicked: {
+                                                selected = !selected
+
+                                                if(selected){
+                                                    base_rec.height += 15 * modelData.schools.length
+                                                }
+
+                                                else{
+                                                   base_rec.height -= 15 * modelData.schools.length
+                                                }
+                                            }
+                                        }
+
+                                        Text{
+                                            id: parental_school_text
+                                            text: "School count: " + modelData.schools.length
+                                            font.pointSize: 12
+                                        }
+                                    }
+
+                                    Repeater{
+                                        model: modelData.schools
+
+                                        Text{
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                            width: parent.width
+                                            anchors.leftMargin: 25
+                                            visible: drpdown_schools.selected ? true : false
+                                            text: "ID: " + modelData.id + "    " + "Pop: " + modelData.pop
+                                            font.pointSize: 11//{parental_school_text.pointSize - 2}
+                                        }
+                                    }
+
+                                    Text{
+                                        text: "College count: " + modelData.colleges.length
+                                        font.pointSize: 10
+                                    }
+
+                                    Text{
+                                        text: "Workplace count: " + modelData.workplaces.length
+                                        font.pointSize: 10
+                                    }
+
+                                    Text{
+                                        text: "Primary community count: " + modelData.primary_communities.length
+                                        font.pointSize: 10
+                                    }
+
+                                    Text{
+                                        text: "Secondary community count: " + modelData.secondary_communities.length
+                                        font.pointSize: 10
+                                    }
+
+                                    Text{
+                                        text: "Household count: " + modelData.households.length
+                                        font.pointSize: 10
+                                    }
+                                }
+                            }
+
+                        }
+                    }
                 }
-            }
 
-            Repeater{
-                model: backend.cities
-               RowLayout{
-                   enabled:modelData.clicked ? true : false
-                   visible: modelData.clicked ? true: false
-                   Layout.maximumHeight: modelData.clicked ? 55 : 0
-                   Layout.minimumHeight: modelData.clicked ? 55 : 0
-                   ColumnLayout{
-                       Text{
-                           enabled:modelData.clicked ? true : false
-                           visible:modelData.clicked ? true : false
-                           text: modelData.name
-                       }
-
-                       Text{
-                           enabled:modelData.clicked ? true : false
-                           visible:modelData.clicked ? true : false
-                           text: "Population: " + modelData.popCount
-                           font.pointSize: 10
-                       }
-
-                       Text{
-                           enabled:modelData.clicked ? true : false
-                           visible:modelData.clicked ? true : false
-                           text: "Infected: " + modelData.infected+ "|" + Math.round(modelData.infected/modelData.popCount*100)+"%"
-                           font.pointSize: 10
-                       }
-
-                   }
-                }
-            }
-            Item{
-                Layout.fillHeight:true
             }
         }
-}
     }
+
 
     Map {
         id: map
@@ -214,20 +370,20 @@ Rectangle{
 
 
         Rectangle {
-                id: selectionRect
-                visible: false
-                x: 0
-                y: 0
-                z: backend.total_pop  +10
-                width: 0
-                height: 0
-                rotation: 0
-                color: "#5F227CEB"
-                border.width: 1
-                border.color: "#103A6E"
-                transformOrigin: Item.TopLeft
-                enabled: false
-            }
+            id: selectionRect
+            visible: false
+            x: 0
+            y: 0
+            z: backend.total_pop  +10
+            width: 0
+            height: 0
+            rotation: 0
+            color: "#5F227CEB"
+            border.width: 1
+            border.color: "#103A6E"
+            transformOrigin: Item.TopLeft
+            enabled: false
+        }
 
         MouseArea{
             id: selectionMouseArea
@@ -344,7 +500,7 @@ Rectangle{
                         }
                     }
                 }
-               backend.flipItems(items)
+                backend.flipItems(items)
             }
         }
 

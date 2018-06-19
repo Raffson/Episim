@@ -58,6 +58,7 @@ public:
     explicit QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *clicontrol,
                        QObject *parent = nullptr);
 
+    /// QTBackend should be unique to a QMLApplication. no copying.
     QTBackEnd(const QTBackEnd&)=delete;
     QTBackEnd& operator=(const QTBackEnd&)=delete;
 
@@ -77,6 +78,7 @@ public:
 
     /// @brief Runs the simulator in n steps.
     /// @param days: The amount of steps (days) to be run.
+    /// @param all: Indicates whether all days should be simulated at once.
     Q_INVOKABLE void runSimulator(int run_val, bool all);
 
     /// @brief Tells QML if it should redraw the map items.

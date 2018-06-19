@@ -39,8 +39,7 @@ public:
      * @param incommuting: Total incommuters on the line.
      * @param parent: Parent used for QML purposes.
      */
-    explicit QTCommuter(QTCity *city1 = nullptr, QTCity *city2 = nullptr, double outcommuting = 0,
-                        double incommuting = 0, QObject *parent = nullptr);
+    explicit QTCommuter(QTCity *city1 = nullptr,QTCity *city2 = nullptr,double outcommuting = 0,double incommuting = 0);
 
     QTCommuter(const QTCommuter&)=delete;
     QTCommuter& operator=(const QTCommuter&)=delete;
