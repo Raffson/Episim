@@ -169,22 +169,10 @@ add_executable(stride execs/main.cpp)
 target_link_libraries(stride ${LIBS} libstride)
 install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
 
-
 #============================================================================
 # Build the Myhayai library.
 #============================================================================
 add_subdirectory(myhayai)
-
-#============================================================================
-# Build and install the Episim executable.
-#============================================================================
-add_executable(popgen-Episim popgen-Episim/main.cpp)
-target_link_libraries(popgen-Episim ${LIBS} libstride)
-install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
-
-add_executable(seg_searcher popgen-Episim/seg_searcher.cpp)
-target_link_libraries(seg_searcher ${LIBS} libstride)
-install(TARGETS seg_searcher  DESTINATION   ${BIN_INSTALL_LOCATION})
 
 #============================================================================
 # Build and install charts showing the populations characteristics
@@ -194,19 +182,6 @@ if(Qt5_FOUND)
 	target_link_libraries(PopChart ${LIBS} libstride ${Qt5Positioning_LIBRARIES} )
 	install(TARGETS PopChart  DESTINATION   ${BIN_INSTALL_LOCATION})
 endif()
-
-#============================================================================
-# Build and install Robbe"s Testing excecutable
-#============================================================================
-if(Qt5_FOUND)
-	add_executable(SandboxRobbe popgen-Episim/SandboxRobbe.cpp)
-	target_link_libraries(SandboxRobbe ${LIBS} libstride ${Qt5Positioning_LIBRARIES} )
-	install(TARGETS SandboxRobbe  DESTINATION   ${BIN_INSTALL_LOCATION})
-endif()
-
-
-
-
 
 #============================================================================
 # Clean up.
