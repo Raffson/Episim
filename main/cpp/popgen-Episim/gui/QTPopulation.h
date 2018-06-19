@@ -52,7 +52,7 @@ private:
     std::map <unsigned int, unsigned int>m_household_counter; ///< holds the number of households with the key describing
                                                                         //the number members in the household
     std::map <std::string, unsigned int>m_workplace_counter; ///< counter for different types of workplaces
-    
+
 };
 
 
