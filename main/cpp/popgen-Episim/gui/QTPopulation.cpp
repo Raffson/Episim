@@ -26,7 +26,16 @@ QT_CHARTS_USE_NAMESPACE
 
 QTPopulation::QTPopulation(std::map <std::string, unsigned int>& popCounter,
    std::map <unsigned int, unsigned int>& householdCounter, std::map <std::string, unsigned int>& workplaceCounter)
-        : m_pop_counter(popCounter), m_household_counter(householdCounter), m_workplace_counter(workplaceCounter)
+        : m_window(nullptr), m_wdg(nullptr), m_vlay(nullptr), m_chartView(nullptr),
+        m_pop_counter(popCounter), m_household_counter(householdCounter), m_workplace_counter(workplaceCounter)
+{
+
+}
+
+QTPopulation::QTPopulation(const QTPopulation& old)
+        : m_window(old.m_window), m_wdg(old.m_wdg), m_vlay(old.m_vlay), m_chartView(old.m_chartView),
+          m_pop_counter(old.m_pop_counter), m_household_counter(old.m_household_counter),
+          m_workplace_counter(old.m_workplace_counter)
 {
 
 }

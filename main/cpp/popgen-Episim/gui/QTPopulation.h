@@ -20,9 +20,16 @@ class QTPopulation : public QObject
 {
     Q_OBJECT
 public:
+    /// Constructor.
     QTPopulation(std::map <std::string, unsigned int>& popCounter,
         std::map <unsigned int, unsigned int>& householdCounter,
                  std::map <std::string, unsigned int>& workplaceCounter);
+
+    /// Copy constructor.
+    QTPopulation(const QTPopulation&);
+
+    /// Assignment operator.
+    QTPopulation& operator=(const QTPopulation&)=delete;
 
     /// Contains the button display all the charts
     void VisualiseAll();
