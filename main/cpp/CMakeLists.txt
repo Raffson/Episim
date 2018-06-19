@@ -108,7 +108,6 @@ set(LIB_SRC
 	viewers/PersonsFileViewer.cpp
 	viewers/SummaryFileViewer.cpp
 #---
-    popgen-Episim/main.cpp
     popgen-Episim/generator/GeoGridGenerator.cpp
     popgen-Episim/generator/PopulationGenerator.cpp
     popgen-Episim/model/Coordinate.cpp
