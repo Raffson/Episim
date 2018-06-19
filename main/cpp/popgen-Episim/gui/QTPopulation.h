@@ -1,11 +1,9 @@
 //
 // Created by Nishchal Shrestha on 16/06/2018.
 //
+#pragma once
 
 #ifdef USING_QT
-
-#ifndef STRIDE_QTPOPULATION_H
-#define STRIDE_QTPOPULATION_H
 
 #include <QObject>
 #include <string>
@@ -65,8 +63,5 @@ private:
     std::map <std::string, unsigned int>m_workplace_counter; ///< Counter for different types of workplaces.
 
 };
-
-
-#endif //STRIDE_QTPOPULATION_H
 
 #endif //USING_QT

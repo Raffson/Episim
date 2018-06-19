@@ -179,7 +179,7 @@ add_subdirectory(myhayai)
 #============================================================================
 if(Qt5_FOUND)
 	add_executable(PopChart popgen-Episim/PopVisualiser.cpp)
-	target_link_libraries(PopChart ${LIBS} libstride ${Qt5Positioning_LIBRARIES} ${Qt5Charts_LIBRARIES} )
+	target_link_libraries(PopChart ${LIBS} libstride ${Qt5Positioning_LIBRARIES} )
 	install(TARGETS PopChart  DESTINATION   ${BIN_INSTALL_LOCATION})
 endif()
 
