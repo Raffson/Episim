@@ -23,12 +23,13 @@ class QTPopulation : public QObject
     unsigned int active = 0;
     Q_OBJECT
 public:
-    QTPopulation(unsigned int toddlers, unsigned int schooled, unsigned int youngsters,
-                 unsigned int middleAged, unsigned int oldies, unsigned int actives);
+    QTPopulation(unsigned int toddlers, unsigned int schooled, unsigned int colleged, unsigned int youngsters,
+                 unsigned int middleAged, unsigned int oldies, unsigned int actives, unsigned int unemployed);
     void VisualiseAll();
 
 public slots:
     void ageDistributionClicked();
+    void populationDensityClicked();
 
 private:
     QMainWindow* m_window;
@@ -36,6 +37,7 @@ private:
     QVBoxLayout *m_vlay;
     QtCharts::QChartView *m_chartView;
     std::map <std::string, unsigned int>m_counter;
+    unsigned int m_total_pop;
 
 
 };

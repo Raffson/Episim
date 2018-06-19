@@ -6,7 +6,9 @@
 #include "popgen-Episim/generator/PopulationGenerator.h"
 #include "gui/QTPopulation.h"
 
-int main()
+#include <QApplication>
+
+int main(int argc, char* argv[])
 {
 
     shared_ptr<stride::GeoGrid> grid = stride::GeoGridGenerator().Generate("run_default.xml", true);
@@ -18,7 +20,8 @@ int main()
     unsigned int toddlers = 0;
     unsigned int oldies = 0;
     unsigned int active = 0;
-
+    unsigned int unemployed = 0;
+    unsigned int colleged = 0;
 
     for (unsigned int i = 0; i < grid->GetPopulation()->size(); i++) {
         auto aPerson = grid->GetPopulation()->at(i);
@@ -33,12 +36,18 @@ int main()
                 if (aPerson.GetPoolId(stride::ContactPoolType::Id::Work) != 0) {
                     active++;
                 }
+                else if(aPerson.GetPoolId(stride::ContactPoolType::Id::School) != 0){
+                    colleged++;
+                }
                 break;
             }
             case stride::Fractions::MIDDLE_AGED : {
                 middleAged++;
                 if (aPerson.GetPoolId(stride::ContactPoolType::Id::Work) != 0) {
                     active++;
+                }
+                else{
+                    unemployed++;
                 }
                 break;
             }
@@ -53,8 +62,10 @@ int main()
         }
     }
 #ifdef USING_QT
-    QTPopulation qtPopulation(toddlers, schooled, youngsters, middleAged, oldies, active);
+    QApplication app(argc, argv);
+    QTPopulation qtPopulation(toddlers, schooled, colleged, youngsters, middleAged, oldies, active, unemployed);
     qtPopulation.VisualiseAll();
+    app.exec();
 #endif
 
 }
