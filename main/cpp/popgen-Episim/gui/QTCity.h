@@ -90,9 +90,7 @@ public:
 
     ///< List of all secondary communities
     Q_PROPERTY(QList<QObject*> secondary_communities MEMBER m_secondary NOTIFY CommunitiesChanged)
-
-    ///< List of all Households
-    Q_PROPERTY(QList<QObject*> households MEMBER m_households NOTIFY HouseHoldsChanged())
+        
 ///@}
 
 // City signals
