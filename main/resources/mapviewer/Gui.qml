@@ -5,6 +5,8 @@ import QtPositioning 5.6
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.3
+import QtCharts 2.0
+
 
 ApplicationWindow{
     id: window
@@ -51,6 +53,7 @@ ApplicationWindow{
             }
         }
     }
+
 }
 
 

@@ -163,6 +163,7 @@ ApplicationWindow {
                         color: "steelblue"
 
                     }
+
                     ToolButton {
                         text: qsTr("update population")
                         onClicked: updateSelected()
@@ -215,6 +216,11 @@ ApplicationWindow {
                     ToolButton{
                         text: qsTr("Update rectangle")
                         onClicked: updateRectangle()
+                    }
+
+                    ToolButton{
+                        text: qsTr("Hide rectangle")
+                        onClicked: hideRectangle()
                     }
                 }
             }
@@ -333,6 +339,11 @@ ApplicationWindow {
                 break
 
         }
+    }
+
+    function hideRectangle(){
+        selector_rect.height = 0
+        selector_rect.width = 0
     }
 
     // Update the total selected population and infected count.

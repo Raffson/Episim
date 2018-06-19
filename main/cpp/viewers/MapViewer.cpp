@@ -95,8 +95,8 @@ void MapViewer::LoadMap(bool showMap, bool makePng) {
     map<unsigned int, vector<stride::City>> sorted;
     for( const auto& city : cities)
         sorted[-city.second.GetPopulation()].emplace_back(city.second);
-    for (const auto& pair : sorted) {
-        for (const auto& city : pair.second) {
+    for (auto& pair : sorted) {
+        for (auto& city : pair.second) {
             std::stringstream ss;
             string s;
             string temp;
@@ -123,8 +123,15 @@ void MapViewer::LoadMap(bool showMap, bool makePng) {
             vals["population"] = city.GetEffectivePopulation();
             // Infected
             vals["infected"] = city.GetInfectedCount();
-            // Info
-            ss << city.GetEffectivePopulation() << "<i>(" << city.GetInfectedCount() << ")</i><br>";
+            /// Info
+            ss <<"Pop:"<< city.GetEffectivePopulation()<<"<br>";
+            ss<< "Infected:"<< city.GetInfectedCount() <<"<br>";
+            ss << "schools:" << city.GetSchools().size() << "<br>";
+            if(city.GetColleges().size() > 0)
+                ss << "collges:" << city.GetColleges().size() << "<br>";
+            ss << "workplaces:" << city.GetWorkplaces().size() << "<br>";
+            ss << "pc:" << city.GetPrimaryCommunities().size() << "<br>";
+            ss << "sc:" << city.GetSecondaryCommunities().size() << "<br>";
             ss >> s;
             s += "\n";
             s.append(city.GetName());

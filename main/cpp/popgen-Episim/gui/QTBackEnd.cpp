@@ -7,7 +7,7 @@
 #include "QTBackEnd.h"
 
 #include <QtQuick/QQuickView>
-
+#include <iostream>
 #include <fstream>
 #include <cstddef>
 
@@ -15,7 +15,11 @@
 #include "util/FileSys.h"
 #include "util/InstallDirs.h"
 
+#include "QTPopulation.h"
+
 #include "boost/filesystem/path.hpp"
+
+
 
 
 using namespace std;
