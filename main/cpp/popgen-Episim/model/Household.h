@@ -21,12 +21,12 @@ public:
         Household() = delete;
 
         /// Household's contructor.
-        /// @param city A pointer to the city to which this household's assigned.
-        /// @param pool A reference to the ContactPoolSys used by stride to create the contact pool
+        /// @param city: A pointer to the city to which this household's assigned.
+        /// @param pool: A reference to the ContactPoolSys used by stride to create the contact pool.
         Household(City* city, ContactPoolSys& poolSys);
 
         /// Add a member to the household.
-        /// @param: member the person to be added to the household
+        /// @param member: The person to be added to the household.
         void AddMember(const Person* member);
 
         /// A const reference to the city where this household is located.
@@ -47,7 +47,7 @@ public:
 
 private:
         const size_t m_id;   ///< A unique ID of the household.
-        City*        m_city; ///< The City in which the household is located
+        City*        m_city; ///< The City in which the household is located.
         ContactPool* m_pool; ///< A ContactPool with the people belonging to this household.
 
 };

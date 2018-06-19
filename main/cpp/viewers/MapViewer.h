@@ -10,8 +10,6 @@
 #include "sim/SimRunner.h"
 #include "sim/event/Id.h"
 
-class QQmlApplicationEngine;
-class QObject;
 
 using namespace std;
 
@@ -24,7 +22,7 @@ namespace viewers {
             MapViewer(const MapViewer&)=delete;
             MapViewer& operator=(const MapViewer&)=delete;
 
-            void LoadMap(bool showMap=true);
+            void LoadMap(bool showMap=true, bool makePng=false);
 
             /// Let viewer perform update.
             void Update(sim_event::Id id);
@@ -32,13 +30,11 @@ namespace viewers {
         private:
             void ToPng();
 
-            shared_ptr<QQmlApplicationEngine> engine;
             shared_ptr<GeoGrid> m_grid;
             string m_output_prefix;
             unsigned int m_step;
             string m_map_option;
             string m_png_option;
-            QObject* m_item;
         };
 }
 }

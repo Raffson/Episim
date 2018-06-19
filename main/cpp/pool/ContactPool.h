@@ -52,13 +52,13 @@ public:
         /// Delete assignment operator.
         ContactPool& operator=(const ContactPool&) = delete;
 
-        /// Get the ID of the pool
+        /// Get the ID of the pool.
         std::size_t GetID() const { return m_pool_id; }
 
-        /// Get the community to which this pool belongs
+        /// Get the community to which this pool belongs.
         Community* GetCommunity() const { return m_community; }
 
-        /// Get the household to which this pool belongs
+        /// Get the household to which this pool belongs.
         Household* GetHousehold() const { return m_household; }
 
         /// Add the given Person.

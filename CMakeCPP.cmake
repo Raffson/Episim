@@ -147,12 +147,13 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
 			"~/Qt/5.10.1/clang_64"
 			"~/Qt/5.10.1/gcc_64"
 )
-find_package(Qt5 COMPONENTS Core Qml Network Quick Positioning Location Widgets Gui PrintSupport)
+find_package(Qt5 COMPONENTS Core Qml Network Quick Positioning Location Widgets Gui PrintSupport Charts)
 if (Qt5_FOUND)
 	set(CMAKE_AUTOMOC ON)
 	set(CMAKE_INCLUDE_CURRENT_DIR ON)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQt5_FOUND=true")
 	find_package(Qt5Positioning REQUIRED)
+	find_package(Qt5Charts REQUIRED)
     set(QT_INCLUDES
         ${Qt5Core_INCLUDE_DIRS}
         ${Qt5Gui_INCLUDE_DIRS}
@@ -160,7 +161,8 @@ if (Qt5_FOUND)
         ${QtQml_INCLUDE_DIRS}
         ${Qt5Widgets_INCLUDE_DIRS}
         ${Qt5Positioning_INCLUDE_DIRS}
-        )
+		${Qt5Charts_INCLUDE_DIRS}
+		)
 	include_directories(SYSTEM ${QT_INCLUDES})
 	add_definitions(
         ${Qt5Core_DEFINITIONS}
@@ -169,6 +171,7 @@ if (Qt5_FOUND)
         ${QtQml_DEFINITIONS}
         ${Qt5Widgets_DEFINITIONS}
         ${Qt5Positioning_DEFINITIONS}
+			${Qt5Charts_DEFINITIONS}
     )
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
     set(QT_LIBRARIES
@@ -178,6 +181,7 @@ if (Qt5_FOUND)
         ${QtQml_LIBRARIES}
         ${Qt5Widgets_LIBRARIES}
 		${Qt5Positioning_LIBRARIES}
+			${Qt5Charts_LIBRARIES}
         )
     if( CMAKE_BUILD_TYPE MATCHES "Release" )
         add_definitions( -DQT_NO_DEBUG_OUTPUT -DQT_NO_WARNING_OUTPUT )

@@ -108,7 +108,6 @@ set(LIB_SRC
 	viewers/PersonsFileViewer.cpp
 	viewers/SummaryFileViewer.cpp
 #---
-    popgen-Episim/main.cpp
     popgen-Episim/generator/GeoGridGenerator.cpp
     popgen-Episim/generator/PopulationGenerator.cpp
     popgen-Episim/model/Coordinate.cpp
@@ -136,7 +135,21 @@ if(Qt5_FOUND)
 			popgen-Episim/gui/QTCommuter.cpp
 			popgen-Episim/gui/QTCommunity.cpp
 			popgen-Episim/gui/QTHouseHold.cpp
+			popgen-Episim/gui/QTPopulation.cpp
             )
+endif()
+
+#============================================================================
+# Link Qt stuff.
+#============================================================================
+if(Qt5_FOUND)
+	set(CMAKE_INCLUDE_CURRENT_DIR ON)
+	include_directories(${Qt5Core_INCLUDE_DIRS})
+	set(CMAKE_AUTOUIC ON)
+	set(CMAKE_AUTOMOC ON)
+	set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+	set(LIBS ${LIBS} Qt5::Core Qt5::Qml Qt5::Network Qt5::Quick Qt5::Positioning Qt5::Location Qt5::Charts)
+	add_definitions(-DUSING_QT=TRUE)
 endif()
 
 #============================================================================
@@ -148,19 +161,6 @@ target_link_libraries(libstride ${LIBS})
 target_compile_options(libstride PUBLIC "-fPIC")
 target_compile_definitions(libstride PUBLIC "-DSTRIDE_GIT_HASH=${STRIDE_WC_REVISION_HASH}")
 set_target_properties(libstride PROPERTIES PREFIX "")
-
-#============================================================================
-# Link Qt stuff.
-#============================================================================
-if(Qt5_FOUND)
-	set(CMAKE_INCLUDE_CURRENT_DIR ON)
-	include_directories(${Qt5Core_INCLUDE_DIRS})
-	set(CMAKE_AUTOUIC ON)
-	set(CMAKE_AUTOMOC ON)
-	set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-	set(LIBS ${LIBS} Qt5::Core Qt5::Qml Qt5::Network Qt5::Quick Qt5::Positioning Qt5::Location)
-	add_definitions(-DUSING_QT=TRUE)
-endif()
 
 #============================================================================
 # Build and install the stride executable.
@@ -176,23 +176,12 @@ install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
 add_subdirectory(myhayai)
 
 #============================================================================
-# Build and install the Episim executable.
-#============================================================================
-add_executable(popgen-Episim popgen-Episim/main.cpp)
-target_link_libraries(popgen-Episim ${LIBS} libstride)
-install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
-
-add_executable(seg_searcher popgen-Episim/seg_searcher.cpp)
-target_link_libraries(seg_searcher ${LIBS} libstride)
-install(TARGETS seg_searcher  DESTINATION   ${BIN_INSTALL_LOCATION})
-
-#============================================================================
-# Build and install Robbe"s Testing excecutable
+# Build and install charts showing the populations characteristics
 #============================================================================
 if(Qt5_FOUND)
-	add_executable(SandboxRobbe popgen-Episim/SandboxRobbe.cpp)
-	target_link_libraries(SandboxRobbe ${LIBS} libstride ${Qt5Positioning_LIBRARIES})
-	install(TARGETS SandboxRobbe  DESTINATION   ${BIN_INSTALL_LOCATION})
+	add_executable(PopChart popgen-Episim/PopVisualiser.cpp)
+	target_link_libraries(PopChart ${LIBS} libstride )
+	install(TARGETS PopChart  DESTINATION   ${BIN_INSTALL_LOCATION})
 endif()
 
 #============================================================================

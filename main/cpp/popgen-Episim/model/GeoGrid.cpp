@@ -104,15 +104,13 @@ void GeoGrid::DefragmentSmallestCities(double X, double Y, const vector<double>&
                 auto nw_pop =  (unsigned int) round(it->GetPopulation() /(amountToFrag[counter] + 2));
                 for (unsigned int i = 0; i < amountToFrag[counter] + 2; i++) {
 
-                        auto newId    = id_counter;
-                        id_counter++;
+                        auto newId     = id_counter++;
                         auto coords    = it->GetCoordinates();
                         double newLat  = coords.GetLatitude() + pow(-1, i) * (0.005 * i);
                         double newLong = coords.GetLongitude() + pow(-1, i) * (0.005 * i);
                         double newX    = coords.GetX() + pow(-1, i) * (0.1 * i);
                         double newY    = coords.GetY() + pow(-1, i) * (0.1 * i);
-                        auto newName = it->GetName();
-                        newName += " " + to_string(i);
+                        auto newName   = (it->GetName() + " " + to_string(i));
 
                         commuters_temp.emplace_back(City(newId, it->GetProvince(),nw_pop, Coordinate(newX, newY, newLong,
                                                                                                      newLat), newName) );
