@@ -54,6 +54,7 @@ void QTBackEnd::genPop() {
 
     // Signal block
     emit PopChanged();
+    emit SelectedPopChanged();
     emit SelectedInfectedChanged();
     emit TotalInfectedChanged();
 }
