@@ -7,7 +7,7 @@
 #include "QTBackEnd.h"
 
 #include <QtQuick/QQuickView>
-
+#include <iostream>
 #include <fstream>
 #include <cstddef>
 
@@ -15,7 +15,11 @@
 #include "util/FileSys.h"
 #include "util/InstallDirs.h"
 
+#include "QTPopulation.h"
+
 #include "boost/filesystem/path.hpp"
+
+
 
 
 using namespace std;
@@ -37,7 +41,6 @@ QTBackEnd::QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *cl
 
 
 void QTBackEnd::genPop() {
-
 
     string file(m_pt.get<string>("run.geopop_file"));
     string path = "config/" + file;
@@ -114,6 +117,7 @@ void QTBackEnd::runSimulator() {
     emit SelectedInfectedChanged();
     emit TotalInfectedChanged();
 }
+
 
 //Config setters and getters
 /***********************************************************************************************************************/

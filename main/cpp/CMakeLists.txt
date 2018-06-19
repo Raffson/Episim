@@ -134,6 +134,7 @@ if(Qt5_FOUND)
 			popgen-Episim/gui/QTBackEnd.cpp
 			popgen-Episim/gui/QTCity.cpp
 			popgen-Episim/gui/QTCommuter.cpp
+			popgen-Episim/gui/QTPopulation.cpp
             )
 endif()
 
@@ -156,7 +157,7 @@ if(Qt5_FOUND)
 	set(CMAKE_AUTOUIC ON)
 	set(CMAKE_AUTOMOC ON)
 	set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-	set(LIBS ${LIBS} Qt5::Core Qt5::Qml Qt5::Network Qt5::Quick Qt5::Positioning Qt5::Location)
+	set(LIBS ${LIBS} Qt5::Core Qt5::Qml Qt5::Network Qt5::Quick Qt5::Positioning Qt5::Location Qt5::Charts)
 	add_definitions(-DUSING_QT=TRUE)
 endif()
 
@@ -185,13 +186,26 @@ target_link_libraries(seg_searcher ${LIBS} libstride)
 install(TARGETS seg_searcher  DESTINATION   ${BIN_INSTALL_LOCATION})
 
 #============================================================================
+# Build and install charts showing the populations characteristics
+#============================================================================
+if(Qt5_FOUND)
+	add_executable(PopChart popgen-Episim/PopVisualiser.cpp)
+	target_link_libraries(PopChart ${LIBS} libstride ${Qt5Positioning_LIBRARIES} )
+	install(TARGETS PopChart  DESTINATION   ${BIN_INSTALL_LOCATION})
+endif()
+
+#============================================================================
 # Build and install Robbe"s Testing excecutable
 #============================================================================
 if(Qt5_FOUND)
 	add_executable(SandboxRobbe popgen-Episim/SandboxRobbe.cpp)
-	target_link_libraries(SandboxRobbe ${LIBS} libstride ${Qt5Positioning_LIBRARIES})
+	target_link_libraries(SandboxRobbe ${LIBS} libstride ${Qt5Positioning_LIBRARIES} )
 	install(TARGETS SandboxRobbe  DESTINATION   ${BIN_INSTALL_LOCATION})
 endif()
+
+
+
+
 
 #============================================================================
 # Clean up.

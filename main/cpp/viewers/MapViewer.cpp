@@ -95,8 +95,8 @@ void MapViewer::LoadMap(bool showMap) {
     map<unsigned int, vector<stride::City>> sorted;
     for( const auto& city : cities)
         sorted[-city.second.GetPopulation()].emplace_back(city.second);
-    for (const auto& pair : sorted) {
-        for (const auto& city : pair.second) {
+    for (auto& pair : sorted) {
+        for (auto& city : pair.second) {
             std::stringstream ss;
             string s;
             string temp;

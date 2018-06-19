@@ -9,6 +9,7 @@
 #include "popgen-Episim/util/GeoGridFileWriter.h"
 #include "popgen-Episim/util/TestSummarizer.h"
 #include "viewers/MapViewer.h"
+#include "gui/QTPopulation.h"
 
 using namespace std;
 
@@ -23,8 +24,10 @@ int main()
         //summarizer.GenerateHtml("all_tests_episim.xml", "../../testsummary.html");
 
 #ifdef USING_QT
+
         string outputPrefix = grid->GetConfigPtree().get<string>("run.output_prefix", "");
         const auto v = make_shared<stride::viewers::MapViewer>(grid, outputPrefix);
         v->LoadMap();
+
 #endif
 }

@@ -34,7 +34,6 @@ namespace gui {
 class QTCity;
 class QTCommuter;
 
-
 /*
 * Wraps the stride logic in a QML object.
 * QTBackEnd is a singleton in our guid and provides
