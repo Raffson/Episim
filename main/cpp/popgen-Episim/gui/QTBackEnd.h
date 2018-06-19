@@ -58,6 +58,7 @@ public:
     explicit QTBackEnd(QQmlApplicationEngine &engine, ptree &pt, CliController *clicontrol,
                        QObject *parent = nullptr);
 
+    /// QTBackend should be unique to a QMLApplication. no copying.
     QTBackEnd(const QTBackEnd&)=delete;
     QTBackEnd& operator=(const QTBackEnd&)=delete;
 
