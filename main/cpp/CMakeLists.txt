@@ -140,6 +140,16 @@ if(Qt5_FOUND)
 endif()
 
 #============================================================================
+# Build the Stride library.
+#============================================================================
+add_library(libstride ${LIB_SRC})
+set_source_files_properties(BeliefSeeder.cpp PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
+target_link_libraries(libstride ${LIBS})
+target_compile_options(libstride PUBLIC "-fPIC")
+target_compile_definitions(libstride PUBLIC "-DSTRIDE_GIT_HASH=${STRIDE_WC_REVISION_HASH}")
+set_target_properties(libstride PROPERTIES PREFIX "")
+
+#============================================================================
 # Link Qt stuff.
 #============================================================================
 if(Qt5_FOUND)
@@ -153,22 +163,11 @@ if(Qt5_FOUND)
 endif()
 
 #============================================================================
-# Build the Stride library.
-#============================================================================
-add_library(libstride ${LIB_SRC})
-set_source_files_properties(BeliefSeeder.cpp PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
-target_link_libraries(libstride ${LIBS})
-target_compile_options(libstride PUBLIC "-fPIC")
-target_compile_definitions(libstride PUBLIC "-DSTRIDE_GIT_HASH=${STRIDE_WC_REVISION_HASH}")
-set_target_properties(libstride PROPERTIES PREFIX "")
-
-#============================================================================
 # Build and install the stride executable.
 #============================================================================
 add_executable(stride execs/main.cpp)
 target_link_libraries(stride ${LIBS} libstride)
 install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
-
 
 #============================================================================
 # Build the Myhayai library.
@@ -180,7 +179,7 @@ add_subdirectory(myhayai)
 #============================================================================
 if(Qt5_FOUND)
 	add_executable(PopChart popgen-Episim/PopVisualiser.cpp)
-	target_link_libraries(PopChart ${LIBS} libstride )
+	target_link_libraries(PopChart ${LIBS} libstride ${Qt5Positioning_LIBRARIES} )
 	install(TARGETS PopChart  DESTINATION   ${BIN_INSTALL_LOCATION})
 endif()
 
