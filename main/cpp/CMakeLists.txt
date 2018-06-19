@@ -141,16 +141,6 @@ if(Qt5_FOUND)
 endif()
 
 #============================================================================
-# Build the Stride library.
-#============================================================================
-add_library(libstride ${LIB_SRC})
-set_source_files_properties(BeliefSeeder.cpp PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
-target_link_libraries(libstride ${LIBS})
-target_compile_options(libstride PUBLIC "-fPIC")
-target_compile_definitions(libstride PUBLIC "-DSTRIDE_GIT_HASH=${STRIDE_WC_REVISION_HASH}")
-set_target_properties(libstride PROPERTIES PREFIX "")
-
-#============================================================================
 # Link Qt stuff.
 #============================================================================
 if(Qt5_FOUND)
@@ -162,6 +152,16 @@ if(Qt5_FOUND)
 	set(LIBS ${LIBS} Qt5::Core Qt5::Qml Qt5::Network Qt5::Quick Qt5::Positioning Qt5::Location Qt5::Charts)
 	add_definitions(-DUSING_QT=TRUE)
 endif()
+
+#============================================================================
+# Build the Stride library.
+#============================================================================
+add_library(libstride ${LIB_SRC})
+set_source_files_properties(BeliefSeeder.cpp PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
+target_link_libraries(libstride ${LIBS})
+target_compile_options(libstride PUBLIC "-fPIC")
+target_compile_definitions(libstride PUBLIC "-DSTRIDE_GIT_HASH=${STRIDE_WC_REVISION_HASH}")
+set_target_properties(libstride PROPERTIES PREFIX "")
 
 #============================================================================
 # Build and install the stride executable.
@@ -177,37 +177,13 @@ install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
 add_subdirectory(myhayai)
 
 #============================================================================
-# Build and install the Episim executable.
-#============================================================================
-add_executable(popgen-Episim popgen-Episim/main.cpp)
-target_link_libraries(popgen-Episim ${LIBS} libstride)
-install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
-
-add_executable(seg_searcher popgen-Episim/seg_searcher.cpp)
-target_link_libraries(seg_searcher ${LIBS} libstride)
-install(TARGETS seg_searcher  DESTINATION   ${BIN_INSTALL_LOCATION})
-
-#============================================================================
 # Build and install charts showing the populations characteristics
 #============================================================================
 if(Qt5_FOUND)
 	add_executable(PopChart popgen-Episim/PopVisualiser.cpp)
-	target_link_libraries(PopChart ${LIBS} libstride ${Qt5Positioning_LIBRARIES} )
+	target_link_libraries(PopChart ${LIBS} libstride )
 	install(TARGETS PopChart  DESTINATION   ${BIN_INSTALL_LOCATION})
 endif()
-
-#============================================================================
-# Build and install Robbe"s Testing excecutable
-#============================================================================
-if(Qt5_FOUND)
-	add_executable(SandboxRobbe popgen-Episim/SandboxRobbe.cpp)
-	target_link_libraries(SandboxRobbe ${LIBS} libstride ${Qt5Positioning_LIBRARIES} )
-	install(TARGETS SandboxRobbe  DESTINATION   ${BIN_INSTALL_LOCATION})
-endif()
-
-
-
-
 
 #============================================================================
 # Clean up.
