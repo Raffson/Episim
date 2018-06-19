@@ -56,24 +56,24 @@ void QTPopulation::VisualiseAll()
     m_window->setWindowTitle(tr("Important characteristics of generated Population"));
     m_window->show();
 
-    QObject::connect(populationDistributionButton, SIGNAL(clicked()), this, SLOT(ageDistributionClicked()));
-    QObject::connect(householdButton, SIGNAL(clicked()), this, SLOT(householdClicked()));
-    QObject::connect(workplaceButton, SIGNAL(clicked()), this, SLOT(workplaceClicked()));
-    QObject::connect(populationDensityButton, SIGNAL(clicked()), this, SLOT(populationDensityClicked()));
+    QObject::connect(populationDistributionButton, SIGNAL(clicked()), this, SLOT(AgeDistributionClicked()));
+    QObject::connect(householdButton, SIGNAL(clicked()), this, SLOT(HouseholdClicked()));
+    QObject::connect(workplaceButton, SIGNAL(clicked()), this, SLOT(WorkplaceClicked()));
+    QObject::connect(populationDensityButton, SIGNAL(clicked()), this, SLOT(PopulationDensityClicked()));
 }
 
-void QTPopulation::householdClicked()
+void QTPopulation::HouseholdClicked()
 {
-    manage("household");
+    Manage("household");
 }
 
 
-void QTPopulation::workplaceClicked()
+void QTPopulation::WorkplaceClicked()
 {
-    manage("workplace");
+    Manage("workplace");
 }
 
-void QTPopulation::manage(std::string toManage)
+void QTPopulation::Manage(std::string toManage)
 {
     //remove the old chart
     if(m_vlay->indexOf(m_chartView) != -1){
@@ -126,7 +126,7 @@ void QTPopulation::manage(std::string toManage)
     m_window->show();
 }
 
-void QTPopulation::ageDistributionClicked()
+void QTPopulation::AgeDistributionClicked()
 {
 
     if(m_vlay->indexOf(m_chartView) != -1){
@@ -178,7 +178,7 @@ void QTPopulation::ageDistributionClicked()
     m_window->show();
 }
 
-void QTPopulation::populationDensityClicked()
+void QTPopulation::PopulationDensityClicked()
 {
     //remove the old chart if it exists
     if(m_vlay->indexOf(m_chartView) != -1){

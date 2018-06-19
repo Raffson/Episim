@@ -21,26 +21,28 @@ public:
     QTPopulation(std::map <std::string, unsigned int>& popCounter,
         std::map <unsigned int, unsigned int>& householdCounter,
                  std::map <std::string, unsigned int>& workplaceCounter);
+
+    /// Contains the button display all the charts
     void VisualiseAll();
 
 public slots:
     /// Displays bardiagrams for age distribution
-    void ageDistributionClicked();
+    void AgeDistributionClicked();
 
     /// Displays piechart for population density
-    void populationDensityClicked();
+    void PopulationDensityClicked();
 
     /// Notify if workplace distribution is clicked and handles appropriately
-    void workplaceClicked();
+    void WorkplaceClicked();
 
     /// Notify if household distribution is clicked and handles appropriately
-    void householdClicked();
+    void HouseholdClicked();
 
 private:
     /// Displays bardiagram
     /// @param toManage if workplace then displays the bardiagram of different types of workplaces
     /// otherwise of different types of households
-    void manage(std::string toManage);
+    void Manage(std::string toManage);
 
 private:
     QMainWindow* m_window; ///< The window where charts will appear

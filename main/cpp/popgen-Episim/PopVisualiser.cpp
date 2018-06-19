@@ -11,7 +11,7 @@
 #include <QApplication>
 
 
-void managePop(std::map<std::string, unsigned int>& popCounter, shared_ptr<stride::Population> population)
+void managePop(std::map<std::string, unsigned int>& popCounter, const shared_ptr<stride::Population> population)
 {
     unsigned int schooled = 0;
     unsigned int youngsters = 0;
