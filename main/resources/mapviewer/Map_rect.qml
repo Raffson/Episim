@@ -300,7 +300,7 @@ Rectangle{
                                             width: parent.width
                                             anchors.leftMargin: 25
                                             visible: drpdown_schools.selected ? true : false
-                                            text: "ID"
+                                            text: "ID: " + modelData.id + "    " + "Pop: " + modelData.pop
                                             font.pointSize: 11//{parental_school_text.pointSize - 2}
                                         }
                                     }
