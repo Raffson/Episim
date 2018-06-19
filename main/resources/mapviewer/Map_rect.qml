@@ -244,17 +244,67 @@ Rectangle{
                                     //anchors.fill: parent
                                     Text{
                                         text: "Population: " + modelData.popCount
-                                        font.pointSize: 10
+                                        font.pointSize: 13
                                     }
                                     Text{
                                         text: "Infected: " + modelData.infected+ "|" + Math.round(modelData.infected/modelData.popCount*100)+"%"
-                                        font.pointSize: 10
+                                        font.pointSize: 13
+                                    }
+                                    Row{
+                                        id: school_select
+                                        height: parent.height / parent.children.length
+                                        width: parent.width
+
+                                        Button{
+                                            property bool selected: false
+                                            width: 15
+                                            height: 15
+                                            id:drpdown_schools
+                                            flat: true
+                                            contentItem: Text {
+                                                anchors.fill: parent
+                                                text:parent.selected ? ">" : "^"
+                                                verticalAlignment: Text.AlignVCenter
+                                                font.pointSize: 15
+                                                //horizontalAlignment: Text.AlignVCenter
+                                                //verticalAlignment:  Text.AlignVCenter
+                                                color: drpdown_schools.down ? "white": "green"
+                                            }
+
+                                            onClicked: {
+                                                selected = !selected
+
+                                                if(selected){
+                                                    base_rec.height += 15 * modelData.schools.length
+                                                }
+
+                                                else{
+                                                   base_rec.height -= 15 * modelData.schools.length
+                                                }
+                                            }
+                                        }
+
+                                        Text{
+                                            id: parental_school_text
+                                            text: "School count: " + modelData.schools.length
+                                            font.pointSize: 12
+                                        }
                                     }
 
-                                    Text{
-                                        text: "School count: " + modelData.schools.length
-                                        font.pointSize: 10
+                                    Repeater{
+                                        model: modelData.schools
+
+                                        Text{
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                            width: parent.width
+                                            anchors.leftMargin: 25
+                                            visible: drpdown_schools.selected ? true : false
+                                            text: "ID"
+                                            font.pointSize: 11//{parental_school_text.pointSize - 2}
+                                        }
                                     }
+
                                     Text{
                                         text: "College count: " + modelData.colleges.length
                                         font.pointSize: 10
