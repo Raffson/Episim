@@ -90,6 +90,11 @@ void QTBackEnd::runSimulator(int run_val, bool all) {
 /***********************************************************************************************************************/
 void QTBackEnd::MakeCityList() {
 
+    // Free up memory
+    for(auto& it: m_cities){
+        it->deleteLater();
+
+    }
 
     m_cities.clear();
     m_commuters.clear();

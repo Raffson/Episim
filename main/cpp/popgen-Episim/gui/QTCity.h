@@ -8,6 +8,8 @@
 #include "popgen-Episim/model/City.h"
 #include "QTBackEnd.h"
 #include "QTCommuter.h"
+#include "QTCommunity.h"
+#include "QTHouseHold.h"
 
 using namespace std;
 
@@ -41,6 +43,8 @@ public:
     QTCity(const QTCity &object);
 
     QTCity& operator=(const QTCity&)=delete;
+
+    ~QTCity() override {cout << "i get deleted!" <<endl;};
 ///@}
 
 /// Q Properties
@@ -88,6 +92,9 @@ public:
 
     ///< List of all secondary communities
     Q_PROPERTY(QList<QObject*> secondary_communities MEMBER m_secondary NOTIFY CommunitiesChanged)
+
+    ///< List of all Households
+    Q_PROPERTY(QList<QObject*> households MEMBER m_households NOTIFY HouseHoldsChanged())
 ///@}
 
 // City signals
@@ -106,6 +113,9 @@ signals:
 
     ///@brief Notifies QMl Communitylists changed
     void CommunitiesChanged();
+
+    ///@brief Notifies QML Households changed
+    void HouseHoldsChanged();
 ///@}
 
 public:
@@ -188,6 +198,9 @@ private:
     /// @param the type as CommunityType
     /// @return returns a list of Qobjects of the given type.
     QList<QObject *> CreateCommunityList(CommunityType::Id id);
+
+    /// @brief creates the list of QT wrappers for this city.
+    void CreateHouseHoldList();
 ///@}
 // Data members
 /***********************************************************************************************************************/
@@ -209,17 +222,29 @@ private:
     ///< Pointer to te parent back End
     QTBackEnd *m_back_end;
 
-    /// integer of the id (faster lookup)
+    ///< integer of the id (faster lookup)
     const int m_id;
 
-    /// population of the city
+    ///< population of the city
     const int m_pop;
 
+    ///< List of schools
     QList<QObject*> m_schools{};
+
+    ///< List of colleges
     QList<QObject*> m_colleges{};
+
+    ///< List of workplaces
     QList<QObject*> m_workplaces{};
+
+    ///< List of primary communities
     QList<QObject*> m_primary{};
+
+    ///< List of secondary communities
     QList<QObject*> m_secondary{};
+
+    ///< List of households
+    QList<QObject*> m_households{};
 
 };
 

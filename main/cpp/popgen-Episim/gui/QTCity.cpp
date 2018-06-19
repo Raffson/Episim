@@ -3,9 +3,9 @@
 //
 
 #include "QTCity.h"
-#include "QTCommunity.h"
+
 #include <algorithm>
-#include <boost/range/adaptor/reversed.hpp>
+#include "boost/range/adaptor/reversed.hpp"
 
 namespace stride {
 namespace gui {
@@ -16,6 +16,7 @@ QTCity::QTCity(stride::City *model, QTBackEnd *back_end, QObject *parent) :
         m_pop(model->GetEffectivePopulation()){
 
     CreateCommunityLists();
+    CreateHouseHoldList();
 }
 
 
@@ -131,11 +132,21 @@ void QTCity::CreateCommunityLists() {
         QList<QObject *> lst;
         for(auto& it: m_city->GetCommunitiesOfType(id)){
 
-            QTCommunity* nw_community = new QTCommunity(it, nullptr);
+            auto nw_community = new QTCommunity(it, nullptr);
             lst.append(nw_community);
         }
         return lst;
     }
+
+void QTCity::CreateHouseHoldList() {
+
+    for(auto& it : m_city->GetHouseholds()){
+
+        auto household = new QTHouseHold(&it);
+        m_households.append(household);
+    }
+
+}
 }
 }
 
