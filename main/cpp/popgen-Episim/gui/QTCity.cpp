@@ -10,8 +10,8 @@
 namespace stride {
 namespace gui {
 
-QTCity::QTCity(stride::City *model, QTBackEnd *back_end, QObject *parent) :
-        QObject(parent), m_city(model), m_commuting_lst(),
+QTCity::QTCity(stride::City *model, QTBackEnd *back_end) :
+        QObject(back_end), m_city(model), m_commuting_lst(),
         m_back_end(back_end), m_id(model->GetId()),
         m_pop(model->GetEffectivePopulation()){
 
@@ -132,7 +132,7 @@ void QTCity::CreateCommunityLists() {
         QList<QObject *> lst;
         for(auto& it: m_city->GetCommunitiesOfType(id)){
 
-            auto nw_community = new QTCommunity(it, nullptr);
+            auto nw_community = new QTCommunity(it, this);
             lst.append(nw_community);
         }
         return lst;
@@ -142,7 +142,7 @@ void QTCity::CreateHouseHoldList() {
 
     for(auto& it : m_city->GetHouseholds()){
 
-        auto household = new QTHouseHold(&it);
+        auto household = new QTHouseHold(&it, this);
         m_households.append(household);
     }
 

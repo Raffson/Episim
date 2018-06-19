@@ -18,7 +18,7 @@ Q_OBJECT
 public:
 // Constructors, Destructor
 /***********************************************************************************************************************/
-    explicit QTCommunity(Community *model_community, QObject *parent = nullptr);
+    explicit QTCommunity(Community *model_community, QObject* parent);
     QTCommunity(const QTCommunity& object);
 
 

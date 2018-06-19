@@ -10,8 +10,8 @@ using namespace std;
 namespace stride {
 namespace gui {
 
-QTCommuter::QTCommuter(QTCity *city1, QTCity *city2, double outcommuting, double incommuting, QObject *parent) :
-        QObject(parent), m_city1(city1), m_city2(city2), m_center_city1(city1->GetCoordinates()),
+QTCommuter::QTCommuter(QTCity *city1, QTCity *city2, double outcommuting, double incommuting) :
+        QObject(city1), m_city1(city1), m_city2(city2), m_center_city1(city1->GetCoordinates()),
         m_center_city2(city2->GetCoordinates()), m_out_count(outcommuting), m_in_count(incommuting) {
 
 

@@ -34,17 +34,16 @@ public:
     ///@{
     /// @brief constructor of QCity. Note: could be used as QTCity() default so it can be a MetaObject in QML.
     /// @param m_city: the city model that corresponds to this QTCity
-    /// @param back_end: pointer to the back_end that is a parent of QTCity
-    /// @param parent: Qobject parent: is used in QML, we use it to call QObject constructor.
-    explicit QTCity(stride::City *m_city = nullptr, QTBackEnd *back_end = nullptr, QObject *parent = nullptr);
+    /// @param back_end: pointer to the back_end that is a parent of QTCity, is also the parent of City.
+    ///
+    explicit QTCity(stride::City *m_city = nullptr, QTBackEnd *back_end = nullptr);
 
     /// @brief Copy constructor. Makes a non trivial deep copy of QTCity
     /// @param object QTCity to be copied
     QTCity(const QTCity &object);
 
     QTCity& operator=(const QTCity&)=delete;
-
-    ~QTCity() override {cout << "i get deleted!" <<endl;};
+    ~QTCity() override {};
 ///@}
 
 /// Q Properties
