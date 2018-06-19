@@ -23,9 +23,9 @@ public:
  * @name Constructor, copy and assignment
  */
 ///@{
-    /// @brief Constructor
-    /// @param model_household The model household this QTHousehold wraps around
-    /// @param optional
+    /// @brief Constructor.
+    /// @param model_household: The model household this QTHousehold wraps around.
+    /// @param parent: optional argument.
     explicit QTHouseHold(Household* model_household, QObject* parent = nullptr);
 
     QTHouseHold(const QTHouseHold& object) = delete;
@@ -35,19 +35,19 @@ public:
 
 /// Properties
 /************************************************************************************************************************/
-        ///> pop Property of popularion
+        ///> pop: Property of popularion.
         Q_PROPERTY(int pop READ CountPop CONSTANT)
-        ///> Property of id
+        ///> id: Property of id.
         Q_PROPERTY(int id READ GetId CONSTANT)
 
 
 public:
 /// Getters
 /***********************************************************************************************************************/
-    /// @brief Counts the size of the model
+    /// @brief Counts the size of the model.
     int CountPop(){return (int)m_household->GetSize();}
 
-    /// @brief returns the id of household
+    /// @brief Returns the id of household.
     int GetId(){return (int) m_household->GetID();}
 private:
     Household* m_household;
