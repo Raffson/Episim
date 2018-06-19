@@ -15,29 +15,32 @@
 
 
 class QTPopulation : public QObject
-{    unsigned int schooled = 0;
-    unsigned int youngsters = 0;
-    unsigned int middleAged = 0;
-    unsigned int toddlers = 0;
-    unsigned int oldies = 0;
-    unsigned int active = 0;
+{
     Q_OBJECT
 public:
-    QTPopulation(unsigned int toddlers, unsigned int schooled, unsigned int colleged, unsigned int youngsters,
-                 unsigned int middleAged, unsigned int oldies, unsigned int actives, unsigned int unemployed);
+    QTPopulation(std::map <std::string, unsigned int>& popCounter,
+        std::map <unsigned int, unsigned int>& householdCounter,
+                 std::map <std::string, unsigned int>& workplaceCounter);
     void VisualiseAll();
 
 public slots:
     void ageDistributionClicked();
     void populationDensityClicked();
+    void workplaceClicked();
+    void householdClicked();
+
+private:
+    void manage(std::string toManage);
 
 private:
     QMainWindow* m_window;
     QWidget* m_wdg;
     QVBoxLayout *m_vlay;
     QtCharts::QChartView *m_chartView;
-    std::map <std::string, unsigned int>m_counter;
-    unsigned int m_total_pop;
+    std::map <std::string, unsigned int>m_pop_counter;
+    std::map <unsigned int, unsigned int>m_household_counter;
+    std::map <std::string, unsigned int>m_workplace_counter;
+
 
 
 };

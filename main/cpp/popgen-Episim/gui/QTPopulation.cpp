@@ -7,6 +7,7 @@
 #include <QApplication>
 #include <QPushButton>
 #include <iostream>
+#include <string>
 
 #include <QtWidgets/QMainWindow>
 #include <QtCharts/QChartView>
@@ -21,18 +22,10 @@
 
 QT_CHARTS_USE_NAMESPACE
 
-QTPopulation::QTPopulation(unsigned int toddlers, unsigned int schooled,  unsigned int colleged, unsigned int youngsters,
-                           unsigned int middleAged, unsigned int oldies, unsigned int actives, unsigned int unemployed)
+QTPopulation::QTPopulation(std::map <std::string, unsigned int>& popCounter,
+   std::map <unsigned int, unsigned int>& householdCounter, std::map <std::string, unsigned int>& workplaceCounter)
+        : m_pop_counter(popCounter), m_household_counter(householdCounter), m_workplace_counter(workplaceCounter)
 {
-    m_counter["toddlers"] = toddlers;
-    m_counter["schooled"] = schooled;
-    m_counter["colleged"] = colleged;
-    m_counter["youngsters"] = youngsters;
-    m_counter["middleAged"] = middleAged;
-    m_counter["oldies"] = oldies;
-    m_counter["actives"] = actives;
-    m_counter["unemployed"] = unemployed;
-    m_total_pop = toddlers + schooled + youngsters + middleAged + oldies;
 
 }
 
@@ -41,6 +34,8 @@ void QTPopulation::VisualiseAll()
 
     QPushButton *populationDistributionButton = new QPushButton("Age distribution");
     QPushButton *populationDensityButton = new QPushButton("Population density");
+    QPushButton *householdButton = new QPushButton("Household distribution");
+    QPushButton *workplaceButton = new QPushButton("Workplace distribution");
 
 
     m_wdg = new QWidget();
@@ -49,20 +44,86 @@ void QTPopulation::VisualiseAll()
     m_vlay = new QVBoxLayout(m_wdg);
     m_vlay->addWidget(populationDistributionButton);
     m_vlay->addWidget(populationDensityButton);
+    m_vlay->addWidget(householdButton);
+    m_vlay->addWidget(workplaceButton);
 
 
     m_wdg->setLayout(m_vlay);
 
     m_window = new QMainWindow;
     m_window->setCentralWidget(m_wdg);
-    m_window->resize(250, 400);
+    m_window->resize(250, 350);
     m_window->setWindowTitle(tr("Important characteristics of generated Population"));
     m_window->show();
 
     QObject::connect(populationDistributionButton, SIGNAL(clicked()), this, SLOT(ageDistributionClicked()));
-    //QObject::connect(householdButton, SIGNAL(clicked()), this, SLOT(householdClicked()));
-    //QObject::connect(workplaceButton, SIGNAL(clicked()), this, SLOT(workplaceClicked()));
+    QObject::connect(householdButton, SIGNAL(clicked()), this, SLOT(householdClicked()));
+    QObject::connect(workplaceButton, SIGNAL(clicked()), this, SLOT(workplaceClicked()));
     QObject::connect(populationDensityButton, SIGNAL(clicked()), this, SLOT(populationDensityClicked()));
+}
+
+void QTPopulation::householdClicked()
+{
+    manage("household");
+}
+
+
+void QTPopulation::workplaceClicked()
+{
+    manage("workplace");
+}
+
+void QTPopulation::manage(std::string toManage)
+{
+    //remove the old chart
+    if(m_vlay->indexOf(m_chartView) != -1){
+        m_vlay->removeWidget(m_chartView);
+        delete m_chartView;
+    }
+    QStringList categories;
+    QBarSeries *series = new QBarSeries();
+
+    if(toManage == "household"){
+        categories << "Number of members";
+        for(auto& hh:m_household_counter){
+            std::string keyvalue = std::to_string(hh.first);
+            QString name = QString::fromStdString(keyvalue);
+            QBarSet *setX = new QBarSet(name);
+            *setX << hh.second;
+            series->append(setX);
+        }
+    }
+
+    else if(toManage == "workplace"){
+        categories << "Type of workplace";
+        for(auto& wp: m_workplace_counter){
+            QString name = QString::fromStdString(wp.first);
+            QBarSet *setX = new QBarSet(name);
+            *setX << wp.second;
+            series->append(setX);
+        }
+    }
+
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Effective size of " + QString::fromStdString(toManage));
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+
+    QBarCategoryAxis *axis = new QBarCategoryAxis();
+    axis->append(categories);
+    chart->createDefaultAxes();
+    chart->setAxisX(axis, series);
+
+    chart->legend()->setVisible(true);
+    chart->legend()->setAlignment(Qt::AlignBottom);
+
+    m_chartView = new QChartView(chart);
+    m_chartView->setRenderHint(QPainter::Antialiasing);
+    m_vlay->addWidget(m_chartView);
+
+    m_window->resize(800, 900);
+    m_window->show();
 }
 
 void QTPopulation::ageDistributionClicked()
@@ -80,11 +141,11 @@ void QTPopulation::ageDistributionClicked()
     QBarSet* set4 = new QBarSet("Old aged(65+)");
 
 
-    *set0 << m_counter["toddlers"];
-    *set1 << m_counter["schooled"];
-    *set2 << m_counter["youngsters"];
-    *set3 << m_counter["middleAged"];
-    *set4 << m_counter["oldies"];
+    *set0 << m_pop_counter["toddlers"];
+    *set1 << m_pop_counter["schooled"];
+    *set2 << m_pop_counter["youngsters"];
+    *set3 << m_pop_counter["middleAged"];
+    *set4 << m_pop_counter["oldies"];
 
     QBarSeries *series = new QBarSeries();
     series->append(set0);
@@ -125,10 +186,12 @@ void QTPopulation::populationDensityClicked()
         delete m_chartView;
     }
 
-    double actives = (double) m_counter["actives"] / m_total_pop;
-    double non_actives = (double) (m_counter["toddlers"] + m_counter["oldies"])/ m_total_pop;
-    double students = (double) (m_counter["schooled"] + m_counter["colleged"]) / m_total_pop;
-    double unemployed = (double) m_counter["unemployed"] / m_total_pop;
+    double total = (double )m_pop_counter["actives"] + m_pop_counter["toddlers"] + m_pop_counter["oldies"] +
+            m_pop_counter["schooled"] + m_pop_counter["colleged"] + m_pop_counter["unemployed"];
+    double actives = (double) m_pop_counter["actives"] /  total;
+    double non_actives = (double) (m_pop_counter["toddlers"] + m_pop_counter["oldies"])/ total;
+    double students = (double) (m_pop_counter["schooled"] + m_pop_counter["colleged"]) / total;
+    double unemployed = (double) m_pop_counter["unemployed"] / total;
 
     QPieSeries *series = new QPieSeries();
     series->append("active(" + QString::number(actives*100.0) + " %)", 1);

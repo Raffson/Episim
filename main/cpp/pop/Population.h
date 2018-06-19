@@ -28,6 +28,7 @@
 #include <memory>
 #include <mutex>
 #include <spdlog/spdlog.h>
+#include <map>
 
 namespace stride {
 
