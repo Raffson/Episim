@@ -169,7 +169,7 @@ Rectangle{
                         color: Qt.rgba(0.7,0.7,0.7)
                         visible: modelData.clicked ? true: false
                         width: sidebar.width
-                        height: modelData.clicked ? 230 : 0
+                        height: modelData.clicked ? main_col.uncollapsed_height : 0
                         Column{
                             id: main_col
                             anchors.fill : parent
@@ -197,7 +197,7 @@ Rectangle{
 
                                             }
                                             else{
-                                                sub_row.height = 200
+                                                sub_row.height = main_col.uncollapsed_height - main_col.collapsed_height
                                                 base_rec.height += sub_row.height
                                                 sub_row.visible = true
                                             }
@@ -237,7 +237,7 @@ Rectangle{
 
                             Item{
                                 id: sub_row
-                                height: 200
+                                height: main_col.uncollapsed_height - main_col.collapsed_height
                                 width: parent.width
                                 Column{
                                     anchors.fill: parent
