@@ -32,7 +32,7 @@ ApplicationWindow{
         TabView{
             width: window.width
             height: window.height
-            currentIndex: 1
+            currentIndex: 0
             Tab{
                 id: map_tab
                 title: "Map"
@@ -43,7 +43,6 @@ ApplicationWindow{
 
             Config_pop {
                 id: config_pop
-                active: false
                 title: "config pop"
             }
 

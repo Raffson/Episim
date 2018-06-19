@@ -36,14 +36,13 @@ public:
     /// @param m_city: the city model that corresponds to this QTCity
     /// @param back_end: pointer to the back_end that is a parent of QTCity, is also the parent of City.
     ///
-    explicit QTCity(stride::City *m_city = nullptr, QTBackEnd *back_end = nullptr);
+    explicit QTCity(stride::City *m_city = nullptr, QTBackEnd *back_end =nullptr);
 
     /// @brief Copy constructor. Makes a non trivial deep copy of QTCity
     /// @param object QTCity to be copied
     QTCity(const QTCity &object);
-
     QTCity& operator=(const QTCity&)=delete;
-    ~QTCity() override {};
+
 ///@}
 
 /// Q Properties

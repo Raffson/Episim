@@ -14,7 +14,7 @@ Rectangle{
         name: "mapbox"//", "esri", ...
         PluginParameter{ name: "mapbox.access_token";
             value: "pk.eyJ1Ijoicm9iYmVoZWlybWFuIiwiYSI6ImNqaTBhYWY2bjEyZG8zcHBncmN5amc4ajUifQ.IiFHtjyHqO0Mrl5Xz_5aug"
-         }
+        }
 
 
     }
@@ -48,15 +48,15 @@ Rectangle{
             }
 
             Text{
-               verticalAlignment: Text.AlignVCenter
-               text: "Total pop: " + backend.total_pop
+                verticalAlignment: Text.AlignVCenter
+                text: "Total pop: " + backend.total_pop
 
             }
 
             Text{
-               verticalAlignment: Text.AlignVCenter
-               property real perc: backend.total_pop === 0 ? 0 : Math.round(backend.total_infected / backend.total_pop * 100)
-               text: "Total infected: " + backend.total_infected + "|" + perc + "%"
+                verticalAlignment: Text.AlignVCenter
+                property real perc: backend.total_pop === 0 ? 0 : Math.round(backend.total_infected / backend.total_pop * 100)
+                text: "Total infected: " + backend.total_infected + "|" + perc + "%"
             }
 
 
@@ -109,143 +109,125 @@ Rectangle{
                 Label{
                     text: "All:"
                 }
-            CheckBox{
-                id: rn_checker
-                Layout.fillHeight: true
-            }
+                CheckBox{
+                    id: rn_checker
+                    Layout.fillHeight: true
+                }
             }
             RowLayout{
-            Label{
-                text: "Days:"
-            }
+                Label{
+                    text: "Days:"
+                }
 
-            SpinBox{
-                id: run_sim_days
-                Layout.fillHeight: true
-                editable: true
-                enabled: !rn_checker.checked
-            }
+                SpinBox{
+                    id: run_sim_days
+                    Layout.fillHeight: true
+                    editable: true
+                    enabled: !rn_checker.checked
+                }
             }
         }
     }
 
-     Rectangle{
-         id: sidebar
-         anchors.left: parent.left
-         anchors.top: toolBar.bottom
-         anchors .right: map.left
-         anchors.bottom: map.bottom
-         width: parent.width / 7
-         Rectangle{
-             id: title
-             anchors.bottom: scrollie.top
-             anchors.top: parent.top
-             anchors.left: parent.left
-             anchors.right: parent.right
-             width: parent.width
-             height: 40
-             color: "#969697"
-             }
-             Text{
-                 anchors.fill: parent
-                 text: "Selected Cities"
-                 font.pointSize: 15
-                 horizontalAlignment: Text.AlignHCenter
-             }
-         ScrollView{
-             id: scrollie
-             focusPolicy: Qt.NoFocus
-             clip: true
-             anchors.top: title.bottom
-             anchors.right: parent.right
-             anchors.left: parent.left
-             anchors.bottom: parent.bottom
-        ColumnLayout{
-
-            spacing: 10
-            RowLayout{
-                clip: true
-            }
-            Repeater{
-                model: backend.cities
-                RowLayout{
-                    Layout.alignment: Qt.AlignTop
-                    enabled:modelData.clicked ? true : false
-                    visible: modelData.clicked ? true: false
-                    Layout.maximumHeight: modelData.clicked ? 175 : 0
-                    Layout.minimumHeight: modelData.clicked ? 175 : 0
+    Rectangle{
+        id: sidebar
+        anchors.left: parent.left
+        anchors.top: toolBar.bottom
+        anchors .right: map.left
+        anchors.bottom: map.bottom
+        width: parent.width / 7
+        Rectangle{
+            id: title
+            anchors.bottom: scrollie.top
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            width: parent.width
+            height: 30
+            color: Qt.rgba(0.2,0.2,0.2,0.2)
+        }
+        Text{
+            anchors.fill: parent
+            text: "Selected Cities"
+            font.pointSize: 15
+            horizontalAlignment: Text.AlignHCenter
+        }
+        ScrollView{
+            id: scrollie
+            focusPolicy: Qt.NoFocus
+            clip: true
+            anchors.top: title.bottom
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            ColumnLayout{
+                spacing: 10
+                Repeater{
+                    model: backend.cities
                     Rectangle{
                         color: "blue"
+                        Layout.alignment: Qt.AlignTop
+                        visible: modelData.clicked ? true: false
+                        Layout.maximumHeight: modelData.clicked ? 175 : 0
+                        Layout.minimumHeight: modelData.clicked ? 175 : 0
+                        Layout.fillWidth: true
+                        onVisibleChanged: color = "blue"
                         ColumnLayout{
-                            RowLayout{
+                            anchors.fill: parent
                             Text{
-                                enabled:modelData.clicked ? true : false
-                                visible:modelData.clicked ? true : false
                                 text: modelData.name
-                            }
                             }
 
                             Text{
-                                enabled:modelData.clicked ? true : false
-                                visible:modelData.clicked ? true : false
                                 text: "Population: " + modelData.popCount
                                 font.pointSize: 10
                             }
-                            RowLayout{
                             Text{
-                                enabled:modelData.clicked ? true : false
-                                visible:modelData.clicked ? true : false
                                 text: "Infected: " + modelData.infected+ "|" + Math.round(modelData.infected/modelData.popCount*100)+"%"
                                 font.pointSize: 10
                             }
-                            }
 
-                            RowLayout{
                             Text{
-                                enabled:modelData.clicked ? true : false
-                                visible:modelData.clicked ? true : false
                                 text: "School count: " + modelData.schools.length
                                 font.pointSize: 10
                             }
-                            }
                             Text{
-                                enabled:modelData.clicked ? true : false
-                                visible:modelData.clicked ? true : false
                                 text: "College count: " + modelData.colleges.length
                                 font.pointSize: 10
                             }
 
                             Text{
-                                enabled:modelData.clicked ? true : false
-                                visible:modelData.clicked ? true : false
                                 text: "Workplace count: " + modelData.workplaces.length
                                 font.pointSize: 10
                             }
 
                             Text{
-                                enabled:modelData.clicked ? true : false
-                                visible:modelData.clicked ? true : false
                                 text: "Primary community count: " + modelData.primary_communities.length
                                 font.pointSize: 10
                             }
 
                             Text{
-                                enabled:modelData.clicked ? true : false
-                                visible:modelData.clicked ? true : false
                                 text: "Secondary community count: " + modelData.secondary_communities.length
                                 font.pointSize: 10
                             }
 
+                            Text{
+                                text: "Household count: " + modelData.households.length
+                                font.pointSize: 10
+                            }
                         }
                     }
+
                 }
+
+
             }
             Item{
                 Layout.fillHeight:true
             }
         }
-         }
-     }
+    }
+
 
     Map {
         id: map

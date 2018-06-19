@@ -21,7 +21,6 @@ public:
     explicit QTCommunity(Community *model_community, QObject* parent);
     QTCommunity(const QTCommunity& object);
 
-
 /***********************************************************************************************************************/
     QTCommunity& operator = (const QTCommunity& object);
 
