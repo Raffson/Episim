@@ -18,12 +18,12 @@ Q_OBJECT
 public:
 // Constructors, Destructor
 /***********************************************************************************************************************/
-    /// @brief constructor, note that the parent is not optional and is a QTCity.
-    /// @param the community model
-    /// @param the parent in this case a city
+    /// @brief Constructor, note that the parent is not optional and is a QTCity.
+    /// @param model_community: The community model.
+    /// @param parent: The parent, in this case a city.
     explicit QTCommunity(Community *model_community, QObject* parent);
 
-    /// @brief copy constructor, shallow copy.
+    /// @brief Copy constructor, shallow copy.
     QTCommunity(const QTCommunity& object);
 
 // Properties
@@ -39,7 +39,7 @@ signals:
 public:
 // Operators
 /***********************************************************************************************************************/
-    ///@brief assignment shallow assignment
+    ///@brief Assignment shallow assignment.
     QTCommunity& operator = (const QTCommunity& object);
 
 
