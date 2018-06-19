@@ -145,7 +145,7 @@ endif()
 #============================================================================
 add_library(libstride ${LIB_SRC})
 set_source_files_properties(BeliefSeeder.cpp PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
-target_link_libraries(libstride ${LIBS})
+target_link_libraries(libstride ${LIBS} ${Qt5Charts_LIBRARIES})
 target_compile_options(libstride PUBLIC "-fPIC")
 target_compile_definitions(libstride PUBLIC "-DSTRIDE_GIT_HASH=${STRIDE_WC_REVISION_HASH}")
 set_target_properties(libstride PROPERTIES PREFIX "")
