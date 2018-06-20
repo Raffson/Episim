@@ -135,7 +135,7 @@ if(Qt5_FOUND)
 			popgen-Episim/gui/QTCommuter.cpp
 			popgen-Episim/gui/QTCommunity.cpp
 			popgen-Episim/gui/QTHouseHold.cpp
-			popgen-Episim/gui/QTPopulation.cpp
+
             )
 endif()
 
@@ -178,7 +178,7 @@ add_subdirectory(myhayai)
 # Build and install charts showing the populations characteristics
 #============================================================================
 if(Qt5_FOUND)
-	add_executable(PopChart popgen-Episim/PopVisualiser.cpp)
+	add_executable(PopChart popgen-Episim/PopVisualiser.cpp popgen-Episim/gui/QTPopulation.cpp)
 	target_link_libraries(PopChart ${LIBS} libstride ${Qt5Positioning_LIBRARIES} )
 	install(TARGETS PopChart  DESTINATION   ${BIN_INSTALL_LOCATION})
 endif()
