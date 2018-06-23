@@ -169,6 +169,13 @@ add_executable(stride execs/main.cpp)
 target_link_libraries(stride ${LIBS} libstride)
 install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
 
+find_package(PAPI REQUIRED)
+include_directories(${PAPI_INCLUDE_DIRS})
+add_executable(papi Papi.cpp)
+target_link_libraries(papi ${PAPI_LIBRARIES})
+install(TARGETS papi  DESTINATION ${BIN_INSTALL_LOCATION})
+
+
 #============================================================================
 # Build the Myhayai library.
 #============================================================================
