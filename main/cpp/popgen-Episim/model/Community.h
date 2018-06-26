@@ -29,49 +29,55 @@ class City;
 class Community
 {
 public:
-        /// No default constructor
+        /// No default constructor.
         Community() = delete;
 
-        /// Constructor
-        /// @param id The ID to be used for this community
-        /// @param type The type of the community to be constructed
-        /// @param city A pointer to the city in which this community is located
+        /// Constructor.
+        /// @param id: The ID to be used for this community.
+        /// @param type: The type of the community to be constructed.
+        /// @param city: A pointer to the city in which this community is located.
         Community(const size_t& id, CommunityType::Id type, City* city);
 
-        /// Return the community's ID
-        const unsigned int GetID() const { return m_id; }
+        /// Copy constructor.
+        Community(const Community&);
 
-        /// Return the community's type
+        /// Delete assignment operator.
+        Community& operator=(const Community&) = delete;
+
+        /// Return the community's ID.
+        size_t GetID() const { return m_id; }
+
+        /// Return the community's type.
         const CommunityType::Id& GetCommunityType() const { return m_type; }
 
-        /// Return a const reference of the city,
-        const City* GetCity() const { return m_city; }
+        /// Return a reference of the city.
+        City* GetCity() const { return m_city; }
 
-        /// Return a reference of the city,
+        /// Return a reference of the city.
         City* GetCity() { return m_city; }
 
-        /// Adds a new contact pool to the community
-        /// @param: poolSys A reference to the ContactPoolSys needed for stride, passed from GeoGrid.
-        /// @retval: <ContactPool> The recently added contactpool
+        /// Adds a new contact pool to the community.
+        /// @param poolSys: A reference to the ContactPoolSys needed for stride, passed from GeoGrid.
+        /// @retval The recently added contactpool
         ContactPool& AddContactPool(ContactPoolSys& poolSys);
 
-        /// Get all the contactpools
+        /// Get all the contactpools.
         const std::vector<ContactPool*>& GetContactPools() const { return m_contact_pools; }
 
-        /// Get all the contactpools
+        /// Get all the contactpools.
         std::vector<ContactPool*>& GetContactPools() { return m_contact_pools; }
 
-        /// Get the total number members of all contactpools for this community
+        /// Get the total number members of all contactpools for this community.
         unsigned int GetSize() const;
 
 private:
-        const size_t m_id; ///< A unique ID for the community
+        const size_t m_id; ///< A unique ID for the community.
 
-        CommunityType::Id m_type; ///< The type of community
+        CommunityType::Id m_type; ///< The type of community.
 
-        City* m_city; ///< Pointer to City of this community
+        City* m_city; ///< Pointer to City of this community.
 
-        std::vector<ContactPool*> m_contact_pools; ///< Contains contactpools
+        std::vector<ContactPool*> m_contact_pools; ///< Contains contactpools.
 };
 
 } // namespace stride

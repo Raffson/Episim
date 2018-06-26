@@ -40,3 +40,13 @@
         <size>20</size>
     </workplace>
 </contactpool_info>
+
+<defrag_cities>
+    <is_defrag>false</is_defrag>
+    <X>0.5</X> <!--// split X Fract cities that have less then -->
+    <Y>0.05</Y> <!--// Y Fract of the population -->
+    <p_vec>     // <!-- P_vec chance of splitting into -->
+        <value>0.3</value> <!-- 1 city -->
+        <value>0.7</value> <!-- 2 cities... -->
+    </p_vec>
+</defrag_cities>

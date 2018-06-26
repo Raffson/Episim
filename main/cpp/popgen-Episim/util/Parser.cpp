@@ -79,7 +79,7 @@ void ParseCommuting(const boost::filesystem::path& filename, map<unsigned int, C
 
                 // so when looping over a row's columns, we're looking the origins...
                 for (unsigned int i = 0; i < readIn.GetColumnCount(); i++) {
-                        double commuters = it.GetValue<double>(i);
+                        auto commuters = it.GetValue<double>(i);
 
                         auto originId = (unsigned int)stoi(cityIds.at(i));
 
@@ -112,25 +112,6 @@ map<unsigned int, vector<vector<double>>> ParseHouseholds(const boost::filesyste
                 result[ages.size()].emplace_back(ages);
         }
         return result;
-}
-
-//What is this function???
-vector<City> DefragmentCity(const City& city, vector<double> distr, util::RNManager& rndm)
-{
-
-        trng::discrete_dist distribution(distr.begin(), distr.end());
-
-        auto fragmentAmount = (unsigned int)rndm.GetGenerator(distribution)();
-
-        for (unsigned int i = 0; i < fragmentAmount; i++) {
-
-                /* Putting stuff in comments to eliminate warnings...
-                unsigned int id = city.GetId() * 10 + i; // TODO: a better way to distribute id's
-                unsigned int province=  city.GetProvince(); //Stays the same
-                unsigned int population = city.GetPopulation() / fragment_amount;
-                *///TODO UNFINISHED
-        }
-        return vector<City>();
 }
 
 } // namespace parser

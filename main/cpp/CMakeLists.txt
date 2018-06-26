@@ -70,21 +70,26 @@ set(LIB_SRC
     pop/SurveySeeder.cpp
 #---
     sim/CliController.cpp
+    sim/ControlHelper.cpp
 	sim/SimRunner.cpp
     sim/Sim.cpp
     sim/SimBuilder.cpp
+	sim/StanController.cpp
     sim/event/Id.cpp
 	sim/event/Subject.cpp
 #---
     util/Any.h
+	util/BoxPlotData.h
     util/ConfigInfo.cpp
     util/CSV.cpp
 	util/CSVRow.cpp
     util/FileSys.cpp
+	util/is_iterator.h
 	util/LogUtils.cpp
-	util/RangeIndexer.h
+	util/PtreeUtils.h
     util/RNEngineType.cpp
     util/RNManager.cpp
+	util/RnPcg.cpp
     util/RunConfigManager.cpp
 	util/Safeline.cpp
     util/SegmentedVector.h
@@ -96,13 +101,13 @@ set(LIB_SRC
     util/TimeStamp.h
     util/TimeToString.h
 #---
-	viewers/AdoptedViewer.cpp
-	viewers/InfectedViewer.cpp
+    viewers/AdoptedFileViewer.cpp
+    viewers/InfectedFileViewer.cpp
+    viewers/InfectedViewer.cpp
     viewers/CliViewer.cpp
-    viewers/PersonsViewer.cpp
-	viewers/SummaryViewer.cpp
+	viewers/PersonsFileViewer.cpp
+	viewers/SummaryFileViewer.cpp
 #---
-    popgen-Episim/main.cpp
     popgen-Episim/generator/GeoGridGenerator.cpp
     popgen-Episim/generator/PopulationGenerator.cpp
     popgen-Episim/model/Coordinate.cpp
@@ -121,11 +126,17 @@ set(LIB_SRC
 # Add specific sources if Qt was found.
 #============================================================================
 if(Qt5_FOUND)
+	set(CMAKE_INCLUDE_CURRENT_DIR ON)
+	set(CMAKE_AUTOMOC  ON)
 	set(LIB_SRC ${LIB_SRC}
 		viewers/MapViewer.cpp
-		RobbeGui/QTBackEnd.cpp
-		RobbeGui/QTCity.cpp
-		)
+			popgen-Episim/gui/QTBackEnd.cpp
+			popgen-Episim/gui/QTCity.cpp
+			popgen-Episim/gui/QTCommuter.cpp
+			popgen-Episim/gui/QTCommunity.cpp
+			popgen-Episim/gui/QTHouseHold.cpp
+
+            )
 endif()
 
 #============================================================================
@@ -147,35 +158,29 @@ if(Qt5_FOUND)
 	set(CMAKE_AUTOUIC ON)
 	set(CMAKE_AUTOMOC ON)
 	set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-	set(LIBS ${LIBS} Qt5::Core Qt5::Qml Qt5::Network Qt5::Quick Qt5::Positioning Qt5::Location)
+	set(LIBS ${LIBS} Qt5::Core Qt5::Qml Qt5::Network Qt5::Quick Qt5::Positioning Qt5::Location Qt5::Charts)
 	add_definitions(-DUSING_QT=TRUE)
 endif()
 
 #============================================================================
 # Build and install the stride executable.
 #============================================================================
-add_executable(stride sim/main.cpp)
+add_executable(stride execs/main.cpp)
 target_link_libraries(stride ${LIBS} libstride)
 install(TARGETS stride  DESTINATION   ${BIN_INSTALL_LOCATION})
 
 #============================================================================
-# Build and install the Episim executable.
+# Build the Myhayai library.
 #============================================================================
-add_executable(popgen-Episim popgen-Episim/main.cpp)
-target_link_libraries(popgen-Episim ${LIBS} libstride)
-install(TARGETS popgen-Episim  DESTINATION   ${BIN_INSTALL_LOCATION})
-
-add_executable(seg_searcher popgen-Episim/seg_searcher.cpp)
-target_link_libraries(seg_searcher ${LIBS} libstride)
-install(TARGETS seg_searcher  DESTINATION   ${BIN_INSTALL_LOCATION})
+add_subdirectory(myhayai)
 
 #============================================================================
-# Build and install Robbe"s Testing excecutable
+# Build and install charts showing the populations characteristics
 #============================================================================
 if(Qt5_FOUND)
-	add_executable(SandboxRobbe popgen-Episim/SandboxRobbe.cpp)
-	target_link_libraries(SandboxRobbe ${LIBS} libstride ${Qt5Positioning_LIBRARIES})
-	install(TARGETS SandboxRobbe  DESTINATION   ${BIN_INSTALL_LOCATION})
+	add_executable(PopChart popgen-Episim/PopVisualiser.cpp popgen-Episim/gui/QTPopulation.cpp)
+	target_link_libraries(PopChart ${LIBS} libstride ${Qt5Positioning_LIBRARIES} )
+	install(TARGETS PopChart  DESTINATION   ${BIN_INSTALL_LOCATION})
 endif()
 
 #============================================================================

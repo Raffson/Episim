@@ -23,7 +23,12 @@ using namespace std;
 namespace stride {
 
 Community::Community(const size_t& id, CommunityType::Id type, City* city)
-    : m_id(id), m_type(type), m_city(city)
+    : m_id(id), m_type(type), m_city(city), m_contact_pools()
+{
+}
+
+Community::Community(const Community& old)
+    : m_id(old.m_id), m_type(old.m_type), m_city(old.m_city), m_contact_pools(old.m_contact_pools)
 {
 }
 
@@ -48,4 +53,5 @@ unsigned int Community::GetSize() const
 
         return result;
 }
+
 } // namespace stride

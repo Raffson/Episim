@@ -57,22 +57,22 @@ TEST_P(WorkplaceTest, HappyDayScenario)
         // Check results against expected results.
         // -----------------------------------------------------------------------------------------
 
-        double possible_workers =  grid->GetFraction(Fractions::YOUNG) * (1 - grid->GetFraction(Fractions::STUDENTS))
+        double possibleWorkers =  grid->GetFraction(Fractions::YOUNG) * (1 - grid->GetFraction(Fractions::STUDENTS))
                                + grid->GetFraction(Fractions::MIDDLE_AGED);
-        double active_pop = possible_workers * grid->GetFraction(Fractions::ACTIVE);
-        double allworkers           = active_pop * grid->GetTotalPopOfModel();
-        double number_of_workplaces = ceil(allworkers / grid->GetAvgSize(Sizes::WORKPLACES));
+        double activePop = possibleWorkers * grid->GetFraction(Fractions::ACTIVE);
+        double allworkers           = activePop * grid->GetTotalPopOfModel();
+        double numberOfWorkplaces = ceil(allworkers / grid->GetAvgSize(Sizes::WORKPLACES));
 
         double margin = 0.01;
 
         for(auto& it: grid->GetCities()){
-            City* a_city = &it.second;
-            double in_commuters_modifier = (a_city->HasCollege()) ? possible_workers : 1.0;
-            double workers = a_city->GetPopulation() * active_pop +
-                             a_city->GetTotalInCommutersCount() * in_commuters_modifier -
-                             a_city->GetTotalOutCommutersCount() * possible_workers;
+            City* aCity = &it.second;
+            double inCommutersModifier = (aCity->HasCollege()) ? possibleWorkers : 1.0;
+            double workers = aCity->GetPopulation() * activePop +
+                             aCity->GetTotalInCommutersCount() * inCommutersModifier -
+                             aCity->GetTotalOutCommutersCount() * possibleWorkers;
             double target = workers / allworkers;
-            double actual = a_city->GetWorkplaces().size() / number_of_workplaces;
+            double actual = aCity->GetWorkplaces().size() / numberOfWorkplaces;
             EXPECT_NEAR(actual, target, margin);
             //ceil helps when there is a city with no workplace (eg-HERSTAPPE)
         }

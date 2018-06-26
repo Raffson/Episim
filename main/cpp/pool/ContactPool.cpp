@@ -47,6 +47,12 @@ ContactPool::ContactPool(std::size_t pool_id, ContactPoolType::Id type, Househol
 {
 }
 
+ContactPool::ContactPool(const ContactPool &old)
+        : m_pool_id(old.m_pool_id), m_pool_type(old.m_pool_type), m_index_immune(old.m_index_immune),
+          m_members(old.m_members), m_community(old.m_community), m_household(old.m_household)
+{
+}
+
 void ContactPool::AddMember(const Person* p)
 {
 #pragma omp critical(c_enter)

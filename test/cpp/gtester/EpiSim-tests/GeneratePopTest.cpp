@@ -12,6 +12,7 @@
 #include <gtest/gtest.h>
 #include <omp.h>
 #include <spdlog/spdlog.h>
+#include <boost/range/adaptors.hpp>
 
 #include "popgen-Episim/generator/GeoGridGenerator.h"
 #include "popgen-Episim/generator/PopulationGenerator.h"
@@ -24,6 +25,8 @@ namespace Tests {
 
     class GenPopTest : public ::testing::TestWithParam<unsigned int> {
     public:
+        GenPopTest() : grid() {}
+
         /// TestCase set up.
         static void SetUpTestCase() {}
 
@@ -49,15 +52,15 @@ namespace Tests {
 
     TEST_P(GenPopTest, CityPopulationTest) {
         double margin = 0.01;
-        unsigned int pop_counter = 0;
+        unsigned int popCounter = 0;
         for (auto &it: grid->GetCities()) {
-            City *a_city = &it.second;
-            double target = ((double) a_city->GetPopulation() / (double) grid->GetTotalPopOfModel());
-            double actual = ((double) a_city->GetEffectivePopulation() / (double) grid->GetTotalPop());
-            pop_counter += a_city->GetEffectivePopulation();
+            City *aCity = &it.second;
+            double target = ((double) aCity->GetPopulation() / (double) grid->GetTotalPopOfModel());
+            double actual = ((double) aCity->GetEffectivePopulation() / (double) grid->GetTotalPop());
+            popCounter += aCity->GetEffectivePopulation();
             EXPECT_NEAR(actual, target, margin);
         }
-        EXPECT_EQ(grid->GetPopulation()->size(), pop_counter);
+        EXPECT_EQ(grid->GetPopulation()->size(), popCounter);
     }
 
 
@@ -73,23 +76,23 @@ namespace Tests {
         unsigned int popCount = grid->GetPopulation()->size();
 
         for (unsigned int i = 0; i < grid->GetPopulation()->size(); i++) {
-            auto a_person = grid->GetPopulation()->at(i);
+            auto aPerson = grid->GetPopulation()->at(i);
 
-            switch (get_category(a_person.GetAge())) {
+            switch (get_category(aPerson.GetAge())) {
                 case Fractions::SCHOOLED : {
                     schooled++;
                     break;
                 }
                 case Fractions::YOUNG : {
                     youngsters++;
-                    if (a_person.GetPoolId(ContactPoolType::Id::Work) != 0) {
+                    if (aPerson.GetPoolId(ContactPoolType::Id::Work) != 0) {
                         active++;
                     }
                     break;
                 }
                 case Fractions::MIDDLE_AGED : {
                     middleAged++;
-                    if (a_person.GetPoolId(ContactPoolType::Id::Work) != 0) {
+                    if (aPerson.GetPoolId(ContactPoolType::Id::Work) != 0) {
                         active++;
                     }
                     break;
@@ -124,6 +127,36 @@ namespace Tests {
     }
 
 
+    TEST_P(GenPopTest, CommutersTest) {
+
+        unsigned int studentCommuters = 0;
+        unsigned int workerCommuters = 0;
+        unsigned int active = 0;
+        unsigned int students = 0;
+
+        for(auto& it:grid->GetCities()){
+            City* aCity = &it.second;
+            studentCommuters += aCity->GetStudentCommutersCount();
+            workerCommuters += aCity->GetWorkerCommutersCount();
+
+        }
+
+        for (unsigned int i = 0; i < grid->GetPopulation()->size(); i++) {
+            auto aPerson = grid->GetPopulation()->at(i);
+
+            if (aPerson.GetPoolId(ContactPoolType::Id::Work) != 0) {
+                active ++;
+            }
+
+            else if(get_category(aPerson.GetAge()) == Fractions::YOUNG &&
+                    aPerson.GetPoolId(ContactPoolType::Id::School) != 0){
+                students ++;
+            }
+        }
+
+        EXPECT_NEAR((double) studentCommuters/students, grid->GetFraction(Fractions::COMMUTING_STUDENTS), 0.05);
+        EXPECT_NEAR((double) workerCommuters/active, grid->GetFraction(Fractions::COMMUTING_WORKERS), 0.05);
+    }
 namespace {
 // OpenMP should have no effect atm...
 // Should we simply leave this out?

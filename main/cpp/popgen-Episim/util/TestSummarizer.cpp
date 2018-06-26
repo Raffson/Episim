@@ -7,7 +7,6 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "TestSummarizer.h"
-#include "util/FileSys.h"
 
 using namespace std;
 
@@ -16,10 +15,10 @@ namespace stride{
 void TestSummarizer::CreateTopTags(ofstream& file)
 {
     file << "<html> \n<head> <meta charset=\"UTF-8\" /> ";
-    file << " <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
-    file << "<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">";
+    file << R"( <meta name="viewport" content="width=device-width, initial-scale=1">)";
+    file << R"(<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">)";
     file << "<style>#wrapper{padding: 40px;} </style> </head>" << endl;
-    file << "<body><div id=\"wrapper\" class=\"table-responsive\">";
+    file << R"(<body><div id="wrapper" class="table-responsive">)";
 
 }
 
@@ -44,7 +43,7 @@ void TestSummarizer::GenerateHtml(const boost::filesystem::path &testPath, const
             string testsuiteName = subtree.get<std::string>("<xmlattr>.name", "");
             //int nr_failures = subtree.get<int>("<xmlattr>.failures", 0);
 
-            if(testsuiteName == "")
+            if(testsuiteName.empty())
                 continue;
 
             file << "<h3>" << testsuiteName << "</h3>" << endl;
@@ -54,7 +53,7 @@ void TestSummarizer::GenerateHtml(const boost::filesystem::path &testPath, const
             for(auto& tc: subtree.get_child("")){
                 string testcaseName = tc.second.get<std::string>("<xmlattr>.name", "");
 
-                if(testcaseName == "")
+                if(testcaseName.empty())
                     continue;
 
                 file << "<tr><td>" << testcaseName << "</td>";

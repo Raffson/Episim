@@ -40,8 +40,9 @@ include(ProcessorCount)
 ProcessorCount(PROCCOUNT)
 set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -DPROCCOUNT=${PROCCOUNT}")
 #
-set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas")
-set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wno-array-bounds")
+set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Weffc++")
+set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+#
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast" )
 set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -O0"   )
 #
@@ -53,7 +54,6 @@ include_directories(${CMAKE_HOME_DIRECTORY}/main/cpp)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_HOST_APPLE)
 	add_definitions( -D__APPLE__ )
 	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
 #
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT CMAKE_HOST_APPLE )
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
@@ -62,13 +62,20 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT CMAKE_HOST_APPLE )
 #
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC")
-	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-maybe-uninitialized")
+#
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++1z")
 endif()
 
 #----------------------------------------------------------------------------
 # Standard math lib
 #----------------------------------------------------------------------------
 set(LIBS   ${LIBS}   m)
+
+#----------------------------------------------------------------------------
+# PCG
+#----------------------------------------------------------------------------
+include_directories(SYSTEM ${CMAKE_HOME_DIRECTORY}/main/resources/lib/pcg/include)
 
 #----------------------------------------------------------------------------
 # Spdlog Library (logging)
@@ -134,13 +141,19 @@ endif()
 #----------------------------------------------------------------------------
 # Qt : not a definitive list of components yet; these are placeholders
 #----------------------------------------------------------------------------
-find_package(Qt5 COMPONENTS Core Gui PrintSupport Widgets Qml QUIET)
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
+			"~/Qt/5.11.0/clang_64"
+			"~/Qt/5.11.0/gcc_64"
+			"~/Qt/5.10.1/clang_64"
+			"~/Qt/5.10.1/gcc_64"
+)
+find_package(Qt5 COMPONENTS Core Qml Network Quick Positioning Location Widgets Gui PrintSupport Charts)
 if (Qt5_FOUND)
 	set(CMAKE_AUTOMOC ON)
 	set(CMAKE_INCLUDE_CURRENT_DIR ON)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQt5_FOUND=true")
-	find_package(Qt5Positioning)
-	find_package(QtQml)
+	find_package(Qt5Positioning REQUIRED)
+	find_package(Qt5Charts REQUIRED)
     set(QT_INCLUDES
         ${Qt5Core_INCLUDE_DIRS}
         ${Qt5Gui_INCLUDE_DIRS}
@@ -148,7 +161,8 @@ if (Qt5_FOUND)
         ${QtQml_INCLUDE_DIRS}
         ${Qt5Widgets_INCLUDE_DIRS}
         ${Qt5Positioning_INCLUDE_DIRS}
-        )
+		${Qt5Charts_INCLUDE_DIRS}
+		)
 	include_directories(SYSTEM ${QT_INCLUDES})
 	add_definitions(
         ${Qt5Core_DEFINITIONS}
@@ -157,6 +171,7 @@ if (Qt5_FOUND)
         ${QtQml_DEFINITIONS}
         ${Qt5Widgets_DEFINITIONS}
         ${Qt5Positioning_DEFINITIONS}
+			${Qt5Charts_DEFINITIONS}
     )
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
     set(QT_LIBRARIES
@@ -165,6 +180,8 @@ if (Qt5_FOUND)
         ${Qt5PrintSupport_LIBRARIES}
         ${QtQml_LIBRARIES}
         ${Qt5Widgets_LIBRARIES}
+		${Qt5Positioning_LIBRARIES}
+			${Qt5Charts_LIBRARIES}
         )
     if( CMAKE_BUILD_TYPE MATCHES "Release" )
         add_definitions( -DQT_NO_DEBUG_OUTPUT -DQT_NO_WARNING_OUTPUT )
@@ -172,8 +189,14 @@ if (Qt5_FOUND)
     if( CMAKE_BUILD_TYPE MATCHES "Debug" )
         add_definitions( -DQDEBUG_OUTPUT )
     endif()
+	message(STATUS "Found Qt5: version " ${Qt5_VERSION})
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQt5_FOUND=false")
+	message(STATUS "Qt5 not found, searched following paths: ")
+	foreach(path ${CMAKE_PREFIX_PATH})
+  		message(STATUS "   " ${path})
+	endforeach(path)
+	message(STATUS " Try adding your path to Qt to CMAKE_PREFIX_PATH in CMakeLocal.cmake")
 endif()
 
 #----------------------------------------------------------------------------
@@ -199,28 +222,6 @@ else()
 		# This is done to eliminate blank output of undefined CMake variables.
 		set(HDF5_FOUND FALSE)
 	endif()
-endif()
-
-#----------------------------------------------------------------------------
-# Qt libraries
-#----------------------------------------------------------------------------
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}
-			"~/Qt/5.11.0/clang_64"
-			"~/Qt/5.11.0/gcc_64"
-			"~/Qt/5.10.1/clang_64"
-			"~/Qt/5.10.1/gcc_64"
-)
-find_package(Qt5 COMPONENTS Core Qml Network Quick Positioning Location Widgets)
-
-if(Qt5_FOUND)
-	#little message although we also show this in the report, perhaps leave it out?
-	message(STATUS "Found Qt5: version " ${Qt5_VERSION})
-else()
-	message(STATUS "Qt5 not found, searched following paths: ")
-	foreach(path ${CMAKE_PREFIX_PATH})
-  		message(STATUS "   " ${path})
-	endforeach(path)
-	message(STATUS " Try adding your path to Qt to CMAKE_PREFIX_PATH in CMakeLocal.cmake")
 endif()
 
 #############################################################################

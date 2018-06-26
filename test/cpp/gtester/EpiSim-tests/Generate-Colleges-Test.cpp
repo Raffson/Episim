@@ -76,15 +76,15 @@ TEST_P(CollegeTest, HappyDayScenario)
         unsigned int colsize       = grid->GetAvgSize(Sizes::COLLEGES);
 
         double nrcolleges = ceil(grid->GetTotalPop() * stufrac * ywfrac / colsize);
-        double total_pop_biggest = 0;
+        double totalPopBiggest = 0;
         for (auto& it: grid->GetCitiesWithCollege()){
-            total_pop_biggest += it->GetPopulation() ;
+            totalPopBiggest += it->GetPopulation() ;
         }
 
         double margin = 0.075;
 
         for(auto& a_city:grid->GetCitiesWithCollege()){
-            double target = a_city->GetPopulation() / total_pop_biggest;
+            double target = a_city->GetPopulation() / totalPopBiggest;
             double actual = a_city->GetColleges().size() / nrcolleges;
             EXPECT_NEAR(actual, target, margin);
         }

@@ -71,7 +71,6 @@ ApplicationWindow {
     property var infected: 0
     property variant selector_rect: 0
 
-
     readonly property bool inPortrait: appWindow.width < appWindow.height
 
     header: ToolBar {
@@ -110,17 +109,13 @@ ApplicationWindow {
                 onClicked: selectMultiple()
             }
             ToolButton {
-                text: qsTr("future function")
-                onClicked: menu.open()
-            }
-            ToolButton {
                 text: qsTr("⋮")
-                onClicked: menu.open()
             }
         }
     }
 
-     Drawer {
+    // Right hand side column.
+    Drawer {
         id: drawer
         edge: Qt.RightEdge
         y: overlayHeader.height
@@ -168,6 +163,7 @@ ApplicationWindow {
                         color: "steelblue"
 
                     }
+
                     ToolButton {
                         text: qsTr("update population")
                         onClicked: updateSelected()
@@ -221,6 +217,11 @@ ApplicationWindow {
                         text: qsTr("Update rectangle")
                         onClicked: updateRectangle()
                     }
+
+                    ToolButton{
+                        text: qsTr("Hide rectangle")
+                        onClicked: hideRectangle()
+                    }
                 }
             }
 
@@ -228,6 +229,7 @@ ApplicationWindow {
         }
     }
 
+    // Select all cities.
     function selectAll(){
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
         for (var i = 0; i < map.children.length; i++)
@@ -242,6 +244,7 @@ ApplicationWindow {
         updateSelected()
     }
 
+    // Deselect all selected cities.
     function deselectAll(){
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
         for (var i = 0; i < map.children.length; i++)
@@ -256,6 +259,7 @@ ApplicationWindow {
         updateSelected()
     }
 
+    // Remove commute lines.
     function removeLines(){
         for (var i = 0; i < map.children.length; i++)
         {
@@ -266,6 +270,7 @@ ApplicationWindow {
         }
     }
 
+    // Rectangle select.
     function selectMultiple(){
         if(selector_rect == 0){
             selector_rect = Qt.createQmlObject('import "custom";FlexRectangle {}', page)
@@ -280,6 +285,7 @@ ApplicationWindow {
 
     }
 
+    // Select all cities within the rectangle.
     function updateRectangle(){
         deselectAll()
         for (var i = 0; i < map.children.length; i++)
@@ -299,6 +305,7 @@ ApplicationWindow {
         updateSelected();
     }
 
+    // Checks intersection between 2 points.
     function isIntersection(x, y, width)
     {
         var nearestX = Math.max(selector_rect.x, Math.min(x, selector_rect.x + selector_rect.width))
@@ -309,6 +316,7 @@ ApplicationWindow {
         return ((deltaX * deltaX + deltaY * deltaY) < (width*width) );
     }
 
+    // Updates size of the rectangle.
     function updateRectanglesSize(par)
     {
         var scale = 30
@@ -333,6 +341,12 @@ ApplicationWindow {
         }
     }
 
+    function hideRectangle(){
+        selector_rect.height = 0
+        selector_rect.width = 0
+    }
+
+    // Update the total selected population and infected count.
     function updateSelected(){
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
         var total_count = 0
@@ -354,26 +368,54 @@ ApplicationWindow {
         pop_info = total_count
     }
 
-
+    // Draws lines representing the commutings between cities, the factor 5000 is arbitrarily chosen to show even small commutes.
     function showCommutes(number){
         if(number === undefined) number = 10
-        var count = 0;
+        var count = 0
         for (var i = 0; i < map.children.length; i++){
             if(map.children[i].objectName === "mqi" && count < number){
-                count ++;
-                var circle = map.children[i];
-                var startCoordinate = QtPositioning.coordinate(circle.sourceItem.lati, circle.sourceItem.longi);
+                count ++
+                var circle = map.children[i]
+                var startCoordinate = QtPositioning.coordinate(circle.sourceItem.lati, circle.sourceItem.longi)
 
+                // For the out-commuters.
                 for (var j = 0; j < number; j++){
-                    var out_id = circle.sourceItem.out_commuting[j];
+                    var out_id = circle.sourceItem.out_commuting[j]
+                    var out_size = circle.sourceItem.out_commuting_size[j]
                     for (var k = 0; k < map.children.length; k++){
                         if(map.children[k].objectName === "mqi"){
                             if(map.children[k].sourceItem.city_id === out_id){
-                                var endCoordinate = QtPositioning.coordinate(map.children[k].sourceItem.lati, map.children[k].sourceItem.longi);
-                                var path = Qt.createQmlObject('import "custom"; PathDraw{}', page);
-                                path.addCoordinate(startCoordinate);
-                                path.addCoordinate(endCoordinate);
-                                map.addMapItem(path);
+
+                                var endCoordinate = QtPositioning.coordinate(map.children[k].sourceItem.lati, map.children[k].sourceItem.longi)
+
+                                var path = Qt.createQmlObject('import "custom"; PathDraw{}', page)
+                                path.addCoordinate(startCoordinate)
+                                path.addCoordinate(endCoordinate)
+
+                                path.line.width = (out_size/circle.sourceItem.population)*5000
+                                map.addMapItem(path)
+                            }
+                        }
+                    }
+                }
+
+                // For the in-commuters.
+                for (var j = 0; j < number; j++){
+                    var in_id = circle.sourceItem.in_commuting[j]
+                    var in_size = circle.sourceItem.in_commuting_size[j]
+                    for (var k = 0; k < map.children.length; k++){
+                        if(map.children[k].objectName === "mqi"){
+                            if(map.children[k].sourceItem.city_id === in_id){
+
+                                var endCoordinate = QtPositioning.coordinate(map.children[k].sourceItem.lati, map.children[k].sourceItem.longi)
+
+                                var path = Qt.createQmlObject('import "custom"; PathDraw{}', page)
+                                path.addCoordinate(startCoordinate)
+                                path.addCoordinate(endCoordinate)
+
+                                path.line.width = (in_size/circle.sourceItem.population)*5000
+                                path.line.color = 'blue'
+                                map.addMapItem(path)
                             }
                         }
                     }
@@ -438,6 +480,7 @@ ApplicationWindow {
         map.forceActiveFocus()
     }
 
+    // Sets the center of the map.
     function setCentre(coords){
         map.center.latitude = coords[0]
         map.center.longitude = coords[1]
@@ -456,12 +499,20 @@ ApplicationWindow {
                                        , map)
     }
 
+    // Save the map to an image.
+    function saveToImage(filename){
+        map.grabToImage(function(result) { result.saveToFile(filename); })
+    }
 
+    // Place a city on the map.
     function placeCity(values, commuting_in_id, commuting_in_size, commuting_out_id, commuting_out_size){
+
+        // Create necesary objects.
         var item = Qt.createQmlObject('import QtQuick 2.7; import QtLocation 5.3; MapQuickItem{objectName: "mqi";}', map, "dynamic")
         item.coordinate = QtPositioning.coordinate(values["latitude"], values["longitude"])
-
         var circle = Qt.createQmlObject('import "custom"; CityCircle {}', page)
+
+        // Determine size.
         var wh = 25000*values["perc"]
         var max = 125
         var min = 50
@@ -471,9 +522,13 @@ ApplicationWindow {
         if (wh < min){
             wh = min
         }
+
+        // Set al values.
         circle.city_id = values["id"]
         circle.in_commuting = commuting_in_id
+        circle.in_commuting_size = commuting_in_size
         circle.out_commuting = commuting_out_id
+        circle.out_commuting_size = commuting_out_size
         circle.width = wh
         circle.height = wh
         circle.longi = values["longitude"]
@@ -487,6 +542,10 @@ ApplicationWindow {
         circle.population = values["population"]
         item.sourceItem = circle
         item.anchorPoint = Qt.point(item.sourceItem.width/2, item.sourceItem.height/2)
+        var percentage = circle.infected/circle.population
+        circle.color = Qt.hsva(0, 1, percentage, 0.75)
+
+        // Add city to the map.
         map.addMapItem(item)
     }
 
